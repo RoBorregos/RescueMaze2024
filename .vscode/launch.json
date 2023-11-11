@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Tests/TOF_test",
-      "program": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Tests/TOF_test/build/Debug/outDebug",
+      "cwd": ".",
+      "program": "build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

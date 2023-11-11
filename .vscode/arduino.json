@@ -1,5 +1,6 @@
 {
-    "port": "COM13",
-    "board": "Intel:arc32:arduino_101",
-    "sketch": "Tests\\TOF_test\\TOF_test.ino"
+    "port": "COM16",
+    "board": "arduino:avr:mega",
+    "sketch": "Tests\\IMUsparkfun_test\\IMUsparkfun_test.ino",
+    "configuration": "cpu=atmega2560"
 }
