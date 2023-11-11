@@ -1,0 +1,5 @@
+{
+    "port": "COM13",
+    "board": "Intel:arc32:arduino_101",
+    "sketch": "Tests\\TOF_test\\TOF_test.ino"
+}
