@@ -1,6 +1,0 @@
-{
-    "port": "/dev/tty.usbmodem143301",
-    "board": "arduino:avr:mega",
-    "sketch": "Tests/Motor_test/Motor_test.ino",
-    "configuration": "cpu=atmega2560"
-}
