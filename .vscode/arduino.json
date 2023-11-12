@@ -1,6 +1,4 @@
 {
     "port": "COM16",
-    "board": "arduino:avr:mega",
-    "sketch": "Tests\\IMUsparkfun_test\\IMUsparkfun_test.ino",
-    "configuration": "cpu=atmega2560"
+    "board": "arduino:avr:mega"
 }
