@@ -24,6 +24,6 @@ class PID{
         PID(const double kp, const double ki, const double kd, const double errorMax, const double outputMax, const double outputMin, const long tiempoActual);
         PID();
         void setValues(double kp, double ki, double kd);
-        void controlSpeed(double setpoint, double input);
+        void controlSpeed(const double setpoint, double &input, double &output, int &reset, const double pulsosPorVuelta);
 };
 #endif

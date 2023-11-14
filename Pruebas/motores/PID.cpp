@@ -21,12 +21,14 @@ void setValues(double kp, double ki, double kd){
     this->kd=kd;
 }
 
-void PID::controlSpeed(const double set){
+void PID::controlSpeed(const double setpoint, double input, double &output, int &reset, const double pulsosPorVuelta){
     if(millis()-tiempoPrev<tiempoActual){
         tiempoPrev=millis();
         return;
     }
-    //aqui iria el input 
+
+
+    input=(reset/pulsosPorVuelta)*(1000/(millis()-tiempoPrev));
 
     const double error=setpoint-input;
     const double errorAcum=errorAcum+error;
