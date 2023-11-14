@@ -1,6 +1,5 @@
 {
-    "port": "COM16",
-    "board": "arduino:avr:mega",
-    "sketch": "Tests\\motors_test\\motors_test.ino",
-    "configuration": "cpu=atmega2560"
+    "port": "COM11",
+    "board": "arduino:avr:uno",
+    "sketch": "Tests\\TCS_test\\TCS_test.ino"
 }
