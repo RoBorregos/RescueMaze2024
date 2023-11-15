@@ -7,18 +7,18 @@
 class PID{
     private:
         //Constantes
-        double kp=0, ki=0, kd=0;
+        double kp_=0, ki_=0, kd_=0;
         //Variables externas
         double setpoint=0, input=0, output=0;
         //Variables internas
-        double error=0, errorPrev=0, errorAcum=, errorDeriv=0;
+        double error=0, errorPrev=0, errorAcum=0, errorDeriv=0;
     
         //Limites
-        double errorMax=0;
-        double outputMax=0 , outputMin=0;
+        double errorMax_=0;
+        double outputMax_=0 , outputMin_=0;
 
         //Tiempo
-        unsigned long  tiempoPrev=0, tiempoActual=0;
+        unsigned long  tiempoPrev_=0, tiempoActual_=0;
         
     public:
         PID(const double kp, const double ki, const double kd, const double errorMax, const double outputMax, const double outputMin, const long tiempoActual);

@@ -4,17 +4,17 @@
 #include <Arduino.h>
 #include "PID.h"
 
-struct MotorID{
-    backLeft=0;
-    backRight=1;
-    frontLeft=2;
-    frontRight=3;
+enum MotorID{
+    backLeft=0,
+    backRight=1,
+    frontLeft=2,
+    frontRight=3
 };
 
 enum class MotorState{
-    forward = 1,
-    backward = -1,
-    stop = 0
+    Forward = 1,
+    Backward = -1,
+    Stop = 0
 };
 
 class Motor{
@@ -116,9 +116,5 @@ class Motor{
     //PID METHODS
     void PIDStraightTunnigs(double kp, double ki, double kd);
     void PIDRotateTunnigs(double kp, double ki, double kd);
-}
-
-
-
-
+};
 #endif

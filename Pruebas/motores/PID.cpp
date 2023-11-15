@@ -1,52 +1,55 @@
 #include "PID.h"
 
 PID::PID(){
-    tiempoPrev=millis();
+    tiempoPrev_=millis();
 }
 
 PID::PID(const double kp, const double ki, const double kd, const double errorMax, const double outputMax, const double outputMin, const long tiempoActual){
     
     
-    tiempoPrev=millis();
+    tiempoPrev_=millis();
     setValues(kp, ki, kd);
-    this->errorMax=errorMax;
-    this->outputMax=outputMax;
-    this->outputMin=outputMin;
-    this->tiempoActual=tiempoActual;
+    errorMax_=errorMax;
+    outputMax_=outputMax;
+    outputMin_=outputMin;
+    tiempoActual_=tiempoActual;
 }
 
-void setValues(double kp, double ki, double kd){
-    this->kp=kp;
-    this->ki=ki;
-    this->kd=kd;
+void PID::setValues(double kp, double ki, double kd){
+    kp_=kp;
+    ki_=ki;
+    kd_=kd;
 }
 
-void PID::controlSpeed(const double setpoint, double input, double &output, int &reset, const double pulsosPorVuelta){
-    if(millis()-tiempoPrev<tiempoActual){
-        tiempoPrev=millis();
+void PID::controlSpeed(const double setpoint, double &input, double &output, int &reset, const double pulsosPorVuelta){
+    if(millis()-tiempoPrev_<tiempoActual_){
+        
         return;
     }
 
 
-    input=(reset/pulsosPorVuelta)*(1000/(millis()-tiempoPrev));
+    input=(reset/pulsosPorVuelta)*(1000/(millis()-tiempoPrev_));
+    reset=0;
 
     const double error=setpoint-input;
-    const double errorAcum=errorAcum+error;
-    const double errorDeriv=error-errorPrev;
-    const double output=kp*error+ki*errorAcum+kd*errorDeriv;
 
-    if(output>outputMax){
+    errorAcum+=error*(millis()-tiempoPrev_);
+
+    const double errorDeriv=(error-errorPrev)/millis()-tiempoPrev_;
+    output=kp*error+ki*errorAcum+kd*errorDeriv;
+
+
+/*     if(output>outputMax){
         output=outputMax;
     }
     else if(output<outputMin){
         output=outputMin;
-    }
+    } */
 
     errorPrev=error;
-    errorAcum+=error;
-
-    errorAcum=errorAcum>errorMax?errorMax:errorAcum;
-    output=output>outputMax?outputMax:output;
-    output=output<outputMin?outputMin:output;
+    errorAcum=errorAcum>errorMax_?errorMax_:errorAcum;
+    output=output>outputMax_?outputMax_:output;
+    output=output<outputMin_?outputMin_:output;
+    tiempoPrev_=millis();
 
 }
