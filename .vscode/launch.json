@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": ".",
-      "program": "build/Debug/outDebug",
+      "cwd": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Tests/PID_test",
+      "program": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Tests/PID_test/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
