@@ -1,21 +1,26 @@
 #include "Motorclass.h"
 
-motor FRmotor(23,22,5);
-motor FLmotor(25,24,4);
-motor BRmotor(26,27,7);
-motor BLmotor(29,28,6);
+motor FLmotor(29,28,7);
+motor FRmotor(27,26,6);
+motor BRmotor(25,24,5);
+motor BLmotor(23,22,4);
+
+int tick1 =0;
+int tick2 =0;
+int tick3 =0;
+int tick4 =0;
 
 void captureCallback(){
-    Serial.println("Change");
+    tick1++;
 }
 void captureCallback_uno(){
-    Serial.println("Change");
+    tick2++;
 }
 void captureCallback_dos(){
-    Serial.println("Change");
+    tick3++;
 }
 void captureCallback_tres(){
-    Serial.println("Change");
+    tick4++;
 }
 void setup (){
     Serial.begin(115200);
@@ -29,14 +34,22 @@ void setup (){
     attachInterrupt(digitalPinToInterrupt(19),captureCallback_tres,RISING);
 }
 void loop (){
-    BLmotor.set_pwm(50);
+    BLmotor.set_pwm(150);
     BLmotor.forward();
-    BRmotor.set_pwm(50);
+    BRmotor.set_pwm(150);
     BRmotor.forward();
-    FRmotor.set_pwm(50);
+    FRmotor.set_pwm(150);
     FRmotor.forward();
-    FLmotor.set_pwm(50);
+    FLmotor.set_pwm(150);
     FLmotor.forward();
+    Serial.print("tick1: ");
+    Serial.print(tick1);
+    Serial.print(" tick2: ");
+    Serial.print(tick2);
+    Serial.print(" tick3: ");
+    Serial.print(tick3);
+    Serial.print(" tick4: ");
+    Serial.println(tick4);
     delay(2000);
     BLmotor.stop();
     BRmotor.stop();
