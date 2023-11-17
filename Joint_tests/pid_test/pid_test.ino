@@ -1,5 +1,6 @@
 
 #include "Motorclass.h"
+#include "Encoderclass.h"
 unsigned long next_time; 
 motor FRmotor(5,4,3);
 float rpm = 0;
@@ -10,7 +11,7 @@ void captureCallback(){
     //Serial.println(tick1);
     tick1++;
 }
-void get_vel(){
+void get_rpm(){
     Serial.print(tick1);
     Serial.print(" checking = ");
     rpm = (tick1*60.00)/496.00;
@@ -30,7 +31,7 @@ void loop(){
     if(millis()-next_time>=1000){
         //Serial.print("1 second = ");
         //Serial.println(millis()-next_time);
-        get_vel();
+        get_rpm();
         next_time = millis();
     }
 
