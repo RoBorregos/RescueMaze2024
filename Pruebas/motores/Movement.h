@@ -4,9 +4,9 @@
 #include <Arduino.h>
 
 
-#include <std_msgs/String.h>
+
 #include <math.h>
-#include "Motor.h"
+#include "Motores.h"
 
 
 
@@ -83,7 +83,7 @@ private:
   static constexpr double kDStraightFR = 2; // 40
 
   // Kinematics.
-  Kinematics kinematics;
+/*   Kinematics kinematics; */
 
   // Cmd movement constants
   static constexpr int kMovementRPMs = 60;
@@ -96,18 +96,18 @@ public:
 
   // Constructors
 
-  // Using ROS and BNO with arduino
+  /* // Using ROS and BNO with arduino
   Movement(ros::NodeHandle *nh, BNO *bno, Sensors *sensors, bool individualConstants = false);
 
   // Using ROS, with external use of BNO.
   Movement(ros::NodeHandle *nh, Sensors *sensors, bool individualConstants = false);
-
-  // Using only Arduino.
+ */
+ /*  // Using only Arduino.
   Movement(BNO *bno, Sensors *sensors, bool individualConstants = false);
 
   // Using only Arduino without bno
   Movement(Sensors *sensors, bool individualConstants = false);
-
+ */
   // Initialize objects in common of constructors.
   initMovement(bool individualConstants = false);
 
@@ -160,7 +160,7 @@ public:
 
   // Calls straight PID method for all motors, each with its specific target RMPs.
   // @param rpm Kinematic object with target rpms per wheel.
-  void updatePIDKinematics(Kinematics::output rpm);
+ /*  void updatePIDKinematics(Kinematics::output rpm); */
 
   // Moves the robot forward the specified distance.
   // @param x Distance in meters.

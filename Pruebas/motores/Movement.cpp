@@ -2,31 +2,31 @@
 
 // Constructors
 
-Movement::Movement(ros::NodeHandle *nh, BNO *bno, Sensors *sensors, bool individualConstants) : nh(nh), bno(bno), sensors(sensors)
+/* Movement::Movement(ros::NodeHandle *nh, BNO *bno, Sensors *sensors, bool individualConstants) : nh(nh), bno(bno), sensors(sensors)
 {
   initMovement(individualConstants);
-}
+} */
 
-Movement::Movement(BNO *bno, Sensors *sensors, bool individualConstants) : bno(bno), sensors(sensors)
+/* Movement::Movement(BNO *bno, Sensors *sensors, bool individualConstants) : bno(bno), sensors(sensors)
 {
   nh = nullptr;
   initMovement(individualConstants);
-}
+} */
 
-Movement::Movement(ros::NodeHandle *nh, Sensors *sensors, bool individualConstants) : nh(nh), sensors(sensors)
+/* Movement::Movement(ros::NodeHandle *nh, Sensors *sensors, bool individualConstants) : nh(nh), sensors(sensors)
 {
   bno = nullptr;
   initMovement(individualConstants);
-}
+} */
 
-Movement::Movement(Sensors *sensors, bool individualConstants) : sensors(sensors)
+/* Movement::Movement(Sensors *sensors, bool individualConstants) : sensors(sensors)
 {
   nh = nullptr;
   bno = nullptr;
   initMovement(individualConstants);
-}
+} */
 
-Movement::initMovement(bool individualConstants)
+/* Movement::initMovement(bool individualConstants)
 {
   kinematics = Kinematics(kRPM, kWheelDiameter, kFrWheelsDist, kLrWheelsDist, kPwmBits);
   setMotors();
@@ -34,24 +34,24 @@ Movement::initMovement(bool individualConstants)
   if (individualConstants)
     setIndividualPID();
   initRobot();
-}
+} */
 
 void Movement::setIndividualPID()
 {
-  motor[BACK_LEFT].PIDStraightTunings(470, 0, 15);
-  motor[FRONT_RIGHT].PIDStraightTunings(120, 80, 10);
-  motor[FRONT_LEFT].PIDStraightTunings(120, 80, 10);
-  motor[BACK_RIGHT].PIDStraightTunings(120, 80, 10);
+  motor[BACK_LEFT].PIDStraightTunnings(470, 0, 15);
+  motor[FRONT_RIGHT].PIDStraightTunnings(120, 80, 10);
+  motor[FRONT_LEFT].PIDStraightTunnings(120, 80, 10);
+  motor[BACK_RIGHT].PIDStraightTunnings(120, 80, 10);
 
-  motor[BACK_LEFT].PIDConservativeTunings(120, 80, 10);
-  motor[FRONT_RIGHT].PIDConservativeTunings(120, 80, 10);
-  motor[FRONT_LEFT].PIDConservativeTunings(120, 80, 10);
-  motor[BACK_RIGHT].PIDConservativeTunings(120, 80, 10);
+/*   motor[BACK_LEFT].PIDConservativeTunnings(120, 80, 10);
+  motor[FRONT_RIGHT].PIDConservativeTunnings(120, 80, 10);
+  motor[FRONT_LEFT].PIDConservativeTunnings(120, 80, 10);
+  motor[BACK_RIGHT].PIDConservativeTunnings(120, 80, 10);
 
-  motor[BACK_LEFT].PIDAggressiveTunings(470, 0, 15);
-  motor[FRONT_RIGHT].PIDAggressiveTunings(470, 0, 15);
-  motor[FRONT_LEFT].PIDAggressiveTunings(470, 0, 15);
-  motor[BACK_RIGHT].PIDAggressiveTunings(470, 0, 15);
+  motor[BACK_LEFT].PIDAggressiveTunnings(470, 0, 15);
+  motor[FRONT_RIGHT].PIDAggressiveTunnings(470, 0, 15);
+  motor[FRONT_LEFT].PIDAggressiveTunnings(470, 0, 15);
+  motor[BACK_RIGHT].PIDAggressiveTunnings(470, 0, 15); */
 
   // Oscilates but arrives fast: motor[FRONT_RIGHT].PIDStraightTunings(470, 0, 15);
   // Oscilates less but arrives less fast: motor[FRONT_RIGHT].PIDStraightTunings(200, 120, 10);
@@ -152,25 +152,25 @@ void Movement::initRobot()
     motor[i].setPWM(0);
   }
 
-  dispenser.initServo();
+  //dispenser.initServo();
 
-  initLeds();
-  initSwitches();
+  //initLeds();
+  //initSwitches();
 }
 
-void Movement::initLeds()
+/* void Movement::initLeds()
 {
   pinMode(kDigitalPinsLEDS[0], OUTPUT);
   pinMode(kDigitalPinsLEDS[1], OUTPUT);
-}
+} */
 
-void Movement::initSwitches()
+/* void Movement::initSwitches()
 {
   pinMode(kDigitalPinsLimitSwitch[0], INPUT);
   pinMode(kDigitalPinsLimitSwitch[1], INPUT);
-}
+} */
 
-int Movement::leftLimitSwitch()
+/* int Movement::leftLimitSwitch()
 {
   int val = digitalRead(kDigitalPinsLimitSwitch[0]);
   if (val == HIGH)
@@ -190,9 +190,9 @@ int Movement::rightLimitSwitch()
   }
 
   return 0;
-}
+} */
 
-void Movement::debugLimitSwitches()
+/* void Movement::debugLimitSwitches()
 {
   int val = digitalRead(kDigitalPinsLimitSwitch[0]);
   if (val == HIGH)
@@ -212,7 +212,7 @@ void Movement::debugLimitSwitches()
   {
     Serial.println("Switch 1 is closed");
   }
-}
+} */
 
 // Encoder Functions
 
@@ -264,7 +264,7 @@ void Movement::stop()
   }
 }
 
-void Movement::cmdVelocity(const double linear_x, const double linear_y, const double angular_z, const bool debug)
+/* void Movement::cmdVelocity(const double linear_x, const double linear_y, const double angular_z, const bool debug)
 {
   if (nh == nullptr)
   {
@@ -378,7 +378,7 @@ void Movement::cmdVelocity(const double linear_x, const double linear_y, const d
       nh->loginfo(log_msg);
     }
   }
-}
+} */
 
 void Movement::girarIzquierda()
 {
@@ -396,14 +396,14 @@ void Movement::girarDerecha()
   motor[BACK_RIGHT].motorForward();
 }
 
-void Movement::updatePIDKinematics(Kinematics::output rpm)
+/* void Movement::updatePIDKinematics(Kinematics::output rpm)
 {
   // Matching of motor # with rpm.motor# is important. Check kinematics getRPM()
   motor[FRONT_LEFT].motorSpeedPID(rpm.motor1);
   motor[FRONT_RIGHT].motorSpeedPID(rpm.motor2);
   motor[BACK_LEFT].motorSpeedPID(rpm.motor3);
   motor[BACK_RIGHT].motorSpeedPID(rpm.motor4);
-}
+} */
 
 void Movement::updateStraightPID(int RPMs)
 {
@@ -505,7 +505,7 @@ void Movement::girarDeltaAngulo(double delta_theta)
   }
 }
 
-void Movement::cmdMovement(int movement_type)
+/* void Movement::cmdMovement(int movement_type)
 {
   if (bno == nullptr)
   {
@@ -531,11 +531,11 @@ void Movement::cmdMovement(int movement_type)
         updateStraightPID(kMovementRPMs);
         current_distance = sensors->getVLXInfo(vlx_front);
 
-        /*if (sensors_->getTCSInfo() == 'b'){
+        if (sensors_->getTCSInfo() == 'b'){
           stop();
           resetEncoders();
           return;
-        }*/
+        }
       }
     }
     else
@@ -545,11 +545,11 @@ void Movement::cmdMovement(int movement_type)
       {
         updateStraightPID(kMovementRPMs);
         current_distance = sensors->getVLXInfo(vlx_front);
-        /*if (sensors_->getTCSInfo() == 'b'){
+        if (sensors_->getTCSInfo() == 'b'){
           stop();
           resetEncoders();
           return;
-        }*/
+        }
       }
     }
     stop();
@@ -608,11 +608,11 @@ void Movement::cmdMovement(int movement_type)
   }
   digitalWrite(kDigitalPinsLEDS[0], HIGH);
 }
-
+ */
 // Drop kit decider
 
 // Gets sign which refers to where should a kit be dropped
-void Movement::dropDecider(int ros_sign_callback)
+/* void Movement::dropDecider(int ros_sign_callback)
 {
   digitalWrite(kDigitalPinsLEDS[1], HIGH);
 
@@ -634,7 +634,7 @@ void Movement::dropDecider(int ros_sign_callback)
   
   digitalWrite(kDigitalPinsLEDS[1], LOW);
 }
-
+ */
 // Limit switches checker
 
 void Movement::testMotor()

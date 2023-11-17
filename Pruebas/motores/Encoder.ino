@@ -12,30 +12,31 @@ void Encoder::updateTics(Motor *motor){
     return;
   }
 }
-/*
+//................................................................................................................
+//VER COMO ADAPTAR ESTO 
 void Encoder::backLeftEncoder() {
-  updateTics(&robot->motor_[BACK_LEFT]);
+/*   updateTics( &robot-> motor_[BACK_LEFT]); */
 }
   
 void Encoder::frontLeftEncoder() {
-  updateTics(&robot->motor_[FRONT_LEFT]);
+/*   updateTics( &robot->/motor_[FRONT_LEFT]); */
 }
   
 void Encoder::backRightEncoder() {
-  updateTics(&robot->motor_[BACK_RIGHT]);
+/*   updateTics( &robot-> motor_[BACK_RIGHT]); */
 }
   
 void Encoder::frontRightEncoder() {
-  updateTics(&robot->motor_[FRONT_RIGHT]);
+/*   updateTics( &robot-> motor_[FRONT_RIGHT]); */
 }
-*/
+
 void captureCallBack()
 {
     Serial.println(Encoder::backLeftEncoder()); 
 }
 
-voidp()
-p{
+/* void setup()
+{
     Serial.begin(9600);
     pinMode(19, INPUT);
     attachInterrupt(digitalPinToInterrupt(19), captureCallBack, RISING);
@@ -44,4 +45,4 @@ p{
 void loop()
 {
 
-}
+} */
