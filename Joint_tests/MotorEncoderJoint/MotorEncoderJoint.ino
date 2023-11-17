@@ -42,6 +42,7 @@ void loop (){
     FRmotor.forward();
     FLmotor.set_pwm(150);
     FLmotor.forward();
+    delay(2000);
     Serial.print("tick1: ");
     Serial.print(tick1);
     Serial.print(" tick2: ");
@@ -50,7 +51,6 @@ void loop (){
     Serial.print(tick3);
     Serial.print(" tick4: ");
     Serial.println(tick4);
-    delay(2000);
     BLmotor.stop();
     BRmotor.stop();
     FRmotor.stop();
