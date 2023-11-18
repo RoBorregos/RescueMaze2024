@@ -13,23 +13,17 @@ Motor motorBR;*/
 //BNO bno;
 Movement robot;
 
-unsigned long next_time;
-
 void setup()
 {
     Serial.begin(115200);
     robot.setup();
     //bno.setupBNO();
-    next_time = millis();
 }
 
 void loop()
 {
-    if(millis()-next_time>=1000){
-        robot.updateRPM();
-        next_time = millis();
-    }
-    robot.moveForward(100);
+    robot.setSpeed(80.00);
+    
     /*Serial.print("FL: ");
     Serial.print(robot.getMotorFL().getEncoderTicsFL());
     Serial.print("\t FR: ");
@@ -39,7 +33,7 @@ void loop()
     Serial.print("\t BR: ");
     Serial.print(robot.getMotorBR().getEncoderTicsBR());
     Serial.println();*/
-    Serial.print("FL: ");
+    /*Serial.print("FL: ");
     Serial.print(robot.getRMPFL());
     Serial.print("\t FR: ");
     Serial.print(robot.getRMPFR());
@@ -47,6 +41,6 @@ void loop()
     Serial.print(robot.getRMPBL());
     Serial.print("\t BR: ");
     Serial.print(robot.getRMPBR());
-    Serial.println();
+    Serial.println();*/
     //delay(250);
 }

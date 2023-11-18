@@ -13,15 +13,20 @@ class Movement{
         float RMPFL, RMPFR, RMPBL, RMPBR;
         int FLtics, FRtics, BLtics, BRtics;
         int FLticsViejos, FRticsViejos, BLticsViejos, BRticsViejos;
+        unsigned long next_time;
+        float kp, ki, kd;
+        float pwmInicial,errorPrev;
     public:
         Movement();
         void setup();
-        void moveForward(int pwm);
+        void moveForward(int pwmA, int pwmB, int pwmC, int pwmD);
+        void updateRPM();
+        void setSpeed(float targetSpeed);
+        //getters
         Motor getMotorFL();
         Motor getMotorFR();
         Motor getMotorBL();
         Motor getMotorBR();
-        void updateRPM();
         float getRMPFL();
         float getRMPFR();
         float getRMPBL();
