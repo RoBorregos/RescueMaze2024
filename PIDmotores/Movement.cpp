@@ -24,8 +24,14 @@ Movement::Movement(){
     this->kp = 0.01;
     this->ki = 0.001;
     this->kd = 0.001;
-    this->pwmInicial = 50;
-    this->errorPrev = 0;
+    this->pwmInicialFL = 50;
+    this->errorPrevFL = 0;
+    this->pwmInicialFR = 50;
+    this->errorPrevFR = 0;
+    this->pwmInicialBL = 50;
+    this->errorPrevBL = 0;
+    this->pwmInicialBR = 50;
+    this->errorPrevBR = 0;
 }
 void Movement::setup(){
     motorFL.motoresSetup(pwmFL, daFL, dbFL, eaFL, MotorID::FRONT_LEFT); 
@@ -60,47 +66,50 @@ void Movement::updateRPM(){
 void Movement::setSpeed(float targetSpeed){
     updateRPM();
     float error = targetSpeed - RMPFL;
-    pwmInicial = pwmInicial + (kp * error + ki * (error + errorPrev) + kd * (error - errorPrev));
-    errorPrev = error;
-    if(pwmInicial>255)
-        pwmInicial = 255;
-    else if(pwmInicial<0)
-        pwmInicial = 0;
-    motorFL.setPWM(pwmInicial);
+    pwmInicialFL = pwmInicialFL + (kp * error + ki * (error + errorPrevFL) + kd * (error - errorPrevFL));
+    errorPrevFL = error;
+    if(pwmInicialFL>255)
+        pwmInicialFL = 255;
+    else if(pwmInicialFL<0)
+        pwmInicialFL = 0;
+    motorFL.setPWM(pwmInicialFL);
 
-    /*error = targetSpeed - RMPFR;
-    pwm = kp * error;
-    if(pwm>255)
-        pwm = 255;
-    else if(pwm<0)
-        pwm = 0;
-    motorFR.setPWM(pwm);
+    error = targetSpeed - RMPFR;
+    pwmInicialFR = pwmInicialFR + (kp * error + ki * (error + errorPrevFR) + kd * (error - errorPrevFR));
+    errorPrevFR = error;
+    if(pwmInicialFR>255)
+        pwmInicialFR = 255;
+    else if(pwmInicialFR<0)
+        pwmInicialFR = 0;
+    motorFR.setPWM(pwmInicialFR);
 
     error = targetSpeed - RMPBL;
-    pwm = kp * error;
-    if(pwm>255)
-        pwm = 255;
-    else if(pwm<0)
-        pwm = 0;
-    motorBL.setPWM(pwm);
+    pwmInicialBL = pwmInicialBL + (kp * error + ki * (error + errorPrevBL) + kd * (error - errorPrevBL));
+    errorPrevBL = error;
+    if(pwmInicialBL>255)
+        pwmInicialBL = 255;
+    else if(pwmInicialBL<0)
+        pwmInicialBL = 0;
+    motorBL.setPWM(pwmInicialBL);
 
     error = targetSpeed - RMPBR;
-    pwm = kp * error;
-    if(pwm>255)
-        pwm = 255;
-    else if(pwm<0)
-        pwm = 0;
-    motorBR.setPWM(pwm);*/
+    pwmInicialBR = pwmInicialBR + (kp * error + ki * (error + errorPrevBR) + kd * (error - errorPrevBR));
+    errorPrevBR = error;
+    if(pwmInicialBR>255)
+        pwmInicialBR = 255;
+    else if(pwmInicialBR<0)
+        pwmInicialBR = 0;
+    motorBR.setPWM(pwmInicialBR);
 
-    Serial.print("FL: ");
-    Serial.print(pwmInicial);
+    /*Serial.print("FL: ");
+    Serial.print(pwmInicialFL);
     Serial.print("\t rpm: ");
     Serial.print(RMPFL);
     Serial.print("\t targetSpeed: ");
     Serial.print(targetSpeed);
     Serial.print("\t error: ");
     Serial.print(error);
-    Serial.println();
+    Serial.println();*/
 }
 Motor Movement::getMotorFL(){
     return motorFL;

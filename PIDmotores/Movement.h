@@ -15,7 +15,10 @@ class Movement{
         int FLticsViejos, FRticsViejos, BLticsViejos, BRticsViejos;
         unsigned long next_time;
         float kp, ki, kd;
-        float pwmInicial,errorPrev;
+        float pwmInicialFL,errorPrevFL;
+        float pwmInicialFR,errorPrevFR;
+        float pwmInicialBL,errorPrevBL;
+        float pwmInicialBR,errorPrevBR;
     public:
         Movement();
         void setup();
