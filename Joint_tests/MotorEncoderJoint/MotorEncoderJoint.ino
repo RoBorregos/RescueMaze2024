@@ -1,9 +1,9 @@
 #include "Motorclass.h"
 
-motor FLmotor(29,28,7);
-motor FRmotor(27,26,6);
-motor BRmotor(25,24,5);
-motor BLmotor(23,22,4);
+motor FLmotor(26,27,8);
+motor FRmotor(29,28,5);
+motor BRmotor(23,22,7);
+motor BLmotor(24,25,4);
 
 int tick1 =0;
 int tick2 =0;
