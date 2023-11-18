@@ -36,7 +36,7 @@ void PID::controlSpeed(const double setpoint, double &input, double &output, int
     errorAcum+=error*(millis()-tiempoPrev_);
 
     const double errorDeriv=(error-errorPrev)/millis()-tiempoPrev_;
-    output=kp*error+ki*errorAcum+kd*errorDeriv;
+    output=kp_*error+ki_*errorAcum+kd_*errorDeriv;
 
 
 /*     if(output>outputMax){
@@ -52,4 +52,8 @@ void PID::controlSpeed(const double setpoint, double &input, double &output, int
     output=output<outputMin_?outputMin_:output;
     tiempoPrev_=millis();
 
+}
+void PID::reset(){
+    errorAcum=0;
+    errorPrev=0;
 }

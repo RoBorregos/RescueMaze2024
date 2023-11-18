@@ -22,8 +22,8 @@ class Motor{
 //VERIFICAR DATOS .....................................................................................................................
     private:
     //Motor info
-    uint8_t digital_one_;
-    uint8_t digital_two_;
+    uint8_t digitalOne;
+    uint8_t digitalTwo;
     int pwm_pin_;
     uint8_t encoderA_;
     uint8_t encoderB_;
@@ -114,7 +114,7 @@ class Motor{
     double getPWM();
 
     //PID METHODS
-    void PIDStraightTunnigs(double kp, double ki, double kd);
-    void PIDRotateTunnigs(double kp, double ki, double kd);
+    void PIDStraightTunnings(double kp, double ki, double kd);
+    void PIDRotateTunnings(double kp, double ki, double kd);
 };
 #endif

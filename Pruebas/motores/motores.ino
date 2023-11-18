@@ -26,7 +26,7 @@ int ENB= 6; */
 
 void setup(){
     //motores
-    motorSetup();
+    //motorSetup();
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
     pinMode(IN3, OUTPUT);
