@@ -8,6 +8,7 @@
 
 BNO::BNO(){
     this->orientationX = 0;
+    this->event = {0};
 }
 void BNO::setupBNO(){
     adafruit_bno055_opmode_t mode = OPERATION_MODE_IMUPLUS;
@@ -27,8 +28,10 @@ void BNO::setupBNO(){
     bno.setExtCrystalUse(true);
 }
 
-float BNO::getOrientationX(){
-    sensors_event_t event;
+void BNO::updateBNO(sensors_event_t &event){
     bno.getEvent(&event);
+}
+float BNO::getOrientationX(){
+    updateBNO(event);
     return event.orientation.x;
 }

@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Motor.h"
+#include "BNO.h"
 
 class Movement{
     private:
@@ -19,12 +20,13 @@ class Movement{
         float pwmInicialFR,errorPrevFR;
         float pwmInicialBL,errorPrevBL;
         float pwmInicialBR,errorPrevBR;
+        float errorPrevOrientation;
     public:
         Movement();
         void setup();
         void moveForward(int pwmA, int pwmB, int pwmC, int pwmD);
         void updateRPM();
-        void setSpeed(float targetSpeed);
+        void setSpeed(float targetSpeed,float orientation,BNO bno);
         //getters
         Motor getMotorFL();
         Motor getMotorFR();

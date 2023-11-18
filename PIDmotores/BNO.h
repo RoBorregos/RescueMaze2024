@@ -11,9 +11,11 @@ class BNO{
     private:
         Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
         float orientationX;
+        sensors_event_t event;
     public:
         BNO();
         void setupBNO();
+        void updateBNO(sensors_event_t &event);
         float getOrientationX();
 };
 

@@ -2,6 +2,7 @@
 #include "Movement.h"
 #include "Motor.h"
 #include "Pines.h"
+#include "BNO.h"
 
 Movement::Movement(){
     this->motorFL = Motor();
@@ -32,6 +33,7 @@ Movement::Movement(){
     this->errorPrevBL = 0;
     this->pwmInicialBR = 50;
     this->errorPrevBR = 0;
+    this->errorPrevOrientation = 0;
 }
 void Movement::setup(){
     motorFL.motoresSetup(pwmFL, daFL, dbFL, eaFL, MotorID::FRONT_LEFT); 
@@ -63,9 +65,39 @@ void Movement::updateRPM(){
         next_time = millis();
     }
 }
-void Movement::setSpeed(float targetSpeed){
+void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
+    //PID orientation
+    float errorOrientation = orientation - bno.getOrientationX();
+    float Kp = 0.2; //AJUSTAR
+    float Ki = 0.05;
+    float Kd = 0.01;
+    if(errorOrientation>300){
+        errorOrientation=orientation-(360+bno.getOrientationX());
+    }
+    if(errorOrientation<-300){
+        errorOrientation=(bno.getOrientationX()-(360+orientation))*-1;
+    }
+    float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorOrientation + errorPrevOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorOrientation + errorPrevOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    errorPrevOrientation = errorOrientation;
+    if(targetSpeedLeft>255)
+        targetSpeedLeft = 255;
+    else if(targetSpeedLeft<0)
+        targetSpeedLeft = 0;
+    if(targetSpeedRight>255)
+        targetSpeedRight = 255;
+    else if(targetSpeedRight<0)
+        targetSpeedRight = 0;
+    Serial.print("targetSpeedLeft: ");
+    Serial.print(targetSpeedLeft);
+    Serial.print("\t targetSpeedRight: ");
+    Serial.print(targetSpeedRight);
+    Serial.print("\t angulo: ");
+    Serial.print(bno.getOrientationX());
+    Serial.println();
+    //PID velocidades
     updateRPM();
-    float error = targetSpeed - RMPFL;
+    float error = targetSpeedLeft - RMPFL;
     pwmInicialFL = pwmInicialFL + (kp * error + ki * (error + errorPrevFL) + kd * (error - errorPrevFL));
     errorPrevFL = error;
     if(pwmInicialFL>255)
@@ -74,7 +106,7 @@ void Movement::setSpeed(float targetSpeed){
         pwmInicialFL = 0;
     motorFL.setPWM(pwmInicialFL);
 
-    error = targetSpeed - RMPFR;
+    error = targetSpeedRight - RMPFR;
     pwmInicialFR = pwmInicialFR + (kp * error + ki * (error + errorPrevFR) + kd * (error - errorPrevFR));
     errorPrevFR = error;
     if(pwmInicialFR>255)
@@ -83,7 +115,7 @@ void Movement::setSpeed(float targetSpeed){
         pwmInicialFR = 0;
     motorFR.setPWM(pwmInicialFR);
 
-    error = targetSpeed - RMPBL;
+    error = targetSpeedLeft - RMPBL;
     pwmInicialBL = pwmInicialBL + (kp * error + ki * (error + errorPrevBL) + kd * (error - errorPrevBL));
     errorPrevBL = error;
     if(pwmInicialBL>255)
@@ -92,7 +124,7 @@ void Movement::setSpeed(float targetSpeed){
         pwmInicialBL = 0;
     motorBL.setPWM(pwmInicialBL);
 
-    error = targetSpeed - RMPBR;
+    error = targetSpeedRight - RMPBR;
     pwmInicialBR = pwmInicialBR + (kp * error + ki * (error + errorPrevBR) + kd * (error - errorPrevBR));
     errorPrevBR = error;
     if(pwmInicialBR>255)
