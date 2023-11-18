@@ -1,5 +1,5 @@
 {
     "port": "COM16",
     "board": "arduino:avr:mega",
-    "sketch": "Pruebas\\PIDmotores\\PIDmotores.ino"
+    "sketch": "PIDmotores\\PIDmotores.ino"
 }
