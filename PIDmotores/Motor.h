@@ -48,7 +48,7 @@ class Motor{
         int getEncoderTicsBL();
         int getEncoderTicsBR();
         //static void a(motor* motora);
-        //void setPWM(uint8_t pwm);
+        void setPWM(uint8_t pwm);
         /*void setDirection(uint8_t direction);
         void setSpeed(uint8_t speed);
         void stop();*/

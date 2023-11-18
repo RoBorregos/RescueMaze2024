@@ -19,10 +19,12 @@ void Motor::motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo,
 
     initEncoder();
 }
-/*static void motor::a(motor* motora){
-    encoder::updateTics(motora);
-    return;
-}*/
+void Motor::setPWM(uint8_t pwm){
+    this->pwm = pwm;
+    analogWrite(pwmPin, pwm);
+    digitalWrite(digitalOne, HIGH);
+    digitalWrite(digitalTwo, LOW);
+}
 void Motor::initEncoder(){
     pinMode(encoderA, INPUT_PULLUP);
     switch (motorId)

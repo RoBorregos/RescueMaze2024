@@ -1,38 +1,52 @@
-#include "Motor.h"
-#include "Pines.h"
-#include "BNO.h"
+//#include "Motor.h"
+//#include "Pines.h"
+//#include "BNO.h"
+#include "Movement.h"
 //#include "encoder.h"
 
 //#define BNO055_SAMPLERATE_DELAY_MS (100)
 
-Motor motorFL;
+/*Motor motorFL;
 Motor motorFR;
 Motor motorBL;
-Motor motorBR;
+Motor motorBR;*/
 //BNO bno;
+Movement robot;
+
+unsigned long next_time;
 
 void setup()
 {
     Serial.begin(115200);
-
-    motorFL.motoresSetup(pwmFL, daFL, dbFL, eaFL, MotorID::FRONT_LEFT); 
-    motorFR.motoresSetup(pwmFR, daFR, dbFR, eaFR, MotorID::FRONT_RIGHT); 
-    motorBL.motoresSetup(pwmBL, daBL, dbBL, eaBL, MotorID::BACK_LEFT); 
-    motorBR.motoresSetup(pwmBR, daBR, dbBR, eaBR, MotorID::BACK_RIGHT);
-
+    robot.setup();
     //bno.setupBNO();
+    next_time = millis();
 }
 
 void loop()
 {
-    Serial.print("FL\tFR\tBL\tBR\n");
-    Serial.print(motorFL.getEncoderTicsFL());
-    Serial.print("\t");
-    Serial.print(motorFR.getEncoderTicsFR());
-    Serial.print("\t");
-    Serial.print(motorBL.getEncoderTicsBL());
-    Serial.print("\t");
-    Serial.print(motorBR.getEncoderTicsBR());
+    if(millis()-next_time>=1000){
+        robot.updateRPM();
+        next_time = millis();
+    }
+    robot.moveForward(100);
+    /*Serial.print("FL: ");
+    Serial.print(robot.getMotorFL().getEncoderTicsFL());
+    Serial.print("\t FR: ");
+    Serial.print(robot.getMotorFR().getEncoderTicsFR());
+    Serial.print("\t BL: ");
+    Serial.print(robot.getMotorBL().getEncoderTicsBL());
+    Serial.print("\t BR: ");
+    Serial.print(robot.getMotorBR().getEncoderTicsBR());
+    Serial.println();*/
+    Serial.print("FL: ");
+    Serial.print(robot.getRMPFL());
+    Serial.print("\t FR: ");
+    Serial.print(robot.getRMPFR());
+    Serial.print("\t BL: ");
+    Serial.print(robot.getRMPBL());
+    Serial.print("\t BR: ");
+    Serial.print(robot.getRMPBR());
     Serial.println();
-    //delay(100);
+    //delay(250);
 }
