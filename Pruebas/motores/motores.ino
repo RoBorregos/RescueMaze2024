@@ -16,6 +16,12 @@ double error=0, errorPrev=0, errorAcum=0, errorDeriv=0;
 unsigned long tiempoPrev=0, tiempoActual=0;
 double tiempoTranscurrido=0;
 
+//Objeto de los motores
+Motor motorFL;
+Motor motorFR;
+Motor motorBL;
+Motor motorBR;
+
 
 /* int ENA= 7;
 int IN1= 26;
@@ -27,6 +33,7 @@ int ENB= 6; */
 void setup(){
     //motores
     //motorSetup();
+    motorSetup(7,29,28);
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
     pinMode(IN3, OUTPUT);

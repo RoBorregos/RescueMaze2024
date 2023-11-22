@@ -7,7 +7,7 @@
 
 namespace Encoder{
   void updateTics(Motor *motor);
-  
+
   void backLeftEncoder();
   void frontLeftEncoder();
   void backRightEncoder();
