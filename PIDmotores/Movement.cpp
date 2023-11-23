@@ -9,7 +9,7 @@ Movement::Movement(){
     this->motorFR = Motor();
     this->motorBL = Motor();
     this->motorBR = Motor();
-    this->RMPFL = 0;
+    /*this->RMPFL = 0;
     this->RMPFR = 0;
     this->RMPBL = 0;
     this->RMPBR = 0;
@@ -20,20 +20,21 @@ Movement::Movement(){
     this->FLtics = 0;
     this->FRtics = 0;
     this->BLtics = 0;
-    this->BRtics = 0;
+    this->BRtics = 0;*/
     this->next_time = millis();
     this->kp = 0.01;
     this->ki = 0.001;
     this->kd = 0.001;
-    this->pwmInicialFL = 50;
+    /*this->pwmInicialFL = 50;
     this->errorPrevFL = 0;
     this->pwmInicialFR = 50;
     this->errorPrevFR = 0;
     this->pwmInicialBL = 50;
     this->errorPrevBL = 0;
     this->pwmInicialBR = 50;
-    this->errorPrevBR = 0;
+    this->errorPrevBR = 0;*/
     this->errorPrevOrientation = 0;
+    this->errorAcumuladoOrientation = 0;
 }
 void Movement::setup(){
     motorFL.motoresSetup(pwmFL, daFL, dbFL, eaFL, MotorID::FRONT_LEFT); 
@@ -48,23 +49,27 @@ void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD){
     motorBR.setPWM(pwmD);
 }
 //tics actuales * 60 / tics por vuelta
-void Movement::updateRPM(){
-    if(millis()-next_time>=1000){
-        FLtics=motorFL.getEncoderTicsFL()-FLticsViejos;
-        FRtics=motorFR.getEncoderTicsFR()-FRticsViejos;
-        BLtics=motorBL.getEncoderTicsBL()-BLticsViejos;
-        BRtics=motorBR.getEncoderTicsBR()-BRticsViejos;
-        RMPFL = (FLtics * 60.00) / 500.00;
+/*void Movement::updateRPM(){
+    if(millis()-next_time>=1000){ //100?
+        FLtics=motorFL.getEncoderTics()-FLticsViejos;
+        FRtics=motorFR.getEncoderTics()-FRticsViejos;
+        BLtics=motorBL.getEncoderTics()-BLticsViejos;
+        BRtics=motorBR.getEncoderTics()-BRticsViejos;
+        RMPFL = (FLtics * 60.00) / 500.00; // 50?
         RMPFR = (FRtics * 60.00) / 500.00;
         RMPBL = (BLtics * 60.00) / 500.00;
         RMPBR = (BRtics * 60.00) / 500.00;
-        FLticsViejos = motorFL.getEncoderTicsFL();
-        FRticsViejos = motorFR.getEncoderTicsFR();
-        BLticsViejos = motorBL.getEncoderTicsBL();
-        BRticsViejos = motorBR.getEncoderTicsBR();
+        FLticsViejos = motorFL.getEncoderTics();
+        FRticsViejos = motorFR.getEncoderTics();
+        BLticsViejos = motorBL.getEncoderTics();
+        BRticsViejos = motorBR.getEncoderTics();
         next_time = millis();
     }
-}
+    motorFL.updateRPM();
+    motorFR.updateRPM();
+    motorBL.updateRPM();
+    motorBR.updateRPM();
+}*/
 void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     //PID orientation
     float errorOrientation = orientation - bno.getOrientationX();
@@ -77,8 +82,9 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     if(errorOrientation<-300){
         errorOrientation=(bno.getOrientationX()-(360+orientation))*-1;
     }
-    float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorOrientation + errorPrevOrientation) + Kd * (errorOrientation - errorPrevOrientation));
-    float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorOrientation + errorPrevOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    errorAcumuladoOrientation = errorAcumuladoOrientation + errorOrientation;
+    float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
     errorPrevOrientation = errorOrientation;
     if(targetSpeedLeft>255)
         targetSpeedLeft = 255;
@@ -88,16 +94,21 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         targetSpeedRight = 255;
     else if(targetSpeedRight<0)
         targetSpeedRight = 0;
-    Serial.print("targetSpeedLeft: ");
-    Serial.print(targetSpeedLeft);
-    Serial.print("\t targetSpeedRight: ");
-    Serial.print(targetSpeedRight);
-    Serial.print("\t angulo: ");
-    Serial.print(bno.getOrientationX());
-    Serial.println();
+    //Serial.print("targetSpeedLeft: ");
+    //Serial.print(targetSpeedLeft);
+    //Serial.print("\t targetSpeedRight: ");
+    //Serial.print(targetSpeedRight);
+    //Serial.print("\t angulo: ");
+    //Serial.print(bno.getOrientationX());
+    //Serial.println();
     //PID velocidades
-    updateRPM();
-    float error = targetSpeedLeft - RMPFL;
+    //updateRPM();
+    motorFL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
+    motorFR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);
+    motorBL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
+    motorBR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);
+
+    /*float error = targetSpeedLeft - RMPFL;
     pwmInicialFL = pwmInicialFL + (kp * error + ki * (error + errorPrevFL) + kd * (error - errorPrevFL));
     errorPrevFL = error;
     if(pwmInicialFL>255)
@@ -131,7 +142,7 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         pwmInicialBR = 255;
     else if(pwmInicialBR<0)
         pwmInicialBR = 0;
-    motorBR.setPWM(pwmInicialBR);
+    motorBR.setPWM(pwmInicialBR);*/
 
     /*Serial.print("FL: ");
     Serial.print(pwmInicialFL);
@@ -155,7 +166,7 @@ Motor Movement::getMotorBL(){
 Motor Movement::getMotorBR(){
     return motorBR;
 }
-float Movement::getRMPFL(){
+/*float Movement::getRMPFL(){
     return RMPFL;
 }
 float Movement::getRMPFR(){
@@ -166,4 +177,4 @@ float Movement::getRMPBL(){
 }
 float Movement::getRMPBR(){
     return RMPBR;
-}
+}*/

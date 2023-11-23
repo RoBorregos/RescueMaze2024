@@ -11,16 +11,17 @@ class Movement{
         Motor motorFR;
         Motor motorBL;
         Motor motorBR;
-        float RMPFL, RMPFR, RMPBL, RMPBR;
+        /*float RMPFL, RMPFR, RMPBL, RMPBR;
         int FLtics, FRtics, BLtics, BRtics;
-        int FLticsViejos, FRticsViejos, BLticsViejos, BRticsViejos;
+        int FLticsViejos, FRticsViejos, BLticsViejos, BRticsViejos;*/
         unsigned long next_time;
         float kp, ki, kd;
-        float pwmInicialFL,errorPrevFL;
+        /*float pwmInicialFL,errorPrevFL;
         float pwmInicialFR,errorPrevFR;
         float pwmInicialBL,errorPrevBL;
-        float pwmInicialBR,errorPrevBR;
+        float pwmInicialBR,errorPrevBR;*/
         float errorPrevOrientation;
+        float errorAcumuladoOrientation;
     public:
         Movement();
         void setup();
@@ -32,10 +33,10 @@ class Movement{
         Motor getMotorFR();
         Motor getMotorBL();
         Motor getMotorBR();
-        float getRMPFL();
+        /*float getRMPFL();
         float getRMPFR();
         float getRMPBL();
-        float getRMPBR();
+        float getRMPBR();*/
         /*void moveBackward();
         void turnLeft();
         void turnRight();

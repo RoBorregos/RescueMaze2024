@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Pruebas/PIDmotores",
-      "program": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/Pruebas/PIDmotores/build/Debug/outDebug",
+      "cwd": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/PIDmotores",
+      "program": "c:/Users/tacol/Documents/GitHub/RescueMaze2024/PIDmotores/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

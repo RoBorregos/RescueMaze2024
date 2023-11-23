@@ -27,30 +27,38 @@ class Motor{
         uint8_t digitalTwo;
         MotorID motorId;
         //uint8_t speed = 0;
-        
+        double rpm;
+
         //ENCODERS
         uint8_t encoderA = 0;
         //uint8_t pidTics = 0;
-        static volatile int encoderTicsFL;
-        static volatile int encoderTicsFR;
+        static volatile int encoderTics;
+        /*static volatile int encoderTicsFR;
         static volatile int encoderTicsBL;
-        static volatile int encoderTicsBR;
+        static volatile int encoderTicsBR;*/
+
+        //PID
+        unsigned long next_time;
+        float kp, ki, kd;
+        float pwmInicial,errorPrev,errorAcumulado;
     public:
         Motor();//constructor
         void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorId);
-        static void updateTicsFL();
-        static void updateTicsFR();
+        static void updateTics();
+        /*tatic void updateTicsFR();
         static void updateTicsBL();
-        static void updateTicsBR();
+        static void updateTicsBR();*/
         void initEncoder();
-        int getEncoderTicsFL();
-        int getEncoderTicsFR();
+        int getEncoderTics();
+        /*int getEncoderTicsFR();
         int getEncoderTicsBL();
-        int getEncoderTicsBR();
+        int getEncoderTicsBR();*/
         //static void a(motor* motora);
         void setPWM(uint8_t pwm);
         /*void setDirection(uint8_t direction);
         void setSpeed(uint8_t speed);
         void stop();*/
+        void updateRPM();
+        void setPID(float targetSpeed, float kp, float ki, float kd);
 };
 #endif

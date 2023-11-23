@@ -28,14 +28,18 @@ void loop()
     Serial.print("\t BR: ");
     Serial.print(robot.getMotorBR().getEncoderTicsBR());
     Serial.println();*/
-    /*Serial.print("FL: ");
+    /*Serial.print(0);
+    Serial.print(" ");
+    Serial.print(180);
+    Serial.print(" ");
+    Serial.print(80);
+    Serial.print(" ");
     Serial.print(robot.getRMPFL());
-    Serial.print("\t FR: ");
+    Serial.print(" ");
     Serial.print(robot.getRMPFR());
-    Serial.print("\t BL: ");
+    Serial.print(" ");
     Serial.print(robot.getRMPBL());
-    Serial.print("\t BR: ");
-    Serial.print(robot.getRMPBR());
-    Serial.println();*/
+    Serial.print(" ");
+    Serial.println(robot.getRMPBR());*/
     //delay(250);
 }
