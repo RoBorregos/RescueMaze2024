@@ -49,15 +49,15 @@ void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD){
 }
 //tics actuales * 60 / tics por vuelta
 void Movement::updateRPM(){
-    if(millis()-next_time>=1000){
+    if(millis()-next_time>=100){
         FLtics=motorFL.getEncoderTicsFL()-FLticsViejos;
         FRtics=motorFR.getEncoderTicsFR()-FRticsViejos;
         BLtics=motorBL.getEncoderTicsBL()-BLticsViejos;
         BRtics=motorBR.getEncoderTicsBR()-BRticsViejos;
-        RMPFL = (FLtics * 60.00) / 500.00;
-        RMPFR = (FRtics * 60.00) / 500.00;
-        RMPBL = (BLtics * 60.00) / 500.00;
-        RMPBR = (BRtics * 60.00) / 500.00;
+        RMPFL = (FLtics * 60.00) / 50.00;
+        RMPFR = (FRtics * 60.00) / 50.00;
+        RMPBL = (BLtics * 60.00) / 50.00;
+        RMPBR = (BRtics * 60.00) / 50.00;
         FLticsViejos = motorFL.getEncoderTicsFL();
         FRticsViejos = motorFR.getEncoderTicsFR();
         BLticsViejos = motorBL.getEncoderTicsBL();
@@ -68,9 +68,15 @@ void Movement::updateRPM(){
 void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     //PID orientation
     float errorOrientation = orientation - bno.getOrientationX();
-    float Kp = 0.2; //AJUSTAR
+
+
+    float Kp = 0.25; //AJUSTAR NO PUEDE ESTAR ARRIBA EN 0.3 
+    float Ki = 0.0;
+    float Kd = 0.0;
+/* float Kp = 0.2; //AJUSTAR
     float Ki = 0.05;
-    float Kd = 0.01;
+    float Kd = 0.01; */
+
     if(errorOrientation>300){
         errorOrientation=orientation-(360+bno.getOrientationX());
     }
@@ -88,13 +94,13 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         targetSpeedRight = 255;
     else if(targetSpeedRight<0)
         targetSpeedRight = 0;
-    Serial.print("targetSpeedLeft: ");
-    Serial.print(targetSpeedLeft);
-    Serial.print("\t targetSpeedRight: ");
-    Serial.print(targetSpeedRight);
-    Serial.print("\t angulo: ");
-    Serial.print(bno.getOrientationX());
-    Serial.println();
+    //Serial.print("targetSpeedLeft: ");
+    //Serial.print(targetSpeedLeft);
+    //Serial.print("\t targetSpeedRight: ");
+    //Serial.print(targetSpeedRight);
+    //Serial.print("\t angulo: ");
+    //Serial.print(bno.getOrientationX());
+    //Serial.println();
     //PID velocidades
     updateRPM();
     float error = targetSpeedLeft - RMPFL;
