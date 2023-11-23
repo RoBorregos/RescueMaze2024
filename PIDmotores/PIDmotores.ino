@@ -36,7 +36,9 @@ void loop()
     Serial.print(" ");
     Serial.print(robot.getRMPFL());
     Serial.print(" ");
+    Serial.print(" ");
     Serial.print(robot.getRMPFR());
+    Serial.print(" ");
     Serial.print(" ");
     Serial.print(robot.getRMPBL());
     Serial.print(" ");

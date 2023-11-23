@@ -73,9 +73,15 @@ void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD){
 void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     //PID orientation
     float errorOrientation = orientation - bno.getOrientationX();
-    float Kp = 0.2; //AJUSTAR
+
+
+    float Kp = 0.25; //AJUSTAR NO PUEDE ESTAR ARRIBA EN 0.3 
+    float Ki = 0.0;
+    float Kd = 0.0;
+/* float Kp = 0.2; //AJUSTAR
     float Ki = 0.05;
-    float Kd = 0.01;
+    float Kd = 0.01; */
+
     if(errorOrientation>300){
         errorOrientation=orientation-(360+bno.getOrientationX());
     }
@@ -94,6 +100,13 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         targetSpeedRight = 255;
     else if(targetSpeedRight<0)
         targetSpeedRight = 0;
+    //Serial.print("targetSpeedLeft: ");
+    //Serial.print(targetSpeedLeft);
+    //Serial.print("\t targetSpeedRight: ");
+    //Serial.print(targetSpeedRight);
+    //Serial.print("\t angulo: ");
+    //Serial.print(bno.getOrientationX());
+    //Serial.println();
     //Serial.print("targetSpeedLeft: ");
     //Serial.print(targetSpeedLeft);
     //Serial.print("\t targetSpeedRight: ");
