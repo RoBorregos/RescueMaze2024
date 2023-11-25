@@ -43,10 +43,21 @@ void Movement::setup(){
     motorBR.motoresSetup(pwmBR, daBR, dbBR, eaBR, MotorID::BACK_RIGHT);
 }
 void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD){
+    motorFL.updateRPM();
+    motorFR.updateRPM();
+    motorBL.updateRPM();
+    motorBR.updateRPM();
     motorFL.setPWM(pwmA);
     motorFR.setPWM(pwmB);
     motorBL.setPWM(pwmC);
     motorBR.setPWM(pwmD);
+    /*Serial.print(motorFL.getRPM());
+    Serial.print(" ");
+    Serial.print(motorFR.getRPM());
+    Serial.print(" ");
+    Serial.print(motorBL.getRPM());
+    Serial.print(" ");
+    Serial.println(motorBR.getRPM());*/
 }
 //tics actuales * 60 / tics por vuelta
 /*void Movement::updateRPM(){
@@ -89,8 +100,10 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         errorOrientation=(bno.getOrientationX()-(360+orientation))*-1;
     }
     errorAcumuladoOrientation = errorAcumuladoOrientation + errorOrientation;
-    float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
-    float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    //float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedRight = - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    //float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedLeft = (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
     errorPrevOrientation = errorOrientation;
     if(targetSpeedLeft>255)
         targetSpeedLeft = 255;
@@ -116,10 +129,16 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     //Serial.println();
     //PID velocidades
     //updateRPM();
-    motorFL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
+
+    //0.01 0.001 0.001
+    /*motorFL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
     motorFR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);
     motorBL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
-    motorBR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);
+    motorBR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);*/
+    motorFL.setPID(80, 0.1, 0.001, 0.001);
+    motorFR.setPID(80, 0.1, 0.001, 0.001);
+    motorBL.setPID(80, 0.1, 0.001, 0.001);
+    motorBR.setPID(80, 0.1, 0.001, 0.001);
 
     /*float error = targetSpeedLeft - RMPFL;
     pwmInicialFL = pwmInicialFL + (kp * error + ki * (error + errorPrevFL) + kd * (error - errorPrevFL));
@@ -160,12 +179,20 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
     /*Serial.print("FL: ");
     Serial.print(pwmInicialFL);
     Serial.print("\t rpm: ");
-    Serial.print(RMPFL);
+    Serial.print(motorFL.getRPM());
     Serial.print("\t targetSpeed: ");
-    Serial.print(targetSpeed);
+    Serial.print(targetSpeedLeft);
     Serial.print("\t error: ");
     Serial.print(error);
     Serial.println();*/
+
+    Serial.print(motorFL.getRPM());
+    Serial.print(" ");
+    Serial.print(motorFR.getRPM());
+    Serial.print(" ");
+    Serial.print(motorBL.getRPM());
+    Serial.print(" ");
+    Serial.println(motorBR.getRPM());
 }
 Motor Movement::getMotorFL(){
     return motorFL;

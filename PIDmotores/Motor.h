@@ -14,7 +14,8 @@ enum class MotorID{
     FRONT_LEFT,
     FRONT_RIGHT,
     BACK_LEFT,
-    BACK_RIGHT
+    BACK_RIGHT,
+    NONE
 };
 
 class Motor{
@@ -32,10 +33,11 @@ class Motor{
         //ENCODERS
         uint8_t encoderA = 0;
         //uint8_t pidTics = 0;
-        static volatile int encoderTics;
-        /*static volatile int encoderTicsFR;
+        //static volatile int encoderTics;
+        static volatile int encoderTicsFL;
+        static volatile int encoderTicsFR;
         static volatile int encoderTicsBL;
-        static volatile int encoderTicsBR;*/
+        static volatile int encoderTicsBR;
 
         //PID
         unsigned long next_time;
@@ -43,11 +45,12 @@ class Motor{
         float pwmInicial,errorPrev,errorAcumulado;
     public:
         Motor();//constructor
-        void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorId);
-        static void updateTics();
-        /*tatic void updateTicsFR();
+        void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);
+        //static void updateTics();
+        static void updateTicsFL();
+        static void updateTicsFR();
         static void updateTicsBL();
-        static void updateTicsBR();*/
+        static void updateTicsBR();
         void initEncoder();
         int getEncoderTics();
         /*int getEncoderTicsFR();
@@ -60,5 +63,7 @@ class Motor{
         void stop();*/
         void updateRPM();
         void setPID(float targetSpeed, float kp, float ki, float kd);
+        float getPWM();
+        float getRPM();
 };
 #endif
