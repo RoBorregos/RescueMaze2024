@@ -33,10 +33,15 @@ class Movement{
         Motor getMotorFR();
         Motor getMotorBL();
         Motor getMotorBR();
-        /*float getRMPFL();
-        float getRMPFR();
-        float getRMPBL();
-        float getRMPBR();*/
+        float getRPMFL();
+        float getRPMFR();
+        float getRPMBL();
+        float getRPMBR();
+
+        float getPWMInicialFL();
+        float getPWMInicialFR();
+        float getPWMInicialBL();
+        float getPWMInicialBR();
         /*void moveBackward();
         void turnLeft();
         void turnRight();

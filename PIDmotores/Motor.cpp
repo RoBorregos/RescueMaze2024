@@ -100,7 +100,7 @@ void Motor::setPID(float targetSpeed,float kp, float ki, float kd){
     updateRPM();
     float error = targetSpeed - rpm;
     errorAcumulado = error + errorAcumulado;
-    pwmInicial = pwmInicial + (kp * error + ki * (errorAcumulado) + kd * (error - errorPrev));
+    pwmInicial = (kp * error + ki * (errorAcumulado) + kd * (error - errorPrev));
     errorPrev = error;
     if(pwmInicial>255)
         pwmInicial = 255;
@@ -108,3 +108,16 @@ void Motor::setPID(float targetSpeed,float kp, float ki, float kd){
         pwmInicial = 0;
     setPWM(pwmInicial);
 }
+
+float Motor::getRPM(){
+    return rpm;
+}
+
+// hacer un metodo que devuelva el pwm inicial
+
+float Motor::getPWMInicial(){
+    return pwmInicial;
+}
+
+
+

@@ -19,7 +19,7 @@ void setup()
 void loop()
 {
     robot.setSpeed(80.00,360.00,bno);
-    /*Serial.print("FL: ");
+    /* Serial.print("FL: ");
     Serial.print(robot.getMotorFL().getEncoderTicsFL());
     Serial.print("\t FR: ");
     Serial.print(robot.getMotorFR().getEncoderTicsFR());
@@ -28,20 +28,30 @@ void loop()
     Serial.print("\t BR: ");
     Serial.print(robot.getMotorBR().getEncoderTicsBR());
     Serial.println();*/
-    /*Serial.print(0);
+    
+    Serial.print(0);
     Serial.print(" ");
     Serial.print(180);
     Serial.print(" ");
     Serial.print(80);
     Serial.print(" ");
-    Serial.print(robot.getRMPFL());
+    Serial.print(robot.getPWMInicialFL());
+    Serial.print(" ");
+    Serial.print(robot.getPWMInicialFR());
+    Serial.print(" ");
+    Serial.print(robot.getPWMInicialBL());
+    Serial.print(" ");
+    Serial.println(robot.getPWMInicialBR());
+
+
+/*     Serial.print(robot.getRPMFL());
     Serial.print(" ");
     Serial.print(" ");
-    Serial.print(robot.getRMPFR());
+    Serial.print(robot.getRPMFR());
     Serial.print(" ");
     Serial.print(" ");
-    Serial.print(robot.getRMPBL());
+    Serial.print(robot.getRPMBL());
     Serial.print(" ");
-    Serial.println(robot.getRMPBR());*/
+    Serial.println(robot.getRPMBR()); */
     //delay(250);
 }

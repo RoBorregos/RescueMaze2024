@@ -89,8 +89,8 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno){
         errorOrientation=(bno.getOrientationX()-(360+orientation))*-1;
     }
     errorAcumuladoOrientation = errorAcumuladoOrientation + errorOrientation;
-    float targetSpeedRight = targetSpeed - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
-    float targetSpeedLeft = targetSpeed + (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedRight = - (Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
+    float targetSpeedLeft =(Kp * errorOrientation + Ki * (errorAcumuladoOrientation) + Kd * (errorOrientation - errorPrevOrientation));
     errorPrevOrientation = errorOrientation;
     if(targetSpeedLeft>255)
         targetSpeedLeft = 255;
@@ -191,3 +191,30 @@ float Movement::getRMPBL(){
 float Movement::getRMPBR(){
     return RMPBR;
 }*/
+
+
+float Movement::getRPMFL(){
+    return motorFL.getRPM();
+}
+float Movement::getRPMFR(){
+    return motorFR.getRPM();
+}
+float Movement::getRPMBL(){
+    return motorBL.getRPM();
+}
+float Movement::getRPMBR(){
+    return motorBR.getRPM();
+}
+
+float Movement::getPWMInicialFL(){
+    return motorFL.getPWMInicial();
+}
+float Movement::getPWMInicialFR(){
+    return motorFR.getPWMInicial();
+}
+float Movement::getPWMInicialBL(){
+    return motorBL.getPWMInicial();
+}
+float Movement::getPWMInicialBR(){
+    return motorBR.getPWMInicial();
+}

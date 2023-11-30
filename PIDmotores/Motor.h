@@ -60,5 +60,8 @@ class Motor{
         void stop();*/
         void updateRPM();
         void setPID(float targetSpeed, float kp, float ki, float kd);
+
+        float getRPM();
+        float getPWMInicial();
 };
 #endif
