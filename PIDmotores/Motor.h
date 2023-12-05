@@ -2,15 +2,16 @@
 #define Motor_h
 
 #include "Arduino.h"
+#include "PID.h"
 
-/*
+
 enum class MotorState
 {
   Backward = -1,
   Stop = 0,
   Forward = 1
 };
-*/
+
 
 // checar el formato
 enum class MotorID{
