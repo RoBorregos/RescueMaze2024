@@ -44,7 +44,9 @@ class Motor{
 
         // PID
         unsigned long next_time;
-        double pwmInicial,errorPrev,errorAcumulado;
+        double pwmInicial;
+        double errorPrev;
+        double errorAcumulado;
     public:
         Motor();
         void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);

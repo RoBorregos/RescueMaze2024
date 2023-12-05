@@ -94,7 +94,7 @@ int Motor::getEncoderTicsBR(){
 }
 */
 void Motor::updateRPM(){
-    if(millis()-next_time>=100){ // si divido a 1000, multiplico abajo
+    if (millis()-next_time>=100){ // si divido a 1000, multiplico abajo
         int tics=-1;
         switch (motorId)
         {
@@ -137,9 +137,9 @@ void Motor::setPID(double targetSpeed,double kp, double ki, double kd){
     // pwmInicial = pwmInicial + (kp * error + ki * (errorAcumulado) + kd * (error - errorPrev));
     pwmInicial = kp * error + ki * errorAcumulado + kd * (error - errorPrev);
     errorPrev = error;
-    if(pwmInicial>255)
+    if (pwmInicial > 255)
         pwmInicial = 255;
-    else if(pwmInicial<50)
+    else if (pwmInicial < 50)
         pwmInicial = 50;
     setPWM(pwmInicial);
     
