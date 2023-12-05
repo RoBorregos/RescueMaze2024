@@ -2,23 +2,23 @@
 #include "Motor.h"
 
 Motor::Motor(){
-    this->pwmPin = 0;
-    this->digitalOne = 0;
-    this->digitalTwo = 0;
-    this->encoderA = 0;
-    this->rpm = 0;
-    this->next_time = millis();
-    this->pwmInicial = 50;
-    this->errorPrev = 0;
-    this->errorAcumulado = 0;
-    this->motorId = MotorID::NONE;
+    this-> pwmPin = 0;
+    this-> digitalOne = 0;
+    this-> digitalTwo = 0;
+    this-> encoderA = 0;
+    this-> rpm = 0;
+    this-> next_time = millis();
+    this-> pwmInicial = 50;
+    this-> errorPrev = 0;
+    this-> errorAcumulado = 0;
+    this-> motorId = MotorID::NONE;
 }
 void Motor::motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid){
-    this->pwmPin = pwmPin;
-    this->digitalOne = digitalOne;
-    this->digitalTwo = digitalTwo;
-    this->motorId = motorid;
-    this->encoderA = encoderA;
+    this-> pwmPin = pwmPin;
+    this-> digitalOne = digitalOne;
+    this-> digitalTwo = digitalTwo;
+    this-> motorId = motorid;
+    this-> encoderA = encoderA;
     pinMode(pwmPin, OUTPUT);
     pinMode(digitalOne, OUTPUT);
     pinMode(digitalTwo, OUTPUT);
@@ -33,7 +33,7 @@ void Motor::setPWM(uint8_t pwmX){
 }
 void Motor::initEncoder(){
     pinMode(encoderA, INPUT_PULLUP);
-    //attachInterrupt(digitalPinToInterrupt(encoderA),updateTics, RISING);
+    // attachInterrupt(digitalPinToInterrupt(encoderA),updateTics, RISING);
     switch (motorId)
     {
     case (MotorID::FRONT_LEFT):
@@ -53,32 +53,37 @@ void Motor::initEncoder(){
     }
     return;
 }
-//volatile int Motor::encoderTics = 0;
+// volatile int Motor::encoderTics = 0;
 volatile int Motor::encoderTicsFL = 0;
 volatile int Motor::encoderTicsFR = 0;
 volatile int Motor::encoderTicsBL = 0;
 volatile int Motor::encoderTicsBR = 0;
-/*static void Motor::updateTics(){
-    encoderTics++;
-    return;
+/*  static void Motor::updateTics(){
+      encoderTics++;
+      return;
 }*/
 static void Motor::updateTicsFL(){
     encoderTicsFL++;
     return;
 }
+
 static void Motor::updateTicsFR(){
     encoderTicsFR++;
     return;
 }
+
 static void Motor::updateTicsBL(){
     encoderTicsBL++;
     return;
 }
+
 static void Motor::updateTicsBR(){
     encoderTicsBR++;
     return;
 }
-/*int Motor::getEncoderTicsFR(){
+
+/*
+int Motor::getEncoderTicsFR(){
     return encoderTicsFR;
 }
 int Motor::getEncoderTicsBL(){
@@ -86,7 +91,8 @@ int Motor::getEncoderTicsBL(){
 }
 int Motor::getEncoderTicsBR(){
     return encoderTicsBR;
-}*/
+}
+*/
 void Motor::updateRPM(){
     if(millis()-next_time>=100){ // si divido a 1000, multiplico abajo
         int tics=-1;
@@ -111,20 +117,24 @@ void Motor::updateRPM(){
         default:
             break;
         }
-        rpm = 10*(tics * 60.00) / 500.00; //50 por lo q dividi
-        /*encoderTicsBL = 0;
+        rpm = 10*(tics * 60.00) / 500.00; // 50 por lo q dividi
+
+        /*
+        encoderTicsBL = 0;
         encoderTicsBR = 0;
         encoderTicsFL = 0;
-        encoderTicsFR = 0;*/
+        encoderTicsFR = 0;
+        */
         next_time = millis();
     }
     return;
 }
-void Motor::setPID(float targetSpeed,float kp, float ki, float kd){
+
+void Motor::setPID(double targetSpeed,double kp, double ki, double kd){
     updateRPM();
-    float error = targetSpeed - rpm;
+    double error = targetSpeed - rpm;
     errorAcumulado = error + errorAcumulado;
-    //pwmInicial = pwmInicial + (kp * error + ki * (errorAcumulado) + kd * (error - errorPrev));
+    // pwmInicial = pwmInicial + (kp * error + ki * (errorAcumulado) + kd * (error - errorPrev));
     pwmInicial = kp * error + ki * errorAcumulado + kd * (error - errorPrev);
     errorPrev = error;
     if(pwmInicial>255)
@@ -133,21 +143,25 @@ void Motor::setPID(float targetSpeed,float kp, float ki, float kd){
         pwmInicial = 50;
     setPWM(pwmInicial);
     
-    /*if(motorId==MotorID::FRONT_LEFT){
+    /*
+    if(motorId==MotorID::FRONT_LEFT){
         Serial.print(pwmInicial);
         Serial.print(" ");
         Serial.print(rpm);
         Serial.print(" ");
         Serial.println(error);
-    }*/
+    }
+    */
 }
 
-float Motor::getPWM(){
+int Motor::getPWM(){
     return pwm;
 }
-float Motor::getRPM(){
+
+double Motor::getRPM(){
     return rpm;
 }
+
 int Motor::getEncoderTics(){
     switch (motorId)
     {
@@ -166,5 +180,5 @@ int Motor::getEncoderTics(){
     default:
         break;
     }
-    //return encoderTics;
+    // return encoderTics;
 }

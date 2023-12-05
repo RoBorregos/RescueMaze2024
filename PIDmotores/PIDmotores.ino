@@ -1,10 +1,10 @@
 #include "Movement.h"
-//#include "Motor.h"
-//#include "Pines.h"
+// #include "Motor.h"
+// #include "Pines.h"
 #include "BNO.h"
-//#include "encoder.h"
+// #include "encoder.h"
 
-//#define BNO055_SAMPLERATE_DELAY_MS (100)
+// #define BNO055_SAMPLERATE_DELAY_MS (100)
 
 BNO bno;
 Movement robot;
@@ -12,8 +12,10 @@ Movement robot;
 void setup()
 {
     Serial.begin(115200);
+    while (!Serial) delay(10);  // wait for serial port to open!
     robot.setup();
     bno.setupBNO();
+    
 }
 
 void loop()
