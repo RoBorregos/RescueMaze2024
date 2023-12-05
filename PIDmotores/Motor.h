@@ -22,6 +22,8 @@ enum class MotorID{
     NONE
 };
 
+
+
 class Motor{
     private:
         // MOTORES
@@ -48,8 +50,45 @@ class Motor{
         double pwmInicial;
         double errorPrev;
         double errorAcumulado;
+
+        MotorState currentState;
+
+        long long int ticsCounter=0;
+        int pidTics = 0;
+
+        double currentSpeed = 0;
+        double targetSpeed = 0;
+
+        // TODO: Motor characteristics
+        // ...........................
+        static constexpr double kPulsesPerRev = 496.0;
+        static constexpr double kPidCountTimeSampleInSec = 1000/100;
+
+
+
     public:
         Motor();
+
+        Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);
+
+        uint8_t getEncoderA();
+        
+        double getCurrentSpeed();
+
+        double getTargetSpeed();
+
+        double getTargetRps(double velocity);
+
+        int getPidTics();
+
+        void deltaPidTics(int deltaTics);
+
+        int getEncoderTics();
+
+        double RpmToRps(double velocity);
+
+        double MsToRps(double ms);
+
         void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);
         // static void updateTics();
         static void updateTicsFL();
@@ -57,22 +96,47 @@ class Motor{
         static void updateTicsBL();
         static void updateTicsBR();
         void initEncoder();
-        int getEncoderTics();
+        
+        MotorState getCurrentState();
+        
         /*
         int getEncoderTicsFR();
         int getEncoderTicsBL();
         int getEncoderTicsBR();
         */
         // static void a(motor* motora);
-        void setPWM(uint8_t pwm);
         /*
         void setDirection(uint8_t direction);
         void setSpeed(uint8_t speed);
         void stop();
         */
         void updateRPM();
-        void setPID(double targetSpeed, double kp, double ki, double kd);
+
+        void motorForward();
+
+        void motorBackward();
+
+        void motorStop();
+
+        void setPWM(uint8_t pwm);
+
         double getPWM();
+
+        void motorSpeedPID(double targetSpeed_, bool debug=false);
+
+        void motorSpeedPWM(double targetSpeed_);
+
+        void motorRotateDerPID(double targetAngle_, bool currentAngle_);
+
+        void motorRotateIzqPID(double targetAngle_, bool currentAngle_);
+
+        void PIDStraightTunings(double kp, double ki, double kd);
+
+        void PIDRotateTunings(double kp, double ki, double kd);
+
+        // -------------------------------------------------------------------
+        void setPID(double targetSpeed, double kp, double ki, double kd);
+
         double getRPM();
 };
 #endif
