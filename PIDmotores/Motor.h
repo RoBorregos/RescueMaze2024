@@ -63,6 +63,8 @@ class Motor{
         // ...........................
         static constexpr double kPulsesPerRev = 496.0;
         static constexpr double kPidCountTimeSampleInSec = 1000/100;
+        static constexpr double kWheelsDiameter = 0.069;
+        static constexpr double DistancePerRev = M_PI * kWheelsDiameter;
 
 
 
@@ -84,6 +86,7 @@ class Motor{
         void deltaPidTics(int deltaTics);
 
         int getEncoderTics();
+        void deltaEncoderTics(int deltaTics);
 
         double RpmToRps(double velocity);
 

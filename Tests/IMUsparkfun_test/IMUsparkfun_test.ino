@@ -1,3 +1,5 @@
+#include <Adafruit_BNO055.h>
+
 /****************************************************************
  * Example1_Basics.ino
  * ICM 20948 Arduino Library Demo

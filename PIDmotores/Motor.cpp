@@ -2,30 +2,31 @@
 #include "Motor.h"
 
 Motor::Motor(){
-    this-> pwmPin = 0;
-    this-> digitalOne = 0;
-    this-> digitalTwo = 0;
-    this-> encoderA = 0;
-    this-> rpm = 0;
-    this-> next_time = millis();
-    this-> pwmInicial = 50;
-    this-> errorPrev = 0;
-    this-> errorAcumulado = 0;
-    this-> motorId = MotorID::NONE;
+    this->pwmPin = 0;
+    this->digitalOne = 0;
+    this->digitalTwo = 0;
+    this->encoderA = 0;
+    this->rpm = 0;
+    this->next_time = millis();
+    this->pwmInicial = 50;
+    this->errorPrev = 0;
+    this->errorAcumulado = 0;
+    this->motorId = MotorID::NONE;
 }
 
 Motor::Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t pwmPin, uint8_t encoderA, MotorID motorid){
-    this-> pwmPin = pwmPin;
-    this-> digitalOne = digitalOne;
-    this-> digitalTwo = digitalTwo;
-    this-> encoderA = encoderA;
-    this-> motorId = motorid;
+    this->pwmPin = pwmPin;
+    this->digitalOne = digitalOne;
+    this->digitalTwo = digitalTwo;
+    this->encoderA = encoderA;
+    this->motorId = motorid;
 }
 
 uint8_t Motor::getEncoderA(){
     return encoderA;
 }
 
+// TODO: meter esto a la clase de Encoders
 int Motor::getEncoderTics(){
     switch (motorId)
     {
@@ -46,6 +47,15 @@ int Motor::getEncoderTics(){
     }
     return encoderTics;
 }
+// ------------------------------
+
+MotorState Motor::getCurrentState(){
+    return currentState;
+}
+
+int Motor::getEncoderTics(){
+    return ticsCounter;
+}
 
 double Motor::getCurrentSpeed(){
     return currentSpeed;
@@ -59,40 +69,24 @@ int Motor::getPidTics(){
     return pidTics;
 }
 
+void Motor::initMotor(){
+    motoresSetup();
+    initEncoder();
+    motorStop();
+}
 
 
-void Motor::motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid){
-    this-> pwmPin = pwmPin;
-    this-> digitalOne = digitalOne;
-    this-> digitalTwo = digitalTwo;
-    this-> motorId = motorid;
-    this-> encoderA = encoderA;
+void Motor::motorSetup(){
     pinMode(pwmPin, OUTPUT);
     pinMode(digitalOne, OUTPUT);
     pinMode(digitalTwo, OUTPUT);
+    pinMode(encoderA, INPUT);
+}
 
-    initEncoder();
-}
-void Motor::setPWM(uint8_t pwm){
-    this->pwm = pwm;
-    switch (currentState)
-    {
-    case (MotorState::FORWARD):
-        motorForward();
-        break;
-    case (MotorState::BACKWARD):
-        motorBackward();
-        break;
-    case (MotorState::STOP):
-        motorStop();
-        break;
-    default:
-        break;
-    }
-}
+
 void Motor::initEncoder(){
     pinMode(encoderA, INPUT_PULLUP);
-    // attachInterrupt(digitalPinToInterrupt(encoderA),updateTics, RISING);
+    
     switch (motorId)
     {
     case (MotorID::FRONT_LEFT):
@@ -111,7 +105,27 @@ void Motor::initEncoder(){
         break;
     }
 }
+/* 
+void Motor::motoresSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid){
+    this->pwmPin = pwmPin;
+    this->digitalOne = digitalOne;
+    this->digitalTwo = digitalTwo;
+    this->motorId = motorid;
+    this->encoderA = encoderA;
+    pinMode(pwmPin, OUTPUT);
+    pinMode(digitalOne, OUTPUT);
+    pinMode(digitalTwo, OUTPUT);
 
+    initEncoder();
+} */
+
+void Motor::deltaEncoderTics(int deltaTics){
+    ticsCounter += deltaTics;
+}
+
+void Motor::deltaPidTics(int deltaTics){
+    pidTics += deltaTics;
+}
 
 void Motor:: motorForward(){
     analogWrite(pwmPin, pwm);
@@ -162,6 +176,24 @@ void Motor:: motorStop(){
     currentState = MotorState::STOP;
 }
 
+void Motor::setPWM(uint8_t pwm){
+    this->pwm = pwm;
+    switch (currentState)
+    {
+    case (MotorState::FORWARD):
+        motorForward();
+        break;
+    case (MotorState::BACKWARD):
+        motorBackward();
+        break;
+    case (MotorState::STOP):
+        motorStop();
+        break;
+    default:
+        break;
+    }
+}
+
 double Motor::getTargetRps(double velocity){
    return MsToRps(velocity);
 }
@@ -176,9 +208,6 @@ double Motor::MsToRps(double ms){
     return ms / 1000.00;
 }
 
-void Motor::deltaPidTics(int deltaTics){
-    pidTics += deltaTics;
-}
 
 void Motor:: motorSpeedPID(double targetSpeed_, bool debug){
     int speedSign_ = min(1, max(-1, targetSpeed_ * 1000));
@@ -250,6 +279,10 @@ void Motor::motorSpeedPWM(double targetSpeed_){
     }
 }
 
+double Motor::getDistanceTraveled(){
+    return (getEncoderTics() / kPulsesPerRev) * (DistancePerRev);
+}
+
 void Motor:: setEncoderTics(int tics){
     ticsCounter = tics;
 }
@@ -263,6 +296,10 @@ void Motor::PIDRotateTunings(double kp, double ki, double kd){
 }
 
 
+
+
+
+// -------------------------------------------------------------------
 // volatile int Motor::encoderTics = 0;
 volatile int Motor::encoderTicsFL = 0;
 volatile int Motor::encoderTicsFR = 0;
