@@ -1,10 +1,10 @@
 #include "Motorclass.h"
 
-motor BRmotor(22,23,7);
+motor BRmotor(33,25,26);
 
 void setup (){
     Serial.begin(115200);
-
+    delay(3000);
 
 }
 
