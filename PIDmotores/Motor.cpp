@@ -1,5 +1,9 @@
 #include "Arduino.h"
 #include "Motor.h"
+#include "Encoder.h"
+#include "PID.h"
+#include "Pines.h"
+
 
 Motor::Motor(){
     this->pwmPin = 0;
@@ -20,34 +24,15 @@ Motor::Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t pwmPin, uint8_t enc
     this->digitalTwo = digitalTwo;
     this->encoderA = encoderA;
     this->motorId = motorid;
+    this->encoders[0] = 0;
+    this->encoders[1] = 0;
+    this->encoders[2] = 0;
+    this->encoders[3] = 0;
 }
 
 uint8_t Motor::getEncoderA(){
     return encoderA;
 }
-
-// TODO: meter esto a la clase de Encoders
-int Motor::getEncoderTics(){
-    switch (motorId)
-    {
-    case (MotorID::FRONT_LEFT):
-        return encoderTicsFL;
-        break;
-    case (MotorID::FRONT_RIGHT):
-        return encoderTicsFR;
-        break;
-    case (MotorID::BACK_LEFT):
-        return encoderTicsBL;
-        break;
-    case (MotorID::BACK_RIGHT):
-        return encoderTicsBR;
-        break;
-    default:
-        break;
-    }
-    return encoderTics;
-}
-// ------------------------------
 
 MotorState Motor::getCurrentState(){
     return currentState;
@@ -70,7 +55,7 @@ int Motor::getPidTics(){
 }
 
 void Motor::initMotor(){
-    motoresSetup();
+    motorSetup();
     initEncoder();
     motorStop();
 }
@@ -83,29 +68,29 @@ void Motor::motorSetup(){
     pinMode(encoderA, INPUT);
 }
 
-
-void Motor::initEncoder(){
+// no comentar
+/* void Motor::initEncoder(){
     pinMode(encoderA, INPUT_PULLUP);
     
     switch (motorId)
     {
     case (MotorID::FRONT_LEFT):
-        attachInterrupt(digitalPinToInterrupt(encoderA),updateTicsFL, RISING);
+        attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontLeftEncoder, RISING);
         break;
     case (MotorID::FRONT_RIGHT):
-        attachInterrupt(digitalPinToInterrupt(encoderA),updateTicsFR, RISING);
+        attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontRightEncoder, RISING);
         break;
     case (MotorID::BACK_LEFT):
-        attachInterrupt(digitalPinToInterrupt(encoderA),updateTicsBL, RISING);
+        attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backLeftEncoder, RISING);
         break;
     case (MotorID::BACK_RIGHT):
-        attachInterrupt(digitalPinToInterrupt(encoderA),updateTicsBR, RISING);
+        attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backRightEncoder, RISING);
         break;
     default:
         break;
     }
-}
-/* 
+} */
+
 void Motor::motoresSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid){
     this->pwmPin = pwmPin;
     this->digitalOne = digitalOne;
@@ -116,8 +101,9 @@ void Motor::motoresSetup(const uint8_t pwmPin, const uint8_t digitalOne, const u
     pinMode(digitalOne, OUTPUT);
     pinMode(digitalTwo, OUTPUT);
 
-    initEncoder();
-} */
+    	//no comentar
+    //initEncoder();
+} 
 
 void Motor::deltaEncoderTics(int deltaTics){
     ticsCounter += deltaTics;
@@ -127,72 +113,68 @@ void Motor::deltaPidTics(int deltaTics){
     pidTics += deltaTics;
 }
 
-void Motor:: motorForward(){
+void Motor:: motorForward(uint8_t pwm){
     analogWrite(pwmPin, pwm);
-    if (currentState == MotorState::FORWARD)
+    /* if (currentState == MotorState::Forward)
     {
         return;
-    }
+    } */
+    //Serial.println("Forward");
     
     digitalWrite(digitalOne, HIGH);
     digitalWrite(digitalTwo, LOW);
 
-    pidStraight.reset();
-    pidRotate.reset();
-
-    currentState = MotorState::FORWARD;
+    currentState = MotorState::Forward;
 }
 
-void Motor:: motorBackward(){
+void Motor:: motorBackward(uint8_t pwm){
     analogWrite(pwmPin, pwm);
-    if (currentState == MotorState::BACKWARD)
+    /* if (currentState == MotorState::Backward)
     {
         return;
-    }
+    } */
+    //Serial.println("Backward");
     
     digitalWrite(digitalOne, LOW);
     digitalWrite(digitalTwo, HIGH);
 
-    pidStraight.reset();
-    pidRotate.reset();
 
-    currentState = MotorState::BACKWARD;
+    currentState = MotorState::Backward;
 }
 
 void Motor:: motorStop(){
-    analogWrite(pwmPin, LOW);
+    pwm=0;
+    analogWrite(pwmPin, pwm);
 
-    if (currentState == MotorState::STOP)
+    /* if (currentState == MotorState::Stop)
     {
         return;
-    }
+    } */
 
     digitalWrite(digitalOne, LOW);
     digitalWrite(digitalTwo, LOW);
 
-    pidStraight.reset();
-    pidRotate.reset();
-
-    currentState = MotorState::STOP;
+    currentState = MotorState::Stop;
 }
 
-void Motor::setPWM(uint8_t pwm){
+//no comentar
+/* void Motor::setPWM(uint8_t pwm){
     this->pwm = pwm;
     switch (currentState)
     {
-    case (MotorState::FORWARD):
+    case (MotorState::Forward):
         motorForward();
         break;
-    case (MotorState::BACKWARD):
+    case (MotorState::Backward):
         motorBackward();
         break;
-    case (MotorState::STOP):
+    case (MotorState::Stop):
         motorStop();
         break;
     default:
         break;
     }
-}
+} */
 
 double Motor::getTargetRps(double velocity){
    return MsToRps(velocity);
@@ -208,31 +190,28 @@ double Motor::MsToRps(double ms){
     return ms / 1000.00;
 }
 
-
-void Motor:: motorSpeedPID(double targetSpeed_, bool debug){
+// no comentar
+/* void Motor:: motorSpeedPID(double targetSpeed_, bool debug){
     int speedSign_ = min(1, max(-1, targetSpeed_ * 1000));
     this->targetSpeed = fabs(targetSpeed_);
     double pwm_ = pwm;
     switch (currentState)
     {
-    case (0):
+    case (MotorState::Stop):
         motorStop();
         break;
-    case (1):
+    case (MotorState::Forward):
         motorForward();
         break;
-    case (-1):
+    case (MotorState::Backward):
         motorBackward();
         break;
     }
-    
-    pidStraight.computeSpeed(RpmToRps(targetSpeed), currentSpeed, pwm_, pidTics, kPulsesPerRev, kPidCountTimeSampleInSec ,debug);
     setPWM(pwm_);
-}
+} */
 
 void Motor::motorRotateIzqPID(double targetAngle, double currentAngle){
     double pwm_ = pwm;
-    pidRotate.computeRotateIzq(targetAngle, currentAngle, pwm_);
     pwm_ = fabs(pwm_);
     if (pwm_ < 70) {
         pwm_ = 70;
@@ -246,7 +225,6 @@ void Motor::motorRotateIzqPID(double targetAngle, double currentAngle){
 
 void Motor::motorRotateDerPID(double targetAngle, double currentAngle){
     double pwm_ = pwm;
-    pidRotate.computeRotateDer(targetAngle, currentAngle, pwm_);
     pwm_ = fabs(pwm_);
     if (pwm_ < 70) {
         pwm_ = 70;
@@ -261,6 +239,8 @@ int Motor::getPWM(){
     return pwm;
 }
 
+//no comentar
+/* 
 void Motor::motorSpeedPWM(double targetSpeed_){
     int speedSign_ = min(1, max(-1, targetSpeed_ * 1000));
     this->targetSpeed = fabs(targetSpeed_);
@@ -277,7 +257,7 @@ void Motor::motorSpeedPWM(double targetSpeed_){
         motorBackward();
         break;
     }
-}
+} */
 
 double Motor::getDistanceTraveled(){
     return (getEncoderTics() / kPulsesPerRev) * (DistancePerRev);
@@ -287,12 +267,12 @@ void Motor:: setEncoderTics(int tics){
     ticsCounter = tics;
 }
 
+// TODO: Pasar esto a movement ademas de calcular todas las cosas a movement
 void Motor::PIDStraightTunings(double kp, double ki, double kd){
-    pidStraight.setTunings(kp, ki, kd);
 }
 
 void Motor::PIDRotateTunings(double kp, double ki, double kd){
-    pidRotate.setTunings(kp, ki, kd);
+
 }
 
 
@@ -301,15 +281,11 @@ void Motor::PIDRotateTunings(double kp, double ki, double kd){
 
 // -------------------------------------------------------------------
 // volatile int Motor::encoderTics = 0;
-volatile int Motor::encoderTicsFL = 0;
-volatile int Motor::encoderTicsFR = 0;
-volatile int Motor::encoderTicsBL = 0;
-volatile int Motor::encoderTicsBR = 0;
 /*  static void Motor::updateTics(){
       encoderTics++;
       return;
 }*/
-static void Motor::updateTicsFL(){
+/* static void Motor::updateTicsFL(){
     encoderTicsFL++;
     return;
 }
@@ -327,7 +303,7 @@ static void Motor::updateTicsBL(){
 static void Motor::updateTicsBR(){
     encoderTicsBR++;
     return;
-}
+} */
 
 /*
 int Motor::getEncoderTicsFR(){
@@ -342,36 +318,11 @@ int Motor::getEncoderTicsBR(){
 */
 void Motor::updateRPM(){
     if (millis()-next_time>=100){ // si divido a 1000, multiplico abajo
-        int tics=-1;
-        switch (motorId)
-        {
-        case (MotorID::FRONT_LEFT):
-            tics=encoderTicsFL;
-            encoderTicsFL = 0;
-            break;
-        case (MotorID::FRONT_RIGHT):
-            tics=encoderTicsFR;
-            encoderTicsFR = 0;
-            break;
-        case (MotorID::BACK_LEFT):
-            tics=encoderTicsBL;
-            encoderTicsBL = 0;
-            break;
-        case (MotorID::BACK_RIGHT):
-            tics=encoderTicsBR;
-            encoderTicsBR = 0;
-            break;
-        default:
-            break;
-        }
-        rpm = 10*(tics * 60.00) / 500.00; // 50 por lo q dividi
+        int tics = -1;
+        tics=encoders[static_cast<int>(motorId)];
+        encoders[static_cast<int>(motorId)] = 0;
 
-        /*
-        encoderTicsBL = 0;
-        encoderTicsBR = 0;
-        encoderTicsFL = 0;
-        encoderTicsFR = 0;
-        */
+        rpm = 10*(tics * 60.00) / 500.00; // 50 por lo q dividi
         next_time = millis();
     }
     return;

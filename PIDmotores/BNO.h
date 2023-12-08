@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
@@ -16,7 +17,7 @@ class BNO{
         BNO();
         void setupBNO();
         void updateBNO(sensors_event_t &event);
-        float getOrientationX();
+        double getOrientationX();
 };
 
 #endif

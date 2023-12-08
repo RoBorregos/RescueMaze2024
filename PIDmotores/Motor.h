@@ -15,14 +15,12 @@ enum class MotorState
 
 // checar el formato
 enum class MotorID{
-    FRONT_LEFT,
-    FRONT_RIGHT,
-    BACK_LEFT,
-    BACK_RIGHT,
+    BACK_LEFT = 0,
+    FRONT_LEFT = 1,
+    BACK_RIGHT = 2,
+    FRONT_RIGHT = 3,
     NONE
 };
-
-
 
 class Motor{
     private:
@@ -40,10 +38,7 @@ class Motor{
         uint8_t encoderA = 0;
         // uint8_t pidTics = 0;
         // static volatile int encoderTics;
-        static volatile int encoderTicsFL;
-        static volatile int encoderTicsFR;
-        static volatile int encoderTicsBL;
-        static volatile int encoderTicsBR;
+        static volatile int encoders[4];
 
         // PID
         unsigned long next_time;
@@ -71,7 +66,7 @@ class Motor{
     public:
         Motor();
 
-        Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);
+        Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t pwmPin, uint8_t encoderA, MotorID motorid);
 
         uint8_t getEncoderA();
         
@@ -92,7 +87,7 @@ class Motor{
 
         double MsToRps(double ms);
 
-        void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorid);
+        void motorSetup();
         // static void updateTics();
         static void updateTicsFL();
         static void updateTicsFR();
@@ -115,31 +110,40 @@ class Motor{
         */
         void updateRPM();
 
-        void motorForward();
+        void motorForward(uint8_t pwm);
 
-        void motorBackward();
+        void motorBackward(uint8_t pwm);
 
         void motorStop();
 
         void setPWM(uint8_t pwm);
 
-        double getPWM();
+        int getPWM();
 
         void motorSpeedPID(double targetSpeed_, bool debug=false);
 
         void motorSpeedPWM(double targetSpeed_);
 
-        void motorRotateDerPID(double targetAngle_, bool currentAngle_);
+        void motorRotateDerPID(double targetAngle_, double currentAngle_);
 
-        void motorRotateIzqPID(double targetAngle_, bool currentAngle_);
+        void motorRotateIzqPID(double targetAngle_, double currentAngle_);
 
         void PIDStraightTunings(double kp, double ki, double kd);
 
         void PIDRotateTunings(double kp, double ki, double kd);
 
         // -------------------------------------------------------------------
+        // Warning: This function will be deleted 
         void setPID(double targetSpeed, double kp, double ki, double kd);
-
+        // -------------------------------------------------------------------------------
         double getRPM();
+
+        void initMotor();
+
+        double getDistanceTraveled();
+
+        void setEncoderTics(int tics);
+
+        void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorId);
 };
 #endif

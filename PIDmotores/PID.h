@@ -2,6 +2,7 @@
 #define PID_h
 
 #include <Arduino.h>
+#include "BNO.h"	
 #include <math.h>
 
 
@@ -30,11 +31,11 @@ class PID {
 
         PID(const double kp, const double ki, const double kd, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
 
-        PID(const double kp, cosnt double ki, const double kd);
+        PID(const double kp, const double ki, const double kd);
 
         PID();
 
-        void compute(const double setPoint, const double &input, double &output, int &resetVariable, const double PulsesPerRev, const double countTimeSampleInSec, const bool debug=false);
+        void compute(const double setPoint, double &input, double &output, int &resetVariable, const double PulsesPerRev, const double countTimeSampleInSec, const bool debug=false);
 
         void computeRotateIzq(const double target, const double current, double &output);
 
@@ -45,7 +46,8 @@ class PID {
         void reset();
 
         void infoPID();	
+
+        void computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
+
 };
-
-
 #endif

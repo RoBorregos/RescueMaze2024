@@ -4,15 +4,24 @@
 #include "Pines.h"
 #include "BNO.h"
 
-constexpr double Kp = 0.2; // AJUSTAR
+// Ajustar
+constexpr double Kp = 5.0; 
 constexpr double Ki = 0.05;
-constexpr double Kd = 0.01;
+constexpr double Kd = 0.05;
+
+PID pidStraight(Kp, Ki, Kd);\
+BNO bno;
+
+
 
 Movement::Movement(){
     this-> motorFL = Motor();
     this-> motorFR = Motor();
     this-> motorBL = Motor();
     this-> motorBR = Motor();
+    this->motor[4];
+    
+    //this->pwm;
     
     /*
     this-> RMPFL = 0;
@@ -30,9 +39,9 @@ Movement::Movement(){
     */
 
     this-> next_time = millis();
-    this-> kp = 0.01;
+    /* this-> kp = 0.01;
     this-> ki = 0.001;
-    this-> kd = 0.001;
+    this-> kd = 0.001; */
 
     /*
     this-> pwmInicialFL = 50;
@@ -49,10 +58,21 @@ Movement::Movement(){
 }
 
 void Movement::setup(){
-    motorFL.motoresSetup(pwmFL, daFL, dbFL, eaFL, MotorID::FRONT_LEFT); 
-    motorFR.motoresSetup(pwmFR, daFR, dbFR, eaFR, MotorID::FRONT_RIGHT); 
-    motorBL.motoresSetup(pwmBL, daBL, dbBL, eaBL, MotorID::BACK_LEFT); 
-    motorBR.motoresSetup(pwmBR, daBR, dbBR, eaBR, MotorID::BACK_RIGHT);
+    setupInternal(MotorID::FRONT_LEFT);
+    setupInternal(MotorID::FRONT_RIGHT);
+    setupInternal(MotorID::BACK_LEFT);
+    setupInternal(MotorID::BACK_RIGHT);
+    bno.setupBNO();
+}
+
+void Movement::setupInternal(MotorID motorId){
+    int index = static_cast<int>(motorId);
+    motor[index].motoresSetup(
+        pwmPin[index],
+        digitalOne[index],
+        digitalTwo[index],
+        encoderA[index],
+        motorId);
 }
 
 void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD){
@@ -262,7 +282,7 @@ float Movement::getRPMBR(){
     return motorBR.getRPM();
 }
 
-float Movement::getPWMInicialFL(){
+/* float Movement::getPWMInicialFL(){
     return motorFL.getPWMInicial();
 }
 
@@ -276,4 +296,174 @@ float Movement::getPWMInicialBL(){
 
 float Movement::getPWMInicialBR(){
     return motorBR.getPWMInicial();
+} */
+
+void Movement::stopMotors(){
+    
+    for(int i=0; i<4; i++){
+        motor[i].motorStop();
+    }
 }
+
+void Movement:: forwardMotors(uint8_t pwms[4]){
+    for(int i=0; i<4; i++){
+        motor[i].motorForward(pwms[i]);
+    }
+}
+
+void Movement:: backwardMotors(uint8_t pwms[4]){
+    for(int i=0; i<4; i++){
+        motor[i].motorBackward(pwms[i]);
+    }
+}
+
+void Movement:: moveMotors(MotorState state){
+    uint8_t pwms[4];
+    int pwm = 60;
+    double targetOrientation = 0;
+    double currentOrientation = bno.getOrientationX();
+    double pwmLeft = 0;
+    double pwmRight = 0;
+    switch (state)
+    {
+    case (MotorState::Stop):
+        stopMotors();
+        break;
+    
+    case (MotorState::Forward):
+        // 1- SET angulo deseado
+        // 2- Llamar a la funcion computeStraight
+        // 3- meter al arreglo
+        // 4- llamar a forward motors
+        pidStraight.computeStraight(targetOrientation,currentOrientation, pwmLeft, pwmRight);
+
+        pwms[static_cast<int>(MotorID::FRONT_LEFT)]= pwmLeft;
+        pwms[static_cast<int>(MotorID::BACK_LEFT)]= pwmLeft;
+        pwms[static_cast<int>(MotorID::FRONT_RIGHT)]= pwmRight;
+        pwms[static_cast<int>(MotorID::BACK_RIGHT)]= pwmRight;
+
+        forwardMotors(pwms);
+        break;
+
+    case (MotorState::Backward):
+        pwms[0]= pwm;
+        pwms[1]= pwm;
+        pwms[2]= pwm;
+        pwms[3]= pwm;
+        backwardMotors(pwms);
+        break;
+    default :
+        break;
+    }
+    
+}
+
+// CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''FEDFE'FREFEJ,FBEJFFBHUWBFUHEWBFHJWERBFHJRBEJHFBRJFBKWRJNSBJFBKREJFBKEJB
+void Movement::updateTics(MotorID motorId){
+
+    int index = static_cast<int>(motorId);
+    if (index >= 0 && index < 4){
+        motor[index].deltaPidTics(1);
+        if (motor[index].getCurrentState() == MotorState::Forward){
+            motor[index].deltaEncoderTics(1);
+        } else if (motor[index].getCurrentState() == MotorState::Backward){
+            motor[index].deltaEncoderTics(-1);
+        }
+        else {
+            return;
+        }
+    }
+    /* motor->deltaPidTics(1);
+
+    if (motor->getCurrentState() == MotorState::Forward){
+        motor->deltaEncoderTics(1);
+    } else if (motor->getCurrentState() == MotorState::Backward){
+        motor->deltaEncoderTics(-1);
+    }
+    else {
+        return;
+    } */
+} 
+
+
+int Movement::getBackLeftEncoderTics(){
+    return motor[static_cast<int>(MotorID::BACK_LEFT)].getEncoderTics();
+}
+
+int Movement::getFrontLeftEncoderTics(){
+    return motor[static_cast<int>(MotorID::FRONT_LEFT)].getEncoderTics();
+}
+
+int Movement::getBackRightEncoderTics(){
+    return motor[static_cast<int>(MotorID::BACK_RIGHT)].getEncoderTics();
+}
+
+int Movement::getFrontRightEncoderTics(){
+    return motor[static_cast<int>(MotorID::FRONT_RIGHT)].getEncoderTics();
+}
+
+// no comentar
+/* void Movement:: setSpeed(double targetSpeed){
+    // El targetSpeed se multiplica por 1000 porque es una conversion de unidades de m/s a mm/s
+    if (targetSpeed == 0) {
+        stopMotors();
+        return;
+    }
+    // TODO: checar como calcular el pwm 
+    // compute(targetSpeed, currentSpeed, pwm, pidTics, 500, 1, false);
+
+
+
+    switch (speedSign)
+    {
+    case (0):
+        stopMotors();
+        break;
+    case (1):
+        forwardMotors();
+        break;
+    case (-1):
+    
+        backwardMotors();
+        break;
+    }
+} */
+
+
+//no comentar
+/* void Movement:: motorSpeedPID(double targetSpeed, bool debug){
+    int speedSign = min(1, max(-1, targetSpeed * 1000));
+    this->targetSpeed = fabs(targetSpeed);
+    double tmpPwm = Motor::pwm;
+    switch (speedSign)
+    {
+    case (0):
+        stopMotors();
+        break;
+    case (1):
+        forwardMotors();
+        break;
+    case (-1):
+
+        backwardMotors();
+        break;
+    }    
+} */
+
+// TODO: comprobar que estos dos se implementen en el PID
+/* 
+void Movement::setSpeed(MotorID motorId, double targetSpeed){
+    int index = static_cast<int>(motorId);
+    if (index >= 0 && index < 4){
+        motor[index].setSpeed(targetSpeed);
+    }
+}
+*/
+
+void Movement::setMotorSpeed(int leftSpeed, int rightSpeed) {
+    motor[static_cast<int>(MotorID::FRONT_LEFT)].setPWM(leftSpeed);
+    motor[static_cast<int>(MotorID::FRONT_RIGHT)].setPWM(rightSpeed);
+    motor[static_cast<int>(MotorID::BACK_LEFT)].setPWM(leftSpeed);
+    motor[static_cast<int>(MotorID::BACK_RIGHT)].setPWM(rightSpeed);
+
+} 
