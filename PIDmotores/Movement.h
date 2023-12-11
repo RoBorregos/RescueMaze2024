@@ -1,13 +1,12 @@
 #ifndef Movement_h
 #define Movement_h
 
-#include "Arduino.h"
 #include "Motor.h"
 #include "BNO.h"
 
 
 
-class Movement{
+class Movement {
     private:
 
 
@@ -15,15 +14,10 @@ class Movement{
         Motor motorFR;
         Motor motorBL;
         Motor motorBR;
-        /*float RMPFL, RMPFR, RMPBL, RMPBR;
-        int FLtics, FRtics, BLtics, BRtics;
-        int FLticsViejos, FRticsViejos, BLticsViejos, BRticsViejos;*/
+
         unsigned long next_time;
-        // float kp, ki, kd;
-        /*float pwmInicialFL,errorPrevFL;
-        float pwmInicialFR,errorPrevFR;
-        float pwmInicialBL,errorPrevBL;
-        float pwmInicialBR,errorPrevBR;*/
+  
+
         float errorPrevOrientation;
         float errorAcumuladoOrientation;
 
@@ -58,8 +52,8 @@ class Movement{
         float getPWMInicialBR();
         void setupInternal(MotorID motorId);
 
-        void PIDRotateTunings(double kp, double ki, double kd);
-        void PIDStraightTunings(double kp, double ki, double kd);
+        void PIDRotateTunings(double kP, double kI, double kD);
+        void PIDStraightTunings(double kP, double kI, double kD);
         void motorRotateDerPID(double targetAngle, double currentAngle);
         void motorRotateIzqPID(double targetAngle, double currentAngle);
         void motorSpeedPID(double targetSpeed, bool debug=false);
@@ -85,6 +79,10 @@ class Movement{
 
         void setMotorSpeed(int leftSpeed, int rightSpeed);
         
+
+        void  turnLeft(uint8_t pwms[4]);
+        void  turnRight(uint8_t pwms[4]);
+ 
         /*void moveBackward();
         void turnLeft();
         void turnRight();

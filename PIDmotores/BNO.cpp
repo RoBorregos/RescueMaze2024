@@ -1,16 +1,10 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
-
 #include "BNO.h"
 
-BNO::BNO(){
+BNO::BNO() {
     this->event = {0};
     this->bno = Adafruit_BNO055(55, 0x28, &Wire);
 }
-void BNO::setupBNO(){
+void BNO::setupBNO() {
     adafruit_bno055_opmode_t mode = OPERATION_MODE_IMUPLUS;
 
     Serial.println("Orientation Sensor Test"); Serial.println("");
@@ -26,10 +20,10 @@ void BNO::setupBNO(){
     bno.setExtCrystalUse(true);
 }
 
-void BNO::updateBNO(sensors_event_t &event){
+void BNO::updateBNO(sensors_event_t &event) {
     bno.getEvent(&event);
 }
-double BNO::getOrientationX(){
+double BNO::getOrientationX() {
     updateBNO(event);
     return event.orientation.x;
 }

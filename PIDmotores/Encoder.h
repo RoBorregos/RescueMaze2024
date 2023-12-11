@@ -18,7 +18,7 @@
 
 extern Movement movement;
 
-namespace Encoder{
+namespace Encoder {
     void initEncoder();
     void updateTics(Motor *motor);
     void backLeftEncoder();

@@ -8,7 +8,7 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-class BNO{
+class BNO {
     private:
         Adafruit_BNO055 bno;
         sensors_event_t event;

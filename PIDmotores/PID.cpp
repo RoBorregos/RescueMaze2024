@@ -1,27 +1,27 @@
 #include "PID.h"
 
-PID::PID(){
+PID::PID() {
     timePrev = millis();
 }
 
-PID::PID(const double kp, const double ki, const double kd, const double minOutput_, const double maxOutput_, const double maxErrorSum, const long sampleTime_){
+PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
     timePrev = millis();
-    setTunings(kp, ki, kd);
-    sampleTime = sampleTime_;
+    setTunings(kP, kI, kD);
+    double sampleTime_ = sampleTime;
     errorPrev = 0;
     maxError = maxErrorSum;
-    minOutput = minOutput_;
-    maxOutput = maxOutput_;
+    double minOutput_ = minOutput;
+    double maxOutput_ = maxOutput;
 }
 
-PID::PID(const double kp, const double ki, const double kd){
+PID::PID(const double kP, const double kI, const double kD) {
     timePrev = millis();
-    setTunings(kp, ki, kd);
+    setTunings(kP, kI, kD);
     errorPrev = 0;
 }
 
 
-void PID::computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight){
+void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
     unsigned long timeDiff = millis() - timePrev;
     
     double errorOrientation = targetOrientation - currentOrientation;
@@ -34,8 +34,8 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     errorSum += errorOrientation * (timeDiff);
     double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    double outputModifier = kp * errorOrientation + ki * errorSum + kd * errorDeriv;
-    int baseSpeed = 70;
+    double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    int baseSpeed = 70; 
     if (errorOrientation <0){
         outputLeft = baseSpeed+outputModifier;
         outputRight= baseSpeed-outputModifier;
@@ -60,8 +60,75 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     errorPrev = errorOrientation;
     
 
+    Serial.println(outputLeft);
+    Serial.println(outputRight);
+
     timePrev = millis(); 
 }
+
+void PID::computeStraightGiro(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
+    unsigned long timeDiff = millis() - timePrev;
+    
+    double errorOrientation = targetOrientation - currentOrientation;
+    if (errorOrientation > 180) {
+        errorOrientation -= 360;
+    }
+    else if (errorOrientation < -180) {
+        errorOrientation += 360;
+    }   
+
+    errorSum += errorOrientation * (timeDiff);
+    double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
+    double outputModifier = 20*(kP * errorOrientation + kI * errorSum + kD * errorDeriv) ;
+    Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+    int baseSpeed = 0; 
+    if (errorOrientation <0){
+        double outputModifieri = outputModifier * 2;
+        outputLeft = outputModifieri;
+        outputRight= -outputModifieri;
+        Serial.println("Aumentando derecho");
+        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+    }
+    else if (errorOrientation >0){
+        double outputModifierd = outputModifier * 2;
+        outputRight = -outputModifierd;
+        outputLeft= outputModifierd;
+        Serial.println("Aumentando izquierdo");
+        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+
+    }
+    else{
+        outputLeft = baseSpeed;
+        outputRight = baseSpeed;
+        Serial.println("Manteniendo");
+    }
+    outputLeft = constrain(outputLeft, -120, 120);
+    outputRight = constrain(outputRight, -120, 120);
+
+    errorPrev = errorOrientation;
+    
+
+    Serial.println(outputLeft);
+    Serial.println(outputRight);
+
+    timePrev = millis(); 
+}
+
+// NO COMENTAR
+/* void PID::computeSpeedPerMotor(double targetSpeed, double &currentSpeed, uint8_t tics, double &output){
+    unsigned long timeDiff = millis() - timePrev;
+    unsigned long timeDiffInSec = timeDiff / 1000.0;
+    currentSpeed = ((tics) / 496) * (timeDiffInSec);
+    double errorSpeed = targetSpeed - currentSpeed;
+    errorSum += errorSpeed * (timeDiffInSec);
+    double errorDeriv = (errorSpeed - errorPrev) / (timeDiffInSec);
+    output = kP * errorSpeed + kI * errorSum + kD * errorDeriv;
+    errorPrev = errorSpeed;
+    errorSum = max(maxError, min(-maxError, errorSum));
+    output = max(minOutput, min(maxOutput, output));
+    timePrev = millis();
+    tics = 0;
+} */
 
 // no comentario
 /* void PID::compute(const double setPoint, const double &input, double &output, int &resetVariable, const double PulsesPerRev, const double countTimeSampleInSec, const bool debug=false){
@@ -71,7 +138,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     }
 
     // Convert timeDiff to seconds
-    double timeDiffInSec = timeDiff / 1000.0;
+    const double timeDiffInSec = timeDiff / 1000.0;
 
     input =((resetVariable * PulsesPerRev) * (1000/timeDiff));
 
@@ -83,7 +150,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     const double errorDeriv = (error - errorPrev) / timeDiffInSec;
 
-    output = kp * error + ki * errorSum + kd * errorDeriv;
+    output = kP * error + kI * errorSum + kD * errorDeriv;
 
     errorPrev = error;
 
@@ -91,7 +158,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     output = max(minOutput, min(maxOutput, output));
 
     timePrev = millis();
-
+    Serial.println("----[PID::compute]----");
     if (debug) {
         Serial.println("Time diff:" + String(timeDiff));
         Serial.println("Input:" + String(input));
@@ -124,7 +191,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     const double errorDeriv = (error - errorPrev) / timeDiffInSec;
 
-    output = kp * error + ki * errorSum + kd * errorDeriv;
+    output = kP * error + kI * errorSum + kD * errorDeriv;
 
     errorPrev = error;
 
@@ -145,10 +212,10 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 } */
 // .............................................................................
 
-void PID::computeRotateIzq(const double target, const double current, double &output){
-    unsigned long timeDiff = millis() - timePrev;
+void PID::computeRotateLeft(const double target, const double current, double &output) {
+    const unsigned long timeDiff = millis() - timePrev;
 
-    if (timeDiff < sampleTime){
+    if (timeDiff < sampleTime) {
         return;
     }
 
@@ -166,7 +233,7 @@ void PID::computeRotateIzq(const double target, const double current, double &ou
     }
 
     // Warning: Check if the units of the time are correct (milliseconds)
-    output = error * kp + errorSum * ki + (error - errorPrev) / timeDiff * kd;
+    output = error * kP + errorSum * kI + (error - errorPrev) / timeDiff * kD;
 
     errorPrev = error;
     errorSum += error;
@@ -178,10 +245,10 @@ void PID::computeRotateIzq(const double target, const double current, double &ou
     timePrev = millis();
 }
 
-void PID::computeRotateDer(const double target, const double current, double &output){
-    unsigned long timeDiff = millis() - timePrev;
+void PID::computeRotateRight(const double target, const double current, double &output) {
+    const unsigned long timeDiff = millis() - timePrev;
 
-    if (timeDiff < sampleTime){
+    if (timeDiff < sampleTime) {
         return;
     }
 
@@ -199,7 +266,7 @@ void PID::computeRotateDer(const double target, const double current, double &ou
     }
 
     // Warning: Check if the units of the time are correct (milliseconds)
-    output = error * kp + errorSum * ki + (error - errorPrev) / timeDiff * kd;
+    output = error * kP + errorSum * kI + (error - errorPrev) / timeDiff * kD;
 
     errorPrev = error;
     errorSum += error;
@@ -212,10 +279,10 @@ void PID::computeRotateDer(const double target, const double current, double &ou
 }
 
 //no comentar
-void PID::setTunings(double kp, double ki, double kd){
-    this-> kp = kp;
-    this-> ki = ki;
-    this-> kd = kd;
+void PID::setTunings(double kP, double kI, double kD) {
+    this-> kP = kP;
+    this-> kI = kI;
+    this-> kD = kD;
 }
 
 
@@ -228,9 +295,9 @@ void PID::setTunings(double kp, double ki, double kd){
 // no comentar
 /* void infoPID(){
     Serial.println("PID info:");
-    Serial.println("kp: " + String(kp));
-    Serial.println("ki: " + String(ki));
-    Serial.println("kd: " + String(kd));
+    Serial.println("kP: " + String(kP));
+    Serial.println("kI: " + String(kI));
+    Serial.println("kD: " + String(kD));
     Serial.println("minOutput: " + String(minOutput));
     Serial.println("maxOutput: " + String(maxOutput));
     Serial.println("maxError: " + String(maxError));

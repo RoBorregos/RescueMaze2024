@@ -18,28 +18,28 @@
 
 extern Movement robot;
 
-void Encoder::backLeftEncoder(){
+void Encoder::backLeftEncoder() {
     robot.updateTics(MotorID::BACK_LEFT);
     //updateTics( &motor[MotorID::BACK_LEFT]);
 }
 
-void Encoder::backRightEncoder(){
+void Encoder::backRightEncoder() {
     robot.updateTics(MotorID::BACK_RIGHT);
     //updateTics(Motor backRight);
 }
 
-void Encoder::frontLeftEncoder(){
+void Encoder::frontLeftEncoder() {
     robot.updateTics(MotorID::FRONT_LEFT);
     //updateTics(&frontLeft);
 }
 
-void Encoder::frontRightEncoder(){
+void Encoder::frontRightEncoder() {
     robot.updateTics(MotorID::FRONT_RIGHT);
     //updateTics(&frontRight);
 } 
 
 
-void Encoder::initEncoder(){
+void Encoder::initEncoder() {
     pinMode(encoderA[0], INPUT);
     pinMode(encoderA[1], INPUT);
     pinMode(encoderA[2], INPUT);

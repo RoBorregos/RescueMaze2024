@@ -52,6 +52,11 @@ constexpr uint8_t encoderA[4] = {
     35, // BACK_RIGHT
     39  // FRONT_RIGHT
 };
+// tics por revolucion
+// 496 BACK_LEFT
+// 496 FRONT_LEFT
+// 496 BACK_RIGHT
+// 496 FRONT_RIGHT
 
 
 #endif

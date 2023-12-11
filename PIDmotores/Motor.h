@@ -14,7 +14,7 @@ enum class MotorState
 
 
 // checar el formato
-enum class MotorID{
+enum class MotorID {
     BACK_LEFT = 0,
     FRONT_LEFT = 1,
     BACK_RIGHT = 2,
@@ -22,7 +22,7 @@ enum class MotorID{
     NONE
 };
 
-class Motor{
+class Motor {
     private:
         // MOTORES
         // __cpp_raw_strings motorID;
@@ -128,13 +128,13 @@ class Motor{
 
         void motorRotateIzqPID(double targetAngle_, double currentAngle_);
 
-        void PIDStraightTunings(double kp, double ki, double kd);
+        void PIDStraightTunings(double kP, double kI, double kD);
 
-        void PIDRotateTunings(double kp, double ki, double kd);
+        void PIDRotateTunings(double kP, double kI, double kD);
 
         // -------------------------------------------------------------------
         // Warning: This function will be deleted 
-        void setPID(double targetSpeed, double kp, double ki, double kd);
+        void setPID(double targetSpeed, double kP, double kI, double kD);
         // -------------------------------------------------------------------------------
         double getRPM();
 

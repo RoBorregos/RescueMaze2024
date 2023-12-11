@@ -8,7 +8,7 @@
 
 //BNO bno;
 Movement robot;
-PID pid(0.1,0.0,0.0);
+// PID pid(0.1,0.0,0.0);
 double targetOrientation=0.0;
 
 
@@ -24,7 +24,6 @@ void setup()
     // BIEEEN
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
-    Encoder::initEncoder();
     //bno.setupBNO();
     robot.setup();	
     //targetOrientation = bno.getOrientationX();
@@ -86,7 +85,7 @@ void loop()
     Serial.println(orientacionX); */
     
     // Asi se mueven los motores sin PID
-    robot.moveMotors(MotorState::Forward);
+    //robot.moveMotors(MotorState::Forward);
 
     /* delay(2000);
 
