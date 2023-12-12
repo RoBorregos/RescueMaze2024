@@ -35,23 +35,6 @@ class PID {
 
         PID();
 
-        void compute(const double setPoint, double &input, double &output, int &resetVariable, const double PulsesPerRev, const double countTimeSampleInSec, const bool debug=false);
-
-        void computeRotateLeft(const double target, const double current, double &output);
-
-        void computeRotateRight(const double target, const double current, double &output);
-
-        void setTunings(double kP,  double kI,  double kD);
-
-        void reset();
-
-        void infoPID();	
-
         void computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
-
-        void  computeSpeedPerMotor(double targetSpeed, double &currentSpeed, uint8_t tics, double &output);
-
-        void computeStraightGiro(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
-
 };
 #endif

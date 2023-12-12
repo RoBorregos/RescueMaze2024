@@ -53,7 +53,7 @@ void PID::controlSpeed(const double setpoint, double &input, double &output, int
     tiempoPrev_=millis();
 
 }
-void PID::reset(){
+void PID::reset1(){
     errorAcum=0;
     errorPrev=0;
 }

@@ -5,18 +5,18 @@
 #include "PID.h"
 
 enum class MotorState{
-  Backward = -1,
-  Stop = 0,
-  Forward = 1
+  kBackward = -1,
+  kStop = 0,
+  kForward = 1
 };
 
 // checar el formato
 enum class MotorID {
-    BACK_LEFT = 0,
-    FRONT_LEFT = 1,
-    BACK_RIGHT = 2,
-    FRONT_RIGHT = 3,
-    NONE
+    kBACK_LEFT = 0,
+    kFRONT_LEFT = 1,
+    kBACK_RIGHT = 2,
+    kFRONT_RIGHT = 3,
+    kNONE
 };
 
 class Motor {
@@ -61,68 +61,31 @@ class Motor {
         Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t pwmPin, uint8_t encoderA, MotorID motorid);
 
         uint8_t getEncoderA();
-        
-        double getCurrentSpeed();
-
-        double getTargetSpeed();
-
-        double getTargetRps(double velocity);
-
+    
         int getPidTics();
 
         void deltaPidTics(int deltaTics);
 
         int getEncoderTics();
+
         void deltaEncoderTics(int deltaTics);
-
-        double RpmToRps(double velocity);
-
-        double MsToRps(double ms);
-
-        void motorSetup();
-        // static void updateTics();
-        static void updateTicsFL();
-        static void updateTicsFR();
-        static void updateTicsBL();
-        static void updateTicsBR();
+        
         void initEncoder();
         
         MotorState getCurrentState();
-        
-        /*
-        int getEncoderTicsFR();
-        int getEncoderTicsBL();
-        int getEncoderTicsBR();
-        */
-        // static void a(motor* motora);
-        /*
-        void setDirection(uint8_t direction);
-        void setSpeed(uint8_t speed);
-        void stop();
-        */
 
         void motorForward(uint8_t pwm);
 
         void motorBackward(uint8_t pwm);
 
         void motorStop();
-
-        int getPWM();
-
-
-        void motorSpeedPWM(double targetSpeed_);
         
-        // -------------------------------------------------------------------
-        // Warning: This function will be deleted 
-        // -------------------------------------------------------------------------------
         double getRPM();
 
         void initMotor();
 
-        double getDistanceTraveled();
-
         void setEncoderTics(int tics);
 
-        void motoresSetup(uint8_t pwmPin, uint8_t digitalOne, uint8_t digitalTwo, uint8_t encoderA, MotorID motorId);
+        void motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorId);
 };
 #endif

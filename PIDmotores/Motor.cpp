@@ -1,7 +1,6 @@
-
 #include "Motor.h"
 #include "Encoder.h"
-#include "Pines.h"
+#include "Pins.h"
 
 
 Motor::Motor() {
@@ -14,7 +13,7 @@ Motor::Motor() {
     this->pwmInicial = 50;
     this->errorPrev = 0;
     this->errorAcumulado = 0;
-    this->motorId = MotorID::NONE;
+    this->motorId = MotorID::kNONE;
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -41,14 +40,6 @@ int Motor::getEncoderTics() {
     return ticsCounter;
 }
 
-double Motor::getCurrentSpeed() {
-    return currentSpeed;
-}
-
-double Motor::getTargetSpeed() {
-    return RpmToRps(targetSpeed);
-}
-
 int Motor::getPidTics() {
     return pidTics;
 }
@@ -57,14 +48,6 @@ void Motor::initMotor() {
     motorSetup();
     initEncoder();
     motorStop();
-}
-
-
-void Motor::motorSetup() {
-    pinMode(pwmPin, OUTPUT);
-    pinMode(digitalOne, OUTPUT);
-    pinMode(digitalTwo, OUTPUT);
-    pinMode(encoderA, INPUT);
 }
 
 // no comentar
@@ -95,7 +78,7 @@ void Motor::motorSetup() {
     }
 } */
 
-void Motor::motoresSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
+void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin = pwmPin;
     this->digitalOne = digitalOne;
     this->digitalTwo = digitalTwo;
@@ -119,7 +102,7 @@ void Motor::deltaPidTics(int deltaTics) {
 
 void Motor:: motorForward(const uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    /* if (currentState == MotorState::Forward)
+    /* if (currentState == MotorState::kForward)
     {
         return;
     } */
@@ -128,12 +111,12 @@ void Motor:: motorForward(const uint8_t pwm) {
     digitalWrite(digitalOne, HIGH);
     digitalWrite(digitalTwo, LOW);
 
-    currentState = MotorState::Forward;
+    currentState = MotorState::kForward;
 }
 
 void Motor:: motorBackward(uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    /* if (currentState == MotorState::Backward)
+    /* if (currentState == MotorState::kBackward)
     {
         return;
     } */
@@ -143,14 +126,14 @@ void Motor:: motorBackward(uint8_t pwm) {
     digitalWrite(digitalTwo, HIGH);
 
 
-    currentState = MotorState::Backward;
+    currentState = MotorState::kBackward;
 }
 
 void Motor:: motorStop() {
     pwm=0;
     analogWrite(pwmPin, pwm);
 
-    /* if (currentState == MotorState::Stop)
+    /* if (currentState == MotorState::kStop)
     {
         return;
     } */
@@ -158,55 +141,8 @@ void Motor:: motorStop() {
     digitalWrite(digitalOne, LOW);
     digitalWrite(digitalTwo, LOW);
 
-    currentState = MotorState::Stop;
+    currentState = MotorState::kStop;
 }
-
-double Motor::getTargetRps(double velocity) {
-   return MsToRps(velocity);
-}
-
-double Motor::RpmToRps(double velocity) {
-    return velocity / 60.00;
-}
-
-double Motor::MsToRps(double ms) {
-
-    // Warning: the 1000.00 supposes the distance per rev but it isn't the case, is necesary to change it
-    return ms / 1000.00;
-}
-
-
-int Motor::getPWM(){
-    return pwm;
-}
-
-double Motor::getDistanceTraveled() {
-    return (getEncoderTics() / kPulsesPerRev) * (DistancePerRev);
-}
-
-void Motor:: setEncoderTics(int tics) {
-    ticsCounter = tics;
-}
-
-
-
-// CHECK IF THIS IS FUNCTIONAL OR NOT, AND IF YES, SEE HOW TO IMPLEMENT THE OTHER ONE
-
-/* void Motor::setPID(double targetSpeed,double kP, double kI, double kD){
-    updateRPM();
-    double error = targetSpeed - rpm;
-    errorAcumulado = error + errorAcumulado;
-    // pwmInicial = pwmInicial + (kP * error + kI * (errorAcumulado) + kD * (error - errorPrev));
-    pwmInicial = kP * error + kI * errorAcumulado + kD * (error - errorPrev);
-    errorPrev = error;
-    if (pwmInicial > 255)
-        pwmInicial = 255;
-    else if (pwmInicial < 50)
-        pwmInicial = 50;
-    setPWM(pwmInicial);
-    
-} */
-
 
 double Motor::getRPM() {
     return rpm;
