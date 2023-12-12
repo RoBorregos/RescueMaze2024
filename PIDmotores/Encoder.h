@@ -16,7 +16,6 @@
 #define RobotTurnLeft 3
 #define RobotBackward 4  */
 
-extern Movement movement;
 
 namespace Encoder {
     void initEncoder();

@@ -30,39 +30,9 @@ Movement::Movement() {
     this-> motorBL = Motor();
     this-> motorBR = Motor();
     this->motor[4];
-    
-    //this->pwm;
-    
-    /*
-    this-> RMPFL = 0;
-    this-> RMPFR = 0;
-    this-> RMPBL = 0;
-    this-> RMPBR = 0;
-    this-> FLticsViejos = 0;
-    this-> FRticsViejos = 0;
-    this-> BLticsViejos = 0;
-    this-> BRticsViejos = 0;
-    this-> FLtics = 0;
-    this-> FRtics = 0;
-    this-> BLtics = 0;
-    this-> BRtics = 0;
-    */
 
     this-> next_time = millis();
-    /* this-> kP = 0.01;
-    this-> kI = 0.001;
-    this-> kD = 0.001; */
 
-    /*
-    this-> pwmInicialFL = 50;
-    this-> errorPrevFL = 0;
-    this-> pwmInicialFR = 50;
-    this-> errorPrevFR = 0;
-    this-> pwmInicialBL = 50;
-    this-> errorPrevBL = 0;
-    this-> pwmInicialBR = 50;
-    this-> errorPrevBR = 0;
-    */
     this-> errorPrevOrientation = 0;
     this-> errorAcumuladoOrientation = 0;
 }
@@ -95,50 +65,12 @@ void Movement::moveForward(int pwmA, int pwmB, int pwmC, int pwmD) {
     motorFR.setPWM(pwmB);
     motorBL.setPWM(pwmC);
     motorBR.setPWM(pwmD);
-    /*Serial.print(motorFL.getRPM());
-    Serial.print(" ");
-    Serial.print(motorFR.getRPM());
-    Serial.print(" ");
-    Serial.print(motorBL.getRPM());
-    Serial.print(" ");
-    Serial.println(motorBR.getRPM());*/
-}
 
-//tics actuales * 60 / tics por vuelta
-/*void Movement::updateRPM(){
-    if(millis()-next_time>=1000){ //100?
-        FLtics=motorFL.getEncoderTics()-FLticsViejos;
-        FRtics=motorFR.getEncoderTics()-FRticsViejos;
-        BLtics=motorBL.getEncoderTics()-BLticsViejos;
-        BRtics=motorBR.getEncoderTics()-BRticsViejos;
-        RMPFL = (FLtics * 60.00) / 500.00; // 50?
-        RMPFR = (FRtics * 60.00) / 500.00;
-        RMPBL = (BLtics * 60.00) / 500.00;
-        RMPBR = (BRtics * 60.00) / 500.00;
-        FLticsViejos = motorFL.getEncoderTics();
-        FRticsViejos = motorFR.getEncoderTics();
-        BLticsViejos = motorBL.getEncoderTics();
-        BRticsViejos = motorBR.getEncoderTics();
-        next_time = millis();
-    }
-    motorFL.updateRPM();
-    motorFR.updateRPM();
-    motorBL.updateRPM();
-    motorBR.updateRPM();
-}*/
+}
 
 void Movement::setSpeed(float targetSpeed,float orientation,BNO bno) {
     //PID orientation
     float errorOrientation = orientation - bno.getOrientationX();
-
-
-    // pwm = PID::getForwardPWM(double targetSpeed, const double kP, const double kI, const double kD) 
-    // Motor::setPWM(double pwm)
-
-
-/* float kP = 0.2; //AJUSTAR
-    float kI = 0.05;
-    float kD = 0.01; */
 
     if (errorOrientation > 300) {
         errorOrientation = orientation - (360 + bno.getOrientationX());
@@ -169,74 +101,10 @@ void Movement::setSpeed(float targetSpeed,float orientation,BNO bno) {
     Serial.print(targetSpeedRight);
     Serial.print(" ");
 
-    //Serial.print("\t angulo: ");
-    //Serial.print(bno.getOrientationX());
-    //Serial.println();
-    //Serial.print("targetSpeedLeft: ");
-    //Serial.print(targetSpeedLeft);
-    //Serial.print("\t targetSpeedRight: ");
-    //Serial.print(targetSpeedRight);
-    //Serial.print("\t angulo: ");
-    //Serial.print(bno.getOrientationX());
-    //Serial.println();
-    //PID velocidades
-    //updateRPM();
-
-    //0.01 0.001 0.001
-    /*motorFL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
-    motorFR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);
-    motorBL.setPID(targetSpeedLeft, 0.01, 0.001, 0.001);
-    motorBR.setPID(targetSpeedRight, 0.01, 0.001, 0.001);*/
     motorFL.setPID(targetSpeed+targetSpeedLeft, 1, 0.005, 0.006); //SEGUIR AJUSTANDO
     motorFR.setPID(targetSpeed+targetSpeedRight, 1, 0.005, 0.006);
     motorBL.setPID(targetSpeed+targetSpeedLeft, 1, 0.005, 0.006);
     motorBR.setPID(targetSpeed+targetSpeedRight, 1, 0.005, 0.006);
-
-    /*float error = targetSpeedLeft - RMPFL;
-    pwmInicialFL = pwmInicialFL + (kP * error + kI * (error + errorPrevFL) + kD * (error - errorPrevFL));
-    errorPrevFL = error;
-    if(pwmInicialFL>255)
-        pwmInicialFL = 255;
-    else if(pwmInicialFL<0)
-        pwmInicialFL = 0;
-    motorFL.setPWM(pwmInicialFL);
-
-    error = targetSpeedRight - RMPFR;
-    pwmInicialFR = pwmInicialFR + (kP * error + kI * (error + errorPrevFR) + kD * (error - errorPrevFR));
-    errorPrevFR = error;
-    if(pwmInicialFR>255)
-        pwmInicialFR = 255;
-    else if(pwmInicialFR<0)
-        pwmInicialFR = 0;
-    motorFR.setPWM(pwmInicialFR);
-
-    error = targetSpeedLeft - RMPBL;
-    pwmInicialBL = pwmInicialBL + (kP * error + kI * (error + errorPrevBL) + kD * (error - errorPrevBL));
-    errorPrevBL = error;
-    if(pwmInicialBL>255)
-        pwmInicialBL = 255;
-    else if(pwmInicialBL<0)
-        pwmInicialBL = 0;
-    motorBL.setPWM(pwmInicialBL);
-
-    error = targetSpeedRight - RMPBR;
-    pwmInicialBR = pwmInicialBR + (kP * error + kI * (error + errorPrevBR) + kD * (error - errorPrevBR));
-    errorPrevBR = error;
-    if(pwmInicialBR>255)
-        pwmInicialBR = 255;
-    else if(pwmInicialBR<0)
-        pwmInicialBR = 0;
-    motorBR.setPWM(pwmInicialBR);*/
-
-    /*Serial.print("FL: ");
-    Serial.print(pwmInicialFL);
-    Serial.print("\t rpm: ");
-    Serial.print(motorFL.getRPM());
-    Serial.print("\t targetSpeed: ");
-    Serial.print(targetSpeedLeft);
-    Serial.print("\t error: ");
-    Serial.print(error);
-    Serial.println();*/
 
     Serial.print(motorFL.getRPM());
     Serial.print(" ");
@@ -263,20 +131,6 @@ Motor Movement::getMotorBR() {
     return motorBR;
 }
 
-/*float Movement::getRMPFL() {
-    return RMPFL;
-}
-float Movement::getRMPFR() {
-    return RMPFR;
-}
-float Movement::getRMPBL() {
-    return RMPBL;
-}
-float Movement::getRMPBR() {
-    return RMPBR;
-}*/
-
-
 float Movement::getRPMFL() {
     return motorFL.getRPM();
 }
@@ -292,22 +146,6 @@ float Movement::getRPMBL() {
 float Movement::getRPMBR() {
     return motorBR.getRPM();
 }
-
-/* float Movement::getPWMInicialFL() {
-    return motorFL.getPWMInicial();
-}
-
-float Movement::getPWMInicialFR() {
-    return motorFR.getPWMInicial();
-}
-
-float Movement::getPWMInicialBL() {
-    return motorBL.getPWMInicial();
-}
-
-float Movement::getPWMInicialBR() {
-    return motorBR.getPWMInicial();
-} */
 
 void Movement::stopMotors() {
     

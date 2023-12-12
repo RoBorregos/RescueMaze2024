@@ -66,54 +66,6 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     timePrev = millis(); 
 }
 
-void PID::computeStraightGiro(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    unsigned long timeDiff = millis() - timePrev;
-    
-    double errorOrientation = targetOrientation - currentOrientation;
-    if (errorOrientation > 180) {
-        errorOrientation -= 360;
-    }
-    else if (errorOrientation < -180) {
-        errorOrientation += 360;
-    }   
-
-    errorSum += errorOrientation * (timeDiff);
-    double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    double outputModifier = 20*(kP * errorOrientation + kI * errorSum + kD * errorDeriv) ;
-    Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
-    int baseSpeed = 0; 
-    if (errorOrientation <0){
-        double outputModifieri = outputModifier * 2;
-        outputLeft = outputModifieri;
-        outputRight= -outputModifieri;
-        Serial.println("Aumentando derecho");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
-    }
-    else if (errorOrientation >0){
-        double outputModifierd = outputModifier * 2;
-        outputRight = -outputModifierd;
-        outputLeft= outputModifierd;
-        Serial.println("Aumentando izquierdo");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
-
-    }
-    else{
-        outputLeft = baseSpeed;
-        outputRight = baseSpeed;
-        Serial.println("Manteniendo");
-    }
-    outputLeft = constrain(outputLeft, -120, 120);
-    outputRight = constrain(outputRight, -120, 120);
-
-    errorPrev = errorOrientation;
-    
-
-    Serial.println(outputLeft);
-    Serial.println(outputRight);
-
-    timePrev = millis(); 
-}
-
 // NO COMENTAR
 /* void PID::computeSpeedPerMotor(double targetSpeed, double &currentSpeed, uint8_t tics, double &output){
     unsigned long timeDiff = millis() - timePrev;

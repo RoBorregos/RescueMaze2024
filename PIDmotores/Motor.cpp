@@ -17,7 +17,7 @@ Motor::Motor() {
     this->motorId = MotorID::NONE;
 }
 
-Motor::Motor(uint8_t digitalOne, uint8_t digitalTwo, uint8_t pwmPin, uint8_t encoderA, MotorID motorid) {
+Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin = pwmPin;
     this->digitalOne = digitalOne;
     this->digitalTwo = digitalTwo;
@@ -117,7 +117,7 @@ void Motor::deltaPidTics(int deltaTics) {
     pidTics += deltaTics;
 }
 
-void Motor:: motorForward(uint8_t pwm) {
+void Motor:: motorForward(const uint8_t pwm) {
     analogWrite(pwmPin, pwm);
     /* if (currentState == MotorState::Forward)
     {
@@ -161,29 +161,6 @@ void Motor:: motorStop() {
     currentState = MotorState::Stop;
 }
 
-//no comentar
-/* void Motor::setPWM(uint8_t pwm) {
-    this->pwm = pwm;
-    switch (currentState)
-    {
-        case (MotorState::Forward): {
-            motorForward();
-            break;
-        }
-        case (MotorState::Backward): {
-            motorBackward();
-            break;
-        }
-        case (MotorState::Stop): {
-            motorStop();
-            break;
-        }
-        default: { 
-            break;
-        }
-    }
-} */
-
 double Motor::getTargetRps(double velocity) {
    return MsToRps(velocity);
 }
@@ -198,80 +175,10 @@ double Motor::MsToRps(double ms) {
     return ms / 1000.00;
 }
 
-// no comentar
-/* void Motor:: motorSpeedPID(double targetSpeed_, bool debug) {
-    int speedSign_ = min(1, max(-1, targetSpeed_ * 1000));
-    this->targetSpeed = fabs(targetSpeed_);
-    double pwm_ = pwm;
-    switch (currentState)
-    {
-        case (MotorState::Stop):{ 
-            motorStop();
-            break;
-        }
-        case (MotorState::Forward):{ 
-            motorForward();
-            break;
-        }
-        case (MotorState::Backward):{ 
-            motorBackward();
-            break;
-        }
-    }
-    setPWM(pwm_);
-} */
-
-void Motor::motorRotateIzqPID(double targetAngle, double currentAngle) {
-    double pwm_ = pwm;
-    pwm_ = fabs(pwm_);
-    if (pwm_ < 70) {
-        pwm_ = 70;
-    }
-    else if (pwm_ > 255) {
-        pwm_ = 255;
-    }
-    setPWM(pwm_);
-
-}
-
-void Motor::motorRotateDerPID(double targetAngle, double currentAngle) {
-    double pwm_ = pwm;
-    pwm_ = fabs(pwm_);
-    if (pwm_ < 70) {
-        pwm_ = 70;
-    }
-    else if (pwm_ > 255) {
-        pwm_ = 255;
-    }
-    setPWM(pwm_);
-}
 
 int Motor::getPWM(){
     return pwm;
 }
-
-//no comentar
-/* 
-void Motor::motorSpeedPWM(double targetSpeed_) {
-    int speedSign_ = min(1, max(-1, targetSpeed_ * 1000));
-    this->targetSpeed = fabs(targetSpeed_);
-    pwm = targetSpeed;
-    switch (speedSign_)
-    {
-        case (0): { 
-            motorStop();
-            break;
-        }
-        case (1): { 
-            motorForward();
-            break;
-        }
-        case (-1): {
-            motorBackward();
-            break;
-        }
-    }
-} */
 
 double Motor::getDistanceTraveled() {
     return (getEncoderTics() / kPulsesPerRev) * (DistancePerRev);
@@ -281,66 +188,7 @@ void Motor:: setEncoderTics(int tics) {
     ticsCounter = tics;
 }
 
-// TODO: Pasar esto a movement ademas de calcular todas las cosas a movement
-void Motor::PIDStraightTunings(double kP, double kI, double kD) {
-}
 
-void Motor::PIDRotateTunings(double kP, double kI, double kD) {
-
-}
-
-
-
-
-
-// -------------------------------------------------------------------
-// volatile int Motor::encoderTics = 0;
-/*  static void Motor::updateTics(){
-      encoderTics++;
-      return;
-}*/
-/* static void Motor::updateTicsFL(){
-    encoderTicsFL++;
-    return;
-}
-
-static void Motor::updateTicsFR(){
-    encoderTicsFR++;
-    return;
-}
-
-static void Motor::updateTicsBL(){
-    encoderTicsBL++;
-    return;
-}
-
-static void Motor::updateTicsBR(){
-    encoderTicsBR++;
-    return;
-} */
-
-/*
-int Motor::getEncoderTicsFR(){
-    return encoderTicsFR;
-}
-int Motor::getEncoderTicsBL(){
-    return encoderTicsBL;
-}
-int Motor::getEncoderTicsBR(){
-    return encoderTicsBR;
-}
-*/
-void Motor::updateRPM() {
-    if (millis()-next_time>=100){ // si divido a 1000, multiplico abajo
-        int tics = -1;
-        tics=encoders[static_cast<int>(motorId)];
-        encoders[static_cast<int>(motorId)] = 0;
-
-        rpm = 10*(tics * 60.00) / 500.00; // 50 por lo q dividi
-        next_time = millis();
-    }
-    return;
-}
 
 // CHECK IF THIS IS FUNCTIONAL OR NOT, AND IF YES, SEE HOW TO IMPLEMENT THE OTHER ONE
 

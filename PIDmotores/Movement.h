@@ -4,12 +4,8 @@
 #include "Motor.h"
 #include "BNO.h"
 
-
-
 class Movement {
     private:
-
-
         Motor motorFL;
         Motor motorFR;
         Motor motorBL;
@@ -17,7 +13,6 @@ class Movement {
 
         unsigned long next_time;
   
-
         float errorPrevOrientation;
         float errorAcumuladoOrientation;
 
@@ -67,7 +62,6 @@ class Movement {
 
         void moveMotors(MotorState state);
 
-
         void updateTics(MotorID motorId);
 
         int getBackLeftEncoderTics();
@@ -82,11 +76,7 @@ class Movement {
 
         void  turnLeft(uint8_t pwms[4]);
         void  turnRight(uint8_t pwms[4]);
- 
-        /*void moveBackward();
-        void turnLeft();
-        void turnRight();
-        void stop();*/
+
 };
 
 #endif
