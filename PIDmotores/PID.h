@@ -5,7 +5,6 @@
 //#include "Encoder.h"
 #include <math.h>
 
-
 class PID {
     private:
         // TODO: Check if it is needed to add a value to the variables
