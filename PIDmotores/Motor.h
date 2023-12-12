@@ -12,11 +12,11 @@ enum class MotorState{
 
 // checar el formato
 enum class MotorID {
-    kBACK_LEFT = 0,
-    kFRONT_LEFT = 1,
-    kBACK_RIGHT = 2,
-    kFRONT_RIGHT = 3,
-    kNONE
+    kBackLeft = 0,
+    kFrontLeft = 1,
+    kBackRight = 2,
+    kFrontRight = 3,
+    kNone
 };
 
 class Motor {

@@ -56,19 +56,19 @@ void Motor::initMotor() {
     
     switch (motorId) {
 
-        case (MotorID::FRONT_LEFT):{
+        case (MotorID::kFrontLeft):{
             attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontLeftEncoder, RISING);
             break;
         }
-        case (MotorID::FRONT_RIGHT): {
+        case (MotorID::kFrontRight): {
             attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontRightEncoder, RISING);
             break;
         }
-        case (MotorID::BACK_LEFT): {
+        case (MotorID::kBackLeft): {
             attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backLeftEncoder, RISING);
             break;
         }
-        case (MotorID::BACK_RIGHT): {
+        case (MotorID::kBackRight): {
             attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backRightEncoder, RISING);
             break;
         }

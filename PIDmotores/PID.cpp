@@ -33,18 +33,18 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     }   
 
     errorSum += errorOrientation * (timeDiff);
-    double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
-    int baseSpeed = 70; 
-    if (errorOrientation <0){
-        outputLeft = baseSpeed+outputModifier;
-        outputRight= baseSpeed-outputModifier;
+    const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
+    const double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    const int baseSpeed = 70; 
+    if (errorOrientation < 0) {
+        outputLeft = baseSpeed + outputModifier;
+        outputRight= baseSpeed - outputModifier;
         Serial.println("Aumentando derecho");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
     }
-    else if (errorOrientation >0){
-        outputRight = baseSpeed-outputModifier;
-        outputLeft= baseSpeed+outputModifier;
+    else if (errorOrientation > 0) {
+        outputRight = baseSpeed - outputModifier;
+        outputLeft= baseSpeed + outputModifier;
         Serial.println("Aumentando izquierdo");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
 

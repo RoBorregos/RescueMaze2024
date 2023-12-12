@@ -16,10 +16,10 @@ Movement::Movement() {
 }
 
 void Movement::setup() {
-    setupInternal(MotorID::kFRONT_LEFT);
-    setupInternal(MotorID::kFRONT_RIGHT);
-    setupInternal(MotorID::kBACK_LEFT);
-    setupInternal(MotorID::kBACK_RIGHT);
+    setupInternal(MotorID::kFrontLeft);
+    setupInternal(MotorID::kFrontRight);
+    setupInternal(MotorID::kBackLeft);
+    setupInternal(MotorID::kBackRight);
     bno.setupBNO();
     //Encoder::initEncoder();
 }
@@ -69,10 +69,10 @@ void Movement::moveMotors(MotorState state) {
         case (MotorState::kForward): {
             pidStraight.computeStraight(targetOrientation,currentOrientation, pwmLeft, pwmRight);
 
-            pwms[static_cast<int>(MotorID::kFRONT_LEFT)]= pwmLeft;
-            pwms[static_cast<int>(MotorID::kBACK_LEFT)]= pwmLeft;
-            pwms[static_cast<int>(MotorID::kFRONT_RIGHT)]= pwmRight;
-            pwms[static_cast<int>(MotorID::kBACK_RIGHT)]= pwmRight;
+            pwms[static_cast<int>(MotorID::kFrontLeft)]= pwmLeft;
+            pwms[static_cast<int>(MotorID::kBackLeft)]= pwmLeft;
+            pwms[static_cast<int>(MotorID::kFrontRight)]= pwmRight;
+            pwms[static_cast<int>(MotorID::kBackRight)]= pwmRight;
 
             forwardMotors(pwms);
             break;
@@ -119,17 +119,17 @@ void Movement::updateTics(MotorID motorId) {
 } 
 
 int Movement::getBackLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBACK_LEFT)].getEncoderTics();
+    return motor[static_cast<int>(MotorID::kBackLeft)].getEncoderTics();
 }
 
 int Movement::getFrontLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFRONT_LEFT)].getEncoderTics();
+    return motor[static_cast<int>(MotorID::kFrontLeft)].getEncoderTics();
 }
 
 int Movement::getBackRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBACK_RIGHT)].getEncoderTics();
+    return motor[static_cast<int>(MotorID::kBackRight)].getEncoderTics();
 }
 
 int Movement::getFrontRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFRONT_RIGHT)].getEncoderTics();
+    return motor[static_cast<int>(MotorID::kFrontRight)].getEncoderTics();
 }

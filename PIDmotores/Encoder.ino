@@ -19,21 +19,20 @@
 extern Movement robot;
 
 void Encoder::backLeftEncoder() {
-    robot.updateTics(MotorID::kBACK_LEFT);
+    robot.updateTics(MotorID::kBackLeft);
 }
 
 void Encoder::backRightEncoder() {
-    robot.updateTics(MotorID::kBACK_RIGHT);
+    robot.updateTics(MotorID::kBackRight);
 }
 
 void Encoder::frontLeftEncoder() {
-    robot.updateTics(MotorID::kFRONT_LEFT);
+    robot.updateTics(MotorID::kFrontLeft);
 }
 
 void Encoder::frontRightEncoder() {
-    robot.updateTics(MotorID::kFRONT_RIGHT);
+    robot.updateTics(MotorID::kFrontRight);
 } 
-
 
 void Encoder::initEncoder() {
     pinMode(encoderA[0], INPUT);

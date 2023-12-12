@@ -13,10 +13,6 @@ class PID {
         double kI{0};
         double kD{0};
 
-        double conskP;
-        double conskI;
-        double conskD;
-
         double errorSum{0};
         double errorPrev{0};
 
