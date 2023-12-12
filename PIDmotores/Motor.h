@@ -100,7 +100,6 @@ class Motor {
         void setSpeed(uint8_t speed);
         void stop();
         */
-        void updateRPM();
 
         void motorForward(uint8_t pwm);
 
@@ -108,25 +107,13 @@ class Motor {
 
         void motorStop();
 
-        void setPWM(uint8_t pwm);
-
         int getPWM();
 
-        void motorSpeedPID(double targetSpeed_, bool debug=false);
 
         void motorSpeedPWM(double targetSpeed_);
-
-        void motorRotateDerPID(double targetAngle_, double currentAngle_);
-
-        void motorRotateIzqPID(double targetAngle_, double currentAngle_);
-
-        void PIDStraightTunings(double kP, double kI, double kD);
-
-        void PIDRotateTunings(double kP, double kI, double kD);
-
+        
         // -------------------------------------------------------------------
         // Warning: This function will be deleted 
-        void setPID(double targetSpeed, double kP, double kI, double kD);
         // -------------------------------------------------------------------------------
         double getRPM();
 
