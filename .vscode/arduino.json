@@ -1,5 +1,4 @@
 {
-    "port": "COM11",
-    "board": "arduino:avr:uno",
-    "sketch": "Tests\\TCS_test\\TCS_test.ino"
+    "sketch": "Tests\\TCS_test\\TCS_test.ino",
+    "board": "arduino:avr:mega"
 }
