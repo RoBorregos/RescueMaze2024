@@ -8,6 +8,8 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
+
+
 class BNO {
     private:
         Adafruit_BNO055 bno;

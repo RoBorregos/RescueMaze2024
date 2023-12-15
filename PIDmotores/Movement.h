@@ -4,6 +4,21 @@
 #include "Motor.h"
 #include "BNO.h"
 
+enum class compass{
+    knorth,
+    keast,
+    ksouth,
+    kwest
+};
+
+enum class MovementState{
+    kStop,
+    kForward,
+    kBackward,
+    kTurnLeft,
+    kTurnRight
+};
+
 class Movement {
     private:
         Motor motorFL;
@@ -32,17 +47,31 @@ class Movement {
         void setupInternal(MotorID motorId);
 
         void stopMotors();
-        void forwardMotors(uint8_t pwms[4]);
-        void backwardMotors(uint8_t pwms[4]);
+        void forwardMotors(const uint8_t pwms[4]);
+        void backwardMotors(const uint8_t pwms[4]);
 
-        void moveMotors(MotorState state);
+        void turnRightMotors(const uint8_t pwms[4]);
+        void turnLeftMotors(const uint8_t pwms[4]);
+
+        void forwardMotor(const uint8_t pwm, MotorID motorId);
+        void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
+        
+
+        //void moveMotors(MotorState state);
 
         void updateTics(MotorID motorId);
 
         int getBackLeftEncoderTics();
         int getBackRightEncoderTics();
         int getFrontLeftEncoderTics();
-        int getFrontRightEncoderTics();        
+        int getFrontRightEncoderTics();    
+
+        int getOrientation(const compass currentOrientation);
+        //void computeTargetOrientation(compass targetOrientation, compass currentOrientation);
+        void moveMotors(MovementState state, const double targetOrientation);
+
+        
+
 };
 
 #endif
