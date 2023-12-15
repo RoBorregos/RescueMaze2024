@@ -241,6 +241,7 @@ int Movement::getOrientation(const compass currentOrientation) {
     }
 }
 
+
 /* void Movement::computeTargetOrientation(compass targetOrientation, compass currentOrientation) {
     int target = getOrientation(targetOrientation);
     int current = getOrientation(currentOrientation);
