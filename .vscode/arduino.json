@@ -3,4 +3,5 @@
     "board": "arduino:avr:mega",
     "sketch": "Tests\\motors_test\\motors_test.ino",
     "configuration": "cpu=atmega2560"
+
 }
