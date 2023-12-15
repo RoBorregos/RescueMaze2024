@@ -70,7 +70,6 @@ class Movement {
         //void computeTargetOrientation(compass targetOrientation, compass currentOrientation);
         void moveMotors(MovementState state, const double targetOrientation);
 
-        
 
 };
 
