@@ -31,7 +31,5 @@ class PID {
         PID();
 
         void computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
-
-        void computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise);
 };
 #endif

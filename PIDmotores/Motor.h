@@ -87,7 +87,5 @@ class Motor {
         void setEncoderTics(int tics);
 
         void motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorId);
-
-        void setPwmAndDirection(const uint8_t pwm, const MotorState direction);
 };
 #endif

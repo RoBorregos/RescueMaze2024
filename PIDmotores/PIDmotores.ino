@@ -13,17 +13,11 @@ void setup()
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();	
-    robot.moveMotors(MovementState::kTurnLeft, 270);
-    delay(1000);
-    robot.moveMotors(MovementState::kTurnRight, 0);
-    delay(1000);
 }
 
 void loop()
 {
-    
-    
-    
+    robot.moveMotors(MotorState::kForward);
     
     //LEER TICS DE LOS ENCODERS
     /* Serial.print("BACK_LEFT: ");
