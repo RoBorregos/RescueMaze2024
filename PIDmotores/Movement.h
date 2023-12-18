@@ -5,10 +5,10 @@
 #include "BNO.h"
 
 enum class compass{
-    knorth,
-    keast,
-    ksouth,
-    kwest
+    kNorth,
+    kEast,
+    kSouth,
+    kWest
 };
 
 enum class MovementState{
@@ -50,10 +50,6 @@ class Movement {
         void forwardMotors(const uint8_t pwms[4]);
         void backwardMotors(const uint8_t pwms[4]);
 
-        void turnRightMotors(const uint8_t pwms[4]);
-        void turnLeftMotors(const uint8_t pwms[4]);
-
-        void forwardMotor(const uint8_t pwm, MotorID motorId);
         void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
         
 
@@ -68,7 +64,10 @@ class Movement {
 
         int getOrientation(const compass currentOrientation);
         //void computeTargetOrientation(compass targetOrientation, compass currentOrientation);
-        void moveMotors(MovementState state, const double targetOrientation);
+        void moveMotors(const MovementState state, const double targetOrientation);
+
+        void setMotorsDirections(const MovementState state, MotorState directions[4]);
+        
 
 
 };

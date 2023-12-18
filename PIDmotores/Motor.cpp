@@ -148,7 +148,7 @@ double Motor::getRPM() {
     return rpm;
 }
 
-void Motor::setPwmAndDirection(const uint8_t pwm, MotorState direction) {
+void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     if (direction == MotorState::kForward) {
         motorForward(pwm);
     } else if (direction == MotorState::kBackward) {

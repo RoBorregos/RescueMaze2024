@@ -20,21 +20,33 @@ PID::PID(const double kP, const double kI, const double kD) {
     errorPrev = 0;
 }
 
-
-void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    unsigned long timeDiff = millis() - timePrev;
-    
+double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
     double errorOrientation = targetOrientation - currentOrientation;
     if (errorOrientation > 180) {
         errorOrientation -= 360;
     }
     else if (errorOrientation < -180) {
         errorOrientation += 360;
-    }   
+    }
+    
+    return errorOrientation;
+}
 
+double PID::computeOutputModifier(const double errorOrientation, const unsigned long timeDiff) {
     errorSum += errorOrientation * (timeDiff);
     const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
     const double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    errorPrev = errorOrientation;
+    return outputModifier;
+}
+
+void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
+    unsigned long timeDiff = millis() - timePrev;
+    double errorOrientation;
+    double outputModifier;
+    computeErrorOrientation(targetOrientation, currentOrientation);
+
+    computeOutputModifier(errorOrientation, timeDiff);
     const int baseSpeed = 70; 
     if (errorOrientation < 0) {
         outputLeft = baseSpeed + outputModifier;
@@ -57,9 +69,6 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     outputLeft = constrain(outputLeft, 40, 120);
     outputRight = constrain(outputRight, 40, 120);
 
-    errorPrev = errorOrientation;
-    
-
     Serial.println(outputLeft);
     Serial.println(outputRight);
 
@@ -69,18 +78,11 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
     bool goalReached = false;
     unsigned long timeDiff = millis() - timePrev;
-    
-    double errorOrientation = targetOrientation - currentOrientation;
-    if (errorOrientation > 180) {
-        errorOrientation -= 360;
-    }
-    else if (errorOrientation < -180) {
-        errorOrientation += 360;
-    }   
+    double errorOrientation;
+    double outputModifier;
+    computeErrorOrientation(targetOrientation, currentOrientation);
 
-    errorSum += errorOrientation * (timeDiff);
-    const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    const double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    computeOutputModifier(errorOrientation, timeDiff);
     const int baseSpeed = 70;
     if (errorOrientation < 0) {
         outputLeft = baseSpeed + outputModifier;
