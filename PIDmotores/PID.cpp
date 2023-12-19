@@ -75,8 +75,8 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
     bool goalReached = false;
     unsigned long timeDiff = millis() - timePrev;
-    const double errorOrientation = computeOutputModifier(errorOrientation, timeDiff);
-    const double outputModifier = computeErrorOrientation(targetOrientation, currentOrientation);
+    const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
+    const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
     const int baseSpeed = 70;
     if (errorOrientation < 0) {
