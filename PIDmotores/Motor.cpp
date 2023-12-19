@@ -13,7 +13,7 @@ Motor::Motor() {
     this->pwmInicial = 50;
     this->errorPrev = 0;
     this->errorAcumulado = 0;
-    this->motorId = MotorID::kNONE;
+    this->motorId = MotorID::kNone;
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -45,8 +45,8 @@ int Motor::getPidTics() {
 }
 
 void Motor::initMotor() {
-    motorSetup();
-    initEncoder();
+    motorSetup(pwmPin, digitalOne, digitalTwo, encoderA, motorId);
+    //initEncoder();
     motorStop();
 }
 
@@ -146,5 +146,15 @@ void Motor:: motorStop() {
 
 double Motor::getRPM() {
     return rpm;
+}
+
+void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
+    if (direction == MotorState::kForward) {
+        motorForward(pwm);
+    } else if (direction == MotorState::kBackward) {
+        motorBackward(pwm);
+    } else {
+        motorStop();
+    }
 }
 

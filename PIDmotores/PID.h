@@ -31,5 +31,11 @@ class PID {
         PID();
 
         void computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
+
+        void computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise);
+
+        double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
+        double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
+
 };
 #endif

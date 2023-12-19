@@ -3,11 +3,16 @@
 #include "Pins.h"
 //#include "Encoder.h"
 
-constexpr double kP = 5.0; 
-constexpr double kI = 0.008;
-constexpr double kD = 0.0;
+constexpr double kPStraight = 5.0; 
+constexpr double kIStraight = 0.008;
+constexpr double kDStraight = 0.0;
 
-PID pidStraight(kP, kI, kD);
+constexpr double kPTurn = 1.0;
+constexpr double kITurn = 0.0;
+constexpr double kDTurn = 0.0;
+
+PID pidStraight(kPStraight, kIStraight, kDStraight);
+PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
 Movement::Movement() {
@@ -40,56 +45,138 @@ void Movement::stopMotors() {
     }
 }
 
-void Movement::forwardMotors(const uint8_t pwms[4]) {
+void Movement::setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]) {
     for(int i = 0; i < 4; ++i){
-        motor[i].motorForward(pwms[i]);
+        motor[i].setPwmAndDirection(pwms[i], directions[i]);
     }
 }
 
-void Movement::backwardMotors(const uint8_t pwms[4]) {
-    for(int i = 0; i < 4; ++i){
-        motor[i].motorBackward(pwms[i]);
+void Movement::setMotorsDirections(const MovementState state, MotorState directions[4]) {
+    const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
+    const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
+    const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
+    const int backRightIndex = static_cast<int>(MotorID::kBackRight);
+    switch (state)
+    {
+    case (MovementState::kForward):{
+            directions[frontLeftIndex] = MotorState::kForward;
+            directions[backLeftIndex] = MotorState::kForward;
+            directions[frontRightIndex] = MotorState::kForward;
+            directions[backRightIndex] = MotorState::kForward;
+        break;
+    }
+    case (MovementState::kBackward):{
+            directions[frontLeftIndex] = MotorState::kBackward;
+            directions[backLeftIndex] = MotorState::kBackward;
+            directions[frontRightIndex] = MotorState::kBackward;
+            directions[backRightIndex] = MotorState::kBackward;
+        break;
+    }
+    case (MovementState::kTurnLeft):{
+            directions[frontLeftIndex] = MotorState::kBackward;
+            directions[backLeftIndex] = MotorState::kBackward;
+            directions[frontRightIndex] = MotorState::kForward;
+            directions[backRightIndex] = MotorState::kForward;
+        break;
+    }
+    case (MovementState::kTurnRight):{
+            directions[frontLeftIndex] = MotorState::kForward;
+            directions[backLeftIndex] = MotorState::kForward;
+            directions[frontRightIndex] = MotorState::kBackward;
+            directions[backRightIndex] = MotorState::kBackward;
+        break;
+    }
+    default:
+        break;
     }
 }
 
-void Movement::moveMotors(MotorState state) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation) {
     uint8_t pwms[4];
+    MotorState directions[4];
     int pwm = 60;
-    double targetOrientation = 0;
     double currentOrientation = bno.getOrientationX();
     double pwmLeft = 0;
     double pwmRight = 0;
+    bool turnLeft = false;
+    const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
+    const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
+    const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
+    const int backRightIndex = static_cast<int>(MotorID::kBackRight);
     switch (state)
     {
-        case (MotorState::kStop): {
+        case (MovementState::kStop): {
             stopMotors();
             break;
         }
-        
-        case (MotorState::kForward): {
-            pidStraight.computeStraight(targetOrientation,currentOrientation, pwmLeft, pwmRight);
+        case (MovementState::kForward): {
+            pidStraight.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
 
-            pwms[static_cast<int>(MotorID::kFrontLeft)]= pwmLeft;
-            pwms[static_cast<int>(MotorID::kBackLeft)]= pwmLeft;
-            pwms[static_cast<int>(MotorID::kFrontRight)]= pwmRight;
-            pwms[static_cast<int>(MotorID::kBackRight)]= pwmRight;
+            pwms[frontLeftIndex] = pwmLeft;
+            pwms[backLeftIndex] = pwmLeft;
+            pwms[frontRightIndex] = pwmRight;
+            pwms[backRightIndex] = pwmRight;
 
-            forwardMotors(pwms);
+            setMotorsDirections(state, directions);
             break;
         }
-        case (MotorState::kBackward): {
-            pwms[0]= pwm;
-            pwms[1]= pwm;
-            pwms[2]= pwm;
-            pwms[3]= pwm;
-            backwardMotors(pwms);
+        case (MovementState::kBackward): {
+            pwms[frontLeftIndex] = pwm;
+            pwms[backLeftIndex] = pwm;
+            pwms[frontRightIndex] = pwm;
+            pwms[backRightIndex] = pwm;
+
+            setMotorsDirections(state, directions); 
             break;
         }
-        default : {
+        // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
+
+        case (MovementState::kTurnLeft): {
+            while (targetOrientation != currentOrientation) {
+                pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
+                if (turnLeft) {
+                    setMotorsDirections(MovementState::kTurnLeft, directions); 
+                }
+                else {
+                    setMotorsDirections(MovementState::kTurnRight, directions); 
+                }
+
+                pwms[frontLeftIndex] = pwmLeft;
+                pwms[backLeftIndex] = pwmLeft;
+                pwms[frontRightIndex] = pwmRight;
+                pwms[backRightIndex] = pwmRight;
+
+                currentOrientation = bno.getOrientationX();
+                setPwmsAndDirections(pwms, directions);
+            }
+
+            break;
+        }
+        case (MovementState::kTurnRight): {
+            while (targetOrientation != currentOrientation) {
+                pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
+                if (turnLeft) {
+                    setMotorsDirections(MovementState::kTurnLeft, directions); 
+                }
+                else {
+                    setMotorsDirections(MovementState::kTurnRight, directions); 
+                }
+
+                pwms[frontLeftIndex] = pwmLeft;
+                pwms[backLeftIndex] = pwmLeft;
+                pwms[frontRightIndex] = pwmRight;
+                pwms[backRightIndex] = pwmRight;
+
+                currentOrientation = bno.getOrientationX();
+                setPwmsAndDirections(pwms, directions);
+            }
+
             break;
         }
     }
+    setPwmsAndDirections(pwms, directions);
 }
+
 
 // CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''FEDFE'FREFEJ,FBEJFFBHUWBFUHEWBFHJWERBFHJRBEJHFBRJFBKWRJNSBJFBKREJFBKEJB
 void Movement::updateTics(MotorID motorId) {
@@ -132,4 +219,24 @@ int Movement::getBackRightEncoderTics() {
 
 int Movement::getFrontRightEncoderTics() {
     return motor[static_cast<int>(MotorID::kFrontRight)].getEncoderTics();
+}
+
+int Movement::getOrientation(const compass currentOrientation) {
+    switch (currentOrientation) {
+        case (compass::kNorth): {
+            return 0;
+        }
+        case (compass::kEast): {
+            return 90;
+        }
+        case (compass::kSouth): {
+            return 180;
+        }
+        case (compass::kWest): {
+            return 270;
+        }
+        default: {
+            return 0;
+        }
+    }
 }
