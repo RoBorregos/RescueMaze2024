@@ -45,20 +45,6 @@ void Movement::stopMotors() {
     }
 }
 
-void Movement::forwardMotors(const uint8_t pwms[4]) {
-    for(int i = 0; i < 4; ++i){
-        motor[i].motorForward(pwms[i]);
-    }
-}
-
-void Movement::backwardMotors(const uint8_t pwms[4]) {
-    for(int i = 0; i < 4; ++i){
-        motor[i].motorBackward(pwms[i]);
-    }
-}
-
-
-
 void Movement::setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]) {
     for(int i = 0; i < 4; ++i){
         motor[i].setPwmAndDirection(pwms[i], directions[i]);
@@ -131,7 +117,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             pwms[frontRightIndex] = pwmRight;
             pwms[backRightIndex] = pwmRight;
 
-            setMotorsDirections(state, directions);            
+            setMotorsDirections(state, directions);
             break;
         }
         case (MovementState::kBackward): {
@@ -143,7 +129,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             setMotorsDirections(state, directions); 
             break;
         }
-        // TODO: cambiar el MotorState de turnRigth y left para que solo sea uno motorState es decir turn
+        // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
 
         case (MovementState::kTurnLeft): {
             while (targetOrientation != currentOrientation) {
@@ -254,28 +240,3 @@ int Movement::getOrientation(const compass currentOrientation) {
         }
     }
 }
-
-
-
-/* void Movement::computeTargetOrientation(compass targetOrientation, compass currentOrientation) {
-    int target = getOrientation(targetOrientation);
-    int current = getOrientation(currentOrientation);
-    int error = target - current;
-    if (error > 180) {
-        error = error - 360;
-    } else if (error < -180) {
-        error = error + 360;
-    }
-    Serial.print("Error: ");
-    Serial.println(error);
-    if (error > 0) {
-        moveMotors(MovementState::kForward);
-    } else if (error < 0) {
-        moveMotors(MovementState::kBackward);
-    } else {
-        moveMotors(MovementState::kStop);
-    }
-} */
-
-
-

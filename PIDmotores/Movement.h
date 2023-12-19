@@ -47,14 +47,9 @@ class Movement {
         void setupInternal(MotorID motorId);
 
         void stopMotors();
-        void forwardMotors(const uint8_t pwms[4]);
-        void backwardMotors(const uint8_t pwms[4]);
 
         void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
         
-
-        //void moveMotors(MotorState state);
-
         void updateTics(MotorID motorId);
 
         int getBackLeftEncoderTics();
@@ -63,7 +58,6 @@ class Movement {
         int getFrontRightEncoderTics();    
 
         int getOrientation(const compass currentOrientation);
-        //void computeTargetOrientation(compass targetOrientation, compass currentOrientation);
         void moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
