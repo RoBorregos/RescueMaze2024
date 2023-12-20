@@ -3,15 +3,20 @@
 #include "Pins.h"
 //#include "Encoder.h"
 
-constexpr double kPStraight = 5.0; 
-constexpr double kIStraight = 0.008;
-constexpr double kDStraight = 0.0;
+constexpr double kPForward = 1.5; 
+constexpr double kIForward = 0.3;
+constexpr double kDForward = 0.0;
+
+constexpr double kPBackward = 1.0;
+constexpr double kIBackward = 0.0;
+constexpr double kDBackward = 0.0;
 
 constexpr double kPTurn = 1.0;
 constexpr double kITurn = 0.0;
 constexpr double kDTurn = 0.0;
 
-PID pidStraight(kPStraight, kIStraight, kDStraight);
+PID pidForward(kPForward, kIForward, kDForward);
+PID pidBackward(kPBackward, kIBackward, kDBackward);
 PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
@@ -110,29 +115,34 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kForward): {
-            pidStraight.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
+            pidForward.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
 
             pwms[frontLeftIndex] = pwmLeft;
             pwms[backLeftIndex] = pwmLeft;
             pwms[frontRightIndex] = pwmRight;
             pwms[backRightIndex] = pwmRight;
 
-            setMotorsDirections(state, directions);
+            setMotorsDirections(MovementState::kForward, directions);
+            
             break;
         }
         case (MovementState::kBackward): {
-            pwms[frontLeftIndex] = pwm;
-            pwms[backLeftIndex] = pwm;
-            pwms[frontRightIndex] = pwm;
-            pwms[backRightIndex] = pwm;
+            pidBackward.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
+            pwms[frontLeftIndex] = pwmRight;
+            pwms[backLeftIndex] = pwmRight;
+            pwms[frontRightIndex] = pwmLeft;
+            pwms[backRightIndex] = pwmLeft;
 
-            setMotorsDirections(state, directions); 
+            setMotorsDirections(MovementState::kBackward, directions); 
+            
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
 
         case (MovementState::kTurnLeft): {
-            while (targetOrientation != currentOrientation) {
+            Serial.println(abs(targetOrientation - currentOrientation));
+            while (abs(targetOrientation - currentOrientation) > 0.3) {
+                Serial.println(abs(targetOrientation - currentOrientation));
                 pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
@@ -153,7 +163,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kTurnRight): {
-            while (targetOrientation != currentOrientation) {
+            while (abs(targetOrientation - currentOrientation) < 0.5) {
                 pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 

@@ -17,6 +17,10 @@ PID::PID(const double kP, const double kI, const double kD, const double minOutp
 PID::PID(const double kP, const double kI, const double kD) {
     timePrev = millis();
     //setTunings(kP, kI, kD);
+    kP_ = kP;
+    kI_ = kI;
+    kD_ = kD;
+
     errorPrev = 0;
 }
 
@@ -35,7 +39,7 @@ double PID::computeErrorOrientation(const double targetOrientation, const double
 double PID::computeOutputModifier(const double errorOrientation, const unsigned long timeDiff) {
     errorSum += errorOrientation * (timeDiff);
     const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    const double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    const double outputModifier = kP_ * errorOrientation + kI_ * errorSum + kD_ * errorDeriv;
     errorPrev = errorOrientation;
     return outputModifier;
 }
@@ -45,6 +49,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
     const int baseSpeed = 70; 
+    const int maxModifier = 50;
     if (errorOrientation < 0) {
         outputLeft = baseSpeed + outputModifier;
         outputRight= baseSpeed - outputModifier;
@@ -63,11 +68,20 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
         outputRight = baseSpeed;
         Serial.println("Manteniendo");
     }
-    outputLeft = constrain(outputLeft, 40, 120);
-    outputRight = constrain(outputRight, 40, 120);
+    outputLeft = constrain(outputLeft, baseSpeed - maxModifier, baseSpeed + maxModifier);
+    outputRight = constrain(outputRight, baseSpeed - maxModifier, baseSpeed + maxModifier);
+
+    delay(1000);
 
     Serial.println(outputLeft);
     Serial.println(outputRight);
+    Serial.println("ERRORORIENTATION:" + String(errorOrientation));
+    Serial.println("ERRORSUM:" + String(errorSum));
+    Serial.println("TIME:" + String(timeDiff));
+    Serial.println("TARGETORIENTATION:" + String(targetOrientation));
+    Serial.println("CURRENTORIENTATION:" + String(currentOrientation));
+    Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+    Serial.println("ERRORPREV:" + String(errorPrev));
 
     timePrev = millis(); 
 }

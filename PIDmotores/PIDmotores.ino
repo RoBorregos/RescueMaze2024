@@ -5,22 +5,41 @@
 #include "Encoder.h"
 
 Movement robot;
-double targetOrientation=0.0;
+double targetOrientation = 0.0;
+unsigned long iterations = 0;
 
-void setup()
-{
+
+void setup(){
     // BIEEEN
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();	
-    robot.moveMotors(MovementState::kTurnLeft, 270);
-    delay(1000);
-    robot.moveMotors(MovementState::kTurnRight, 0);
-    delay(1000);
 }
+    
+void loop() {
+    
+    if (iterations < 25) { // TODO: juega con este numero
+        robot.moveMotors(MovementState::kForward, 0);
+    } else if (iterations < 50) { // TODO: juega con este numero
+        robot.moveMotors(MovementState::kStop, 0);
+    } else if (iterations < 75) {
+        robot.moveMotors(MovementState::kBackward, 0);
+    } else if (iterations < 100) {
+        robot.moveMotors(MovementState::kStop, 0);
+    } else if (iterations < 125) {
+        robot.moveMotors(MovementState::kTurnLeft, 90);
+    } else if (iterations < 150) {
+        robot.moveMotors(MovementState::kStop, 0);
+    } else if (iterations < 175) {
+        robot.moveMotors(MovementState::kTurnRight, 90);
+    }
+    else {
+        robot.moveMotors(MovementState::kStop, 0);
+        delay(10000);
+    } 
+    
+    ++iterations;
 
-void loop()
-{
     
     
     
