@@ -40,10 +40,6 @@ void loop() {
     
     ++iterations;
 
-    
-    
-    
-    
     //LEER TICS DE LOS ENCODERS
     /* Serial.print("BACK_LEFT: ");
     Serial.println(robot.getBackLeftEncoderTics());
