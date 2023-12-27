@@ -6,7 +6,6 @@ PID::PID() {
 
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
     timePrev = millis();
-    //setTunings(kP, kI, kD);
     double sampleTime_ = sampleTime;
     errorPrev = 0;
     maxError = maxErrorSum;
@@ -16,7 +15,10 @@ PID::PID(const double kP, const double kI, const double kD, const double minOutp
 
 PID::PID(const double kP, const double kI, const double kD) {
     timePrev = millis();
-    //setTunings(kP, kI, kD);
+    kP_ = kP;
+    kI_ = kI;
+    kD_ = kD;
+
     errorPrev = 0;
 }
 
@@ -35,7 +37,7 @@ double PID::computeErrorOrientation(const double targetOrientation, const double
 double PID::computeOutputModifier(const double errorOrientation, const unsigned long timeDiff) {
     errorSum += errorOrientation * (timeDiff);
     const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    const double outputModifier = kP * errorOrientation + kI * errorSum + kD * errorDeriv;
+    const double outputModifier = kP_ * errorOrientation + kI_ * errorSum + kD_ * errorDeriv;
     errorPrev = errorOrientation;
     return outputModifier;
 }
@@ -44,30 +46,28 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     unsigned long timeDiff = millis() - timePrev;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    const int baseSpeed = 70; 
+    constexpr int kBaseSpeed = 70; 
+    constexpr int kMaxModifier = 50;
     if (errorOrientation < 0) {
-        outputLeft = baseSpeed + outputModifier;
-        outputRight= baseSpeed - outputModifier;
+        outputLeft = kBaseSpeed + outputModifier;
+        outputRight = kBaseSpeed - outputModifier;
         Serial.println("Aumentando derecho");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
     }
     else if (errorOrientation > 0) {
-        outputRight = baseSpeed - outputModifier;
-        outputLeft= baseSpeed + outputModifier;
+        outputRight = kBaseSpeed - outputModifier;
+        outputLeft = kBaseSpeed + outputModifier;
         Serial.println("Aumentando izquierdo");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
 
     }
     else{
-        outputLeft = baseSpeed;
-        outputRight = baseSpeed;
+        outputLeft = kBaseSpeed;
+        outputRight = kBaseSpeed;
         Serial.println("Manteniendo");
     }
-    outputLeft = constrain(outputLeft, 40, 120);
-    outputRight = constrain(outputRight, 40, 120);
-
-    Serial.println(outputLeft);
-    Serial.println(outputRight);
+    outputLeft = constrain(outputLeft, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
+    outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
 
     timePrev = millis(); 
 }

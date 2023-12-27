@@ -102,10 +102,9 @@ void Motor::deltaPidTics(int deltaTics) {
 
 void Motor:: motorForward(const uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    /* if (currentState == MotorState::kForward)
-    {
+    if (currentState == MotorState::kForward) {
         return;
-    } */
+    } 
     //Serial.println("Forward");
     
     digitalWrite(digitalOne, HIGH);
@@ -116,10 +115,9 @@ void Motor:: motorForward(const uint8_t pwm) {
 
 void Motor:: motorBackward(uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    /* if (currentState == MotorState::kBackward)
-    {
+    if (currentState == MotorState::kBackward) {
         return;
-    } */
+    }
     //Serial.println("Backward");
     
     digitalWrite(digitalOne, LOW);
@@ -130,13 +128,12 @@ void Motor:: motorBackward(uint8_t pwm) {
 }
 
 void Motor:: motorStop() {
-    pwm=0;
+    pwm = 0;
     analogWrite(pwmPin, pwm);
 
-    /* if (currentState == MotorState::kStop)
-    {
+    if (currentState == MotorState::kStop) {
         return;
-    } */
+    } 
 
     digitalWrite(digitalOne, LOW);
     digitalWrite(digitalTwo, LOW);

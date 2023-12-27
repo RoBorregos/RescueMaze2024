@@ -7,10 +7,9 @@
 
 class PID {
     private:
-        // TODO: Check if it is needed to add a value to the variables
-        double kP{0};
-        double kI{0};
-        double kD{0};
+        double kP_{0};
+        double kI_{0};
+        double kD_{0};
 
         double errorSum{0};
         double errorPrev{0};
