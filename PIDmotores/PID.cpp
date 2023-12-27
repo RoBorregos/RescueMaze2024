@@ -6,7 +6,6 @@ PID::PID() {
 
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
     timePrev = millis();
-    //setTunings(kP, kI, kD);
     double sampleTime_ = sampleTime;
     errorPrev = 0;
     maxError = maxErrorSum;
@@ -16,7 +15,6 @@ PID::PID(const double kP, const double kI, const double kD, const double minOutp
 
 PID::PID(const double kP, const double kI, const double kD) {
     timePrev = millis();
-    //setTunings(kP, kI, kD);
     kP_ = kP;
     kI_ = kI;
     kD_ = kD;
@@ -48,40 +46,28 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     unsigned long timeDiff = millis() - timePrev;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    const int baseSpeed = 70; 
-    const int maxModifier = 50;
+    constexpr int kBaseSpeed = 70; 
+    constexpr int kMaxModifier = 50;
     if (errorOrientation < 0) {
-        outputLeft = baseSpeed + outputModifier;
-        outputRight= baseSpeed - outputModifier;
+        outputLeft = kBaseSpeed + outputModifier;
+        outputRight = kBaseSpeed - outputModifier;
         Serial.println("Aumentando derecho");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
     }
     else if (errorOrientation > 0) {
-        outputRight = baseSpeed - outputModifier;
-        outputLeft= baseSpeed + outputModifier;
+        outputRight = kBaseSpeed - outputModifier;
+        outputLeft = kBaseSpeed + outputModifier;
         Serial.println("Aumentando izquierdo");
         Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
 
     }
     else{
-        outputLeft = baseSpeed;
-        outputRight = baseSpeed;
+        outputLeft = kBaseSpeed;
+        outputRight = kBaseSpeed;
         Serial.println("Manteniendo");
     }
-    outputLeft = constrain(outputLeft, baseSpeed - maxModifier, baseSpeed + maxModifier);
-    outputRight = constrain(outputRight, baseSpeed - maxModifier, baseSpeed + maxModifier);
-
-    delay(1000);
-
-    Serial.println(outputLeft);
-    Serial.println(outputRight);
-    Serial.println("ERRORORIENTATION:" + String(errorOrientation));
-    Serial.println("ERRORSUM:" + String(errorSum));
-    Serial.println("TIME:" + String(timeDiff));
-    Serial.println("TARGETORIENTATION:" + String(targetOrientation));
-    Serial.println("CURRENTORIENTATION:" + String(currentOrientation));
-    Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
-    Serial.println("ERRORPREV:" + String(errorPrev));
+    outputLeft = constrain(outputLeft, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
+    outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
 
     timePrev = millis(); 
 }

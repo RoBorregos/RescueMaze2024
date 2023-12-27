@@ -31,12 +31,12 @@ void loop() {
     } else if (iterations < 150) {
         robot.moveMotors(MovementState::kStop, 0);
     } else if (iterations < 175) {
-        robot.moveMotors(MovementState::kTurnRight, 90);
+        robot.moveMotors(MovementState::kTurnRight, 270);
     }
     else {
         robot.moveMotors(MovementState::kStop, 0);
         delay(10000);
-    } 
+    }
     
     ++iterations;
 
