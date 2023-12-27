@@ -13,12 +13,15 @@ void setup(){
     // BIEEEN
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
-    robot.setup();	
+    robot.setup();
+    robot.moveMotors(MovementState::kTurnLeft, 270);
+    
+    
 }
     
 void loop() {
     
-    if (iterations < 25) { // TODO: juega con este numero
+    /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);
     } else if (iterations < 50) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kStop, 0);
@@ -36,7 +39,7 @@ void loop() {
     else {
         robot.moveMotors(MovementState::kStop, 0);
         delay(10000);
-    }
+    } */
     
     ++iterations;
 

@@ -125,6 +125,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             pwms[backRightIndex] = pwmRight;
 
             setMotorsDirections(MovementState::kForward, directions);
+            setPwmsAndDirections(pwms, directions);
             
             break;
         }
@@ -137,14 +138,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             pwms[backRightIndex] = pwmLeft;
 
             setMotorsDirections(MovementState::kBackward, directions); 
+            setPwmsAndDirections(pwms, directions);
             
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
 
         case (MovementState::kTurnLeft): {
-            Serial.println(abs(targetOrientation - currentOrientation));
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) < kMaxOrientationError) {
+            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
                 Serial.println(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
@@ -164,11 +165,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 currentOrientation = bno.getOrientationX();
                 setPwmsAndDirections(pwms, directions);
             }
+            stopMotors();
 
             break;
         }
         case (MovementState::kTurnRight): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) < kMaxOrientationError) {
+            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
                 pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
 
                 if (turnLeft) {
@@ -186,11 +188,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 currentOrientation = bno.getOrientationX();
                 setPwmsAndDirections(pwms, directions);
             }
+            stopMotors();
 
             break;
         }
     }
-    setPwmsAndDirections(pwms, directions);
 }
 
 
