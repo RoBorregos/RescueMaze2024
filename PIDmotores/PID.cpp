@@ -46,7 +46,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     unsigned long timeDiff = millis() - timePrev;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    constexpr int kBaseSpeed = 70; 
+    constexpr int kBaseSpeed = 70;
     constexpr int kMaxModifier = 50;
     if (errorOrientation < 0) {
         outputLeft = kBaseSpeed + outputModifier;
@@ -70,6 +70,25 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
 
     timePrev = millis(); 
+}
+
+void PID::compute(const double setpoint, double &input, double &output, int &resetVariable, const double pulsesPerRev, const double countTimeSampleInSec){
+    if (millis() - timePrev < sampleTime) {
+        return;
+    }
+
+    input = (resetVariable / pulsesPerRev) * (countTimeSampleInSec);
+    resetVariable = 0;
+
+    const double error = setpoint - input;
+    output = error * kP_ + errorSum * kI_ + (error - errorPrev) * kD_;
+    errorPrev = error;
+    errorSum += error;
+
+    errorSum = constrain(errorSum, minOutput, maxOutput);
+    output = constrain(output, minOutput, maxOutput);
+
+    timePrev = millis();
 }
 
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {

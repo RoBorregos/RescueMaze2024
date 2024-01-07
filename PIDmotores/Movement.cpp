@@ -196,7 +196,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 }
 
 
-// CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''FEDFE'FREFEJ,FBEJFFBHUWBFUHEWBFHJWERBFHJRBEJHFBRJFBKWRJNSBJFBKREJFBKEJB
+// CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 void Movement::updateTics(MotorID motorId) {
 
     int index = static_cast<int>(motorId);
@@ -211,31 +211,22 @@ void Movement::updateTics(MotorID motorId) {
             return;
         }
     }
-    /* motor->deltaPidTics(1);
 
-    if (motor->getCurrentState() == MotorState::kForward){
-        motor->deltaEncoderTics(1);
-    } else if (motor->getCurrentState() == MotorState::kBackward){
-        motor->deltaEncoderTics(-1);
-    }
-    else {
-        return;
-    } */
 } 
 
-int Movement::getBackLeftEncoderTics() {
+long long Movement::getBackLeftEncoderTics() {
     return motor[static_cast<int>(MotorID::kBackLeft)].getEncoderTics();
 }
 
-int Movement::getFrontLeftEncoderTics() {
+long long Movement::getFrontLeftEncoderTics() {
     return motor[static_cast<int>(MotorID::kFrontLeft)].getEncoderTics();
 }
 
-int Movement::getBackRightEncoderTics() {
+long long Movement::getBackRightEncoderTics() {
     return motor[static_cast<int>(MotorID::kBackRight)].getEncoderTics();
 }
 
-int Movement::getFrontRightEncoderTics() {
+long long Movement::getFrontRightEncoderTics() {
     return motor[static_cast<int>(MotorID::kFrontRight)].getEncoderTics();
 }
 
@@ -258,3 +249,4 @@ int Movement::getOrientation(const compass currentOrientation) {
         }
     }
 }
+

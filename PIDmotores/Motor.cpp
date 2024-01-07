@@ -2,6 +2,7 @@
 #include "Encoder.h"
 #include "Pins.h"
 
+PID pid;
 
 Motor::Motor() {
     this->pwmPin = 0;
@@ -36,7 +37,15 @@ MotorState Motor::getCurrentState() {
     return currentState;
 }
 
-int Motor::getEncoderTics() {
+double Motor::getTargetRps(const double speed) {
+    return msToRps(speed) + speedAdjustment;
+}
+
+double Motor::msToRps(const double speed) {
+    return (speed / (kDistancePerRev));
+}
+
+long long Motor::getEncoderTics() {
     return ticsCounter;
 }
 
@@ -51,7 +60,7 @@ void Motor::initMotor() {
 }
 
 // no comentar
-/* void Motor::initEncoder() {
+void Motor::initEncoder() {
     pinMode(encoderA, INPUT_PULLUP);
     
     switch (motorId) {
@@ -76,7 +85,7 @@ void Motor::initMotor() {
             break;
         }
     }
-} */
+} 
 
 void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin = pwmPin;
@@ -89,7 +98,7 @@ void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uin
     pinMode(digitalTwo, OUTPUT);
 
     	//no comentar
-    //initEncoder();
+    initEncoder();
 } 
 
 void Motor::deltaEncoderTics(int deltaTics) {
@@ -155,3 +164,25 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     }
 }
 
+double Motor::getSpeed() {
+    return currentSpeed;
+}
+
+// Todavia no se va a implementar esto
+void Motor::constSpeed(const double speed) {
+    double pwm_ = pwm;
+    pid.compute(
+    getTargetRps(speed), currentSpeed, pwm, pidTics,
+    kPulsesPerRev, kPidCountTimeSampleInSec
+    );
+
+}
+
+void Motor::ticsToMs () {
+    double deltaTics = pidTics;
+    double deltaTicsPerSecond = deltaTics / kPidCountTimeSampleInSec;
+    double deltaTicsPerRev = deltaTicsPerSecond / kPulsesPerRev;
+    double deltaMetersPerRev = deltaTicsPerRev * kDistancePerRev;
+    double deltaMetersPerSecond = deltaMetersPerRev * 1000;
+    currentSpeed = deltaMetersPerSecond;
+}

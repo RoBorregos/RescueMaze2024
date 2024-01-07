@@ -53,7 +53,7 @@ class Motor {
         static constexpr double kPulsesPerRev = 496.0;
         static constexpr double kPidCountTimeSampleInSec = 1000/100;
         static constexpr double kWheelsDiameter = 0.069;
-        static constexpr double DistancePerRev = M_PI * kWheelsDiameter;
+        static constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
 
     public:
         Motor();
@@ -66,7 +66,7 @@ class Motor {
 
         void deltaPidTics(int deltaTics);
 
-        int getEncoderTics();
+        long long getEncoderTics();
 
         void deltaEncoderTics(int deltaTics);
         
@@ -92,6 +92,10 @@ class Motor {
 
         double getCurrentSpeed(); // devuelve velocidad en metros por segundo
         
-        void constSpeed(const double targetSpeed); // Darle velocidad en metros por segundo
+        void constSpeed(const double speed); // Darle velocidad en metros por segundo
+
+        double getSpeed();
+
+        void ticsToMs ();
 };
 #endif

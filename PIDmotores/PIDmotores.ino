@@ -14,12 +14,11 @@ void setup(){
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();
-    robot.moveMotors(MovementState::kTurnLeft, 270);
-    
     
 }
     
 void loop() {
+    robot.moveMotors(MovementState::kForward, 0);
     
     /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);
@@ -44,14 +43,14 @@ void loop() {
     ++iterations;
 
     //LEER TICS DE LOS ENCODERS
-    /* Serial.print("BACK_LEFT: ");
+    Serial.print("BACK_LEFT: ");
     Serial.println(robot.getBackLeftEncoderTics());
     Serial.print("FRONT_LEFT: ");
     Serial.println(robot.getFrontLeftEncoderTics());
     Serial.print("BACK_RIGHT: ");
     Serial.println(robot.getBackRightEncoderTics());
     Serial.print("FRONT_RIGHT: ");
-    Serial.println(robot.getFrontRightEncoderTics()); */
+    Serial.println(robot.getFrontRightEncoderTics()); 
 
     // Asi se leen los valores del eje x del bno
     /* double orientacionX = bno.getOrientationX();

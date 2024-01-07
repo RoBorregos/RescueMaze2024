@@ -52,15 +52,17 @@ class Movement {
         
         void updateTics(MotorID motorId);
 
-        int getBackLeftEncoderTics();
-        int getBackRightEncoderTics();
-        int getFrontLeftEncoderTics();
-        int getFrontRightEncoderTics();    
+        long long getBackLeftEncoderTics();
+        long long getBackRightEncoderTics();
+        long long getFrontLeftEncoderTics();
+        long long getFrontRightEncoderTics();    
 
         int getOrientation(const compass currentOrientation);
         void moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
+
+    
         
 
 
