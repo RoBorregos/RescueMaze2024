@@ -37,8 +37,9 @@ MotorState Motor::getCurrentState() {
     return currentState;
 }
 
+// Checar que hacer en este caso
 double Motor::getTargetRps(const double speed) {
-    return msToRps(speed) + speedAdjustment;
+    return msToRps(speed); // + speedAdjustment;
 }
 
 double Motor::msToRps(const double speed) {
@@ -169,14 +170,14 @@ double Motor::getSpeed() {
 }
 
 // Todavia no se va a implementar esto
-void Motor::constSpeed(const double speed) {
+/* void Motor::constSpeed(const double speed) {
     double pwm_ = pwm;
     pid.compute(
     getTargetRps(speed), currentSpeed, pwm, pidTics,
     kPulsesPerRev, kPidCountTimeSampleInSec
     );
 
-}
+} */
 
 void Motor::ticsToMs () {
     double deltaTics = pidTics;

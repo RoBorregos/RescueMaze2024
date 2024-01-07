@@ -36,7 +36,7 @@ class PID {
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
 
-        void compute(const double setpoint, const double &input, double &output, int &resetVariable, const double pulsesPerRev, const double countTimeSampleInSec);
+        void compute(const double setpoint, double &input, double &output, int &resetVariable, const double pulsesPerRev, const double countTimeSampleInSec);
 
 };
 #endif

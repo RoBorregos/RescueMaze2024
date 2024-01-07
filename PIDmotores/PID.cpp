@@ -77,7 +77,7 @@ void PID::compute(const double setpoint, double &input, double &output, int &res
         return;
     }
 
-    input = (resetVariable / pulsesPerRev) * (countTimeSampleInSec);
+    input = ((resetVariable / pulsesPerRev) * countTimeSampleInSec);
     resetVariable = 0;
 
     const double error = setpoint - input;

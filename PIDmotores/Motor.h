@@ -82,6 +82,10 @@ class Motor {
         
         double getRPM();
 
+        double getTargetRps(const double speed);
+
+        double msToRps(const double speed);
+
         void initMotor();
 
         void setEncoderTics(int tics);
