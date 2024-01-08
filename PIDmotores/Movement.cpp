@@ -1,7 +1,7 @@
 
 #include "Movement.h"
 #include "Pins.h"
-//#include "Encoder.h"
+#include "Encoder.h"
 
 constexpr double kPForward = 1.5; 
 constexpr double kIForward = 0.3;
@@ -31,7 +31,7 @@ void Movement::setup() {
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
-    //Encoder::initEncoder();
+    Encoder::initEncoder();
 }
 
 void Movement::setupInternal(MotorID motorId) {
@@ -201,11 +201,11 @@ void Movement::updateTics(MotorID motorId) {
 
     int index = static_cast<int>(motorId);
     if (index >= 0 && index < 4) {
-        motor[index].deltaPidTics(1);
+        motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
-            motor[index].deltaEncoderTics(1);
+            motor[index].deltaTotalTics(1);
         } else if (motor[index].getCurrentState() == MotorState::kBackward){
-            motor[index].deltaEncoderTics(-1);
+            motor[index].deltaTotalTics(-1);
         }
         else {
             return;
@@ -214,20 +214,20 @@ void Movement::updateTics(MotorID motorId) {
 
 } 
 
-long long Movement::getBackLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBackLeft)].getEncoderTics();
+double Movement::getBackLeftEncoderTics() {
+    return motor[static_cast<int>(MotorID::kBackLeft)].ticsToMs();
 }
 
-long long Movement::getFrontLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFrontLeft)].getEncoderTics();
+double Movement::getFrontLeftEncoderTics() {
+    return motor[static_cast<int>(MotorID::kFrontLeft)].ticsToMs();
 }
 
-long long Movement::getBackRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBackRight)].getEncoderTics();
+double Movement::getBackRightEncoderTics() {
+    return motor[static_cast<int>(MotorID::kBackRight)].ticsToMs();
 }
 
-long long Movement::getFrontRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFrontRight)].getEncoderTics();
+double Movement::getFrontRightEncoderTics() {
+    return motor[static_cast<int>(MotorID::kFrontRight)].ticsToMs();
 }
 
 int Movement::getOrientation(const compass currentOrientation) {

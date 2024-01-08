@@ -52,6 +52,8 @@ void loop() {
     Serial.print("FRONT_RIGHT: ");
     Serial.println(robot.getFrontRightEncoderTics()); 
 
+    delay(200);
+
     // Asi se leen los valores del eje x del bno
     /* double orientacionX = bno.getOrientationX();
     Serial.print("orientacionX: ");

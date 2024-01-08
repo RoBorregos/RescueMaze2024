@@ -47,11 +47,11 @@ double Motor::msToRps(const double speed) {
 }
 
 long long Motor::getEncoderTics() {
-    return ticsCounter;
+    return totalTics;
 }
 
 int Motor::getPidTics() {
-    return pidTics;
+    return timeEpochTics;
 }
 
 void Motor::initMotor() {
@@ -102,12 +102,12 @@ void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uin
     initEncoder();
 } 
 
-void Motor::deltaEncoderTics(int deltaTics) {
-    ticsCounter += deltaTics;
+void Motor::deltaTotalTics(const int deltaTics) {
+    totalTics += deltaTics;
 }
 
-void Motor::deltaPidTics(int deltaTics) {
-    pidTics += deltaTics;
+void Motor::deltaTics(const int deltaTics) {
+    timeEpochTics += deltaTics;
 }
 
 void Motor:: motorForward(const uint8_t pwm) {
@@ -179,11 +179,26 @@ double Motor::getSpeed() {
 
 } */
 
-void Motor::ticsToMs () {
-    double deltaTics = pidTics;
-    double deltaTicsPerSecond = deltaTics / kPidCountTimeSampleInSec;
-    double deltaTicsPerRev = deltaTicsPerSecond / kPulsesPerRev;
-    double deltaMetersPerRev = deltaTicsPerRev * kDistancePerRev;
-    double deltaMetersPerSecond = deltaMetersPerRev * 1000;
+double Motor::ticsToMs () {
+    unsigned long currentTime = millis();
+    Serial.print("currentTime: ");
+    Serial.println(currentTime);
+    Serial.print("timePrev: ");
+    Serial.println(timePrev);
+    Serial.print("Diferencia: ");
+    Serial.println(currentTime - timePrev);
+    /* if (currentTime - timePrev < kOneSecInMs) {
+        return 0;
+    } */
+    // unsigned long deltaTime = currentTime - timePrev;
+    timePrev = currentTime;
+
+   /*  const double deltaTics = timeEpochTics;
+    const double deltaRev = deltaTics / kPulsesPerRev;
+    const double deltaMeters = deltaRev * kDistancePerRev;
+    const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
+
     currentSpeed = deltaMetersPerSecond;
+    timeEpochTics = 0; */ 
+    return timeEpochTics;
 }

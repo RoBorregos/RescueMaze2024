@@ -20,6 +20,7 @@ extern Movement robot;
 
 void Encoder::backLeftEncoder() {
     robot.updateTics(MotorID::kBackLeft);
+
 }
 
 void Encoder::backRightEncoder() {
