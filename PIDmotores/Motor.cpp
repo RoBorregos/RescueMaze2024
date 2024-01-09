@@ -2,8 +2,6 @@
 #include "Encoder.h"
 #include "Pins.h"
 
-PID pid;
-
 Motor::Motor() {
     this->pwmPin = 0;
     this->digitalOne = 0;
@@ -35,15 +33,6 @@ uint8_t Motor::getEncoderA() {
 
 MotorState Motor::getCurrentState() {
     return currentState;
-}
-
-// Checar que hacer en este caso
-double Motor::getTargetRps(const double speed) {
-    return msToRps(speed); // + speedAdjustment;
-}
-
-double Motor::msToRps(const double speed) {
-    return (speed / (kDistancePerRev));
 }
 
 long long Motor::getEncoderTics() {
@@ -169,36 +158,19 @@ double Motor::getSpeed() {
     return currentSpeed;
 }
 
-// Todavia no se va a implementar esto
-/* void Motor::constSpeed(const double speed) {
-    double pwm_ = pwm;
-    pid.compute(
-    getTargetRps(speed), currentSpeed, pwm, pidTics,
-    kPulsesPerRev, kPidCountTimeSampleInSec
-    );
-
-} */
-
-double Motor::ticsToMs () {
+double Motor::ticsToMs() {
     unsigned long currentTime = millis();
-    Serial.print("currentTime: ");
-    Serial.println(currentTime);
-    Serial.print("timePrev: ");
-    Serial.println(timePrev);
-    Serial.print("Diferencia: ");
-    Serial.println(currentTime - timePrev);
-    /* if (currentTime - timePrev < kOneSecInMs) {
-        return 0;
-    } */
-    // unsigned long deltaTime = currentTime - timePrev;
-    timePrev = currentTime;
-
-   /*  const double deltaTics = timeEpochTics;
-    const double deltaRev = deltaTics / kPulsesPerRev;
-    const double deltaMeters = deltaRev * kDistancePerRev;
-    const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
-
-    currentSpeed = deltaMetersPerSecond;
-    timeEpochTics = 0; */ 
-    return timeEpochTics;
+    double speed = 0;
+    unsigned long deltaTime = currentTime - timePrev;
+    if ( (deltaTime) > kOneSecInMs) {
+        speed = timeEpochTics;
+        timePrev = currentTime;
+        const double deltaTics = timeEpochTics;
+        const double deltaRev = deltaTics / kPulsesPerRev;
+        const double deltaMeters = deltaRev * kDistancePerRev;
+        const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
+        speed = deltaMetersPerSecond;
+        timeEpochTics = 0; 
+    }
+    return speed;
 }

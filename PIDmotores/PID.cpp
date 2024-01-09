@@ -72,25 +72,6 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     timePrev = millis(); 
 }
 
-void PID::compute(const double setpoint, double &input, double &output, int &resetVariable, const double pulsesPerRev, const double countTimeSampleInSec){
-    if (millis() - timePrev < sampleTime) {
-        return;
-    }
-
-    input = ((resetVariable / pulsesPerRev) * countTimeSampleInSec);
-    resetVariable = 0;
-
-    const double error = setpoint - input;
-    output = error * kP_ + errorSum * kI_ + (error - errorPrev) * kD_;
-    errorPrev = error;
-    errorSum += error;
-
-    errorSum = constrain(errorSum, minOutput, maxOutput);
-    output = constrain(output, minOutput, maxOutput);
-
-    timePrev = millis();
-}
-
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
     bool goalReached = false;
     unsigned long timeDiff = millis() - timePrev;

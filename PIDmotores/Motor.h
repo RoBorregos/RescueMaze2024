@@ -44,17 +44,17 @@ class Motor {
 
         unsigned long timePrev = 0;
 
-        // This may will be use for the total distance traveled
+        // This will be use for the total distance traveled.
         long long int totalTics = 0;
 
 
-        // This may will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time
+        // This will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time.
         long long timeEpochTics = 0;
 
         double currentSpeed = 0;
         double targetSpeed = 0;
 
-        long long kOneSecInMs = 1000;
+        static constexpr long long kOneSecInMs = 1000;
 
         // TODO: Motor characteristics
         // ...........................

@@ -214,19 +214,19 @@ void Movement::updateTics(MotorID motorId) {
 
 } 
 
-double Movement::getBackLeftEncoderTics() {
+double Movement::getBackLeftVelocity() {
     return motor[static_cast<int>(MotorID::kBackLeft)].ticsToMs();
 }
 
-double Movement::getFrontLeftEncoderTics() {
+double Movement::getFrontLeftVelocity() {
     return motor[static_cast<int>(MotorID::kFrontLeft)].ticsToMs();
 }
 
-double Movement::getBackRightEncoderTics() {
+double Movement::getBackRightVelocity() {
     return motor[static_cast<int>(MotorID::kBackRight)].ticsToMs();
 }
 
-double Movement::getFrontRightEncoderTics() {
+double Movement::getFrontRightVelocity() {
     return motor[static_cast<int>(MotorID::kFrontRight)].ticsToMs();
 }
 

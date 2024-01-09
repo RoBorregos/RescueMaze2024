@@ -44,13 +44,13 @@ void loop() {
 
     //LEER TICS DE LOS ENCODERS
     Serial.print("BACK_LEFT: ");
-    Serial.println(robot.getBackLeftEncoderTics());
+    Serial.println(robot.getBackLeftVelocity());
     Serial.print("FRONT_LEFT: ");
-    Serial.println(robot.getFrontLeftEncoderTics());
+    Serial.println(robot.getFrontLeftVelocity());
     Serial.print("BACK_RIGHT: ");
-    Serial.println(robot.getBackRightEncoderTics());
+    Serial.println(robot.getBackRightVelocity());
     Serial.print("FRONT_RIGHT: ");
-    Serial.println(robot.getFrontRightEncoderTics()); 
+    Serial.println(robot.getFrontRightVelocity()); 
 
     delay(200);
 
