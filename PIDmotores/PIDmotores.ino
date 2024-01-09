@@ -8,13 +8,10 @@ Movement robot;
 double targetOrientation = 0.0;
 unsigned long iterations = 0;
 
-
 void setup(){
-    // BIEEEN
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();
-    
 }
     
 void loop() {

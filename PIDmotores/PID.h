@@ -35,7 +35,5 @@ class PID {
 
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
-
-
 };
 #endif

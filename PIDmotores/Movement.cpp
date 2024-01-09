@@ -31,7 +31,6 @@ void Movement::setup() {
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
-    Encoder::initEncoder();
 }
 
 void Movement::setupInternal(MotorID motorId) {
@@ -195,20 +194,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-
-// CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 void Movement::updateTics(MotorID motorId) {
-
-    int index = static_cast<int>(motorId);
+    const int index = static_cast<int>(motorId);
     if (index >= 0 && index < 4) {
         motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
             motor[index].deltaTotalTics(1);
         } else if (motor[index].getCurrentState() == MotorState::kBackward){
             motor[index].deltaTotalTics(-1);
-        }
-        else {
-            return;
         }
     }
 

@@ -35,11 +35,11 @@ MotorState Motor::getCurrentState() {
     return currentState;
 }
 
-long long Motor::getEncoderTics() {
+long long Motor::getTotalTics() {
     return totalTics;
 }
 
-int Motor::getPidTics() {
+long long Motor::getEpochTics() {
     return timeEpochTics;
 }
 
@@ -49,7 +49,6 @@ void Motor::initMotor() {
     motorStop();
 }
 
-// no comentar
 void Motor::initEncoder() {
     pinMode(encoderA, INPUT_PULLUP);
     
@@ -86,8 +85,6 @@ void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uin
     pinMode(pwmPin, OUTPUT);
     pinMode(digitalOne, OUTPUT);
     pinMode(digitalTwo, OUTPUT);
-
-    	//no comentar
     initEncoder();
 } 
 
@@ -159,9 +156,10 @@ double Motor::getSpeed() {
 }
 
 double Motor::ticsToMs() {
-    unsigned long currentTime = millis();
+    const unsigned long currentTime = millis();
     double speed = 0;
-    unsigned long deltaTime = currentTime - timePrev;
+    
+    const unsigned long deltaTime = currentTime - timePrev;
     if ( (deltaTime) > kOneSecInMs) {
         speed = timeEpochTics;
         timePrev = currentTime;
@@ -171,6 +169,7 @@ double Motor::ticsToMs() {
         const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
         speed = deltaMetersPerSecond;
         timeEpochTics = 0; 
+        speedPrev = speed;
     }
-    return speed;
+    return speedPrev;
 }

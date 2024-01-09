@@ -16,10 +16,8 @@
 #define RobotTurnLeft 3
 #define RobotBackward 4  */
 
-
 namespace Encoder {
     void initEncoder();
-    void updateTics(Motor *motor);
     void backLeftEncoder();
     void backRightEncoder();
     void frontLeftEncoder();

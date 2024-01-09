@@ -45,7 +45,7 @@ class Motor {
         unsigned long timePrev = 0;
 
         // This will be use for the total distance traveled.
-        long long int totalTics = 0;
+        long long totalTics = 0;
 
 
         // This will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time.
@@ -53,6 +53,7 @@ class Motor {
 
         double currentSpeed = 0;
         double targetSpeed = 0;
+        double speedPrev = 0;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -70,11 +71,11 @@ class Motor {
 
         uint8_t getEncoderA();
     
-        int getPidTics();
+        long long getEpochTics();
 
         void deltaTics(const int deltaTics);
 
-        long long getEncoderTics();
+        long long getTotalTics();
 
         void deltaTotalTics(const int deltaTics);
         
@@ -90,10 +91,6 @@ class Motor {
         
         double getRPM();
 
-        double getTargetRps(const double speed);
-
-        double msToRps(const double speed);
-
         void initMotor();
 
         void setEncoderTics(int tics);
@@ -103,8 +100,6 @@ class Motor {
         void setPwmAndDirection(const uint8_t pwm, const MotorState direction);
 
         double getCurrentSpeed(); // devuelve velocidad en metros por segundo
-        
-        void constSpeed(const double speed); // Darle velocidad en metros por segundo
 
         double getSpeed();
 
