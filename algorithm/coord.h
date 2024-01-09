@@ -5,7 +5,9 @@ struct coord{
     bool const operator==(const coord &o) const {
         return x == o.x && y == o.y;
     }
-
+    bool const operator!=(const coord &o) const {
+        return x != o.x || y != o.y;
+    }
     bool const operator<(const coord &o) const {
         return x < o.x || (x == o.x && y < o.y);
     }

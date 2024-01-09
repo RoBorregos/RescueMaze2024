@@ -2,10 +2,18 @@
 #include<vector>
 #include<unordered_map>
 #include<stack>
+#include<climits>
 
 using namespace std;
 
 #include "Tile.h"
+
+bool compare(coord a, coord b){
+    if(a.x == b.x && a.y == b.y){
+        return true;
+    }
+    return false;
+}
 
 void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
     unordered_map<coord,bool> explored;
@@ -15,7 +23,7 @@ void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
     string directions[] = {"up", "down", "left", "right"};
     //initialize distance
     for(auto it = map.begin(); it != map.end(); it++){
-        distance[it->first] = 1000000;
+        distance[it->first] = INT_MAX;
         explored[it->first] = false;
     }
     distance[start] = 0;
@@ -23,11 +31,12 @@ void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
 
     //explore the map
     coord currentTile = start;
+    int minDistance, weight;
     while(!explored[end]){
         //update distance
         for(int i = 0; i < 4; i++){
             if(map[currentTile].adjacentTiles[directions[i]] != NULL && !map[currentTile].walls[directions[i]]){
-                int weight = map[currentTile].weights[directions[i]] + distance[currentTile];
+                weight = map[currentTile].weights[directions[i]] + distance[currentTile];
                 if(weight < distance[map[currentTile].adjacentTiles[directions[i]]->position]){
                     distance[map[currentTile].adjacentTiles[directions[i]]->position] = weight;
                     previous[map[currentTile].adjacentTiles[directions[i]]->position] = currentTile;
@@ -35,7 +44,7 @@ void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
             }
         }
         //find next tile
-        int minDistance = 1000000;
+        minDistance = INT_MAX;
         for(auto it = distance.begin(); it != distance.end(); it++){
             if(it->second < minDistance && !explored[it->first]){
                 minDistance = it->second;
@@ -46,7 +55,7 @@ void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
     }
     //find path
     coord current = end;
-    while(current.x != start.x && current.y != start.y){
+    while(current!=start){ // current.x != start.x || current.y != start.y
         path.push(current);
         current = previous[current];
     }
@@ -193,7 +202,7 @@ int main(){
         cout<<endl;
     }
 
-    dijsktra(coord{1,1},coord{9,7},map);
+    dijsktra(coord{1,1},coord{9,5},map);
     return 0;
 }
 
