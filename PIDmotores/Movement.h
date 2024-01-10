@@ -21,6 +21,7 @@ enum class MovementState{
 
 class Movement {
     private:
+        PID pid;
         Motor motorFL;
         Motor motorFR;
         Motor motorBL;
@@ -61,6 +62,8 @@ class Movement {
         void moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
+
+        void setSpeed(const double speed);
 };
 
 #endif

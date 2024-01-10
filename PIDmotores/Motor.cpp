@@ -13,6 +13,7 @@ Motor::Motor() {
     this->errorPrev = 0;
     this->errorAcumulado = 0;
     this->motorId = MotorID::kNone;
+    this->pid.setTunnings(150, 100, 0.0, 0, 255, 4000, 100);
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -32,7 +33,7 @@ uint8_t Motor::getEncoderA() {
 }
 
 MotorState Motor::getCurrentState() {
-    return currentState;
+    return currentState_;
 }
 
 long long Motor::getTotalTics() {
@@ -98,7 +99,7 @@ void Motor::deltaTics(const int deltaTics) {
 
 void Motor:: motorForward(const uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    if (currentState == MotorState::kForward) {
+    if (currentState_ == MotorState::kForward) {
         return;
     } 
     //Serial.println("Forward");
@@ -106,12 +107,12 @@ void Motor:: motorForward(const uint8_t pwm) {
     digitalWrite(digitalOne, HIGH);
     digitalWrite(digitalTwo, LOW);
 
-    currentState = MotorState::kForward;
+    currentState_ = MotorState::kForward;
 }
 
 void Motor:: motorBackward(uint8_t pwm) {
     analogWrite(pwmPin, pwm);
-    if (currentState == MotorState::kBackward) {
+    if (currentState_ == MotorState::kBackward) {
         return;
     }
     //Serial.println("Backward");
@@ -120,21 +121,21 @@ void Motor:: motorBackward(uint8_t pwm) {
     digitalWrite(digitalTwo, HIGH);
 
 
-    currentState = MotorState::kBackward;
+    currentState_ = MotorState::kBackward;
 }
 
 void Motor:: motorStop() {
     pwm = 0;
     analogWrite(pwmPin, pwm);
 
-    if (currentState == MotorState::kStop) {
+    if (currentState_ == MotorState::kStop) {
         return;
     } 
 
     digitalWrite(digitalOne, LOW);
     digitalWrite(digitalTwo, LOW);
 
-    currentState = MotorState::kStop;
+    currentState_ = MotorState::kStop;
 }
 
 double Motor::getRPM() {
@@ -152,7 +153,17 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
 }
 
 double Motor::getSpeed() {
-    return currentSpeed;
+    return currentSpeed_;
+}
+
+static double ticsToSpeed(const long long tics, const unsigned long time) {
+    const double timeDouble = static_cast<double>(time);
+    const double timeInSec = timeDouble / kOneSecInMs;
+    const double deltaTics = tics;
+    const double deltaRev = deltaTics / kPulsesPerRev;
+    const double deltaMeters = deltaRev * kDistancePerRev;
+    const double deltaMetersPerSecond = deltaMeters / timeInSec;
+    return deltaMetersPerSecond;
 }
 
 double Motor::ticsToMs() {
@@ -162,13 +173,15 @@ double Motor::ticsToMs() {
     
     if (deltaTime > kOneSecInMs) {
         previousTime = currentTime;
-        const double deltaTics = timeEpochTics;
-        const double deltaRev = deltaTics / kPulsesPerRev;
-        const double deltaMeters = deltaRev * kDistancePerRev;
-        const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
-        speed = deltaMetersPerSecond;
+        speed = ticsToSpeed(timeEpochTics, deltaTime);
         timeEpochTics = 0; 
-        previousSpeed = speed;
+        currentSpeed_ = speed;
     }
-    return previousSpeed;
+    return currentSpeed_;
+}
+
+void Motor::constantSpeed(const double speed) {
+    double tmpPwm = pwm;
+    pid.compute(speed, currentSpeed_, tmpPwm, timeEpochTics, &ticsToSpeed);
+    setPwmAndDirection(tmpPwm, MotorState::kForward);
 }

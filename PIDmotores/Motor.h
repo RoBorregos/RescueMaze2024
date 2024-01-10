@@ -19,8 +19,15 @@ enum class MotorID {
     kNone
 };
 
+constexpr long long kOneSecInMs = 1000;
+constexpr double kPulsesPerRev = 496.0;
+constexpr double kPidCountTimeSampleInSec = 1000/100;
+constexpr double kWheelsDiameter = 0.069;
+constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
+
 class Motor {
     private:
+        PID pid;
         // MOTORS
         uint8_t pwm = 0;
         uint8_t pwmPin;
@@ -40,7 +47,7 @@ class Motor {
         double errorPrev;
         double errorAcumulado;
 
-        MotorState currentState;
+        MotorState currentState_;
 
         unsigned long previousTime = 0;
 
@@ -51,18 +58,18 @@ class Motor {
         // This will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time.
         long long timeEpochTics = 0;
 
-        double currentSpeed = 0;
+        double currentSpeed_ = 0;
         double targetSpeed = 0;
         double previousSpeed = 0;
 
-        static constexpr long long kOneSecInMs = 1000;
+        // static constexpr long long kOneSecInMs = 1000;
 
         // TODO: Motor characteristics
         // ...........................
-        static constexpr double kPulsesPerRev = 496.0;
+       /*  static constexpr double kPulsesPerRev = 496.0;
         static constexpr double kPidCountTimeSampleInSec = 1000/100;
         static constexpr double kWheelsDiameter = 0.069;
-        static constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
+        static constexpr double kDistancePerRev = M_PI * kWheelsDiameter; */
 
     public:
         Motor();
@@ -104,5 +111,9 @@ class Motor {
         double getSpeed();
 
         double ticsToMs();
+
+        //static double ticsToSpeed(const long long tics, const unsigned long time);
+
+        void constantSpeed(const double speed);
 };
 #endif
