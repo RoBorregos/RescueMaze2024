@@ -1,7 +1,6 @@
 
 #include "Movement.h"
 #include "Pins.h"
-//#include "Encoder.h"
 
 constexpr double kPForward = 1.5; 
 constexpr double kIForward = 0.3;
@@ -31,7 +30,6 @@ void Movement::setup() {
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
-    //Encoder::initEncoder();
 }
 
 void Movement::setupInternal(MotorID motorId) {
@@ -195,48 +193,33 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-
-// CALIZZ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''FEDFE'FREFEJ,FBEJFFBHUWBFUHEWBFHJWERBFHJRBEJHFBRJFBKWRJNSBJFBKREJFBKEJB
 void Movement::updateTics(MotorID motorId) {
-
-    int index = static_cast<int>(motorId);
+    const int index = static_cast<int>(motorId);
     if (index >= 0 && index < 4) {
-        motor[index].deltaPidTics(1);
+        motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
-            motor[index].deltaEncoderTics(1);
+            motor[index].deltaTotalTics(1);
         } else if (motor[index].getCurrentState() == MotorState::kBackward){
-            motor[index].deltaEncoderTics(-1);
-        }
-        else {
-            return;
+            motor[index].deltaTotalTics(-1);
         }
     }
-    /* motor->deltaPidTics(1);
 
-    if (motor->getCurrentState() == MotorState::kForward){
-        motor->deltaEncoderTics(1);
-    } else if (motor->getCurrentState() == MotorState::kBackward){
-        motor->deltaEncoderTics(-1);
-    }
-    else {
-        return;
-    } */
 } 
 
-int Movement::getBackLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBackLeft)].getEncoderTics();
+double Movement::getBackLeftSpeed() {
+    return motor[static_cast<int>(MotorID::kBackLeft)].ticsToMs();
 }
 
-int Movement::getFrontLeftEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFrontLeft)].getEncoderTics();
+double Movement::getFrontLeftSpeed() {
+    return motor[static_cast<int>(MotorID::kFrontLeft)].ticsToMs();
 }
 
-int Movement::getBackRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kBackRight)].getEncoderTics();
+double Movement::getBackRightSpeed() {
+    return motor[static_cast<int>(MotorID::kBackRight)].ticsToMs();
 }
 
-int Movement::getFrontRightEncoderTics() {
-    return motor[static_cast<int>(MotorID::kFrontRight)].getEncoderTics();
+double Movement::getFrontRightSpeed() {
+    return motor[static_cast<int>(MotorID::kFrontRight)].ticsToMs();
 }
 
 int Movement::getOrientation(const compass currentOrientation) {
@@ -258,3 +241,4 @@ int Movement::getOrientation(const compass currentOrientation) {
         }
     }
 }
+

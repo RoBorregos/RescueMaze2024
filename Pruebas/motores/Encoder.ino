@@ -1,6 +1,6 @@
 #include "Encoder.h"
 
-void Encoder::updateTics(Motor *motor){
+/* void Encoder::updateTics(Motor *motor){
   motor->deltaPidTics(1);
   if(motor->getCurrentState() == MotorState::Forward){
     motor->deltaEncoderTics(1);
@@ -11,7 +11,7 @@ void Encoder::updateTics(Motor *motor){
   else {
     return;
   }
-}
+} */
 //................................................................................................................
 //VER COMO ADAPTAR ESTO 
 void Encoder::backLeftEncoder() {

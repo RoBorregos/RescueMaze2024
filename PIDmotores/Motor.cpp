@@ -2,7 +2,6 @@
 #include "Encoder.h"
 #include "Pins.h"
 
-
 Motor::Motor() {
     this->pwmPin = 0;
     this->digitalOne = 0;
@@ -36,12 +35,12 @@ MotorState Motor::getCurrentState() {
     return currentState;
 }
 
-int Motor::getEncoderTics() {
-    return ticsCounter;
+long long Motor::getTotalTics() {
+    return totalTics;
 }
 
-int Motor::getPidTics() {
-    return pidTics;
+long long Motor::getEpochTics() {
+    return timeEpochTics;
 }
 
 void Motor::initMotor() {
@@ -50,8 +49,7 @@ void Motor::initMotor() {
     motorStop();
 }
 
-// no comentar
-/* void Motor::initEncoder() {
+void Motor::initEncoder() {
     pinMode(encoderA, INPUT_PULLUP);
     
     switch (motorId) {
@@ -76,7 +74,7 @@ void Motor::initMotor() {
             break;
         }
     }
-} */
+} 
 
 void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin = pwmPin;
@@ -87,17 +85,15 @@ void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uin
     pinMode(pwmPin, OUTPUT);
     pinMode(digitalOne, OUTPUT);
     pinMode(digitalTwo, OUTPUT);
-
-    	//no comentar
-    //initEncoder();
+    initEncoder();
 } 
 
-void Motor::deltaEncoderTics(int deltaTics) {
-    ticsCounter += deltaTics;
+void Motor::deltaTotalTics(const int deltaTics) {
+    totalTics += deltaTics;
 }
 
-void Motor::deltaPidTics(int deltaTics) {
-    pidTics += deltaTics;
+void Motor::deltaTics(const int deltaTics) {
+    timeEpochTics += deltaTics;
 }
 
 void Motor:: motorForward(const uint8_t pwm) {
@@ -155,3 +151,24 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     }
 }
 
+double Motor::getSpeed() {
+    return currentSpeed;
+}
+
+double Motor::ticsToMs() {
+    const unsigned long currentTime = millis();
+    const unsigned long deltaTime = currentTime - previousTime;
+    double speed = 0;
+    
+    if (deltaTime > kOneSecInMs) {
+        previousTime = currentTime;
+        const double deltaTics = timeEpochTics;
+        const double deltaRev = deltaTics / kPulsesPerRev;
+        const double deltaMeters = deltaRev * kDistancePerRev;
+        const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
+        speed = deltaMetersPerSecond;
+        timeEpochTics = 0; 
+        previousSpeed = speed;
+    }
+    return previousSpeed;
+}

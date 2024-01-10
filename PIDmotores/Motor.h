@@ -42,18 +42,27 @@ class Motor {
 
         MotorState currentState;
 
-        long long int ticsCounter=0;
-        int pidTics = 0;
+        unsigned long previousTime = 0;
+
+        // This will be use for the total distance traveled.
+        long long totalTics = 0;
+
+
+        // This will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time.
+        long long timeEpochTics = 0;
 
         double currentSpeed = 0;
         double targetSpeed = 0;
+        double previousSpeed = 0;
+
+        static constexpr long long kOneSecInMs = 1000;
 
         // TODO: Motor characteristics
         // ...........................
         static constexpr double kPulsesPerRev = 496.0;
         static constexpr double kPidCountTimeSampleInSec = 1000/100;
         static constexpr double kWheelsDiameter = 0.069;
-        static constexpr double DistancePerRev = M_PI * kWheelsDiameter;
+        static constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
 
     public:
         Motor();
@@ -62,13 +71,13 @@ class Motor {
 
         uint8_t getEncoderA();
     
-        int getPidTics();
+        long long getEpochTics();
 
-        void deltaPidTics(int deltaTics);
+        void deltaTics(const int deltaTics);
 
-        int getEncoderTics();
+        long long getTotalTics();
 
-        void deltaEncoderTics(int deltaTics);
+        void deltaTotalTics(const int deltaTics);
         
         void initEncoder();
         
@@ -91,7 +100,9 @@ class Motor {
         void setPwmAndDirection(const uint8_t pwm, const MotorState direction);
 
         double getCurrentSpeed(); // devuelve velocidad en metros por segundo
-        
-        void constSpeed(const double targetSpeed); // Darle velocidad en metros por segundo
+
+        double getSpeed();
+
+        double ticsToMs();
 };
 #endif

@@ -46,7 +46,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     unsigned long timeDiff = millis() - timePrev;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    constexpr int kBaseSpeed = 70; 
+    constexpr int kBaseSpeed = 70;
     constexpr int kMaxModifier = 50;
     if (errorOrientation < 0) {
         outputLeft = kBaseSpeed + outputModifier;
