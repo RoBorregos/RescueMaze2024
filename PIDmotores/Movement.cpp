@@ -1,7 +1,6 @@
 
 #include "Movement.h"
 #include "Pins.h"
-#include "Encoder.h"
 
 constexpr double kPForward = 1.5; 
 constexpr double kIForward = 0.3;
@@ -207,19 +206,19 @@ void Movement::updateTics(MotorID motorId) {
 
 } 
 
-double Movement::getBackLeftVelocity() {
+double Movement::getBackLeftSpeed() {
     return motor[static_cast<int>(MotorID::kBackLeft)].ticsToMs();
 }
 
-double Movement::getFrontLeftVelocity() {
+double Movement::getFrontLeftSpeed() {
     return motor[static_cast<int>(MotorID::kFrontLeft)].ticsToMs();
 }
 
-double Movement::getBackRightVelocity() {
+double Movement::getBackRightSpeed() {
     return motor[static_cast<int>(MotorID::kBackRight)].ticsToMs();
 }
 
-double Movement::getFrontRightVelocity() {
+double Movement::getFrontRightSpeed() {
     return motor[static_cast<int>(MotorID::kFrontRight)].ticsToMs();
 }
 

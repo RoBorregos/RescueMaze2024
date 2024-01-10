@@ -157,19 +157,18 @@ double Motor::getSpeed() {
 
 double Motor::ticsToMs() {
     const unsigned long currentTime = millis();
+    const unsigned long deltaTime = currentTime - previousTime;
     double speed = 0;
     
-    const unsigned long deltaTime = currentTime - timePrev;
-    if ( (deltaTime) > kOneSecInMs) {
-        speed = timeEpochTics;
-        timePrev = currentTime;
+    if (deltaTime > kOneSecInMs) {
+        previousTime = currentTime;
         const double deltaTics = timeEpochTics;
         const double deltaRev = deltaTics / kPulsesPerRev;
         const double deltaMeters = deltaRev * kDistancePerRev;
         const double deltaMetersPerSecond = deltaMeters / (deltaTime / kOneSecInMs);
         speed = deltaMetersPerSecond;
         timeEpochTics = 0; 
-        speedPrev = speed;
+        previousSpeed = speed;
     }
-    return speedPrev;
+    return previousSpeed;
 }

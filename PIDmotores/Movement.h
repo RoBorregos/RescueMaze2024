@@ -52,10 +52,10 @@ class Movement {
         
         void updateTics(MotorID motorId);
 
-        double getBackLeftVelocity();
-        double getBackRightVelocity();
-        double getFrontLeftVelocity();
-        double getFrontRightVelocity();    
+        double getBackLeftSpeed();
+        double getBackRightSpeed();
+        double getFrontLeftSpeed();
+        double getFrontRightSpeed();    
 
         int getOrientation(const compass currentOrientation);
         void moveMotors(const MovementState state, const double targetOrientation);

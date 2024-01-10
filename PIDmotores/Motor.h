@@ -42,7 +42,7 @@ class Motor {
 
         MotorState currentState;
 
-        unsigned long timePrev = 0;
+        unsigned long previousTime = 0;
 
         // This will be use for the total distance traveled.
         long long totalTics = 0;
@@ -53,7 +53,7 @@ class Motor {
 
         double currentSpeed = 0;
         double targetSpeed = 0;
-        double speedPrev = 0;
+        double previousSpeed = 0;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -103,6 +103,6 @@ class Motor {
 
         double getSpeed();
 
-        double ticsToMs ();
+        double ticsToMs();
 };
 #endif
