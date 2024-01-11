@@ -26,6 +26,7 @@ Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t p
     this->encoders_[1] = 0;
     this->encoders_[2] = 0;
     this->encoders_[3] = 0;
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
 }
 
 uint8_t Motor::getEncoderA() {
