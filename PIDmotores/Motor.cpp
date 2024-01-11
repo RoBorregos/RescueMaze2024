@@ -162,7 +162,7 @@ static double ticsToSpeed(const long long tics, const unsigned long time) {
 
 void Motor::constantSpeed(const double speed) {
     double tmpPwm = 0;
-    pid.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
+    pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
     // TODO: Change thw way we set the MotorState
     setPwmAndDirection(tmpPwm, MotorState::kForward);
 }
