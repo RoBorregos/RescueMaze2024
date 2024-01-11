@@ -21,21 +21,22 @@ enum class MovementState{
 
 class Movement {
     private:
-        Motor motorFL;
-        Motor motorFR;
-        Motor motorBL;
-        Motor motorBR;
+        PID pid_;
+        Motor motorFL_;
+        Motor motorFR_;
+        Motor motorBL_;
+        Motor motorBR_;
 
-        unsigned long next_time;
+        unsigned long nextTime_;
   
-        float errorPrevOrientation;
-        float errorAcumuladoOrientation;
+        float errorPrevOrientation_;
+        float errorAcumuladoOrientation_;
 
-        long long int ticsCounter=0;
-        int pidTics = 0;
+        long long int ticsCounter_ = 0;
+        int pidTics_ = 0;
 
-        double currentSpeed = 0;
-        double targetSpeed = 0;
+        double currentSpeed_ = 0;
+        double targetSpeed_ = 0;
 
         Motor motor[4];
 
@@ -61,6 +62,8 @@ class Movement {
         void moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
+
+        void setSpeed(const double speed);
 };
 
 #endif

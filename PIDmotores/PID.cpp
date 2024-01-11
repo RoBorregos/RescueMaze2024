@@ -1,25 +1,33 @@
 #include "PID.h"
 
 PID::PID() {
-    timePrev = millis();
+    timePrev_ = millis();
+    errorPrev_ = 0;
 }
 
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
-    timePrev = millis();
-    double sampleTime_ = sampleTime;
-    errorPrev = 0;
-    maxError = maxErrorSum;
-    double minOutput_ = minOutput;
-    double maxOutput_ = maxOutput;
+    timePrev_ = millis();
+    errorPrev_ = 0;
+    setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
 }
 
 PID::PID(const double kP, const double kI, const double kD) {
-    timePrev = millis();
+    timePrev_ = millis();
     kP_ = kP;
     kI_ = kI;
     kD_ = kD;
 
-    errorPrev = 0;
+    errorPrev_ = 0;
+}
+
+void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
+    kP_ = kP;
+    kI_ = kI;
+    kD_ = kD;
+    minOutput_ = minOutput;
+    maxOutput_ = maxOutput;
+    maxErrorSum_ = maxErrorSum;
+    sampleTime_ = sampleTime;
 }
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
@@ -34,16 +42,18 @@ double PID::computeErrorOrientation(const double targetOrientation, const double
     return errorOrientation;
 }
 
-double PID::computeOutputModifier(const double errorOrientation, const unsigned long timeDiff) {
-    errorSum += errorOrientation * (timeDiff);
-    const double errorDeriv = (errorOrientation - errorPrev) / (timeDiff);
-    const double outputModifier = kP_ * errorOrientation + kI_ * errorSum + kD_ * errorDeriv;
-    errorPrev = errorOrientation;
+double PID::computeOutputModifier(const double error, const unsigned long timeDiff) {
+    // TODO: Check if timeDiff is needed in the errorSum_ calculation
+    errorSum_ += error * (timeDiff);
+    errorSum_ = constrain(errorSum_, maxErrorSum_ * -1, maxErrorSum_);
+    const double errorDeriv = (error - errorPrev_) / (timeDiff);
+    const double outputModifier = kP_ * error + kI_ * errorSum_ + kD_ * errorDeriv;
+    errorPrev_ = error;
     return outputModifier;
 }
 
 void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    unsigned long timeDiff = millis() - timePrev;
+    unsigned long timeDiff = millis() - timePrev_;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
     constexpr int kBaseSpeed = 70;
@@ -69,12 +79,12 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     outputLeft = constrain(outputLeft, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
     outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
 
-    timePrev = millis(); 
+    timePrev_ = millis(); 
 }
 
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
     bool goalReached = false;
-    unsigned long timeDiff = millis() - timePrev;
+    unsigned long timeDiff = millis() - timePrev_;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
@@ -103,7 +113,26 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
         outputRight = constrain(outputRight, 40, 120);
     }
 
-    errorPrev = errorOrientation;
+    errorPrev_ = errorOrientation;
 
-    timePrev = millis();
+    timePrev_ = millis();
+}
+
+void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
+    if(millis() - timePrev_ < sampleTime_) {
+      return;
+    }
+    
+    input = func(resetVariable, sampleTime_);
+
+    // TODO: Call the method computeOutputModifier to replace the line 118 - 124
+    const double error = setpoint - input;
+    output = error * kP_ + errorSum_ * kI_ + (error - errorPrev_) * kD_;
+
+    errorPrev_ = error;
+    errorSum_ += error;
+    errorSum_ = constrain(errorSum_, 4000 * -1, 4000);
+    output = constrain(output, 0, 255);
+    resetVariable = 0;
+    timePrev_ = millis();
 }

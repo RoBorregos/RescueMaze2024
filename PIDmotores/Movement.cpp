@@ -44,7 +44,14 @@ void Movement::setupInternal(MotorID motorId) {
 
 void Movement::stopMotors() {
     for(int i = 0; i < 4; ++i){
-        motor[i].motorStop();
+        motor[i].motorStop(0);
+    }
+}
+
+// TODO: It will be needed to change this function to make it work with moveMotors
+void Movement::setSpeed(const double speed) { // Speed in meters per second
+    for(int i = 0; i < 4; ++i){
+        motor[i].constantSpeed(speed);
     }
 }
 
@@ -207,19 +214,19 @@ void Movement::updateTics(MotorID motorId) {
 } 
 
 double Movement::getBackLeftSpeed() {
-    return motor[static_cast<int>(MotorID::kBackLeft)].ticsToMs();
+    return motor[static_cast<int>(MotorID::kBackLeft)].getSpeed();
 }
 
 double Movement::getFrontLeftSpeed() {
-    return motor[static_cast<int>(MotorID::kFrontLeft)].ticsToMs();
+    return motor[static_cast<int>(MotorID::kFrontLeft)].getSpeed();
 }
 
 double Movement::getBackRightSpeed() {
-    return motor[static_cast<int>(MotorID::kBackRight)].ticsToMs();
+    return motor[static_cast<int>(MotorID::kBackRight)].getSpeed();
 }
 
 double Movement::getFrontRightSpeed() {
-    return motor[static_cast<int>(MotorID::kFrontRight)].ticsToMs();
+    return motor[static_cast<int>(MotorID::kFrontRight)].getSpeed();
 }
 
 int Movement::getOrientation(const compass currentOrientation) {
