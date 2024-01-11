@@ -28,7 +28,7 @@ constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
 class Motor {
     private:
         // PID
-        PID pid;
+        PID pid_;
         constexpr static double kP_ = 150;
         constexpr static double kI_ = 100;
         constexpr static double kD_ = 0.0;

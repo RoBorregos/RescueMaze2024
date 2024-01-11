@@ -21,7 +21,7 @@ enum class MovementState{
 
 class Movement {
     private:
-        PID pid;
+        PID pid_;
         Motor motorFL_;
         Motor motorFR_;
         Motor motorBL_;

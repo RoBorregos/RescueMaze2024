@@ -13,7 +13,7 @@ Motor::Motor() {
     this->errorPrev_ = 0;
     this->errorAcumulado_ = 0;
     this->motorId_ = MotorID::kNone;
-    this->pid.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -46,7 +46,6 @@ long long Motor::getEpochTics() {
 
 void Motor::initMotor() {
     motorSetup(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
-    //initEncoder();
     motorStop(0);
 }
 
