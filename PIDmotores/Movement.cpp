@@ -44,10 +44,11 @@ void Movement::setupInternal(MotorID motorId) {
 
 void Movement::stopMotors() {
     for(int i = 0; i < 4; ++i){
-        motor[i].motorStop();
+        motor[i].motorStop(0);
     }
 }
 
+// TODO: It will be needed to change this function to make it work with moveMotors
 void Movement::setSpeed(const double speed) { // Speed in meters per second
     for(int i = 0; i < 4; ++i){
         motor[i].constantSpeed(speed);

@@ -1,8 +1,7 @@
 #ifndef PID_h
 #define PID_h
 
-#include "BNO.h"	
-#include <functional>
+#include "BNO.h"
 #include <math.h>
 
 class PID {

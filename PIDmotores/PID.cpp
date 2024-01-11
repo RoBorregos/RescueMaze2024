@@ -1,5 +1,4 @@
 #include "PID.h"
-#include <functional>
 
 PID::PID() {
     timePrev_ = millis();
@@ -8,11 +7,8 @@ PID::PID() {
 
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
     timePrev_ = millis();
-    sampleTime_ = sampleTime;
     errorPrev_ = 0;
-    maxErrorSum_ = maxErrorSum;
-    minOutput_ = minOutput;
-    maxOutput_ = maxOutput;
+    setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
 }
 
 PID::PID(const double kP, const double kI, const double kD) {
@@ -126,12 +122,13 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
     if(millis() - timePrev_ < sampleTime_) {
       return;
     }
+    
     input = func(resetVariable, sampleTime_);
 
     // TODO: Call the method computeOutputModifier to replace the line 118 - 124
     const double error = setpoint - input;
     output = error * kP_ + errorSum_ * kI_ + (error - errorPrev_) * kD_;
-    
+
     errorPrev_ = error;
     errorSum_ += error;
     errorSum_ = constrain(errorSum_, 4000 * -1, 4000);

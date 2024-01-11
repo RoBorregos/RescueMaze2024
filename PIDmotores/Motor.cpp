@@ -3,33 +3,33 @@
 #include "Pins.h"
 
 Motor::Motor() {
-    this->pwmPin = 0;
-    this->digitalOne = 0;
-    this->digitalTwo = 0;
-    this->encoderA = 0;
-    this->rpm = 0;
-    this->next_time = millis();
-    this->pwmInicial = 50;
-    this->errorPrev = 0;
-    this->errorAcumulado = 0;
-    this->motorId = MotorID::kNone;
-    this->pid.setTunnings(150, 100, 0.0, 0, 255, 4000, 100);
+    this->pwmPin_ = 0;
+    this->digitalOne_ = 0;
+    this->digitalTwo_ = 0;
+    this->encoderA_ = 0;
+    this->rpm_ = 0;
+    this->nextTime_ = millis();
+    this->pwmInicial_ = 50;
+    this->errorPrev_ = 0;
+    this->errorAcumulado_ = 0;
+    this->motorId_ = MotorID::kNone;
+    this->pid.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
-    this->pwmPin = pwmPin;
-    this->digitalOne = digitalOne;
-    this->digitalTwo = digitalTwo;
-    this->encoderA = encoderA;
-    this->motorId = motorid;
-    this->encoders[0] = 0;
-    this->encoders[1] = 0;
-    this->encoders[2] = 0;
-    this->encoders[3] = 0;
+    this->pwmPin_ = pwmPin;
+    this->digitalOne_ = digitalOne;
+    this->digitalTwo_ = digitalTwo;
+    this->encoderA_ = encoderA;
+    this->motorId_ = motorid;
+    this->encoders_[0] = 0;
+    this->encoders_[1] = 0;
+    this->encoders_[2] = 0;
+    this->encoders_[3] = 0;
 }
 
 uint8_t Motor::getEncoderA() {
-    return encoderA;
+    return encoderA_;
 }
 
 MotorState Motor::getCurrentState() {
@@ -37,38 +37,38 @@ MotorState Motor::getCurrentState() {
 }
 
 long long Motor::getTotalTics() {
-    return totalTics;
+    return totalTics_;
 }
 
 long long Motor::getEpochTics() {
-    return timeEpochTics;
+    return timeEpochTics_;
 }
 
 void Motor::initMotor() {
-    motorSetup(pwmPin, digitalOne, digitalTwo, encoderA, motorId);
+    motorSetup(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
     //initEncoder();
-    motorStop();
+    motorStop(0);
 }
 
 void Motor::initEncoder() {
-    pinMode(encoderA, INPUT_PULLUP);
+    pinMode(encoderA_, INPUT_PULLUP);
     
-    switch (motorId) {
+    switch (motorId_) {
 
         case (MotorID::kFrontLeft):{
-            attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontLeftEncoder, RISING);
+            attachInterrupt(digitalPinToInterrupt(encoderA_), Encoder::frontLeftEncoder, RISING);
             break;
         }
         case (MotorID::kFrontRight): {
-            attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::frontRightEncoder, RISING);
+            attachInterrupt(digitalPinToInterrupt(encoderA_), Encoder::frontRightEncoder, RISING);
             break;
         }
         case (MotorID::kBackLeft): {
-            attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backLeftEncoder, RISING);
+            attachInterrupt(digitalPinToInterrupt(encoderA_), Encoder::backLeftEncoder, RISING);
             break;
         }
         case (MotorID::kBackRight): {
-            attachInterrupt(digitalPinToInterrupt(encoderA), Encoder::backRightEncoder, RISING);
+            attachInterrupt(digitalPinToInterrupt(encoderA_), Encoder::backRightEncoder, RISING);
             break;
         }
         default: { 
@@ -78,69 +78,63 @@ void Motor::initEncoder() {
 } 
 
 void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
-    this->pwmPin = pwmPin;
-    this->digitalOne = digitalOne;
-    this->digitalTwo = digitalTwo;
-    this->motorId = motorid;
-    this->encoderA = encoderA;
-    pinMode(pwmPin, OUTPUT);
-    pinMode(digitalOne, OUTPUT);
-    pinMode(digitalTwo, OUTPUT);
+    this->pwmPin_ = pwmPin;
+    this->digitalOne_ = digitalOne;
+    this->digitalTwo_ = digitalTwo;
+    this->motorId_ = motorid;
+    this->encoderA_ = encoderA;
+    pinMode(pwmPin_, OUTPUT);
+    pinMode(digitalOne_, OUTPUT);
+    pinMode(digitalTwo_, OUTPUT);
     initEncoder();
 } 
 
 void Motor::deltaTotalTics(const int deltaTics) {
-    totalTics += deltaTics;
+    totalTics_ += deltaTics;
 }
 
 void Motor::deltaTics(const int deltaTics) {
-    timeEpochTics += deltaTics;
+    timeEpochTics_ += deltaTics;
 }
 
-void Motor:: motorForward(const uint8_t pwm) {
-    analogWrite(pwmPin, pwm);
+void Motor::motorForward(const uint8_t pwm) {
+    analogWrite(pwmPin_, pwm);
     if (currentState_ == MotorState::kForward) {
         return;
     } 
-    //Serial.println("Forward");
     
-    digitalWrite(digitalOne, HIGH);
-    digitalWrite(digitalTwo, LOW);
+    digitalWrite(digitalOne_, HIGH);
+    digitalWrite(digitalTwo_, LOW);
 
     currentState_ = MotorState::kForward;
 }
 
-void Motor:: motorBackward(uint8_t pwm) {
-    analogWrite(pwmPin, pwm);
+void Motor::motorBackward(uint8_t pwm) {
+    analogWrite(pwmPin_, pwm);
     if (currentState_ == MotorState::kBackward) {
         return;
     }
-    //Serial.println("Backward");
     
-    digitalWrite(digitalOne, LOW);
-    digitalWrite(digitalTwo, HIGH);
-
+    digitalWrite(digitalOne_, LOW);
+    digitalWrite(digitalTwo_, HIGH);
 
     currentState_ = MotorState::kBackward;
 }
 
-void Motor:: motorStop() {
+void Motor::motorStop(uint8_t pwm) {
     pwm = 0;
-    analogWrite(pwmPin, pwm);
+    analogWrite(pwmPin_, pwm);
 
     if (currentState_ == MotorState::kStop) {
         return;
     } 
 
-    digitalWrite(digitalOne, LOW);
-    digitalWrite(digitalTwo, LOW);
+    digitalWrite(digitalOne_, LOW);
+    digitalWrite(digitalTwo_, LOW);
 
     currentState_ = MotorState::kStop;
 }
 
-double Motor::getRPM() {
-    return rpm;
-}
 
 void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     if (direction == MotorState::kForward) {
@@ -148,7 +142,7 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     } else if (direction == MotorState::kBackward) {
         motorBackward(pwm);
     } else {
-        motorStop();
+        motorStop(0);
     }
 }
 
@@ -166,22 +160,9 @@ static double ticsToSpeed(const long long tics, const unsigned long time) {
     return deltaMetersPerSecond;
 }
 
-double Motor::ticsToMs() {
-    const unsigned long currentTime = millis();
-    const unsigned long deltaTime = currentTime - previousTime;
-    double speed = 0;
-    
-    if (deltaTime > kOneSecInMs) {
-        previousTime = currentTime;
-        speed = ticsToSpeed(timeEpochTics, deltaTime);
-        timeEpochTics = 0; 
-        currentSpeed_ = speed;
-    }
-    return currentSpeed_;
-}
-
 void Motor::constantSpeed(const double speed) {
-    double tmpPwm = pwm;
-    pid.compute(speed, currentSpeed_, tmpPwm, timeEpochTics, &ticsToSpeed);
+    double tmpPwm = 0;
+    pid.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
+    // TODO: Change thw way we set the MotorState
     setPwmAndDirection(tmpPwm, MotorState::kForward);
 }

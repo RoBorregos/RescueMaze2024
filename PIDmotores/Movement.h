@@ -22,21 +22,21 @@ enum class MovementState{
 class Movement {
     private:
         PID pid;
-        Motor motorFL;
-        Motor motorFR;
-        Motor motorBL;
-        Motor motorBR;
+        Motor motorFL_;
+        Motor motorFR_;
+        Motor motorBL_;
+        Motor motorBR_;
 
-        unsigned long next_time;
+        unsigned long nextTime_;
   
-        float errorPrevOrientation;
-        float errorAcumuladoOrientation;
+        float errorPrevOrientation_;
+        float errorAcumuladoOrientation_;
 
-        long long int ticsCounter=0;
-        int pidTics = 0;
+        long long int ticsCounter_ = 0;
+        int pidTics_ = 0;
 
-        double currentSpeed = 0;
-        double targetSpeed = 0;
+        double currentSpeed_ = 0;
+        double targetSpeed_ = 0;
 
         Motor motor[4];
 
