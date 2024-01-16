@@ -81,6 +81,36 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     timePrev_ = millis(); 
 }
+/* void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
+    unsigned long timeDiff = millis() - timePrev_;
+    const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
+    const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
+    constexpr int kBaseSpeed = motor.constantSpeed(0.05);
+    constexpr int kSpeedModifier = outputModifier;
+    constexpr int kMaxModifier = 0.30;
+    if (errorOrientation < 0) {
+        outputLeft = kBaseSpeed + kSpeedModifier;
+        outputRight = kBaseSpeed - kSpeedModifier;
+        Serial.println("Aumentando derecho");
+        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+    }
+    else if (errorOrientation > 0) {
+        outputRight = kBaseSpeed - kSpeedModifier;
+        outputLeft = kBaseSpeed + kSpeedModifier;
+        Serial.println("Aumentando izquierdo");
+        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+
+    }
+    else{
+        outputLeft = kBaseSpeed;
+        outputRight = kBaseSpeed;
+        Serial.println("Manteniendo");
+    }
+    outputLeft = constrain(outputLeft, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
+    outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
+
+    timePrev_ = millis(); 
+} */
 
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
     bool goalReached = false;
