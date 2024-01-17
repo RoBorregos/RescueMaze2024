@@ -7,60 +7,24 @@ using namespace std;
 
 #include "coord.h"
 
+enum class TileDirection{
+    up = 0,
+    down = 1,
+    left = 2,
+    right = 3,
+    none
+};
+
 class Tile{
     public:
-        coord position;
-        map<string, Tile *> adjacentTiles;
-        map<string, bool> walls;
-        map <string, int> weights;
+        coord position_;
+        map <TileDirection, Tile *> adjacentTiles_;
+        map <TileDirection, bool> walls_;
+        map <TileDirection, int> weights_;
         Tile();
         Tile(coord position);
-        void addAdjacentTile(string direction, Tile *tile, bool wall, coord position);
+        void addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, coord position);
         void setPosition(coord position);
 };
-// inum
-Tile::Tile(){
-    position = coord{1000,1000};
-    adjacentTiles["up"] = NULL;
-    adjacentTiles["down"] = NULL;
-    adjacentTiles["left"] = NULL;
-    adjacentTiles["right"] = NULL;
 
-    walls["up"] = true;
-    walls["down"] = true;
-    walls["left"] = true;
-    walls["right"] = true;
-
-    weights["up"] = 0;
-    weights["down"] = 0;
-    weights["left"] = 0;
-    weights["right"] = 0;
-}
-Tile::Tile(coord position){
-    this->position = position;
-
-    adjacentTiles["up"] = NULL;
-    adjacentTiles["down"] = NULL;
-    adjacentTiles["left"] = NULL;
-    adjacentTiles["right"] = NULL;
-
-    walls["up"] = true;
-    walls["down"] = true;
-    walls["left"] = true;
-    walls["right"] = true;
-
-    weights["up"] = 0;
-    weights["down"] = 0;
-    weights["left"] = 0;
-    weights["right"] = 0;
-}
-void Tile::addAdjacentTile(string direction, Tile *tile, bool wall, coord position){
-    adjacentTiles[direction] = tile;
-    weights[direction] = 1;
-    walls[direction] = wall;
-    tile->setPosition(position);
-}
-void Tile::setPosition(coord position){
-    this->position = position;
-}
 #endif

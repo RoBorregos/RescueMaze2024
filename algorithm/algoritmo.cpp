@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#include "Tile.h"
+#include "Tile.cpp"
 
 bool compare(coord a, coord b){
     if(a.x == b.x && a.y == b.y){
@@ -15,163 +15,196 @@ bool compare(coord a, coord b){
     return false;
 }
 
-void dijsktra(coord start, coord end, unordered_map<coord,Tile> map){
-    unordered_map<coord,bool> explored;
-    unordered_map<coord,int> distance;
-    unordered_map<coord,coord> previous;
-    stack<coord> path;
-    string directions[] = {"up", "down", "left", "right"};
-    //initialize distance
-    for(auto it = map.begin(); it != map.end(); it++){
+const TileDirection directions[] = {TileDirection::up, TileDirection::down, TileDirection::left, TileDirection::right};
+
+vector<vector<char>> maze = {
+        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
+        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'},
+        {'#', ' ', '#', ' ', '#', ' ', '#', '#', '#', '#', '#'},
+        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#'},
+        {'#', ' ', '#', '#', '#', ' ', '#', ' ', '#', '#', '#'},
+        {'#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', '#'},
+        {'#', ' ', '#', '#', '#', ' ', '#', '#', ' ', ' ', '#'},
+        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
+        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
+};
+
+void printMaze(){
+    for(int i = 0; i < maze.size(); i++){
+        for(int j = 0; j < maze[i].size(); j++){
+            cout<<maze[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+}
+
+void printPath(stack <coord> path){
+    vector<vector<char>> newMaze = maze;
+    int lastX=path.top().x;
+    int lastY=path.top().y;
+    path.pop();
+    newMaze[lastY][lastX]='S';
+    while(!path.empty()){
+        if(path.top().x==lastX){
+            if(path.top().y>lastY){
+                newMaze[lastY+1][lastX]='/';
+            }else{
+                newMaze[lastY-1][lastX]='^';
+            }
+        }else{
+            if(path.top().x>lastX){
+                newMaze[lastY][lastX+1]='>';
+            }else{
+                newMaze[lastY][lastX-1]='<';
+            }
+        }
+        lastX=path.top().x;
+        lastY=path.top().y;
+        path.pop();
+    }
+    newMaze[lastY][lastX]='E';
+    // print path on maze
+    for(int i = 0; i < newMaze.size(); i++){
+        for(int j = 0; j < newMaze[i].size(); j++){
+            cout<<newMaze[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    return;
+}
+
+void dijsktra(const coord& start, const coord& end, unordered_map<coord,Tile> map){
+    unordered_map <coord, bool> explored;
+    unordered_map <coord, int> distance;
+    unordered_map <coord, coord> previousPositions;
+    stack <coord> path;
+    // initialize distance.
+    for(auto it = map.begin(); it != map.end(); ++it){
         distance[it->first] = INT_MAX;
         explored[it->first] = false;
     }
     distance[start] = 0;
     explored[start] = true;
 
-    //explore the map
-    coord currentTile = start;
+    // explore the map.
+    coord currentCoord = start;
     int minDistance, weight;
     while(!explored[end]){
-        //update distance
+        // update distance.
         for(int i = 0; i < 4; i++){
-            if(map[currentTile].adjacentTiles[directions[i]] != NULL && !map[currentTile].walls[directions[i]]){
-                weight = map[currentTile].weights[directions[i]] + distance[currentTile];
-                if(weight < distance[map[currentTile].adjacentTiles[directions[i]]->position]){
-                    distance[map[currentTile].adjacentTiles[directions[i]]->position] = weight;
-                    previous[map[currentTile].adjacentTiles[directions[i]]->position] = currentTile;
+            TileDirection direction = directions[i];
+            Tile currentTile = map[currentCoord];
+            coord adjacentCoord = currentTile.adjacentTiles_[direction]->position_;
+            // check if there's an adjecent tile and there's no wall.
+            if(currentTile.adjacentTiles_[direction] != NULL && !currentTile.walls_[direction]){
+                weight = currentTile.weights_[direction] + distance[currentCoord];
+                // check if the new weight to visit the adjecent tile is less than the current weight.
+                if(weight < distance[adjacentCoord]){
+                    distance[adjacentCoord] = weight;
+                    previousPositions[adjacentCoord] = currentCoord;
                 }
             }
         }
-        //find next tile
+        // find next tile.
         minDistance = INT_MAX;
-        for(auto it = distance.begin(); it != distance.end(); it++){
-            if(it->second < minDistance && !explored[it->first]){
-                minDistance = it->second;
-                currentTile = it->first;
+        for(auto it = distance.begin(); it != distance.end(); ++it){
+            coord current = it->first; // las declaro antes?
+            int currentDistance = it->second;
+            if(currentDistance < minDistance && !explored[current]){
+                minDistance = currentDistance;
+                currentCoord = current;
             }
         }
-        explored[currentTile] = true;
+        explored[currentCoord] = true;
     }
-    //find path
+    // find path.
     coord current = end;
     while(current!=start){ // current.x != start.x || current.y != start.y
         path.push(current);
-        current = previous[current];
+        current = previousPositions[current];
     }
     path.push(start);
-    //print path
-    while(!path.empty()){
-        cout<<"("<<path.top().x<<","<<path.top().y<<")"<<endl;
-        path.pop();
-    }
+    // print path.
+    printPath(path);
+    // while(!path.empty()){
+    //     cout<<"("<<path.top().x<<","<<path.top().y<<")"<<endl;
+    //     path.pop();
+    // }
     return;
 }
 
 int main(){
-    unordered_map<coord,Tile> map;
-    unordered_map<coord,bool> visited;
-
-    //pruebas insanas
-    //mapa.insert(pair<coord, int>(coord{0,0},123));
-    /*vector<coord> v;
-    v.push_back(coord{-1,0});
-    mapa.insert(pair<coord,vector<coord>>(coord{0,0},v));*/
-
-    /*explore(coord{0,0},map,visited);
-    cout<<"End of exploration"<<endl;*/
-
-    /*map[coord{0,0}].push_back(coord{1,0});
-    map[coord{0,0}].push_back(coord{0,1});
-    map[coord{0,0}].push_back(coord{-1,0});
-    vector<coord> v;
-    v=map[coord{0,0}];
-    for(int i = 0; i < v.size(); i++){
-        cout<<"("<<v[i].x<<","<<v[i].y<<")"<<endl;
-    }*/
-    //map[coord{0,0}].push_back(coord{1,0});
-
-    vector<vector<char>> maze = {
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'},
-        {'#', ' ', '#', ' ', '#', ' ', '#', '#', '#', '#', '#'},
-        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#'},
-        {'#', ' ', '#', '#', '#', ' ', '#', ' ', '#', '#', '#'},
-        {'#', ' ', ' ', ' ', '#', ' ', '#', ' ', ' ', ' ', '#'},
-        {'#', ' ', '#', '#', '#', ' ', '#', '#', ' ', ' ', '#'},
-        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-    };
-
+    unordered_map<coord, Tile> map;
+    unordered_map<coord, bool> visited;
     stack<coord> unvisited;
     Tile currentTile;
     unvisited.push(coord{1,1});
-    //depth first search
+    // depth first search.
     while(!unvisited.empty()){
-        //get the next tile to explore
+        // get the next tile to explore.
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
-        //check if the tile has been visited
+        // check if the tile has been visited.
         if(visited.find(currentTileCoord) != visited.end()){
-            cout<<currentTileCoord.x<<","<<currentTileCoord.y<<" Already visited"<<endl;
+            //cout<<currentTileCoord.x<<","<<currentTileCoord.y<<" Already visited"<<endl;
             continue;
         }
-        //go to tile
+        // go to tile. TODO
 
         visited[currentTileCoord] = true;
         bool wall, alreadyConnected;
-        cout<<"Exploring tile ("<<currentTileCoord.x<<","<<currentTileCoord.y<<")"<<endl;
-        //check walls the 4 adjacent tiles
+        //cout<<"Exploring tile ("<<currentTileCoord.x<<","<<currentTileCoord.y<<")"<<endl;
+        // check walls the 4 adjacent tiles.
         for(int i = 0; i < 4; i++){
             wall = false;
             coord nextTileCoord;
-            string direction, oppositeDirection;
+            TileDirection direction, oppositeDirection;
             switch(i){
                 case 0:
                     nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y};
                     currentTile = map[currentTileCoord];
-                    direction = "right";
-                    oppositeDirection = "left";
+                    direction = TileDirection::right;
+                    oppositeDirection = TileDirection::left;
                     break;
                 case 1:
                     nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2};
                     currentTile = map[currentTileCoord];
-                    direction = "up";
-                    oppositeDirection = "down";
+                    direction = TileDirection::up;
+                    oppositeDirection = TileDirection::down;
                     break;
                 case 2:
                     nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y};
                     currentTile = map[currentTileCoord];
-                    direction = "left";
-                    oppositeDirection = "right";
+                    direction = TileDirection::left;
+                    oppositeDirection = TileDirection::right;
                     break;
                 case 3:
                     nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2};
                     currentTile = map[currentTileCoord];
-                    direction = "down";
-                    oppositeDirection = "up";
+                    direction = TileDirection::down;
+                    oppositeDirection = TileDirection::up;
                     break;
             }
-            //check if the tile has been checked
-            if(currentTile.adjacentTiles[direction] == NULL){
-                //check for a wall
-                if(maze[currentTileCoord.y][currentTileCoord.x+1] == '#' && direction == "right"){
+            // check if the tile has been checked.
+            if(currentTile.adjacentTiles_[direction] == NULL){
+                // check for a wall.
+                if(maze[currentTileCoord.y][currentTileCoord.x+1] == '#' && direction == TileDirection::right){
                     wall = true;
-                }else if(maze[currentTileCoord.y+1][currentTileCoord.x] == '#' && direction == "up"){
+                }else if(maze[currentTileCoord.y+1][currentTileCoord.x] == '#' && direction == TileDirection::up){
                     wall = true;
-                }else if(maze[currentTileCoord.y][currentTileCoord.x-1] == '#' && direction == "left"){
+                }else if(maze[currentTileCoord.y][currentTileCoord.x-1] == '#' && direction == TileDirection::left){
                     wall = true;
-                }else if(maze[currentTileCoord.y-1][currentTileCoord.x] == '#' && direction == "down"){
+                }else if(maze[currentTileCoord.y-1][currentTileCoord.x] == '#' && direction == TileDirection::down){
                     wall = true;
                 }
-                //if there is no wall, add the connection
+                // if there is no wall, add the connection.
                 if(!wall){
                     maze[currentTileCoord.y][currentTileCoord.x] = 'o';
                     maze[nextTileCoord.y][nextTileCoord.x] = 'o';
-                    cout<<"Adding connection: ("<<currentTileCoord.x<<","<<currentTileCoord.y<<") - ("<<nextTileCoord.x<<","<<nextTileCoord.y<<")"<<endl;
+                    //cout<<"Adding connection: ("<<currentTileCoord.x<<","<<currentTileCoord.y<<") - ("<<nextTileCoord.x<<","<<nextTileCoord.y<<")"<<endl;
                     map[currentTileCoord].addAdjacentTile(direction, &map[nextTileCoord], false, nextTileCoord);
                     map[nextTileCoord].addAdjacentTile(oppositeDirection, &map[currentTileCoord], false, currentTileCoord);
-                    //if the tile has not been visited, add it to the queue
+                    // if the tile has not been visited, add it to the queue.
                     if(visited.find(nextTileCoord) == visited.end()){
                         unvisited.push(nextTileCoord);
                     }
@@ -182,27 +215,18 @@ int main(){
             }
         }
     }
-    //print the map
-    cout<<"End of exploration"<<endl;
-    string directions[]={{"up"},{"down"},{"left"},{"right"}};
-    for(auto it = map.begin(); it != map.end(); it++){
-        cout<<"connections of: ("<<it->first.x<<","<<it->first.y<<")"<<endl;
-        for(int i=0;i<4;i++){
-            if(it->second.adjacentTiles[directions[i]] != NULL && !it->second.walls[directions[i]]){
-                //cout<<directions[i]<<": "<<it->second.adjacentTiles[directions[i]]<<endl;
-                cout<<directions[i]<<": ("<<it->second.adjacentTiles[directions[i]]->position.x<<","<<it->second.adjacentTiles[directions[i]]->position.y<<")"<<endl;
-            }
-        }
-    }
-    //print the maze
-    for(int i = 0; i < maze.size(); i++){
-        for(int j = 0; j < maze[i].size(); j++){
-            cout<<maze[i][j]<<" ";
-        }
-        cout<<endl;
-    }
-
-    dijsktra(coord{1,1},coord{9,5},map);
+    // print the map.
+    // cout<<"End of exploration"<<endl;
+    // for(auto it = map.begin(); it != map.end(); it++){
+    //     cout<<"connections of: ("<<it->first.x<<","<<it->first.y<<")"<<endl;
+    //     for(int i=0;i<4;i++){
+    //         if(it->second.adjacentTiles_[directions[i]] != NULL && !it->second.walls_[directions[i]]){
+    //             //cout<<directions[i]<<": "<<it->second.adjacentTiles[directions[i]]<<endl;
+    //             cout<<directions[i]<<": ("<<it->second.adjacentTiles_[directions[i]]->position_.x<<","<<it->second.adjacentTiles_[directions[i]]->position_.y<<")"<<endl;
+    //         }
+    //     }
+    // }
+    dijsktra(coord{7,5},coord{3,5},map);
     return 0;
 }
 
@@ -211,8 +235,37 @@ int main(){
 - weight between nodes (new map?)
 - movement comments
 - dijsktra's algorithm
+- almacenar victimas y tiles negras, checkpoints, etc.
 
 (19/12/2023):
 - Tile.h
 - coord.h
+
+(02/01/2024):
+- dijsktra's algorithm
+- visualize and read ascii map for testing
+
+(15/01/2024):
+- Tile.cpp
+- enum class TileDirection
+- visualize path
 */
+
+//pruebas insanas
+//mapa.insert(pair<coord, int>(coord{0,0},123));
+/*vector<coord> v;
+v.push_back(coord{-1,0});
+mapa.insert(pair<coord,vector<coord>>(coord{0,0},v));*/
+
+/*explore(coord{0,0},map,visited);
+cout<<"End of exploration"<<endl;*/
+
+/*map[coord{0,0}].push_back(coord{1,0});
+map[coord{0,0}].push_back(coord{0,1});
+map[coord{0,0}].push_back(coord{-1,0});
+vector<coord> v;
+v=map[coord{0,0}];
+for(int i = 0; i < v.size(); i++){
+    cout<<"("<<v[i].x<<","<<v[i].y<<")"<<endl;
+}*/
+//map[coord{0,0}].push_back(coord{1,0});
