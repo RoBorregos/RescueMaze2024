@@ -1,3 +1,6 @@
+#define PRINT_SERIAL
+#include "CustomSerial.h"
+
 #include "Movement.h"
 #include "Motor.h"
 #include "Pins.h"
@@ -15,8 +18,8 @@ void setup(){
 }
     
 void loop() {
-    //robot.setSpeed(0.4);
-    robot.moveMotors(MovementState::kForward, 0);
+    robot.setSpeed(0.4);
+    //robot.moveMotors(MovementState::kForward, 0);
     
     /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);
@@ -41,14 +44,14 @@ void loop() {
     ++iterations;
 
     //LEER TICS DE LOS ENCODERS
-    Serial.print("BACK_LEFT: ");
-    Serial.println(robot.getBackLeftSpeed());
-    Serial.print("FRONT_LEFT: ");
-    Serial.println(robot.getFrontLeftSpeed());
-    Serial.print("BACK_RIGHT: ");
-    Serial.println(robot.getBackRightSpeed());
-    Serial.print("FRONT_RIGHT: ");
-    Serial.println(robot.getFrontRightSpeed()); 
+    customPrint("BACK_LEFT: ");
+    customPrintln(robot.getBackLeftSpeed());
+    customPrint("FRONT_LEFT: ");
+    customPrintln(robot.getFrontLeftSpeed());
+    customPrint("BACK_RIGHT: ");
+    customPrintln(robot.getBackRightSpeed());
+    customPrint("FRONT_RIGHT: ");
+    customPrintln(robot.getFrontRightSpeed()); 
 
     delay(200);
 

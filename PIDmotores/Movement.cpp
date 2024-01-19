@@ -1,6 +1,7 @@
 
 #include "Movement.h"
 #include "Pins.h"
+#include "CustomSerial.h"
 
 constexpr double kPForward = 1.5; 
 constexpr double kIForward = 0.3;
@@ -35,10 +36,10 @@ void Movement::setup() {
 void Movement::setupInternal(MotorID motorId) {
     int index = static_cast<int>(motorId);
     motor[index].motorSetup(
-        pwmPin[index],
-        digitalOne[index],
-        digitalTwo[index],
-        encoderA[index],
+        Pins::pwmPin[index],
+        Pins::digitalOne[index],
+        Pins::digitalTwo[index],
+        Pins::encoderA[index],
         motorId);
 }
 
@@ -113,6 +114,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
     const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
     const int backRightIndex = static_cast<int>(MotorID::kBackRight);
+    // TODO: Move this variable to Movement.h
     constexpr double kMaxOrientationError = 0.3;
 
     switch (state)
@@ -151,7 +153,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
         case (MovementState::kTurnLeft): {
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                Serial.println(abs(targetOrientation - currentOrientation));
+                customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
 
