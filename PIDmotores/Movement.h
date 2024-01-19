@@ -50,6 +50,8 @@ class Movement {
         void stopMotors();
 
         void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
+
+        void setSpeedsAndDirections(const double speeds[4], const MotorState directions[4]);
         
         void updateTics(MotorID motorId);
 

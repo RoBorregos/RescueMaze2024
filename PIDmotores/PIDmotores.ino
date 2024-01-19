@@ -18,8 +18,8 @@ void setup(){
 }
     
 void loop() {
-    robot.setSpeed(0.4);
-    //robot.moveMotors(MovementState::kForward, 0);
+    //robot.setSpeed(1);
+    robot.moveMotors(MovementState::kForward, 0);
     
     /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);
@@ -55,10 +55,8 @@ void loop() {
 
     delay(200);
 
-    // Asi se leen los valores del eje x del bno
-    /* double orientacionX = bno.getOrientationX();
-    Serial.print("orientacionX: ");
-    Serial.println(orientacionX); */
+    
+    
     
     // Asi se mueven los motores sin PID
     //robot.moveMotors(MotorState::kForward);

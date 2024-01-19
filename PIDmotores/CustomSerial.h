@@ -1,3 +1,4 @@
+// TODO: THIS DOESN'T WORK FOR ALL FILES ONLY FOR .INO
 template <typename T>
 void customPrintln(T message) {
     #ifdef PRINT_SERIAL

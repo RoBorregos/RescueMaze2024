@@ -15,7 +15,7 @@ class PID {
         double errorSum_{0};
         double errorPrev_{0};
 
-        double maxErrorSum_{0};
+        double maxErrorSum_{4000};
         double minOutput_{0};
         double maxOutput_{255};
 
