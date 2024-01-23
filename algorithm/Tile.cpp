@@ -4,47 +4,83 @@ using namespace std;
 
 #include "Tile.h"
 
-Tile::Tile(){
-    position_ = coord{1000,1000};
-    adjacentTiles_[TileDirection::up] = NULL;
-    adjacentTiles_[TileDirection::down] = NULL;
-    adjacentTiles_[TileDirection::left] = NULL;
-    adjacentTiles_[TileDirection::right] = NULL;
+Tile::Tile(){ //initialize walls_?
+    position_ = coord{1000, 1000};
+    adjacentTiles_[TileDirection::kUp] = NULL;
+    adjacentTiles_[TileDirection::kDown] = NULL;
+    adjacentTiles_[TileDirection::kLeft] = NULL;
+    adjacentTiles_[TileDirection::kRight] = NULL;
 
-    walls_[TileDirection::up] = true;
-    walls_[TileDirection::down] = true;
-    walls_[TileDirection::left] = true;
-    walls_[TileDirection::right] = true;
+    weights_[TileDirection::kUp] = 0;
+    weights_[TileDirection::kDown] = 0;
+    weights_[TileDirection::kLeft] = 0;
+    weights_[TileDirection::kRight] = 0;
 
-    weights_[TileDirection::up] = 0;
-    weights_[TileDirection::down] = 0;
-    weights_[TileDirection::left] = 0;
-    weights_[TileDirection::right] = 0;
+    // walls_[TileDirection::kUp] = false;
+    // walls_[TileDirection::kDown] = false;
+    // walls_[TileDirection::kLeft] = false;
+    // walls_[TileDirection::kRight] = false;
+
+    this->walls_ = '\0';
 }
-Tile::Tile(coord position){
+
+Tile::Tile(const coord& position){
     this->position_ = position;
 
-    adjacentTiles_[TileDirection::up] = NULL;
-    adjacentTiles_[TileDirection::down] = NULL;
-    adjacentTiles_[TileDirection::left] = NULL;
-    adjacentTiles_[TileDirection::right] = NULL;
+    adjacentTiles_[TileDirection::kUp] = NULL;
+    adjacentTiles_[TileDirection::kDown] = NULL;
+    adjacentTiles_[TileDirection::kLeft] = NULL;
+    adjacentTiles_[TileDirection::kRight] = NULL;
 
-    walls_[TileDirection::up] = true;
-    walls_[TileDirection::down] = true;
-    walls_[TileDirection::left] = true;
-    walls_[TileDirection::right] = true;
+    weights_[TileDirection::kUp] = 0;
+    weights_[TileDirection::kDown] = 0;
+    weights_[TileDirection::kLeft] = 0;
+    weights_[TileDirection::kRight] = 0;
 
-    weights_[TileDirection::up] = 0;
-    weights_[TileDirection::down] = 0;
-    weights_[TileDirection::left] = 0;
-    weights_[TileDirection::right] = 0;
+    // walls_[TileDirection::kUp] = false;
+    // walls_[TileDirection::kDown] = false;
+    // walls_[TileDirection::kLeft] = false;
+    // walls_[TileDirection::kRight] = false;
+
+    this->walls_ = '\0';
 }
-void Tile::addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, coord position){
+
+// void Tile::setWall(const TileDirection direction, const bool wall){
+//     if(wall){
+//         this->wallsChar_ |= (1 << static_cast<int>(direction));
+//     }
+// }
+
+bool Tile::hasWall(const TileDirection direction){
+    return this->walls_ & (1 << static_cast<int>(direction));
+}
+
+bool Tile::hasVictim(){
+    return this->walls_ & (1 << 4);
+}
+
+void Tile::setVictim(){
+    this->walls_ |= (1 << 4);
+}
+
+bool Tile::hasObstacle(){
+    return this->walls_ & (1 << 5);
+}
+
+void Tile::setObstacle(){
+    this->walls_ |= (1 << 5);
+}
+
+void Tile::addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, const coord& position){
     adjacentTiles_[direction] = tile;
     weights_[direction] = 1;
-    walls_[direction] = wall;
-    tile->setPosition(position);
+    if(wall){
+        this->walls_ |= (1 << static_cast<int>(direction));
+    }
+    // walls_[direction] = wall;
+    tile->setPosition(position);//posible error
 }
-void Tile::setPosition(coord position){
+
+void Tile::setPosition(const coord& position){
     this->position_ = position;
 }
