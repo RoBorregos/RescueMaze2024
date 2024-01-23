@@ -15,6 +15,9 @@ enum class TileDirection{
     kNone
 };
 
+constexpr int kVictimBit = 4;
+constexpr int kObstacleBit = 5;
+
 class Tile{
     public:
         coord position_;
@@ -26,7 +29,7 @@ class Tile{
         Tile(const coord& position);
         void addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, const coord& position);
         void setPosition(const coord& position);
-        // void setWall(const TileDirection direction, const bool wall);
+        void setWall(const TileDirection direction, const bool wall);
         bool hasWall(const TileDirection direction);
         bool hasVictim();
         void setVictim();

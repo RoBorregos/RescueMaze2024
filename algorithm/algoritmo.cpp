@@ -208,11 +208,7 @@ int main(){
 }
 
 /*TODO:
-- visualize map (how tf) done
-- weight between nodes (new map?)
-- movement comments
-- dijsktra's algorithm
-- almacenar victimas y tiles negras, checkpoints, etc.
+
 
 (19/12/2023):
 - Tile.h
@@ -226,4 +222,8 @@ int main(){
 - Tile.cpp
 - enum class TileDirection
 - visualize path
+
+(23/01/2024):
+- char walls_
+- victim, obstacle and wall storage
 */
