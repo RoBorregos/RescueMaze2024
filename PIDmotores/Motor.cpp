@@ -146,6 +146,19 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     }
 }
 
+void Motor::setSpeedAndDirection(const double speed, const MotorState direction) {
+    if (direction == MotorState::kStop) {
+        motorStop(0);
+        return;
+    } 
+    const uint8_t pwm = speedToPwm(speed);
+    if (direction == MotorState::kForward) {
+        motorForward(pwm);
+    } else if (direction == MotorState::kBackward) {
+        motorBackward(pwm);
+    }
+}
+
 double Motor::getSpeed() {
     return currentSpeed_;
 }
@@ -160,9 +173,15 @@ static double ticsToSpeed(const long long tics, const unsigned long time) {
     return deltaMetersPerSecond;
 }
 
-void Motor::constantSpeed(const double speed) {
+uint8_t Motor::speedToPwm(const double speed) {
     double tmpPwm = 0;
     pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
-    // TODO: Change thw way we set the MotorState
-    setPwmAndDirection(tmpPwm, MotorState::kForward);
+
+    return tmpPwm;
+}
+
+void Motor::constantSpeed(const double speed, const MotorState direction) {
+    double tmpPwm = 0;
+    pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
+    setPwmAndDirection(tmpPwm, direction);
 }

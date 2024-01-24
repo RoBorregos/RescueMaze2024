@@ -1,27 +1,24 @@
 
 #include "Movement.h"
 #include "Pins.h"
+#include "CustomSerial.h"
 
-constexpr double kPForward = 1.5; 
-constexpr double kIForward = 0.3;
-constexpr double kDForward = 0.0;
+// TODO: ALL THIS VARIABLES SHOULD BE IN A CLASS AS CONSTANTS
+constexpr static double kPBackward = 1.0;
+constexpr static double kIBackward = 0.0;
+constexpr static double kDBackward = 0.0;
 
-constexpr double kPBackward = 1.0;
-constexpr double kIBackward = 0.0;
-constexpr double kDBackward = 0.0;
+constexpr static double kPTurn = 1.0;
+constexpr static double kITurn = 0.0;
+constexpr static double kDTurn = 0.0;
 
-constexpr double kPTurn = 1.0;
-constexpr double kITurn = 0.0;
-constexpr double kDTurn = 0.0;
-
-PID pidForward(kPForward, kIForward, kDForward);
 PID pidBackward(kPBackward, kIBackward, kDBackward);
 PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
 Movement::Movement() {
-    this->motor[4];
-
+    this->motor[kNumberOfWheels];
+    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
 }
 
 void Movement::setup() {
@@ -30,38 +27,45 @@ void Movement::setup() {
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
+    
 }
 
 void Movement::setupInternal(MotorID motorId) {
     int index = static_cast<int>(motorId);
     motor[index].motorSetup(
-        pwmPin[index],
-        digitalOne[index],
-        digitalTwo[index],
-        encoderA[index],
+        Pins::pwmPin[index],
+        Pins::digitalOne[index],
+        Pins::digitalTwo[index],
+        Pins::encoderA[index],
         motorId);
 }
 
 void Movement::stopMotors() {
-    for(int i = 0; i < 4; ++i){
+    for (int i = 0; i < kNumberOfWheels; ++i) {
         motor[i].motorStop(0);
     }
 }
 
 // TODO: It will be needed to change this function to make it work with moveMotors
 void Movement::setSpeed(const double speed) { // Speed in meters per second
-    for(int i = 0; i < 4; ++i){
-        motor[i].constantSpeed(speed);
+    for (int i = 0; i < kNumberOfWheels; ++i) {
+        motor[i].constantSpeed(speed, MotorState::kForward);
     }
 }
 
-void Movement::setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]) {
-    for(int i = 0; i < 4; ++i){
+void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
+    for (int i = 0; i < kNumberOfWheels; ++i) {
         motor[i].setPwmAndDirection(pwms[i], directions[i]);
     }
 }
 
-void Movement::setMotorsDirections(const MovementState state, MotorState directions[4]) {
+void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
+    for (int i = 0; i < kNumberOfWheels; ++i) {
+        motor[i].setSpeedAndDirection(speeds[i], directions[i]);
+    }
+}
+
+void Movement::setMotorsDirections(const MovementState state, MotorState directions[kNumberOfWheels]) {
     const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
     const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
     const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
@@ -102,18 +106,17 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
 }
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation) {
-    uint8_t pwms[4];
-    MotorState directions[4];
-    int pwm = 60; // TODO: velocidad metros por segundos
+    double speeds[kNumberOfWheels];
+    MotorState directions[kNumberOfWheels];
+    int pwm = 60; 
     double currentOrientation = bno.getOrientationX();
-    double pwmLeft = 0;
-    double pwmRight = 0;
+    double speedLeft = 0;
+    double speedRight = 0;
     bool turnLeft = false;
     const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
     const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
     const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
     const int backRightIndex = static_cast<int>(MotorID::kBackRight);
-    constexpr double kMaxOrientationError = 0.3;
 
     switch (state)
     {
@@ -122,38 +125,38 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kForward): {
-            pidForward.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
-
-            pwms[frontLeftIndex] = pwmLeft;
-            pwms[backLeftIndex] = pwmLeft;
-            pwms[frontRightIndex] = pwmRight;
-            pwms[backRightIndex] = pwmRight;
+            pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+            speeds[frontLeftIndex] = speedLeft;
+            speeds[backLeftIndex] = speedLeft;
+            speeds[frontRightIndex] = speedRight;
+            speeds[backRightIndex] = speedRight;
 
             setMotorsDirections(MovementState::kForward, directions);
-            setPwmsAndDirections(pwms, directions);
+            setSpeedsAndDirections(speeds, directions);
             
             break;
         }
+        // TODO: apply giving a speed to the motors to go backward
         case (MovementState::kBackward): {
-            pidBackward.computeStraight(targetOrientation, currentOrientation, pwmLeft, pwmRight);
+            pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
 
-            pwms[frontLeftIndex] = pwmRight;
-            pwms[backLeftIndex] = pwmRight;
-            pwms[frontRightIndex] = pwmLeft;
-            pwms[backRightIndex] = pwmLeft;
+            speeds[frontLeftIndex] = speedRight;
+            speeds[backLeftIndex] = speedRight;
+            speeds[frontRightIndex] = speedLeft;
+            speeds[backRightIndex] = speedLeft;
 
             setMotorsDirections(MovementState::kBackward, directions); 
-            setPwmsAndDirections(pwms, directions);
+            setSpeedsAndDirections(speeds, directions);
             
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
-
+        // TODO: apply giving a speed to the motors to turn left or right
         case (MovementState::kTurnLeft): {
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                Serial.println(abs(targetOrientation - currentOrientation));
+                customPrintln(abs(targetOrientation - currentOrientation));
 
-                pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
+                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, speedRight, turnLeft);
 
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
@@ -162,13 +165,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     setMotorsDirections(MovementState::kTurnRight, directions); 
                 }
 
-                pwms[frontLeftIndex] = pwmLeft;
-                pwms[backLeftIndex] = pwmLeft;
-                pwms[frontRightIndex] = pwmRight;
-                pwms[backRightIndex] = pwmRight;
+                speeds[frontLeftIndex] = speedLeft;
+                speeds[backLeftIndex] = speedLeft;
+                speeds[frontRightIndex] = speedRight;
+                speeds[backRightIndex] = speedRight;
 
                 currentOrientation = bno.getOrientationX();
-                setPwmsAndDirections(pwms, directions);
+                setSpeedsAndDirections(speeds, directions);
             }
             stopMotors();
 
@@ -176,7 +179,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kTurnRight): {
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                pidTurn.computeTurn(targetOrientation, currentOrientation, pwmLeft, pwmRight, turnLeft);
+                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, speedRight, turnLeft);
 
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
@@ -185,13 +188,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     setMotorsDirections(MovementState::kTurnRight, directions); 
                 }
 
-                pwms[frontLeftIndex] = pwmLeft;
-                pwms[backLeftIndex] = pwmLeft;
-                pwms[frontRightIndex] = pwmRight;
-                pwms[backRightIndex] = pwmRight;
+                speeds[frontLeftIndex] = speedLeft;
+                speeds[backLeftIndex] = speedLeft;
+                speeds[frontRightIndex] = speedRight;
+                speeds[backRightIndex] = speedRight;
 
                 currentOrientation = bno.getOrientationX();
-                setPwmsAndDirections(pwms, directions);
+                setSpeedsAndDirections(speeds, directions);
             }
             stopMotors();
 
@@ -202,7 +205,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
 void Movement::updateTics(MotorID motorId) {
     const int index = static_cast<int>(motorId);
-    if (index >= 0 && index < 4) {
+    if (index >= 0 && index < kNumberOfWheels) {
         motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
             motor[index].deltaTotalTics(1);

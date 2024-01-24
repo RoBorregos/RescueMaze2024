@@ -103,10 +103,14 @@ class Motor {
 
         void setPwmAndDirection(const uint8_t pwm, const MotorState direction);
 
-        double getCurrentSpeed(); // devuelve velocidad en metros por segundo
+        void setSpeedAndDirection(const double speed, const MotorState direction);
+
+        uint8_t speedToPwm(const double speed);
+
+        double getCurrentSpeed(); // It returns the speed in meters per second (m/s)
 
         double getSpeed();
 
-        void constantSpeed(const double speed);
+        void constantSpeed(const double speed, const MotorState direction);
 };
 #endif

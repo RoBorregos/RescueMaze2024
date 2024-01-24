@@ -19,6 +19,7 @@ enum class MovementState{
     kTurnRight
 };
 
+
 class Movement {
     private:
         PID pid_;
@@ -40,6 +41,20 @@ class Movement {
 
         Motor motor[4];
 
+        static constexpr double kMaxOrientationError = 0.3;
+        static constexpr uint8_t kNumberOfWheels = 4;
+
+        PID pidForward;
+
+        constexpr static double kPForward = 0.015; 
+        constexpr static double kIForward = 0.00;
+        constexpr static double kDForward = 0.0;
+
+        constexpr static double kMaxErrorSum{4000};
+        constexpr static double kMinOutput{0};
+        constexpr static double kMaxOutput{0.5};
+        constexpr static long kSampleTime{1};
+
     public:
         Movement();
 
@@ -50,6 +65,8 @@ class Movement {
         void stopMotors();
 
         void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
+
+        void setSpeedsAndDirections(const double speeds[4], const MotorState directions[4]);
         
         void updateTics(MotorID motorId);
 

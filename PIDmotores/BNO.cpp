@@ -1,4 +1,5 @@
 #include "BNO.h"
+#include "CustomSerial.h"
 
 BNO::BNO() {
     this->event = {0};
@@ -7,11 +8,11 @@ BNO::BNO() {
 void BNO::setupBNO() {
     adafruit_bno055_opmode_t mode = OPERATION_MODE_IMUPLUS;
 
-    Serial.println("Orientation Sensor Test"); Serial.println("");
-    // Initialise the sensor 
+    customPrintln("Orientation Sensor Test");
+    // Initialise the sensor
     if (!bno.begin()){
         // There was a problem detecting the BNO055 ... check your connections
-        Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+        customPrint("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
         while(1);
     }
 

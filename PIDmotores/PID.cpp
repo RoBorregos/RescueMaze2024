@@ -1,4 +1,6 @@
 #include "PID.h"
+#include "CustomSerial.h"
+
 
 PID::PID() {
     timePrev_ = millis();
@@ -8,7 +10,7 @@ PID::PID() {
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
     timePrev_ = millis();
     errorPrev_ = 0;
-    setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime);
 }
 
 PID::PID(const double kP, const double kI, const double kD) {
@@ -56,28 +58,22 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     unsigned long timeDiff = millis() - timePrev_;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    constexpr int kBaseSpeed = 70;
-    constexpr int kMaxModifier = 50;
+    constexpr double kBaseSpeed = 0.14;
     if (errorOrientation < 0) {
         outputLeft = kBaseSpeed + outputModifier;
         outputRight = kBaseSpeed - outputModifier;
-        Serial.println("Aumentando derecho");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
     }
     else if (errorOrientation > 0) {
         outputRight = kBaseSpeed - outputModifier;
         outputLeft = kBaseSpeed + outputModifier;
-        Serial.println("Aumentando izquierdo");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
 
     }
     else{
         outputLeft = kBaseSpeed;
         outputRight = kBaseSpeed;
-        Serial.println("Manteniendo");
     }
-    outputLeft = constrain(outputLeft, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
-    outputRight = constrain(outputRight, kBaseSpeed - kMaxModifier, kBaseSpeed + kMaxModifier);
+    outputLeft = constrain(outputLeft, minOutput_, maxOutput_);
+    outputRight = constrain(outputRight, minOutput_, maxOutput_);
 
     timePrev_ = millis(); 
 }
@@ -93,15 +89,15 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
         outputLeft = baseSpeed + outputModifier;
         outputRight= baseSpeed + outputModifier;
         clockwise = true;
-        Serial.println("Aumentando derecho");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+        customPrintln("Aumentando derecho");
+        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
     }
     else if (errorOrientation > 0) {
         outputRight = baseSpeed - outputModifier;
         outputLeft= baseSpeed - outputModifier;
         clockwise = false;
-        Serial.println("Aumentando izquierdo");
-        Serial.println("OUTPUTMODIFIER:" + String(outputModifier));
+        customPrintln("Aumentando izquierdo");
+        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
     }
     else { 
         outputLeft = 0;
@@ -120,7 +116,7 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
 
 void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
     if(millis() - timePrev_ < sampleTime_) {
-      return;
+        return;
     }
     
     input = func(resetVariable, sampleTime_);
@@ -131,8 +127,8 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
 
     errorPrev_ = error;
     errorSum_ += error;
-    errorSum_ = constrain(errorSum_, 4000 * -1, 4000);
-    output = constrain(output, 0, 255);
+    errorSum_ = constrain(errorSum_, maxErrorSum_ * -1, maxErrorSum_);
+    output = constrain(output, minOutput_, maxOutput_);
     resetVariable = 0;
     timePrev_ = millis();
 }
