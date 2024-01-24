@@ -45,10 +45,15 @@ class Movement {
         static constexpr uint8_t kNumberOfWheels = 4;
 
         PID pidForward;
+        PID pidBackward;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
         constexpr static double kDForward = 0.0;
+
+        constexpr static double kPBackward = 0.02;
+        constexpr static double kIBackward = 0.0;
+        constexpr static double kDBackward = 0.0;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};

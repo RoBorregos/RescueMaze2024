@@ -4,21 +4,19 @@
 #include "CustomSerial.h"
 
 // TODO: ALL THIS VARIABLES SHOULD BE IN A CLASS AS CONSTANTS
-constexpr static double kPBackward = 1.0;
-constexpr static double kIBackward = 0.0;
-constexpr static double kDBackward = 0.0;
 
 constexpr static double kPTurn = 1.0;
 constexpr static double kITurn = 0.0;
 constexpr static double kDTurn = 0.0;
 
-PID pidBackward(kPBackward, kIBackward, kDBackward);
+
 PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
 Movement::Movement() {
     this->motor[kNumberOfWheels];
     this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
+    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
 }
 
 void Movement::setup() {
@@ -46,7 +44,6 @@ void Movement::stopMotors() {
     }
 }
 
-// TODO: It will be needed to change this function to make it work with moveMotors
 void Movement::setSpeed(const double speed) { // Speed in meters per second
     for (int i = 0; i < kNumberOfWheels; ++i) {
         motor[i].constantSpeed(speed, MotorState::kForward);
@@ -136,7 +133,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             break;
         }
-        // TODO: apply giving a speed to the motors to go backward
         case (MovementState::kBackward): {
             pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
 
