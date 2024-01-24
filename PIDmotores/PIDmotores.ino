@@ -1,6 +1,4 @@
-
 #include "CustomSerial.h"
-
 #include "Movement.h"
 #include "Motor.h"
 #include "Pins.h"

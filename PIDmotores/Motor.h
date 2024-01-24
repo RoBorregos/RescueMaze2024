@@ -107,7 +107,7 @@ class Motor {
 
         uint8_t speedToPwm(const double speed);
 
-        double getCurrentSpeed(); // devuelve velocidad en metros por segundo
+        double getCurrentSpeed(); // It returns the speed in meters per second (m/s)
 
         double getSpeed();
 

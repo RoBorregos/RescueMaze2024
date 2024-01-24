@@ -54,13 +54,13 @@ void Movement::setSpeed(const double speed) { // Speed in meters per second
 }
 
 void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
-    for(int i = 0; i < kNumberOfWheels; ++i){
+    for (int i = 0; i < kNumberOfWheels; ++i) {
         motor[i].setPwmAndDirection(pwms[i], directions[i]);
     }
 }
 
 void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
-    for(int i = 0; i < kNumberOfWheels; ++i){
+    for (int i = 0; i < kNumberOfWheels; ++i) {
         motor[i].setSpeedAndDirection(speeds[i], directions[i]);
     }
 }
