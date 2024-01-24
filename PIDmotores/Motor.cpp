@@ -148,12 +148,14 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
 
 void Motor::setSpeedAndDirection(const double speed, const MotorState direction) {
     const uint8_t pwm = speedToPwm(speed);
-    if (direction == MotorState::kForward) {
+    if (direction == MotorState::kStop) {
+        motorStop(0);
+        return;
+    } 
+    else if (direction == MotorState::kForward) {
         motorForward(pwm);
     } else if (direction == MotorState::kBackward) {
         motorBackward(pwm);
-    } else {
-        motorStop(0);
     }
 }
 
@@ -181,6 +183,5 @@ uint8_t Motor::speedToPwm(const double speed) {
 void Motor::constantSpeed(const double speed, const MotorState direction) {
     double tmpPwm = 0;
     pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
-    // TODO: Change thw way we set the MotorState
     setPwmAndDirection(tmpPwm, direction);
 }

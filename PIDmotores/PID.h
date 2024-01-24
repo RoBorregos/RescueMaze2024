@@ -6,7 +6,6 @@
 
 class PID {
     private:
-        //Motor motor;
 
         double kP_{0};
         double kI_{0};

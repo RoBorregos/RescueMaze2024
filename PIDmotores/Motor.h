@@ -111,7 +111,6 @@ class Motor {
 
         double getSpeed();
 
-        // TODO: DELETE THIS FUNCTION
         void constantSpeed(const double speed, const MotorState direction);
 };
 #endif

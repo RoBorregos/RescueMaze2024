@@ -1,4 +1,4 @@
-#define PRINT_SERIAL
+
 #include "CustomSerial.h"
 
 #include "Movement.h"

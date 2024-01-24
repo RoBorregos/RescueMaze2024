@@ -3,27 +3,22 @@
 #include "Pins.h"
 #include "CustomSerial.h"
 
-constexpr double kPForward = 0.015; 
-constexpr double kIForward = 0.00;
-constexpr double kDForward = 0.0;
-
-constexpr double kPBackward = 1.0;
-constexpr double kIBackward = 0.0;
-constexpr double kDBackward = 0.0;
-
-constexpr double kPTurn = 1.0;
-constexpr double kITurn = 0.0;
-constexpr double kDTurn = 0.0;
-
 // TODO: ALL THIS VARIABLES SHOULD BE IN A CLASS AS CONSTANTS
-PID pidForward(kPForward, kIForward, kDForward, 0, 0.5, 4000, 1);
+constexpr static double kPBackward = 1.0;
+constexpr static double kIBackward = 0.0;
+constexpr static double kDBackward = 0.0;
+
+constexpr static double kPTurn = 1.0;
+constexpr static double kITurn = 0.0;
+constexpr static double kDTurn = 0.0;
+
 PID pidBackward(kPBackward, kIBackward, kDBackward);
 PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
 Movement::Movement() {
-    this->motor[4];
-
+    this->motor[kNumberOfWheels];
+    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
 }
 
 void Movement::setup() {
@@ -32,6 +27,7 @@ void Movement::setup() {
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
+    
 }
 
 void Movement::setupInternal(MotorID motorId) {
@@ -45,31 +41,31 @@ void Movement::setupInternal(MotorID motorId) {
 }
 
 void Movement::stopMotors() {
-    for(int i = 0; i < 4; ++i){
+    for(int i = 0; i < kNumberOfWheels; ++i){
         motor[i].motorStop(0);
     }
 }
 
 // TODO: It will be needed to change this function to make it work with moveMotors
 void Movement::setSpeed(const double speed) { // Speed in meters per second
-    for(int i = 0; i < 4; ++i){
+    for(int i = 0; i < kNumberOfWheels; ++i){
         motor[i].constantSpeed(speed, MotorState::kForward);
     }
 }
 
-void Movement::setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]) {
-    for(int i = 0; i < 4; ++i){
+void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
+    for(int i = 0; i < kNumberOfWheels; ++i){
         motor[i].setPwmAndDirection(pwms[i], directions[i]);
     }
 }
 
-void Movement::setSpeedsAndDirections(const double speeds[4], const MotorState directions[4]) {
-    for(int i = 0; i < 4; ++i){
+void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
+    for(int i = 0; i < kNumberOfWheels; ++i){
         motor[i].setSpeedAndDirection(speeds[i], directions[i]);
     }
 }
 
-void Movement::setMotorsDirections(const MovementState state, MotorState directions[4]) {
+void Movement::setMotorsDirections(const MovementState state, MotorState directions[kNumberOfWheels]) {
     const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
     const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
     const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
@@ -110,9 +106,9 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
 }
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation) {
-    double speeds[4];
-    MotorState directions[4];
-    int pwm = 60; // TODO: velocidad metros por segundos
+    double speeds[kNumberOfWheels];
+    MotorState directions[kNumberOfWheels];
+    int pwm = 60; 
     double currentOrientation = bno.getOrientationX();
     double speedLeft = 0;
     double speedRight = 0;
@@ -121,8 +117,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
     const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
     const int backRightIndex = static_cast<int>(MotorID::kBackRight);
-    // TODO: Move this variable to Movement.h
-    constexpr double kMaxOrientationError = 0.3;
 
     switch (state)
     {
@@ -138,11 +132,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             speeds[backRightIndex] = speedRight;
 
             setMotorsDirections(MovementState::kForward, directions);
-            
             setSpeedsAndDirections(speeds, directions);
             
             break;
         }
+        // TODO: apply giving a speed to the motors to go backward
         case (MovementState::kBackward): {
             pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
 
@@ -152,13 +146,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             speeds[backRightIndex] = speedLeft;
 
             setMotorsDirections(MovementState::kBackward, directions); 
-            
             setSpeedsAndDirections(speeds, directions);
             
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
-
+        // TODO: apply giving a speed to the motors to turn left or right
         case (MovementState::kTurnLeft): {
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
                 customPrintln(abs(targetOrientation - currentOrientation));
@@ -178,7 +171,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 speeds[backRightIndex] = speedRight;
 
                 currentOrientation = bno.getOrientationX();
-                
                 setSpeedsAndDirections(speeds, directions);
             }
             stopMotors();
@@ -202,7 +194,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 speeds[backRightIndex] = speedRight;
 
                 currentOrientation = bno.getOrientationX();
-                
                 setSpeedsAndDirections(speeds, directions);
             }
             stopMotors();
@@ -214,7 +205,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
 void Movement::updateTics(MotorID motorId) {
     const int index = static_cast<int>(motorId);
-    if (index >= 0 && index < 4) {
+    if (index >= 0 && index < kNumberOfWheels) {
         motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
             motor[index].deltaTotalTics(1);
