@@ -29,7 +29,7 @@ void Movement::setup() {
 }
 
 void Movement::setupInternal(MotorID motorId) {
-    int index = static_cast<int>(motorId);
+    uint8_t index = static_cast<uint8_t>(motorId);
     motor[index].motorSetup(
         Pins::pwmPin[index],
         Pins::digitalOne[index],
@@ -39,34 +39,34 @@ void Movement::setupInternal(MotorID motorId) {
 }
 
 void Movement::stopMotors() {
-    for (int i = 0; i < kNumberOfWheels; ++i) {
+    for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         motor[i].motorStop(0);
     }
 }
 
 void Movement::setSpeed(const double speed) { // Speed in meters per second
-    for (int i = 0; i < kNumberOfWheels; ++i) {
+    for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         motor[i].constantSpeed(speed, MotorState::kForward);
     }
 }
 
 void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
-    for (int i = 0; i < kNumberOfWheels; ++i) {
+    for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         motor[i].setPwmAndDirection(pwms[i], directions[i]);
     }
 }
 
 void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
-    for (int i = 0; i < kNumberOfWheels; ++i) {
+    for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         motor[i].setSpeedAndDirection(speeds[i], directions[i]);
     }
 }
 
 void Movement::setMotorsDirections(const MovementState state, MotorState directions[kNumberOfWheels]) {
-    const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
-    const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
-    const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
-    const int backRightIndex = static_cast<int>(MotorID::kBackRight);
+    const uint8_t frontLeftIndex = static_cast<uint8_t>(MotorID::kFrontLeft);
+    const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
+    const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
+    const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
     switch (state)
     {
     case (MovementState::kForward):{
@@ -105,15 +105,15 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
 void Movement::moveMotors(const MovementState state, const double targetOrientation) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels];
-    int pwm = 60; 
+    uint8_t pwm = 60; 
     double currentOrientation = bno.getOrientationX();
     double speedLeft = 0;
     double speedRight = 0;
     bool turnLeft = false;
-    const int frontLeftIndex = static_cast<int>(MotorID::kFrontLeft);
-    const int frontRightIndex = static_cast<int>(MotorID::kFrontRight);
-    const int backLeftIndex = static_cast<int>(MotorID::kBackLeft);
-    const int backRightIndex = static_cast<int>(MotorID::kBackRight);
+    const uint8_t frontLeftIndex = static_cast<uint8_t>(MotorID::kFrontLeft);
+    const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
+    const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
+    const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
     switch (state)
     {
@@ -200,7 +200,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 }
 
 void Movement::updateTics(MotorID motorId) {
-    const int index = static_cast<int>(motorId);
+    const uint8_t index = static_cast<uint8_t>(motorId);
     if (index >= 0 && index < kNumberOfWheels) {
         motor[index].deltaTics(1);
         if (motor[index].getCurrentState() == MotorState::kForward){
@@ -213,22 +213,22 @@ void Movement::updateTics(MotorID motorId) {
 } 
 
 double Movement::getBackLeftSpeed() {
-    return motor[static_cast<int>(MotorID::kBackLeft)].getSpeed();
+    return motor[static_cast<uint8_t>(MotorID::kBackLeft)].getSpeed();
 }
 
 double Movement::getFrontLeftSpeed() {
-    return motor[static_cast<int>(MotorID::kFrontLeft)].getSpeed();
+    return motor[static_cast<uint8_t>(MotorID::kFrontLeft)].getSpeed();
 }
 
 double Movement::getBackRightSpeed() {
-    return motor[static_cast<int>(MotorID::kBackRight)].getSpeed();
+    return motor[static_cast<uint8_t>(MotorID::kBackRight)].getSpeed();
 }
 
 double Movement::getFrontRightSpeed() {
-    return motor[static_cast<int>(MotorID::kFrontRight)].getSpeed();
+    return motor[static_cast<uint8_t>(MotorID::kFrontRight)].getSpeed();
 }
 
-int Movement::getOrientation(const compass currentOrientation) {
+uint8_t Movement::getOrientation(const compass currentOrientation) {
     switch (currentOrientation) {
         case (compass::kNorth): {
             return 0;
