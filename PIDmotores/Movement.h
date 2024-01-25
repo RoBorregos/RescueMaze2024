@@ -46,6 +46,7 @@ class Movement {
 
         PID pidForward;
         PID pidBackward;
+        PID pidTurn;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -55,8 +56,13 @@ class Movement {
         constexpr static double kIBackward = 0.0;
         constexpr static double kDBackward = 0.0;
 
+        constexpr static double kPTurn = 0.010;
+        constexpr static double kITurn = 0.0;
+        constexpr static double kDTurn = 0.0;
+
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
+        constexpr static double kTurnMinOutput{0.05};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{1};
 

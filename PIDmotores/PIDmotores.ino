@@ -16,8 +16,9 @@ void setup(){
 }
     
 void loop() {
-    //robot.setSpeed(1);
-    robot.moveMotors(MovementState::kBackward, 0);
+    //robot.setSpeed(0);
+    //robot.moveMotors(MovementState::kForward, 170);
+    robot.moveMotors(MovementState::kTurnLeft, 270);
     
     /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);
