@@ -145,7 +145,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             customPrintln(targetOrientation);
 
             // while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-
+            
+            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
+                stopMotors();
+            }
+            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
             customPrintln(abs(targetOrientation - currentOrientation));
 
             pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
@@ -164,6 +168,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // currentOrientation = bno.getOrientationX();
             setSpeedsAndDirections(speeds, directions);
             // }
+            }
 
             break;
         }

@@ -34,6 +34,8 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
     double errorOrientation = targetOrientation - currentOrientation;
+    customPrint("Error Orientation: ");
+    customPrintln(errorOrientation);
     if (errorOrientation > 180) {
         errorOrientation -= 360;
     }

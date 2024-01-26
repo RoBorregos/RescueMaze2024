@@ -41,7 +41,7 @@ class Movement {
 
         Motor motor[4];
 
-        static constexpr double kMaxOrientationError = 0.3;
+        static constexpr double kMaxOrientationError = 2;
         static constexpr uint8_t kNumberOfWheels = 4;
 
         PID pidForward;
@@ -58,7 +58,7 @@ class Movement {
 
         constexpr static double kPTurn = 0.010;
         constexpr static double kITurn = 0.0;
-        constexpr static double kDTurn = 0.0;
+        constexpr static double kDTurn = 0.008;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
