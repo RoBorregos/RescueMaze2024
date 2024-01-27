@@ -95,7 +95,7 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
     }
 }
 
-void Movement::moveMotors(const MovementState state, const double targetOrientation) {
+bool Movement::moveMotors(const MovementState state, const double targetOrientation) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno.getOrientationX();
@@ -143,37 +143,44 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kTurnLeft): {
             customPrint("targetOrientation: ");
             customPrintln(targetOrientation);
-
             // while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
             
             if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
                 stopMotors();
+                return true;
             }
-            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
-            customPrintln(abs(targetOrientation - currentOrientation));
+            else if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
+                customPrintln(abs(targetOrientation - currentOrientation));
 
-            pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
-            if (turnLeft) {
-                setMotorsDirections(MovementState::kTurnLeft, directions); 
-            }
-            else {
-                setMotorsDirections(MovementState::kTurnRight, directions); 
-            }
+                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
+                if (turnLeft) {
+                    setMotorsDirections(MovementState::kTurnLeft, directions); 
+                }
+                else {
+                    setMotorsDirections(MovementState::kTurnRight, directions); 
+                }
 
-            speeds[frontLeftIndex] = speedLeft;
-            speeds[backLeftIndex] = speedLeft;
-            speeds[frontRightIndex] = speedLeft;
-            speeds[backRightIndex] = speedLeft;
+                speeds[frontLeftIndex] = speedLeft;
+                speeds[backLeftIndex] = speedLeft;
+                speeds[frontRightIndex] = speedLeft;
+                speeds[backRightIndex] = speedLeft;
 
-            // currentOrientation = bno.getOrientationX();
-            setSpeedsAndDirections(speeds, directions);
-            // }
+                // currentOrientation = bno.getOrientationX();
+                setSpeedsAndDirections(speeds, directions);
+                // }
+                return false;
             }
 
             break;
         }
         case (MovementState::kTurnRight): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+            
+             if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
+                stopMotors();
+                return true;
+            }
+            else if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
+           
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
 
                 if (turnLeft) {
@@ -190,8 +197,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 currentOrientation = bno.getOrientationX();
                 setSpeedsAndDirections(speeds, directions);
+                return false;
             }
-            stopMotors();
 
             break;
         }

@@ -87,7 +87,7 @@ class Movement {
         double getFrontRightSpeed();    
 
         uint8_t getOrientation(const compass currentOrientation);
-        void moveMotors(const MovementState state, const double targetOrientation);
+        bool moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
