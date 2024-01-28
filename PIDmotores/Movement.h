@@ -64,7 +64,7 @@ class Movement {
         constexpr static double kMinOutput{0};
         constexpr static double kTurnMinOutput{0.05};
         constexpr static double kMaxOutput{0.5};
-        constexpr static long kSampleTime{1};
+        constexpr static long kSampleTime{100};
 
     public:
         Movement();

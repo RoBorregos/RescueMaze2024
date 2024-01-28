@@ -58,6 +58,9 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
 
 void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
     unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < sampleTime_) {
+        return;
+    }
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
     constexpr double kBaseSpeed = 0.14;
@@ -84,6 +87,9 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
     customPrintln("ENTRANDO A COMPUTETURN");
     bool goalReached = false;
     unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < sampleTime_) {
+        return;
+    }
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
@@ -115,7 +121,7 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
 }
 
 void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
-    if(millis() - timePrev_ < sampleTime_) {
+    if (millis() - timePrev_ < sampleTime_) {
         return;
     }
     
