@@ -20,6 +20,8 @@ void setup(){
 }
     
 void loop() {
+    // WARNING: by using a while or for loop here, the robot will not follow the instruction
+
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kForward, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 270);
