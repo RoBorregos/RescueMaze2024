@@ -139,17 +139,15 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
-        // TODO: apply giving a speed to the motors to turn left or right
         case (MovementState::kTurnLeft): {
             customPrint("targetOrientation: ");
             customPrintln(targetOrientation);
-            // while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
             
             if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
                 stopMotors();
                 return true;
             }
-            else if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
+            else {
                 customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
@@ -165,21 +163,18 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
                 speeds[frontRightIndex] = speedLeft;
                 speeds[backRightIndex] = speedLeft;
 
-                // currentOrientation = bno.getOrientationX();
                 setSpeedsAndDirections(speeds, directions);
-                // }
-                return false;
             }
 
             break;
         }
         case (MovementState::kTurnRight): {
             
-             if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
+            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
                 stopMotors();
                 return true;
             }
-            else if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError){
+            else {
            
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
 
@@ -197,12 +192,13 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 currentOrientation = bno.getOrientationX();
                 setSpeedsAndDirections(speeds, directions);
-                return false;
+                
             }
 
             break;
         }
     }
+    return false;
 }
 
 void Movement::updateTics(MotorID motorId) {
