@@ -16,10 +16,10 @@ Tile::Tile(){
     weights_[TileDirection::kLeft] = 0;
     weights_[TileDirection::kRight] = 0;
 
-    this->walls_ = '\0';
+    this->data_ = '\0';
 }
 
-Tile::Tile(const coord& position){
+Tile::Tile(const coord& position) {
     this->position_ = position;
 
     adjacentTiles_[TileDirection::kUp] = NULL;
@@ -32,42 +32,42 @@ Tile::Tile(const coord& position){
     weights_[TileDirection::kLeft] = 0;
     weights_[TileDirection::kRight] = 0;
 
-    this->walls_ = '\0';
+    this->data_ = '\0';
 }
 
-void Tile::setWall(const TileDirection direction, const bool wall){
-    if(wall){
-        this->walls_ |= (1 << static_cast<int>(direction));
+void Tile::setWall(const TileDirection direction, const bool wall) {
+    if(wall) {
+        this->data_ |= (1 << static_cast<int>(direction));
     }
 }
 
-bool Tile::hasWall(const TileDirection direction){
-    return this->walls_ & (1 << static_cast<int>(direction));
+bool Tile::hasWall(const TileDirection direction) {
+    return this->data_ & (1 << static_cast<int>(direction));
 }
 
-bool Tile::hasVictim(){
-    return this->walls_ & (1 << kVictimBit);
+bool Tile::hasVictim() {
+    return this->data_ & (1 << kVictimBit);
 }
 
-void Tile::setVictim(){
-    this->walls_ |= (1 << kVictimBit);
+void Tile::setVictim() {
+    this->data_ |= (1 << kVictimBit);
 }
 
-bool Tile::hasObstacle(){
-    return this->walls_ & (1 << kObstacleBit);
+bool Tile::hasObstacle() {
+    return this->data_ & (1 << kObstacleBit);
 }
 
-void Tile::setObstacle(){
-    this->walls_ |= (1 << kObstacleBit);
+void Tile::setObstacle() {
+    this->data_ |= (1 << kObstacleBit);
 }
 
-void Tile::addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, const coord& position){
+void Tile::addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, const coord& position) {
     adjacentTiles_[direction] = tile;
-    weights_[direction] = 1;
+    weights_[direction] = kMinWeight;
     this->setWall(direction, wall);
     tile->setPosition(position);//posible error
 }
 
-void Tile::setPosition(const coord& position){
+void Tile::setPosition(const coord& position) {
     this->position_ = position;
 }

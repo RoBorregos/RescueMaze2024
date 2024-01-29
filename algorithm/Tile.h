@@ -7,7 +7,7 @@ using namespace std;
 
 #include "coord.h"
 
-enum class TileDirection{
+enum class TileDirection {
     kUp = 0,
     kDown = 1,
     kLeft = 2,
@@ -15,16 +15,18 @@ enum class TileDirection{
     kNone
 };
 
+// Bits 0-3 are reserved for the walls. 
 constexpr int kVictimBit = 4;
 constexpr int kObstacleBit = 5;
+
+constexpr int kMinWeight = 1;
 
 class Tile{
     public:
         coord position_;
         map<TileDirection, Tile *> adjacentTiles_;
-        char walls_;
-        // map<TileDirection, bool> walls_;
         map<TileDirection, int> weights_;
+        char data_;
         Tile();
         Tile(const coord& position);
         void addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall, const coord& position);
