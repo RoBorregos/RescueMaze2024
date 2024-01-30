@@ -34,12 +34,9 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
     double errorOrientation = targetOrientation - currentOrientation;
-    customPrint("Error Orientation: ");
-    customPrintln(errorOrientation);
     if (errorOrientation > 180) {
         errorOrientation -= 360;
-    }
-    else if (errorOrientation < -180) {
+    } else if (errorOrientation < -180) {
         errorOrientation += 360;
     }
     
@@ -57,7 +54,7 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
 }
 
 void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    unsigned long timeDiff = millis() - timePrev_;
+    const unsigned long timeDiff = millis() - timePrev_;
     if (timeDiff < sampleTime_) {
         return;
     }
@@ -84,33 +81,32 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 }
 
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &speed, bool &clockwise) {
-    customPrintln("ENTRANDO A COMPUTETURN");
-    bool goalReached = false;
-    unsigned long timeDiff = millis() - timePrev_;
+    const unsigned long timeDiff = millis() - timePrev_;
     if (timeDiff < sampleTime_) {
         return;
     }
+    
+    bool goalReached = false;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
-    const double baseSpeed = 0.14;
+    constexpr double baseSpeed = 0.14;
 
     if (errorOrientation < 0) {
         speed = baseSpeed + outputModifier;
         clockwise = true;
         customPrintln("Aumentando derecho");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    }
-    else if (errorOrientation > 0) {
+    } else if (errorOrientation > 0) {
         speed = baseSpeed - outputModifier;
         clockwise = false;
         customPrintln("Aumentando izquierdo");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    }
-    else { 
+    } else { 
         speed = 0;
         goalReached = true;
     }
+    
     if (goalReached == false) {
         speed = constrain(speed, minOutput_, maxOutput_);
     }
