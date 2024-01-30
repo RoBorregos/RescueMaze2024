@@ -36,8 +36,7 @@ double PID::computeErrorOrientation(const double targetOrientation, const double
     double errorOrientation = targetOrientation - currentOrientation;
     if (errorOrientation > 180) {
         errorOrientation -= 360;
-    }
-    else if (errorOrientation < -180) {
+    } else if (errorOrientation < -180) {
         errorOrientation += 360;
     }
     
@@ -55,7 +54,10 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
 }
 
 void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    unsigned long timeDiff = millis() - timePrev_;
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < sampleTime_) {
+        return;
+    }
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
     constexpr double kBaseSpeed = 0.14;
@@ -78,35 +80,35 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     timePrev_ = millis(); 
 }
 
-void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight, bool &clockwise) {
+void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &speed, bool &clockwise) {
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < sampleTime_) {
+        return;
+    }
+    
     bool goalReached = false;
-    unsigned long timeDiff = millis() - timePrev_;
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
-    const int baseSpeed = 70;
+    constexpr double baseSpeed = 0.14;
+
     if (errorOrientation < 0) {
-        outputLeft = baseSpeed + outputModifier;
-        outputRight= baseSpeed + outputModifier;
+        speed = baseSpeed + outputModifier;
         clockwise = true;
         customPrintln("Aumentando derecho");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    }
-    else if (errorOrientation > 0) {
-        outputRight = baseSpeed - outputModifier;
-        outputLeft= baseSpeed - outputModifier;
+    } else if (errorOrientation > 0) {
+        speed = baseSpeed - outputModifier;
         clockwise = false;
         customPrintln("Aumentando izquierdo");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    }
-    else { 
-        outputLeft = 0;
-        outputRight = 0;
+    } else { 
+        speed = 0;
         goalReached = true;
     }
+    
     if (goalReached == false) {
-        outputLeft = constrain(outputLeft, 40, 120);
-        outputRight = constrain(outputRight, 40, 120);
+        speed = constrain(speed, minOutput_, maxOutput_);
     }
 
     errorPrev_ = errorOrientation;
@@ -115,7 +117,7 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
 }
 
 void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
-    if(millis() - timePrev_ < sampleTime_) {
+    if (millis() - timePrev_ < sampleTime_) {
         return;
     }
     

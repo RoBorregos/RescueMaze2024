@@ -3,20 +3,13 @@
 #include "Pins.h"
 #include "CustomSerial.h"
 
-// TODO: ALL THIS VARIABLES SHOULD BE IN A CLASS AS CONSTANTS
-
-constexpr static double kPTurn = 1.0;
-constexpr static double kITurn = 0.0;
-constexpr static double kDTurn = 0.0;
-
-
-PID pidTurn(kPTurn, kITurn, kDTurn);
 BNO bno;
 
 Movement::Movement() {
     this->motor[kNumberOfWheels];
     this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
     this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
+    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
 }
 
 void Movement::setup() {
@@ -102,10 +95,9 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
     }
 }
 
-void Movement::moveMotors(const MovementState state, const double targetOrientation) {
+bool Movement::moveMotors(const MovementState state, const double targetOrientation) {
     double speeds[kNumberOfWheels];
-    MotorState directions[kNumberOfWheels];
-    uint8_t pwm = 60; 
+    MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno.getOrientationX();
     double speedLeft = 0;
     double speedRight = 0;
@@ -147,56 +139,60 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
-        // TODO: apply giving a speed to the motors to turn left or right
         case (MovementState::kTurnLeft): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+            customPrint("targetOrientation: ");
+            customPrintln(targetOrientation);
+            
+            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
+                stopMotors();
+                return true;
+            } else {
                 customPrintln(abs(targetOrientation - currentOrientation));
 
-                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, speedRight, turnLeft);
-
+                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
-                }
-                else {
+                } else {
                     setMotorsDirections(MovementState::kTurnRight, directions); 
                 }
 
                 speeds[frontLeftIndex] = speedLeft;
                 speeds[backLeftIndex] = speedLeft;
-                speeds[frontRightIndex] = speedRight;
-                speeds[backRightIndex] = speedRight;
+                speeds[frontRightIndex] = speedLeft;
+                speeds[backRightIndex] = speedLeft;
 
-                currentOrientation = bno.getOrientationX();
                 setSpeedsAndDirections(speeds, directions);
             }
-            stopMotors();
 
             break;
         }
         case (MovementState::kTurnRight): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, speedRight, turnLeft);
+            
+            if (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) <= kMaxOrientationError) {
+                stopMotors();
+                return true;
+            } else {
+           
+                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
 
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
-                }
-                else {
+                } else {
                     setMotorsDirections(MovementState::kTurnRight, directions); 
                 }
 
                 speeds[frontLeftIndex] = speedLeft;
                 speeds[backLeftIndex] = speedLeft;
-                speeds[frontRightIndex] = speedRight;
-                speeds[backRightIndex] = speedRight;
+                speeds[frontRightIndex] = speedLeft;
+                speeds[backRightIndex] = speedLeft;
 
-                currentOrientation = bno.getOrientationX();
                 setSpeedsAndDirections(speeds, directions);
             }
-            stopMotors();
 
             break;
         }
     }
+    return false;
 }
 
 void Movement::updateTics(MotorID motorId) {

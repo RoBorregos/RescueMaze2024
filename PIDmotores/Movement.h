@@ -41,11 +41,12 @@ class Movement {
 
         Motor motor[4];
 
-        static constexpr double kMaxOrientationError = 0.3;
+        static constexpr double kMaxOrientationError = 0.8;
         static constexpr uint8_t kNumberOfWheels = 4;
 
         PID pidForward;
         PID pidBackward;
+        PID pidTurn;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -55,10 +56,15 @@ class Movement {
         constexpr static double kIBackward = 0.0;
         constexpr static double kDBackward = 0.0;
 
+        constexpr static double kPTurn = 0.010;
+        constexpr static double kITurn = 0.0;
+        constexpr static double kDTurn = 0.008;
+
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
+        constexpr static double kTurnMinOutput{0.05};
         constexpr static double kMaxOutput{0.5};
-        constexpr static long kSampleTime{1};
+        constexpr static long kSampleTime{100};
 
     public:
         Movement();
@@ -81,7 +87,7 @@ class Movement {
         double getFrontRightSpeed();    
 
         uint8_t getOrientation(const compass currentOrientation);
-        void moveMotors(const MovementState state, const double targetOrientation);
+        bool moveMotors(const MovementState state, const double targetOrientation);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 

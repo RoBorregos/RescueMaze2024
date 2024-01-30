@@ -13,11 +13,35 @@ void setup(){
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();
+    
+    /* for (int i = 0; i < 1000; ++i) {
+        robot.moveMotors(MovementState::kForward, 0);
+    } */
+    
+    /* while (robot.moveMotors(MovementState::kTurnRight, 0) == false) {
+        customPrintln("Turning right");
+    }
+    customPrintln("Arrived to 0"); */
 }
     
 void loop() {
-    //robot.setSpeed(1);
-    robot.moveMotors(MovementState::kBackward, 0);
+    // WARNING: by using a while or for loop here, the robot will not follow the instruction
+
+    //robot.setSpeed(0);
+    
+    //robot.moveMotors(MovementState::kForward, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 270);
+    
+    /* for (int i = 0; i < 1000; ++i) {
+        robot.moveMotors(MovementState::kForward, 0);
+    } */
+
+    /* if (robot.moveMotors(MovementState::kTurnLeft, 270) == false) {
+        customPrintln("Turining left...");
+    }
+    else { 
+        customPrintln("Arrived");
+    } */
     
     /* if (iterations < 25) { // TODO: juega con este numero
         robot.moveMotors(MovementState::kForward, 0);

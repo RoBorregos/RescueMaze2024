@@ -10,7 +10,6 @@ enum class MotorState{
   kForward = 1
 };
 
-// checar el formato
 enum class MotorID {
     kBackLeft = 0,
     kFrontLeft = 1,
