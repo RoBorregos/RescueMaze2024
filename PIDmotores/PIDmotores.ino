@@ -8,6 +8,7 @@
 Movement robot;
 double targetOrientation = 0.0;
 unsigned long iterations = 0;
+bool hasArrived = false;
 
 void setup(){
     Serial.begin(115200);
@@ -28,10 +29,29 @@ void loop() {
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
 
     //robot.setSpeed(0);
-    
-    //robot.moveMotors(MovementState::kForward, 0);
-    robot.moveMotors(MovementState::kTurnLeft, 270);
-    
+    robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    robot.moveMotors(MovementState::kForward, 0, 0.5);
+    robot.moveMotors(MovementState::kBackward, 0, 0.5);
+    delay(10000);
+
+    /* if (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false) {
+        customPrintln("Moving forward...");
+    }
+    else {
+        customPrintln("Arrived");
+        hasArrived = true;
+    } */
+
+   /*  while (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false){
+        delay(100);
+    }
+    delay(1000);
+    while (hasArrived == false && robot.moveMotors(MovementState::kBackward, 0, 0.5) == false){
+        delay(100);
+    }
+    hasArrived = true; */
+
     /* for (int i = 0; i < 1000; ++i) {
         robot.moveMotors(MovementState::kForward, 0);
     } */
@@ -65,7 +85,7 @@ void loop() {
     
     ++iterations;
 
-    //LEER TICS DE LOS ENCODERS
+    //LEER VELOCIDAD 
     customPrint("BACK_LEFT: ");
     customPrintln(robot.getBackLeftSpeed());
     customPrint("FRONT_LEFT: ");
@@ -75,7 +95,7 @@ void loop() {
     customPrint("FRONT_RIGHT: ");
     customPrintln(robot.getFrontRightSpeed()); 
 
-    delay(200);
+    delay(70);
 
     
     

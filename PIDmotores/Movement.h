@@ -28,7 +28,8 @@ class Movement {
         Motor motorBL_;
         Motor motorBR_;
 
-        unsigned long nextTime_;
+        unsigned long prevTimeTraveled_ = 0;
+        double allDistanceTraveled_ = 0; 
   
         float errorPrevOrientation_;
         float errorAcumuladoOrientation_;
@@ -65,6 +66,7 @@ class Movement {
         constexpr static double kTurnMinOutput{0.05};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{100};
+        constexpr static long kSampleTimeTraveled{50};
 
     public:
         Movement();
@@ -87,11 +89,15 @@ class Movement {
         double getFrontRightSpeed();    
 
         uint8_t getOrientation(const compass currentOrientation);
-        bool moveMotors(const MovementState state, const double targetOrientation);
+        bool moveMotors(const MovementState state, const double targetOrientation, const double targetDistance);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
         void setSpeed(const double speed);
+
+        bool hasTraveledDistance(const double distance);
+
+        bool hasTraveledDistanceWithSpeed(const double distance);
 };
 
 #endif

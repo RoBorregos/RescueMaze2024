@@ -61,6 +61,7 @@ class Motor {
         // This will be use for the total distance traveled.
         long long totalTics_ = 0;
 
+        long long previousTics_ = 0;
 
         // This will be use for the PID and the speed and the variable can also be reset to 0 every lapse of time.
         long long timeEpochTics_ = 0;
@@ -111,5 +112,7 @@ class Motor {
         double getSpeed();
 
         void constantSpeed(const double speed, const MotorState direction);
+
+        bool hasTraveledDistance(const double distance);
 };
 #endif
