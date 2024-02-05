@@ -12,14 +12,23 @@ constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown
 
 vector<vector<char>> maze = {
         {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'},
+        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
         {'#', ' ', '#', ' ', '#', ' ', '#', '#', '#', '#', '#'},
-        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#'},
+        {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#'}, // 3.
         {'#', ' ', '#', '#', '#', ' ', '#', ' ', '#', '#', '#'},
-        {'#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', '#'},
+        {'#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', '#'}, // 5.
         {'#', ' ', '#', '#', '#', ' ', '#', '#', ' ', ' ', '#'},
+        {'#', ' ', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 7.
         {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
+        {'#', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'}, // 9.
         {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
+        // {'#', '#', '#', '#', '#', '#', '#'},
+        // {'#', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
+        // {'#', ' ', '#', '#', '#', ' ', '#'},
+        // {'#', ' ', '#', ' ', '#', ' ', '#'}, // 3.
+        // {'#', ' ', '#', '#', '#', ' ', '#'},
+        // {'#', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
+        // {'#', '#', '#', '#', '#', '#', '#'}
 };
 
 void printMaze(const vector<vector<char>>& mazeToPrint) {
@@ -81,12 +90,12 @@ void dijsktra(const coord& start, const coord& end, unordered_map<coord,Tile> ma
         // update distance.
         for(int i = 0; i < 4; i++) {
             const TileDirection& direction = directions[i];
-            Tile& currentTile = map[currentCoord];
-            const coord& adjacentCoord = currentTile.adjacentTiles_[direction]->position_;
+            const Tile& currentTile = map[currentCoord];
+            const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
             // check if there's an adjecent tile and there's no wall.
             //TODO: check if the tile to explore is black
-            if(currentTile.adjacentTiles_[direction] != NULL && !currentTile.hasWall(direction)) {
-                const int weight = currentTile.weights_[direction] + distance[currentCoord];
+            if(currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction)) {
+                const int weight = currentTile.weights_[static_cast<int>(direction)] + distance[currentCoord];
                 // check if the new weight to visit the adjecent tile is less than the current weight.
                 if(weight < distance[adjacentCoord]) {
                     distance[adjacentCoord] = weight;
@@ -97,7 +106,7 @@ void dijsktra(const coord& start, const coord& end, unordered_map<coord,Tile> ma
         // find next tile.
         minDistance = INT_MAX;
         for(auto it = distance.begin(); it != distance.end(); ++it) {
-            const coord& current = it->first; // las declaro antes?
+            const coord& current = it->first;
             const int currentDistance = it->second;
             if(currentDistance < minDistance && !explored[current]) {
                 minDistance = currentDistance;
@@ -131,11 +140,24 @@ bool checkForWall(const vector<vector<char>>& maze, const TileDirection& directi
     }
 }
 
+void printMap(unordered_map<coord, Tile>& map){
+    for(auto it = map.begin(); it != map.end(); ++it) {
+        cout << "Tile: " << it->first.x << " " << it->first.y << endl;
+        for(int i = 0; i < 4; i++) {
+            if(it->second.adjacentTiles_[i] != NULL) {
+                cout << "Adjacent Tile: " << it->second.adjacentTiles_[i]->position_.x << " " << it->second.adjacentTiles_[i]->position_.y << endl;
+            }
+        }
+    }
+    return;
+}
+
 void depthFirstSearch(unordered_map<coord, Tile>& map) {
     unordered_map<coord, bool> visited;
     stack<coord> unvisited;
-    Tile currentTile;
-    coord robotCoord = coord{1,1};
+    Tile* currentTile;
+    coord robotCoord = coord{1,1,1};
+    map[robotCoord] = Tile(robotCoord);
     unvisited.push(robotCoord);
     // explore the map.
     while(!unvisited.empty()) {
@@ -147,8 +169,8 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
             continue;
         }
         // go to tile. TODO
-        // dijsktra(robotCoord, currentTileCoord, map);
-        // robotCoord = currentTileCoord;
+        dijsktra(robotCoord, currentTileCoord, map);
+        robotCoord = currentTileCoord;
         visited[currentTileCoord] = true;
         bool wall, alreadyConnected;
         // check walls the 4 adjacent tiles.
@@ -158,43 +180,46 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
             TileDirection oppositeDirection;
             switch(direction) {
                 case TileDirection::kRight:
-                    nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y};
-                    currentTile = map[currentTileCoord];
+                    nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y,robotCoord.z};
+                    currentTile = &map[currentTileCoord];
                     oppositeDirection = TileDirection::kLeft;
                     break;
                 case TileDirection::kUp:
-                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2};
-                    currentTile = map[currentTileCoord];
+                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2,robotCoord.z};
+                    currentTile = &map[currentTileCoord];
                     oppositeDirection = TileDirection::kDown;
                     break;
                 case TileDirection::kLeft:
-                    nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y};
-                    currentTile = map[currentTileCoord];
+                    nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y,robotCoord.z};
+                    currentTile = &map[currentTileCoord];
                     oppositeDirection = TileDirection::kRight;
                     break;
                 case TileDirection::kDown:
-                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2};
-                    currentTile = map[currentTileCoord];
+                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2,robotCoord.z};
+                    currentTile = &map[currentTileCoord];
                     oppositeDirection = TileDirection::kUp;
                     break;
             }
             // check if the tile has not been checked.
-            if(currentTile.adjacentTiles_[direction] == NULL) {
+            if(currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
                 wall = checkForWall(maze, direction, currentTileCoord);
-                // if there is no wall, add the connection.
+                // create a pointer to the next tile and asign its coordenate if it's a new Tile.
+                Tile* nextTile = &map[nextTileCoord];
+                if(nextTile->position_ == coord{1000,1000,1000}) {
+                    map[nextTileCoord].setPosition(nextTileCoord);
+                }
+                // Link the two adjacent Tiles.
+                currentTile->addAdjacentTile(direction, nextTile, wall);
+                nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
+                // Check if there's a wall between the two adjacent Tiles.
                 if(!wall) {
                     maze[currentTileCoord.y][currentTileCoord.x] = 'o';
                     maze[nextTileCoord.y][nextTileCoord.x] = 'o';
-                    map[currentTileCoord].addAdjacentTile(direction, &map[nextTileCoord], false, nextTileCoord);
-                    map[nextTileCoord].addAdjacentTile(oppositeDirection, &map[currentTileCoord], false, currentTileCoord);
                     // if the tile has not been visited, add it to the queue.
                     if(visited.find(nextTileCoord) == visited.end()) {
                         unvisited.push(nextTileCoord);
                     }
-                }else{
-                    map[currentTileCoord].addAdjacentTile(direction, &map[currentTileCoord], true, nextTileCoord);
-                    map[nextTileCoord].addAdjacentTile(oppositeDirection, &map[currentTileCoord], true, currentTileCoord);
                 }
             }
         }
@@ -205,7 +230,7 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
 int main() {
     unordered_map<coord, Tile> map;
     depthFirstSearch(map);
-    dijsktra(coord{1,1},coord{9,7},map);
+    // dijsktra(coord{1,5},coord{5,9},map);
     return 0;
 }
 
@@ -230,4 +255,9 @@ multiple heights
 (23/01/2024):
 - char walls_
 - victim, obstacle and wall storage
+
+(30/01/2024):
+- maps to array storage
+- checkpoint storage
+- black tiles storage and check
 */
