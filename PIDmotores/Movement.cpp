@@ -115,6 +115,10 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kForward): {
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+                const unsigned long timeDiff = millis() - timePrev_;
+                if (timeDiff < sampleTime_) {
+                    continue;
+                }
                 pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
                 speeds[frontLeftIndex] = speedLeft;
                 speeds[backLeftIndex] = speedLeft;
@@ -124,7 +128,8 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
                 setMotorsDirections(MovementState::kForward, directions);
                 setSpeedsAndDirections(speeds, directions);
                 currentOrientation = bno.getOrientationX();
-                delay(100);
+                timePrev_ = millis();
+                
             }
             stopMotors();
             return true;
@@ -133,6 +138,10 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+                const unsigned long timeDiff = millis() - timePrev_;
+                if (timeDiff < sampleTime_) {
+                    continue;
+                }
                 pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
 
                 speeds[frontLeftIndex] = speedRight;
@@ -143,7 +152,8 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
                 setMotorsDirections(MovementState::kBackward, directions); 
                 setSpeedsAndDirections(speeds, directions);
                 currentOrientation = bno.getOrientationX();
-                delay(100);
+                timePrev_ = millis();
+                
             }
             stopMotors();
             return true;
@@ -153,6 +163,10 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+                const unsigned long timeDiff = millis() - timePrev_;
+                if (timeDiff < sampleTime_) {
+                    continue;
+                }
                 customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
@@ -169,7 +183,7 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 setSpeedsAndDirections(speeds, directions);
                 currentOrientation = bno.getOrientationX();
-                delay(100);
+                timePrev_ = millis();
             }
             
             stopMotors();
@@ -178,8 +192,11 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kTurnRight): {
-            
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+                const unsigned long timeDiff = millis() - timePrev_;
+                if (timeDiff < sampleTime_) {
+                    continue;
+                }
                 customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
@@ -196,7 +213,7 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 setSpeedsAndDirections(speeds, directions);
                 currentOrientation = bno.getOrientationX();
-                delay(100);
+                timePrev_ = millis();
             }
             
             stopMotors();

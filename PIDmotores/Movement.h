@@ -40,6 +40,10 @@ class Movement {
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
 
+        double timePrev_ = 0;
+
+        double sampleTime_ = 100;
+
         Motor motor[4];
 
         static constexpr double kMaxOrientationError = 0.8;

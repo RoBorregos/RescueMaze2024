@@ -29,11 +29,19 @@ void loop() {
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
 
     //robot.setSpeed(0);
-    robot.moveMotors(MovementState::kTurnRight, 90, 0);
-    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    robot.moveMotors(MovementState::kForward, 0, 0.5);
-    robot.moveMotors(MovementState::kBackward, 0, 0.5);
-    delay(10000);
+    // robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    robot.moveMotors(MovementState::kForward, 0, 1.5);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 1.64);
+    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
+    robot.moveMotors(MovementState::kForward, 90, 1.70);
+    robot.moveMotors(MovementState::kTurnRight, 180, 0);
+    robot.moveMotors(MovementState::kForward, 180, 1.5);
+
+    
+    // robot.moveMotors(MovementState::kBackward, 0, 0.5);
+    
 
     /* if (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false) {
         customPrintln("Moving forward...");
