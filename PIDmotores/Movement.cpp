@@ -6,10 +6,11 @@
 BNO bno;
 
 Movement::Movement() {
+    this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
-    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
-    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
-    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime);
+    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
+    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
+    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
 }
 
 void Movement::setup() {
@@ -95,7 +96,7 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
     }
 }
 
-bool Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno.getOrientationX();
@@ -116,8 +117,9 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 const unsigned long timeDiff = millis() - timePrev_;
-                if (timeDiff < sampleTime_) {
-                    continue;
+                if (timeDiff > sampleTime_) {
+                    currentOrientation = bno.getOrientationX();
+                    timePrev_ = millis();
                 }
                 pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
                 speeds[frontLeftIndex] = speedLeft;
@@ -127,12 +129,10 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 setMotorsDirections(MovementState::kForward, directions);
                 setSpeedsAndDirections(speeds, directions);
-                currentOrientation = bno.getOrientationX();
-                timePrev_ = millis();
                 
             }
+
             stopMotors();
-            return true;
             
             break;
         }
@@ -155,8 +155,8 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
                 timePrev_ = millis();
                 
             }
+
             stopMotors();
-            return true;
             
             break;
         }
@@ -187,7 +187,6 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
             }
             
             stopMotors();
-            return true;
 
             break;
         }
@@ -217,12 +216,10 @@ bool Movement::moveMotors(const MovementState state, const double targetOrientat
             }
             
             stopMotors();
-            return true;
 
             break;
         }
     }
-    return false;
 }
 
 void Movement::updateTics(MotorID motorId) {
@@ -287,12 +284,13 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     if (timeTraveled_ < kSampleTimeTraveled) {
         return false;
     }
+
     const double averageSpeed = (motor[static_cast<uint8_t>(MotorID::kBackLeft)].getSpeed() +
                                  motor[static_cast<uint8_t>(MotorID::kBackRight)].getSpeed() +
                                  motor[static_cast<uint8_t>(MotorID::kFrontLeft)].getSpeed() +
-                                 motor[static_cast<uint8_t>(MotorID::kFrontRight)].getSpeed()) / 4;
+                                 motor[static_cast<uint8_t>(MotorID::kFrontRight)].getSpeed()) / kNumberOfWheels;
     
-    const double distanceTraveled = averageSpeed * (timeTraveled_ / 1000.0);
+    const double distanceTraveled = averageSpeed * (timeTraveled_ / kOneSecInMs);
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
     if (allDistanceTraveled_ >= distance) {

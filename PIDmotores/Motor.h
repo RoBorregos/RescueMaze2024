@@ -71,6 +71,10 @@ class Motor {
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
         double previousSpeed_ = 0;
+
+        constexpr static double kBaseSpeed_ = 0.14;
+
+        constexpr static double kMaxOrientationError_ = 0.8;
       
     public:
         Motor();

@@ -21,9 +21,17 @@ class PID {
         unsigned long timePrev_{0};
         unsigned long sampleTime_{100};
 
+        double baseModifier_{0.14};
+        
+        static constexpr double kBaseSpeedTurn = 0.075;
+        
+        double kMaxOrientationError_{0.8};
+
+
+
     public:
 
-        PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
+        PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier_, const double kMaxOrientationError_);
 
         PID(const double kP, const double kI, const double kD);
 
@@ -36,6 +44,6 @@ class PID {
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
         void compute(const double setpoint, double& input, double& output, long long& resetVariable, double (*func)(const long long, const unsigned long));
-        void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
+        void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier, const double baseModifierTurn);
 };
 #endif
