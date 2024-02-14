@@ -14,20 +14,16 @@ class PID {
         double errorSum_{0};
         double errorPrev_{0};
 
-        double maxErrorSum_{4000};
-        double minOutput_{0};
-        double maxOutput_{255};
+        double kMaxErrorSum_{4000};
+        double kMinOutput_{0};
+        double kMaxOutput_{255};
 
         unsigned long timePrev_{0};
-        unsigned long sampleTime_{100};
+        unsigned long kSampleTime_{100};
 
-        double baseModifier_{0.14};
-        
-        static constexpr double kBaseSpeedTurn = 0.075;
+        double kBaseModifier_{0};
         
         double kMaxOrientationError_{0.8};
-
-
 
     public:
 
@@ -44,6 +40,7 @@ class PID {
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
         void compute(const double setpoint, double& input, double& output, long long& resetVariable, double (*func)(const long long, const unsigned long));
+        void setTunningsMotors(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
         void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier, const double baseModifierTurn);
 };
 #endif

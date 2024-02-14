@@ -8,9 +8,9 @@ BNO bno;
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
-    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
-    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
-    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeed_, kMaxOrientationError);
+    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
 }
 
 void Movement::setup() {
@@ -117,18 +117,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 const unsigned long timeDiff = millis() - timePrev_;
-                if (timeDiff > sampleTime_) {
+                if (timeDiff < sampleTime_) {
                     currentOrientation = bno.getOrientationX();
-                    timePrev_ = millis();
+                    continue;
                 }
                 pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
                 speeds[frontLeftIndex] = speedLeft;
                 speeds[backLeftIndex] = speedLeft;
                 speeds[frontRightIndex] = speedRight;
                 speeds[backRightIndex] = speedRight;
+                customPrintln("SpeedLeft:" + String(speedLeft));
+                customPrintln("SpeedRight:" + String(speedRight));
 
                 setMotorsDirections(MovementState::kForward, directions);
                 setSpeedsAndDirections(speeds, directions);
+                timePrev_ = millis();
                 
             }
 
@@ -140,7 +143,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 const unsigned long timeDiff = millis() - timePrev_;
                 if (timeDiff < sampleTime_) {
-                    continue;
+                    currentOrientation = bno.getOrientationX();
                 }
                 pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
 
@@ -151,7 +154,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 setMotorsDirections(MovementState::kBackward, directions); 
                 setSpeedsAndDirections(speeds, directions);
-                currentOrientation = bno.getOrientationX();
                 timePrev_ = millis();
                 
             }
@@ -165,9 +167,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
                 const unsigned long timeDiff = millis() - timePrev_;
                 if (timeDiff < sampleTime_) {
+                    currentOrientation = bno.getOrientationX();
                     continue;
                 }
-                customPrintln(abs(targetOrientation - currentOrientation));
+                //customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
                 if (turnLeft) {
@@ -182,8 +185,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 speeds[backRightIndex] = speedLeft;
 
                 setSpeedsAndDirections(speeds, directions);
-                currentOrientation = bno.getOrientationX();
+                
                 timePrev_ = millis();
+                
             }
             
             stopMotors();
@@ -194,9 +198,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
                 const unsigned long timeDiff = millis() - timePrev_;
                 if (timeDiff < sampleTime_) {
+                    currentOrientation = bno.getOrientationX();
                     continue;
                 }
-                customPrintln(abs(targetOrientation - currentOrientation));
+                //customPrintln(abs(targetOrientation - currentOrientation));
 
                 pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
                 if (turnLeft) {
@@ -211,8 +216,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 speeds[backRightIndex] = speedLeft;
 
                 setSpeedsAndDirections(speeds, directions);
-                currentOrientation = bno.getOrientationX();
+
                 timePrev_ = millis();
+                
             }
             
             stopMotors();
@@ -270,6 +276,7 @@ uint8_t Movement::getOrientation(const compass currentOrientation) {
     }
 }
 
+// TODO: delete this function
 bool Movement::hasTraveledDistance(const double distance) {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         if (motor[i].hasTraveledDistance(distance) == false) {

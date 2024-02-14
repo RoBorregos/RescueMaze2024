@@ -39,7 +39,8 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        double kBaseSpeed_ = 0.14;
+        static constexpr double kBaseSpeedForward_ = 0.14;
+        static constexpr double kBaseSpeedTurn_ = 0.07;
 
         double timePrev_ = 0;
 
@@ -47,7 +48,7 @@ class Movement {
 
         Motor motor[4];
 
-        double kMaxOrientationError = 0.8;
+        static constexpr double kMaxOrientationError = 0.9;
         static constexpr uint8_t kNumberOfWheels = 4;
 
         static constexpr long long kOneSecInMs = 1000;
@@ -65,13 +66,13 @@ class Movement {
         constexpr static double kIBackward = 0.0;
         constexpr static double kDBackward = 0.0;
 
-        constexpr static double kPTurn = 0.010;
+        constexpr static double kPTurn = 0.00005;
         constexpr static double kITurn = 0.0;
-        constexpr static double kDTurn = 0.008;
+        constexpr static double kDTurn = 0.00019;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
-        constexpr static double kTurnMinOutput{0.05};
+        constexpr static double kTurnMinOutput{0.050};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{100};
         constexpr static long kSampleTimeTraveled{50};
