@@ -96,7 +96,7 @@ class Motor {
 
         void motorBackward(uint8_t pwm);
 
-        void motorStop(uint8_t pwm);
+        void motorStop();
 
         void initMotor();
 

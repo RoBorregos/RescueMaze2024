@@ -47,7 +47,7 @@ long long Motor::getEpochTics() {
 
 void Motor::initMotor() {
     motorSetup(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
-    motorStop(0);
+    motorStop();
 }
 
 void Motor::initEncoder() {
@@ -121,8 +121,8 @@ void Motor::motorBackward(uint8_t pwm) {
     currentState_ = MotorState::kBackward;
 }
 
-void Motor::motorStop(uint8_t pwm) {
-    pwm = 0;
+void Motor::motorStop() {
+    uint8_t pwm = 0;
     analogWrite(pwmPin_, pwm);
 
     if (currentState_ == MotorState::kStop) {
@@ -144,13 +144,13 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     } else if (direction == MotorState::kBackward) {
         motorBackward(pwm);
     } else {
-        motorStop(0);
+        motorStop();
     }
 }
 
 void Motor::setSpeedAndDirection(const double speed, const MotorState direction) {
     if (direction == MotorState::kStop) {
-        motorStop(0);
+        motorStop();
         return;
     } 
     const uint8_t pwm = speedToPwm(speed);

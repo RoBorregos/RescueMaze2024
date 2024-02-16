@@ -37,7 +37,7 @@ void Movement::setupInternal(MotorID motorId) {
 
 void Movement::stopMotors() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-        motor[i].motorStop(0);
+        motor[i].motorStop();
     }
 }
 
