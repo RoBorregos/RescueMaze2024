@@ -190,7 +190,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistance(desiredDistance, vlx.getDistance(), moveForward) == false) {
                 if (moveForward) {
                     moveMotosForward(targetOrientation);
-                } else {
+                } else if (!moveForward) {
                     moveMotorsBackward(targetOrientation);
                 }
             }
