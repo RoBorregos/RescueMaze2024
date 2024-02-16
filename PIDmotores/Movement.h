@@ -42,11 +42,17 @@ class Movement {
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
 
+        double currentDistance_ = 0;
+        double targetDistance_ = 0;
+        double distancePrev_ = 0;
+
         double timePrev_ = 0;
 
         double sampleTime_ = 100;
 
         Motor motor[4];
+
+        static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
         static constexpr uint8_t kNumberOfWheels = 4;
@@ -107,6 +113,12 @@ class Movement {
         bool hasTraveledDistance(const double distance);
 
         bool hasTraveledDistanceWithSpeed(const double distance);
+
+        bool hasTraveledDistance(double targetDistance, double currentDistance, bool &moveForward);
+
+        void moveMotosForward(double targetOrientation);
+
+        void moveMotorsBackward(double targetOrientation);
 };
 
 #endif

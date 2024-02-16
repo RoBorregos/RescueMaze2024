@@ -187,12 +187,3 @@ void Motor::constantSpeed(const double speed, const MotorState direction) {
     pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
     setPwmAndDirection(tmpPwm, direction);
 }
-
-bool Motor::hasTraveledDistance(const double distance) {
-    const double distanceInMeters = distance;
-    const double distanceInPulses = distanceInMeters * kPulsesPerRev / kDistancePerRev;
-    const long long distanceInTics = static_cast<long long>(distanceInPulses);
-    const long long currentTics = totalTics_ - previousTics_;
-    
-    return currentTics >= distanceInTics;
-}

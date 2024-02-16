@@ -21,7 +21,7 @@ void setup(){
     robot.moveMotors(MovementState::kForward, 90, 1.70);
     robot.moveMotors(MovementState::kTurnRight, 180, 0);
     robot.moveMotors(MovementState::kForward, 180, 1.5); */
-    robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     /* for (int i = 0; i < 1000; ++i) {
         robot.moveMotors(MovementState::kForward, 0);
     } */
@@ -30,6 +30,8 @@ void setup(){
         customPrintln("Turning right");
     }
     customPrintln("Arrived to 0"); */
+    //robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kBackward, 0, 0.3);
 }
     
 void loop() {
@@ -40,17 +42,24 @@ void loop() {
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
     //robot.moveMotors(MovementState::kForward, 0, 0.5);
     //robot.moveMotors(MovementState::kBackward, 0, 0);
+    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+
+
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
-    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
-    robot.moveMotors(MovementState::kForward, 90, 1.70);
+    robot.moveMotors(MovementState::kTurnLeft, 89, 0);
+    robot.moveMotors(MovementState::kForward, 91, 1.75);
     robot.moveMotors(MovementState::kTurnRight, 180, 0);
     robot.moveMotors(MovementState::kForward, 180, 1.5); */
 
     
     // robot.moveMotors(MovementState::kBackward, 0, 0.5);
     
+    /* digitalWrite(18, HIGH);
+    digitalWrite(19, LOW);
+    analogWrite(23, 200); */
 
     /* if (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false) {
         customPrintln("Moving forward...");
