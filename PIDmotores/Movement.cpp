@@ -4,7 +4,9 @@
 #include "CustomSerial.h"
 #include "VLX.h"
 
-BNO bno;
+#define DEBUG_MOVEMENT 0
+
+BNO bno_;
 VLX vlxFrontRight(Pins::vlxPins[0]);
 VLX vlxBack(Pins::vlxPins[1]);
 VLX vlxLeft(Pins::vlxPins[2]);
@@ -14,9 +16,9 @@ VLX vlxFrontLeft(Pins::vlxPins[4]);
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
-    this->pidForward.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
-    this->pidBackward.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
-    this->pidTurn.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
 }
 
 void Movement::setup() {
@@ -25,23 +27,29 @@ void Movement::setup() {
     setupInternal(MotorID::kFrontRight);
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
-    bno.setupBNO();
+    bno_.setupBNO();
     Wire.begin();
-    vlxFrontRight.init();
-    vlxBack.init();
-    vlxLeft.init();
-    vlxRight.init();
-    vlxFrontLeft.init();
+    setupVlx(VlxID::kFrontRight);
+    setupVlx(VlxID::kBack);
+    setupVlx(VlxID::kLeft);
+    setupVlx(VlxID::kRight);
+    setupVlx(VlxID::kFrontLeft);
 }
 
-void Movement::setupInternal(MotorID motorId) {
+void Movement::setupInternal(const MotorID motorId) {
     uint8_t index = static_cast<uint8_t>(motorId);
-    motor[index].motorSetup(
+    motor[index].setupMotors(
         Pins::pwmPin[index],
         Pins::digitalOne[index],
         Pins::digitalTwo[index],
         Pins::encoderA[index],
         motorId);
+}
+
+void Movement::setupVlx(const VlxID vlxId) {
+    uint8_t index = static_cast<uint8_t>(vlxId);
+    vlx[index].setMux(Pins::vlxPins[index]);
+    vlx[index].init();
 }
 
 void Movement::stopMotors() {
@@ -111,9 +119,9 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     const unsigned long timeDiff = millis() - timePrev_;
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
-    double currentOrientation = bno.getOrientationX();
+    double currentOrientation = bno_.getOrientationX();
     if (timeDiff < sampleTime_) {
-        currentOrientation = bno.getOrientationX();
+        currentOrientation = bno_.getOrientationX();
         return;
     }
 
@@ -126,16 +134,18 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
     if (moveForward) {
-        pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
         speeds[frontLeftIndex] = speedLeft;
         speeds[backLeftIndex] = speedLeft;
         speeds[frontRightIndex] = speedRight;
         speeds[backRightIndex] = speedRight;
+        #if DEBUG_MOVEMENT
         customPrintln("SpeedLeft:" + String(speedLeft));
         customPrintln("SpeedRight:" + String(speedRight));
+        #endif
         setMotorsDirections(MovementState::kForward, directions);
     } else {
-        pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        pidBackward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
         speeds[frontLeftIndex] = speedRight;
         speeds[backLeftIndex] = speedRight;
         speeds[frontRightIndex] = speedLeft;
@@ -149,10 +159,33 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     timePrev_ = millis();
 }
 
+/* double getAllWallsDistances() {
+    for (const auto& vlxDirection : wallDistances) {
+        allWallsDistances += wallDistance;
+    }
+    return allWallsDistances;
+} */
+
+void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
+
+    for (const auto& vlxDirection : vlxDirections) {
+        wallDistances[static_cast<uint8_t>(vlxDirection)] = vlx[static_cast<uint8_t>(vlxDirection)].getDistance();
+    }
+    #if DEBUG_MOVEMENT
+    customPrintln("FrontRight:" + String(wallDistances[0]));
+    customPrintln("Back:" + String(wallDistances[1]));
+    customPrintln("Left:" + String(wallDistances[2]));
+    customPrintln("Right:" + String(wallDistances[3]));
+    customPrintln("FrontLeft:" + String(wallDistances[4]));
+    #endif
+
+}
+
+
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
-    double currentOrientation = bno.getOrientationX();
+    double currentOrientation = bno_.getOrientationX();
     double speedLeft = 0;
     double speedRight = 0;
     bool turnLeft = false;
@@ -160,16 +193,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
     const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
-    double initialWallDistance = vlxFrontRight.getDistance();
-    customPrintln("InitialDistance:" + String(initialWallDistance));
-    double backDistance = vlxBack.getDistance();
-    customPrintln("BackDistance:" + String(backDistance));
-    double leftDistance = vlxLeft.getDistance();
-    customPrintln("LeftDistance:" + String(leftDistance));
-    double rightDistance = vlxRight.getDistance();
-    customPrintln("RightDistance:" + String(rightDistance));
-    double frontLeftDistance = vlxFrontLeft.getDistance();
-    customPrintln("FrontLeftDistance:" + String(frontLeftDistance));
+
+    getAllWallsDistances(&wallDistances[kNumberOfVlx]);
     
     bool moveForward = false;
     switch (state)
@@ -184,7 +209,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             } 
             
-            double desiredWallDistance = initialWallDistance - targetDistance;
+            double desiredWallDistance = wallDistances[0] - targetDistance;
             while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
@@ -199,7 +224,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
-            const double desiredWallDistance = initialWallDistance + targetDistance;
+            const double desiredWallDistance = wallDistances[0]  + targetDistance;
             while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
@@ -210,16 +235,18 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+            while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+                #if DEBUG_MOVEMENT
                 customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
+                #endif
                 const unsigned long timeDiff = millis() - timePrev_;
                 if (timeDiff < sampleTime_) {
-                    currentOrientation = bno.getOrientationX();
+                    currentOrientation = bno_.getOrientationX();
                     continue;
                 }
                 //customPrintln(abs(targetOrientation - currentOrientation));
 
-                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
+                pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
                 } else {
@@ -242,16 +269,18 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kTurnRight): {
-            while (abs(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+            while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+                #if DEBUG_MOVEMENT
                 customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
+                #endif
                 const unsigned long timeDiff = millis() - timePrev_;
                 if (timeDiff < sampleTime_) {
-                    currentOrientation = bno.getOrientationX();
+                    currentOrientation = bno_.getOrientationX();
                     continue;
                 }
                 //customPrintln(abs(targetOrientation - currentOrientation));
 
-                pidTurn.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
+                pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
                 if (turnLeft) {
                     setMotorsDirections(MovementState::kTurnLeft, directions); 
                 } else {

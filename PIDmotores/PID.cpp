@@ -1,5 +1,6 @@
 #include "PID.h"
 #include "CustomSerial.h"
+
 #define DEBUG_PID 0
 
 PID::PID() {
@@ -25,17 +26,7 @@ PID::PID(const double kP, const double kI, const double kD) {
     errorPrev_ = 0;
 }
 
-void PID::setTunningsMotors(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime) {
-    kP_ = kP;
-    kI_ = kI;
-    kD_ = kD;
-    kMinOutput_ = minOutput;
-    kMaxOutput_ = maxOutput;
-    kMaxErrorSum_ = maxErrorSum;
-    kSampleTime_ = sampleTime;
-}
-
-void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxOrientationError) {
+void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
     kP_ = kP;
     kI_ = kI;
     kD_ = kD;
@@ -44,7 +35,7 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
     kMaxErrorSum_ = maxErrorSum;
     kSampleTime_ = sampleTime;
     kBaseModifier_ = baseModifier;
-    kMaxOrientationError_ = kMaxOrientationError;
+    kMaxOrientationError_ = maxOrientationError;
 }
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
@@ -163,7 +154,7 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
         return;
     }
     
-    input = func(resetVariable, millis() - timePrev_);
+    input = func(resetVariable, timeDiff);
 
     // TODO: Call the method computeOutputModifier to replace the line 118 - 124
     const double error = setpoint - input;

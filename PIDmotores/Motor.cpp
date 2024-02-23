@@ -13,7 +13,7 @@ Motor::Motor() {
     this->errorPrev_ = 0;
     this->errorAcumulado_ = 0;
     this->motorId_ = MotorID::kNone;
-    this->pid_.setTunningsMotors(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_, 0, 0);
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -26,7 +26,7 @@ Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t p
     this->encoders_[1] = 0;
     this->encoders_[2] = 0;
     this->encoders_[3] = 0;
-    this->pid_.setTunningsMotors(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_, 0, 0);
 }
 
 uint8_t Motor::getEncoderA() {
@@ -46,7 +46,7 @@ long long Motor::getEpochTics() {
 }
 
 void Motor::initMotor() {
-    motorSetup(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
+    setupMotors(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
     motorStop();
 }
 
@@ -77,7 +77,7 @@ void Motor::initEncoder() {
     }
 } 
 
-void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
+void Motor::setupMotors(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin_ = pwmPin;
     this->digitalOne_ = digitalOne;
     this->digitalTwo_ = digitalTwo;
@@ -122,8 +122,7 @@ void Motor::motorBackward(uint8_t pwm) {
 }
 
 void Motor::motorStop() {
-    const uint8_t pwm = 0;
-    analogWrite(pwmPin_, pwm);
+    analogWrite(pwmPin_, 0);
 
     if (currentState_ == MotorState::kStop) {
         return;

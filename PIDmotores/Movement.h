@@ -3,6 +3,7 @@
 
 #include "Motor.h"
 #include "BNO.h"
+#include "VLX.h"
 
 enum class compass{
     kNorth,
@@ -19,6 +20,7 @@ enum class MovementState{
     kTurnRight
 };
 
+constexpr VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
 class Movement {
     private:
@@ -42,6 +44,8 @@ class Movement {
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
 
+        static constexpr uint8_t kNumberOfVlx = 5;
+
         double currentDistance_ = 0;
         double targetDistance_ = 0;
         double distancePrev_ = 0;
@@ -52,6 +56,10 @@ class Movement {
 
         Motor motor[4];
 
+        VLX vlx[kNumberOfVlx];
+
+        double wallDistances[kNumberOfVlx];
+
         static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
@@ -60,9 +68,9 @@ class Movement {
         static constexpr long long kOneSecInMs = 1000;
 
 
-        PID pidForward;
-        PID pidBackward;
-        PID pidTurn;
+        PID pidForward_;
+        PID pidBackward_;
+        PID pidTurn_;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -88,7 +96,7 @@ class Movement {
 
         void setup();
         
-        void setupInternal(MotorID motorId);
+        void setupInternal(const MotorID motorId);
 
         void stopMotors();
 
@@ -110,15 +118,15 @@ class Movement {
 
         void setSpeed(const double speed);
 
-        bool hasTraveledDistance(const double distance);
-
         bool hasTraveledDistanceWithSpeed(const double distance);
 
-        bool hasTraveledDistance(double targetDistance, double currentDistance, bool &moveForward);
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward);
 
         void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
-        void moveMotorsBackward(double targetOrientation, bool moveForward);
+        void setupVlx(const VlxID vlxId);
+
+        void getAllWallsDistances(double wallDistances[kNumberOfVlx]);
 };
 
 #endif

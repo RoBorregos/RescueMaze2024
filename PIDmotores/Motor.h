@@ -102,7 +102,7 @@ class Motor {
 
         void setEncoderTics(int tics);
 
-        void motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorId);
+        void setupMotors(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorId);
 
         void setPwmAndDirection(const uint8_t pwm, const MotorState direction);
 
@@ -115,7 +115,5 @@ class Motor {
         double getSpeed();
 
         void constantSpeed(const double speed, const MotorState direction);
-
-        bool hasTraveledDistance(const double distance);
 };
 #endif

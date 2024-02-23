@@ -1,6 +1,7 @@
 #include "VLX.h"
 
 
+
 VLX::VLX() {
 }
 
@@ -12,12 +13,23 @@ void VLX::setMux(const uint8_t posMux) {
     mux_.setNewChannel(posMux);
 }
 
-void VLX::init() {
+bool VLX::init() {
+    uint8_t count = 0;
     mux_.selectChannel();
     while (!vLX_.begin()) {
         customPrintln("ERROR VLX");
         customPrint(mux_.hasAddress(VLX_ADDR));
         customPrintln(mux_.hasAddress(0x70));
+        count++;
+        if (count > 1000) {
+            customPrintln("Comprueba que el VLX sirva");
+            return false;
+        }
+        return true;
+    }
+    if (vLX_.begin()) {
+        customPrintln("VLX OK");
+        itWorks_ = true;
     }
 }
 
@@ -34,10 +46,10 @@ void VLX::updateDistance() {
 
 double VLX::getDistance() {
     updateDistance();
-    double measure = (measure_.RangeMilliMeter / kMm_in_M);
-    singleEMAFilter.AddValue(measure);
+    const double measure = (measure_.RangeMilliMeter / kMmInM);
+    singleEMAFilter.addValue(measure);
     
-    return singleEMAFilter.GetLowPass();
+    return singleEMAFilter.getLowPass();
 }
 
 void VLX::printDistance() {

@@ -1,26 +1,4 @@
-#ifndef _SingleEMAFilter_h
-#define _SingleEMAFilter_h
-
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-template <typename T>
-class SingleEMAFilter {
-	private:
-		double alpha_;
-		T lowPassFilter_;
-		T highPassFilter_;
-	public:
-		SingleEMAFilter<T>(const double alpha);
-		T addValue(const T value);
-		T getLowPass();
-		T getHighPass();
-
-};
-#endif
+/* #include "SingleEMAFilter.h"
 
 template<typename T>
 SingleEMAFilter<T>::SingleEMAFilter(const double alpha) {
@@ -42,4 +20,4 @@ inline T SingleEMAFilter<T>::getLowPass() {
 template<typename T>
 inline T SingleEMAFilter<T>::getHighPass() {
 	return highPassFilter_;
-} 
+} */

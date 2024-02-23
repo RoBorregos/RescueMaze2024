@@ -1,4 +1,6 @@
 #include "MUX.h"
+#include <Wire.h>
+#include "CustomSerial.h"
 
 MUX::MUX() {
     tcaPos_ = 0;
@@ -19,7 +21,7 @@ void MUX::selectChannel() {
     Wire.endTransmission();
 }
 
-void MUX::findI2C(const bool scan,const uint8_t address) {
+void MUX::findI2C(const bool scan, const uint8_t address) {
     if (scan) {
         for (uint8_t i = 0; i < 128; i++) {
             Wire.beginTransmission(i);
@@ -45,10 +47,7 @@ uint8_t MUX::getTcaPos() {
     return tcaPos_;
 }
 
-bool MUX::hasAddress(uint8_t address) {
+bool MUX::hasAddress(const uint8_t address) {
     Wire.beginTransmission(address);
-    if (Wire.endTransmission() == 0) {
-        return true;
-    }
-    return false;
+    return Wire.endTransmission() == 0;
 }
