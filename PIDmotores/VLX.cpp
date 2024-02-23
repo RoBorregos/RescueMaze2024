@@ -1,4 +1,4 @@
-/* #include "VLX.h"
+#include "VLX.h"
 
 VLX::VLX() {
 }
@@ -53,4 +53,4 @@ double VLX::getDistance() {
 void VLX::printDistance() {
     customPrint("Distance (M): ");
     customPrintln(VLX::getDistance());
-} */
+} 

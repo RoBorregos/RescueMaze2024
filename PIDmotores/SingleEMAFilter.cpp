@@ -1,4 +1,4 @@
-#include "SingleEMAFilter.h"
+/* #include "SingleEMAFilter.h"
 
 template<typename T>
 SingleEMAFilter<T>::SingleEMAFilter(const double alpha) {
@@ -20,4 +20,4 @@ inline T SingleEMAFilter<T>::getLowPass() {
 template<typename T>
 inline T SingleEMAFilter<T>::getHighPass() {
 	return highPassFilter_;
-} 
+}  */
