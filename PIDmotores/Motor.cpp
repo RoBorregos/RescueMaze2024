@@ -122,7 +122,7 @@ void Motor::motorBackward(uint8_t pwm) {
 }
 
 void Motor::motorStop() {
-    uint8_t pwm = 0;
+    const uint8_t pwm = 0;
     analogWrite(pwmPin_, pwm);
 
     if (currentState_ == MotorState::kStop) {

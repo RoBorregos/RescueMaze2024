@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "CustomSerial.h"
 
 #define MUX_ADDR 0x70
 
@@ -13,12 +14,13 @@ class MUX {
     public:
         MUX();
         
-        void setNewChannel(uint8_t tcaPos);
-        void selectChannel(uint8_t tcaPos);
+        void setNewChannel(const uint8_t tcaPos);
+        void selectChannel(const uint8_t tcaPos);
         void selectChannel();
-        void findI2C(bool scan, uint8_t address);
-        void setMatchingI2C(uint8_t address);
+        void findI2C(const bool scan = true,const uint8_t address = 0);
+        void setMatchingI2C(const uint8_t address);
         uint8_t getTcaPos();
+        bool hasAddress(uint8_t address);
 };
 
 #endif

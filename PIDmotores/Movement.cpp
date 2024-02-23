@@ -5,7 +5,11 @@
 #include "VLX.h"
 
 BNO bno;
-VLX vlx(Pins::vlxPins[0]);
+VLX vlxFrontRight(Pins::vlxPins[0]);
+VLX vlxBack(Pins::vlxPins[1]);
+VLX vlxLeft(Pins::vlxPins[2]);
+VLX vlxRight(Pins::vlxPins[3]);
+VLX vlxFrontLeft(Pins::vlxPins[4]);
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
@@ -16,13 +20,18 @@ Movement::Movement() {
 }
 
 void Movement::setup() {
+
     setupInternal(MotorID::kFrontLeft);
     setupInternal(MotorID::kFrontRight);
     setupInternal(MotorID::kBackLeft);
     setupInternal(MotorID::kBackRight);
     bno.setupBNO();
-    vlx.init();
-    
+    Wire.begin();
+    vlxFrontRight.init();
+    vlxBack.init();
+    vlxLeft.init();
+    vlxRight.init();
+    vlxFrontLeft.init();
 }
 
 void Movement::setupInternal(MotorID motorId) {
@@ -98,10 +107,15 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
         break;
     }
 }
-void Movement::moveMotosForward(double targetOrientation){
+void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward){
+    const unsigned long timeDiff = millis() - timePrev_;
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno.getOrientationX();
+    if (timeDiff < sampleTime_) {
+        currentOrientation = bno.getOrientationX();
+        return;
+    }
 
     double speedLeft = 0;
     double speedRight = 0;
@@ -111,53 +125,27 @@ void Movement::moveMotosForward(double targetOrientation){
     const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
-    const unsigned long timeDiff = millis() - timePrev_;
-    if (timeDiff < sampleTime_) {
-        currentOrientation = bno.getOrientationX();
-        return;
-    }
-    pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
-    speeds[frontLeftIndex] = speedLeft;
-    speeds[backLeftIndex] = speedLeft;
-    speeds[frontRightIndex] = speedRight;
-    speeds[backRightIndex] = speedRight;
-    customPrintln("SpeedLeft:" + String(speedLeft));
-    customPrintln("SpeedRight:" + String(speedRight));
+    if (moveForward) {
+        pidForward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        speeds[frontLeftIndex] = speedLeft;
+        speeds[backLeftIndex] = speedLeft;
+        speeds[frontRightIndex] = speedRight;
+        speeds[backRightIndex] = speedRight;
+        customPrintln("SpeedLeft:" + String(speedLeft));
+        customPrintln("SpeedRight:" + String(speedRight));
+        setMotorsDirections(MovementState::kForward, directions);
+    } else {
+        pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        speeds[frontLeftIndex] = speedRight;
+        speeds[backLeftIndex] = speedRight;
+        speeds[frontRightIndex] = speedLeft;
+        speeds[backRightIndex] = speedLeft;
 
-    setMotorsDirections(MovementState::kForward, directions);
+        setMotorsDirections(MovementState::kBackward, directions);
+    }
+
     setSpeedsAndDirections(speeds, directions);
 
-    //customPrintln(vlx.getDistance());
-
-    timePrev_ = millis();
-}
-
-void Movement::moveMotorsBackward(double targetOrientation){
-    double speeds[kNumberOfWheels];
-    MotorState directions[kNumberOfWheels]; 
-    double currentOrientation = bno.getOrientationX();
-
-    double speedLeft = 0;
-    double speedRight = 0;
-
-    const uint8_t frontLeftIndex = static_cast<uint8_t>(MotorID::kFrontLeft);
-    const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
-    const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
-    const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
-
-    const unsigned long timeDiff = millis() - timePrev_;
-    if (timeDiff < sampleTime_) {
-        currentOrientation = bno.getOrientationX();
-        return;
-    }
-    pidBackward.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
-    speeds[frontLeftIndex] = speedRight;
-    speeds[backLeftIndex] = speedRight;
-    speeds[frontRightIndex] = speedLeft;
-    speeds[backRightIndex] = speedLeft;
-
-    setMotorsDirections(MovementState::kBackward, directions); 
-    setSpeedsAndDirections(speeds, directions);
     timePrev_ = millis();
 }
 
@@ -172,7 +160,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
     const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
-    double initialDistance = vlx.getDistance();
+    double initialWallDistance = vlxFrontRight.getDistance();
+    customPrintln("InitialDistance:" + String(initialWallDistance));
+    double backDistance = vlxBack.getDistance();
+    customPrintln("BackDistance:" + String(backDistance));
+    double leftDistance = vlxLeft.getDistance();
+    customPrintln("LeftDistance:" + String(leftDistance));
+    double rightDistance = vlxRight.getDistance();
+    customPrintln("RightDistance:" + String(rightDistance));
+    double frontLeftDistance = vlxFrontLeft.getDistance();
+    customPrintln("FrontLeftDistance:" + String(frontLeftDistance));
+    
     bool moveForward = false;
     switch (state)
     {
@@ -181,18 +179,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kForward): {
+            moveForward = true;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
-                moveMotosForward(targetOrientation);
+                moveMotorsInADirection(targetOrientation, moveForward);
             } 
-            stopMotors();
-            delay(1000);
-            double desiredDistance = initialDistance - targetDistance;
-            while (hasTraveledDistance(desiredDistance, vlx.getDistance(), moveForward) == false) {
-                if (moveForward) {
-                    moveMotosForward(targetOrientation);
-                } else if (!moveForward) {
-                    moveMotorsBackward(targetOrientation);
-                }
+            
+            double desiredWallDistance = initialWallDistance - targetDistance;
+            while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
+                moveMotorsInADirection(targetOrientation, moveForward);
             }
 
             stopMotors();
@@ -200,17 +194,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kBackward): {
+            moveForward = false;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
-                moveMotorsBackward(targetOrientation);
+                moveMotorsInADirection(targetOrientation, moveForward);
             }
 
-            double desiredDistance = initialDistance + targetDistance;
-            while (hasTraveledDistance(desiredDistance, vlx.getDistance(), moveForward) == false) {
-                if (moveForward) {
-                    moveMotosForward(targetOrientation);
-                } else {
-                    moveMotorsBackward(targetOrientation);
-                }
+            const double desiredWallDistance = initialWallDistance + targetDistance;
+            while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
+                moveMotorsInADirection(targetOrientation, moveForward);
             }
             
             stopMotors();
@@ -355,7 +346,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     return false;
 }
 
-bool Movement::hasTraveledDistance(double targetDistance, double currentDistance, bool &moveForward) {
+bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward) {
     const double distanceDiff = (targetDistance - currentDistance);
     if (distanceDiff > 0) {
         moveForward = false;

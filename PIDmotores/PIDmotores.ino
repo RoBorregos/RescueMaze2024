@@ -6,6 +6,7 @@
 #include "Encoder.h"
 
 Movement robot;
+
 double targetOrientation = 0.0;
 unsigned long iterations = 0;
 bool hasArrived = false;
@@ -25,18 +26,23 @@ void setup(){
     /* for (int i = 0; i < 1000; ++i) {
         robot.moveMotors(MovementState::kForward, 0);
     } */
-    
+
+    /* while (true) {
+        vlx1.printDistance();
+        delay(1000);
+    } */
+
     /* while (robot.moveMotors(MovementState::kTurnRight, 0) == false) {
         customPrintln("Turning right");
     }
     customPrintln("Arrived to 0"); */
     //robot.moveMotors(MovementState::kForward, 0, 0.3);
-    robot.moveMotors(MovementState::kBackward, 0, 0.3);
+    //robot.moveMotors(MovementState::kBackward, 0, 0.3);
 }
     
 void loop() {
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
-
+    robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
@@ -44,9 +50,9 @@ void loop() {
     //robot.moveMotors(MovementState::kBackward, 0, 0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    
 
-
-    /* robot.moveMotors(MovementState::kForward, 0, 1.5);
+   /*  robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
     robot.moveMotors(MovementState::kTurnLeft, 89, 0);

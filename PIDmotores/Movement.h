@@ -116,9 +116,9 @@ class Movement {
 
         bool hasTraveledDistance(double targetDistance, double currentDistance, bool &moveForward);
 
-        void moveMotosForward(double targetOrientation);
+        void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
-        void moveMotorsBackward(double targetOrientation);
+        void moveMotorsBackward(double targetOrientation, bool moveForward);
 };
 
 #endif

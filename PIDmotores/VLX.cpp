@@ -1,35 +1,43 @@
 #include "VLX.h"
 
+
 VLX::VLX() {
 }
 
-VLX::VLX(uint8_t posMux) {
+VLX::VLX(const uint8_t posMux) {
     mux_.setNewChannel(posMux);
 }
 
-void VLX::setMux(uint8_t posMux) {
+void VLX::setMux(const uint8_t posMux) {
     mux_.setNewChannel(posMux);
 }
 
 void VLX::init() {
     mux_.selectChannel();
-    if (!vLX_.begin()){
+    while (!vLX_.begin()) {
         customPrintln("ERROR VLX");
+        customPrint(mux_.hasAddress(VLX_ADDR));
+        customPrintln(mux_.hasAddress(0x70));
     }
 }
 
-float VLX::getRawDistance() {
-    mux_.selectChannel();
-    vLX_.rangingTest(&measure_, false);
+uint16_t VLX::getRawDistance() {
+    updateDistance();
 
     return measure_.RangeMilliMeter;
 }
 
-double VLX::getDistance() {
+void VLX::updateDistance() {
     mux_.selectChannel();
     vLX_.rangingTest(&measure_, false);
+}
 
-    return (measure_.RangeMilliMeter / 1000.00);
+double VLX::getDistance() {
+    updateDistance();
+    double measure = (measure_.RangeMilliMeter / kMm_in_M);
+    singleEMAFilter.AddValue(measure);
+    
+    return singleEMAFilter.GetLowPass();
 }
 
 void VLX::printDistance() {
