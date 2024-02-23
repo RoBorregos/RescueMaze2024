@@ -1,6 +1,4 @@
-#include "VLX.h"
-
-
+/* #include "VLX.h"
 
 VLX::VLX() {
 }
@@ -46,7 +44,7 @@ void VLX::updateDistance() {
 
 double VLX::getDistance() {
     updateDistance();
-    const double measure = (measure_.RangeMilliMeter / kMmInM);
+    double measure = (measure_.RangeMilliMeter / kMmInM);
     singleEMAFilter.addValue(measure);
     
     return singleEMAFilter.getLowPass();
@@ -55,4 +53,4 @@ double VLX::getDistance() {
 void VLX::printDistance() {
     customPrint("Distance (M): ");
     customPrintln(VLX::getDistance());
-}
+} */
