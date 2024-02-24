@@ -1,27 +1,33 @@
-#include<iostream>
-#include<map>
-using namespace std;
-
 #include "Tile.h"
 
 Tile::Tile(){
     this->position_ = kInvalidPosition;
 
-    for (int i = 0; i < kNumberOfDirections; ++i) {
-        adjacentTiles_[i] = NULL;
-        weights_[i] = 0;
-    }
-    
+    adjacentTiles_[0] = NULL;
+    adjacentTiles_[1] = NULL;
+    adjacentTiles_[2] = NULL;
+    adjacentTiles_[3] = NULL;
+
+    weights_[0] = 0;
+    weights_[1] = 0;
+    weights_[2] = 0;
+    weights_[3] = 0;
+
     this->data_ = '\0';
 }
 
 Tile::Tile(const coord& position) {
     this->position_ = position;
 
-    for (int i = 0; i < kNumberOfDirections; ++i) {
-        adjacentTiles_[i] = NULL;
-        weights_[i] = 0;
-    }
+    adjacentTiles_[0] = NULL;
+    adjacentTiles_[1] = NULL;
+    adjacentTiles_[2] = NULL;
+    adjacentTiles_[3] = NULL;
+
+    weights_[0] = 0;
+    weights_[1] = 0;
+    weights_[2] = 0;
+    weights_[3] = 0;
 
     this->data_ = '\0';
 }

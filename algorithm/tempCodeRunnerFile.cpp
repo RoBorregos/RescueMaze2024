@@ -1,3 +1,2 @@
-}) {
-                        map[nextTileCoord].setPosition(nextTileCoord);
-                    }
+'o';
+                    // maze[nextTileCoord.y][nextTileCoord.x] = 'o';

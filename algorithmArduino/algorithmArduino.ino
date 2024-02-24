@@ -1,16 +1,15 @@
-#include<iostream>
-#include<vector>
-#include<unordered_map>
-#include<stack>
-#include<climits>
+// make sure that we do not rely on the STL.
+#define ETL_NO_STL
 
-using namespace std;
+// #include<etl/unordered_map.h>
 
-#include "Tile.cpp"
+#include "Map.h"
+
+using namespace etl;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-vector<vector<char>> maze = {
+etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> maze = {
         // {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
         // {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
         // {'#', ' ', '#', ' ', '#', ' ', '#', '#', '#', '#', '#'},
@@ -30,7 +29,7 @@ vector<vector<char>> maze = {
         {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
         {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
 };
-vector<vector<char>> mazeSecondLevel = {
+etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> mazeSecondLevel = {
     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
     {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
     {'#', ' ', ' ', ' ', '#', '#', '#', ' ', ' ', ' ', '#'},
@@ -40,17 +39,17 @@ vector<vector<char>> mazeSecondLevel = {
     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
 };
 
-void printMaze(const vector<vector<char>>& mazeToPrint) {
-    for (int i = 0; i < mazeToPrint.size(); ++i) {
-        for (int j = 0; j < mazeToPrint[i].size(); j++) {
-            cout << mazeToPrint[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
+// void printMaze(const etl::vector<etl::vector<char,kMaxMapSize>,kMaxMapSize>& mazeToPrint) {
+//     for (int i = 0; i < mazeToPrint.size(); ++i) {
+//         for (int j = 0; j < mazeToPrint[i].size(); j++) {
+//             etl::cout << mazeToPrint[i][j] << " ";
+//         }
+//         cout << endl;
+//     }
+// }
 
-void printPath(stack <coord> path) {
-    vector<vector<char>> newMaze = maze;
+void printPath(etl::stack <coord, kMaxMapSize> path) {
+    etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> newMaze = maze;
     int lastX = path.top().x;
     int lastY = path.top().y;
     path.pop();
@@ -74,60 +73,65 @@ void printPath(stack <coord> path) {
         path.pop();
     }
     newMaze[lastY][lastX] = 'E';
-    printMaze(newMaze);
+    // printMaze(newMaze);
     return;
 }
 
-void dijsktra(const coord& start, const coord& end, const unordered_map<coord,Tile>& map) {
-    unordered_map<coord, bool> explored;
-    unordered_map<coord, int> distance;
-    unordered_map<coord, coord> previousPositions;
-    stack<coord> path;
+void dijsktra(const coord& start, const coord& end, Map& map) {
+    Map explored = Map("bool");
+    // etl::unordered_map<coord, bool, kMaxMapSize> explored;
+    Map distance = Map("int");
+    // etl::unordered_map<coord, int, kMaxMapSize> distance;
+    Map previousPositions = Map("coord");
+    // etl::unordered_map<coord, coord, kMaxMapSize> previousPositions;
+    etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
-    for (auto it = map.begin(); it != map.end(); ++it) {
-        distance[it->first] = INT_MAX;
-        explored[it->first] = false;
+    for (int i = map.indexes.size() - 1; i >= 0; --i) {
+        distance.addInt(INT_MAX, map.indexes[i]);
+        // distance[map.tiles[i].position_] = INT_MAX;
+        explored.addBool(false, map.indexes[i]);
+        // explored[it->first] = false;
     }
-    distance[start] = 0;
-    explored[start] = true;
+    distance.setInt(0,start);
+    explored.setBool(true,start);
 
     // explore the map.
     coord currentCoord = start;
     int minDistance;
-    while (!explored[end]) {
+    while (!explored.getBool(end)) {
         // update distance.
         for (int i = 0; i < 4; i++) {
             const TileDirection& direction = directions[i];
-            const Tile& currentTile = map.at(currentCoord);
-            const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
+            const Tile* currentTile = map.getTile(currentCoord);
+            const coord& adjacentCoord = currentTile->adjacentTiles_[static_cast<int>(direction)]->position_;
             // check if there's an adjecent tile and there's no wall.
             //TODO: check if the tile to explore is black
-            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction)) {
-                const int weight = currentTile.weights_[static_cast<int>(direction)] + distance[currentCoord];
+            if (currentTile->adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile->hasWall(direction)) {
+                const int weight = currentTile->weights_[static_cast<int>(direction)] + distance.getInt(currentCoord);
                 // check if the new weight to visit the adjecent tile is less than the current weight.
-                if (weight < distance[adjacentCoord]) {
-                    distance[adjacentCoord] = weight;
-                    previousPositions[adjacentCoord] = currentCoord;
+                if (weight < distance.getInt(adjacentCoord)) {
+                    distance.setInt(weight, adjacentCoord);
+                    previousPositions.setCoord(currentCoord, adjacentCoord);
                 }
             }
         }
         // find next tile.
         minDistance = INT_MAX;
-        for (auto it = distance.begin(); it != distance.end(); ++it) {
-            const coord& current = it->first;
-            const int currentDistance = it->second;
-            if (currentDistance < minDistance && !explored[current]) {
+        for (int i = map.indexes.size() - 1; i >= 0; --i) {
+            const coord& current = map.indexes[i];
+            const int currentDistance = distance.getInt(current);
+            if (currentDistance < minDistance && !explored.getBool(current)) {
                 minDistance = currentDistance;
                 currentCoord = current;
             }
         }
-        explored[currentCoord] = true;
+        explored.setBool(true, currentCoord);
     }
     // find path.
     coord current = end;
     while (current != start) {
         path.push(current);
-        current = previousPositions[current];
+        current = previousPositions.getCoord(current);
     }
     path.push(start);
     // print path.
@@ -135,7 +139,7 @@ void dijsktra(const coord& start, const coord& end, const unordered_map<coord,Ti
     return;
 }
 
-bool checkForWall(const vector<vector<char>>& maze, const TileDirection& direction, const coord& currentTileCoord) {
+bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
     switch(direction) {
         case TileDirection::kRight:
             return maze[currentTileCoord.y][currentTileCoord.x + 1] == '#';
@@ -148,19 +152,19 @@ bool checkForWall(const vector<vector<char>>& maze, const TileDirection& directi
     }
 }
 
-void printMap(unordered_map<coord, Tile>& map){
-    for (auto it = map.begin(); it != map.end(); ++it) {
-        cout << "Tile: " << it->first.x << " " << it->first.y << " " << it->first.z << endl;
-        for (int i = 0; i < 4; ++i) {
-            if (it->second.adjacentTiles_[i] != NULL) {
-                cout << "Adjacent Tile: " << it->second.adjacentTiles_[i]->position_.x << " " << it->second.adjacentTiles_[i]->position_.y << " " << it->second.adjacentTiles_[i]->position_.z << endl;
-            }
-        }
-    }
-    return;
-}
+// void printMap(unordered_map<coord, Tile>& map){
+//     for (auto it = map.begin(); it != map.end(); ++it) {
+//         cout << "Tile: " << it->first.x << " " << it->first.y << " " << it->first.z << endl;
+//         for (int i = 0; i < 4; ++i) {
+//             if (it->second.adjacentTiles_[i] != NULL) {
+//                 cout << "Adjacent Tile: " << it->second.adjacentTiles_[i]->position_.x << " " << it->second.adjacentTiles_[i]->position_.y << " " << it->second.adjacentTiles_[i]->position_.z << endl;
+//             }
+//         }
+//     }
+//     return;
+// }
 
-int checkRamp(const vector<vector<char>>& maze, const TileDirection& direction, const coord& currentTileCoord) {
+int checkRamp(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
     int z = currentTileCoord.z;
     switch(direction) {
         case TileDirection::kRight:
@@ -195,15 +199,16 @@ int checkRamp(const vector<vector<char>>& maze, const TileDirection& direction, 
     return z;
 }
 
-void depthFirstSearch(unordered_map<coord, Tile>& map) {
-    unordered_map<coord, bool> visited;
-    stack<coord> unvisited;
+void depthFirstSearch(Map& map) {
+    Map visited = Map("bool");
+    etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
     coord robotCoord = coord{1,1,1};
-    map[robotCoord] = Tile(robotCoord);
+    map.setTile(Tile(robotCoord), robotCoord);
     unvisited.push(robotCoord);
     bool wall;
     bool alreadyConnected;
+    bool visitedFlag;
     coord nextTileCoord;
     TileDirection oppositeDirection;
     // explore the map.
@@ -212,13 +217,20 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
         // check if the tile has been visited.
-        if (visited.find(currentTileCoord) != visited.end()) {
+        visitedFlag = false;
+        for (int i=0; i<visited.indexes.size(); i++) {
+            if (visited.indexes[i] == currentTileCoord) {
+                visitedFlag = true;
+                break;
+            }
+        }
+        if (visitedFlag) {
             continue;
         }
         // go to tile. TODO
         dijsktra(robotCoord, currentTileCoord, map);
         robotCoord = currentTileCoord;
-        visited[currentTileCoord] = true;
+        visited.setBool(true, currentTileCoord);
         // check walls the 4 adjacent tiles.
         // cout<<currentTileCoord.x<<" "<<currentTileCoord.y<<" "<<currentTileCoord.z<<endl;
         for (const TileDirection& direction : directions) {
@@ -226,22 +238,22 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
             switch(direction) {
                 case TileDirection::kRight:
                     nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y,checkRamp(maze, direction, currentTileCoord)};
-                    currentTile = &map[currentTileCoord];
+                    currentTile = map.getTile(currentTileCoord);
                     oppositeDirection = TileDirection::kLeft;
                     break;
                 case TileDirection::kUp:
                     nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2,checkRamp(maze, direction, currentTileCoord)};
-                    currentTile = &map[currentTileCoord];
+                    currentTile = map.getTile(currentTileCoord);
                     oppositeDirection = TileDirection::kDown;
                     break;
                 case TileDirection::kLeft:
                     nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y,checkRamp(maze, direction, currentTileCoord)};
-                    currentTile = &map[currentTileCoord];
+                    currentTile = map.getTile(currentTileCoord);
                     oppositeDirection = TileDirection::kRight;
                     break;
                 case TileDirection::kDown:
                     nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2,checkRamp(maze, direction, currentTileCoord)};
-                    currentTile = &map[currentTileCoord];
+                    currentTile = map.getTile(currentTileCoord);
                     oppositeDirection = TileDirection::kUp;
                     break;
             }
@@ -255,9 +267,10 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
                 }
                 //cout<<nextTileCoord.x<<" "<<nextTileCoord.y<<" "<<nextTileCoord.z<<" "<<wall<<endl;
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
-                Tile* nextTile = &map[nextTileCoord];
+                Tile* nextTile = map.getTile(nextTileCoord);
                 if (nextTile->position_ == kInvalidPosition) {
-                    map[nextTileCoord].setPosition(nextTileCoord);
+                     nextTile->setPosition(nextTileCoord);
+                    // map[nextTileCoord].setPosition(nextTileCoord);
                 }
                 // Link the two adjacent Tiles.
                 currentTile->addAdjacentTile(direction, nextTile, wall);
@@ -267,7 +280,14 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
                     // maze[currentTileCoord.y][currentTileCoord.x] = 'o';
                     // maze[nextTileCoord.y][nextTileCoord.x] = 'o';
                     // if the tile has not been visited, add it to the queue.
-                    if (visited.find(nextTileCoord) == visited.end()) {
+                    visitedFlag = false;
+                    for (int i=0; i<visited.indexes.size(); i++) {
+                        if (visited.indexes[i] == nextTileCoord) {
+                            visitedFlag = true;
+                            break;
+                        }
+                    }
+                    if(!visitedFlag) {
                         unvisited.push(nextTileCoord);
                     }
                 }
@@ -277,36 +297,11 @@ void depthFirstSearch(unordered_map<coord, Tile>& map) {
     return;
 }
 
-int main() {
-    unordered_map<coord, Tile> map;
-    depthFirstSearch(map);
-    return 0;
+void setup() {
+    Serial.begin(9600);
+    Map map = Map("Tile");
+    depthFirstSearch(map); // hash problem.
 }
+void loop() {
 
-/*TODO:
-dijsktra's algorithm on bfs
-check black tiles
-multiple heights
-
-(19/12/2023):
-- Tile.h
-- coord.h
-
-(02/01/2024):
-- dijsktra's algorithm
-- visualize and read ascii map for testing
-
-(15/01/2024):
-- Tile.cpp
-- enum class TileDirection
-- visualize path
-
-(23/01/2024):
-- char walls_
-- victim, obstacle and wall storage
-
-(30/01/2024):
-- maps to array storage
-- checkpoint storage
-- black tiles storage and check
-*/
+}

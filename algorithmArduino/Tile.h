@@ -1,9 +1,7 @@
 #ifndef Tile_h
 #define Tile_h
 
-#include<iostream>
-
-using namespace std;
+#include<Arduino.h>
 
 #include "coord.h"
 
@@ -22,15 +20,15 @@ constexpr int kBlackTileBit = 6;
 constexpr int kCheckpointBit = 7;
 
 constexpr int kMinWeight = 1;
-constexpr int kNumberOfDirections = 4;
+
 constexpr coord kInvalidPosition = coord{1000,1000,1000};
 
 class Tile{
     public:
         // TODO: SAVE RAMP INFORMATION.
         coord position_;
-        Tile *adjacentTiles_[kNumberOfDirections];
-        int weights_[kNumberOfDirections];
+        Tile *adjacentTiles_[4];
+        int weights_[4];
         char data_;
         Tile();
         Tile(const coord& position);
