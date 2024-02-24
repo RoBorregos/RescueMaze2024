@@ -159,13 +159,6 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     timePrev_ = millis();
 }
 
-/* double getAllWallsDistances() {
-    for (const auto& vlxDirection : wallDistances) {
-        allWallsDistances += wallDistance;
-    }
-    return allWallsDistances;
-} */
-
 void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
 
     for (const auto& vlxDirection : vlxDirections) {
@@ -181,6 +174,45 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
 
 }
 
+uint8_t Movement::checkWallsDistances() {
+    // 0000
+    // FBLR
+    bool wallDetected = false;
+    for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
+        wallDetected = (wallDistances[i] < kMinWallDistance? 1:0) << i;
+    }
+    wallDetected = (wallDetected[kNumberOfVlx] << 0);
+    return wallDetected;
+
+    /* getAllWallsDistances(wallDistances);
+    bool wallDetected = false;
+    for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
+        if (wallDistances[i] < kMinWallDistance) {
+            wallDetected = vlxDirections[i] == VlxID::kFrontRight || vlxDirections[i] == VlxID::kFrontLeft || vlxDirections[i] == VlxID::kBack || vlxDirections[i] == VlxID::kRight || vlxDirections[i] == VlxID::kLeft;
+            return wallDetected;
+        }
+        wallDetected = false;
+    }
+    return wallDetected; */
+}
+
+double Movement::getDistanceToCenter() {
+    double distanceLeft = 0;
+    double distanceRight = 0;
+    distanceLeft = wallDistances[static_cast<uint8_t>(VlxID::kFrontLeft)];
+    distanceRight = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
+    distanceLeft *= 100;
+    double distanceToCenter = ((uint8_t)distanceLeft % 15) - 2;
+    return distanceToCenter / 100.0;
+}
+
+/* void decodingWalls(uint8_t wallDetected, bool &front, bool &back, bool &left, bool &right) {
+    front = (wallDetected & 0b0001) == 0b0001;
+    back = (wallDetected & 0b0010) == 0b0010;
+    left = (wallDetected & 0b0100) == 0b0100;
+    right = (wallDetected & 0b1000) == 0b1000;
+
+} */
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
     double speeds[kNumberOfWheels];
@@ -207,6 +239,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             moveForward = true;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
+                checkWallsDistances();
             } 
             
             double desiredWallDistance = wallDistances[0] - targetDistance;

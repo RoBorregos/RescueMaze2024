@@ -60,6 +60,8 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
+        constexpr double kMinWallDistance = 0.0775; // 7.75 cm
+
         static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
@@ -127,6 +129,8 @@ class Movement {
         void setupVlx(const VlxID vlxId);
 
         void getAllWallsDistances(double wallDistances[kNumberOfVlx]);
+
+        bool checkWallsDistances();
 };
 
 #endif
