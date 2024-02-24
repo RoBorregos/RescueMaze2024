@@ -60,7 +60,7 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        constexpr double kMinWallDistance = 0.0775; // 7.75 cm
+        const double kMinWallDistance = 0.0775; // 7.75 cm
 
         static constexpr double kMaxDistanceError = 0.01;
 
@@ -130,7 +130,9 @@ class Movement {
 
         void getAllWallsDistances(double wallDistances[kNumberOfVlx]);
 
-        bool checkWallsDistances();
+        uint8_t checkWallsDistances();
+
+        double getDistanceToCenter();
 };
 
 #endif
