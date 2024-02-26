@@ -28,7 +28,7 @@ class VLX {
         SingleEMAFilter<double> singleEMAFilter = SingleEMAFilter<double>(0.1);
 
         const double kMmInM = 1000.00;
-
+        VlxID vlxId_;
         bool itWorks_ = false;
 
     public:

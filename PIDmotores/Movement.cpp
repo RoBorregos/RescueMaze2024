@@ -6,12 +6,6 @@
 
 #define DEBUG_MOVEMENT 0
 
-BNO bno_;
-VLX vlxFrontRight(Pins::vlxPins[0]);
-VLX vlxBack(Pins::vlxPins[1]);
-VLX vlxLeft(Pins::vlxPins[2]);
-VLX vlxRight(Pins::vlxPins[3]);
-VLX vlxFrontLeft(Pins::vlxPins[4]);
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
@@ -37,8 +31,8 @@ void Movement::setup() {
 }
 
 void Movement::setupInternal(const MotorID motorId) {
-    uint8_t index = static_cast<uint8_t>(motorId);
-    motor[index].setupMotors(
+    const uint8_t index = static_cast<uint8_t>(motorId);
+    motor[index].setupMotor(
         Pins::pwmPin[index],
         Pins::digitalOne[index],
         Pins::digitalTwo[index],
@@ -117,13 +111,13 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
 }
 void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward){
     const unsigned long timeDiff = millis() - timePrev_;
-    double speeds[kNumberOfWheels];
-    MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno_.getOrientationX();
     if (timeDiff < sampleTime_) {
         currentOrientation = bno_.getOrientationX();
         return;
     }
+    double speeds[kNumberOfWheels];
+    MotorState directions[kNumberOfWheels]; 
 
     double speedLeft = 0;
     double speedRight = 0;
@@ -160,16 +154,16 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
 }
 
 void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
-
     for (const auto& vlxDirection : vlxDirections) {
-        wallDistances[static_cast<uint8_t>(vlxDirection)] = vlx[static_cast<uint8_t>(vlxDirection)].getDistance();
+        const uint8_t index = static_cast<uint8_t>(vlxDirection);
+        wallDistances[index] = vlx[index].getDistance();
     }
     #if DEBUG_MOVEMENT
-    customPrintln("FrontRight:" + String(wallDistances[0]));
-    customPrintln("Back:" + String(wallDistances[1]));
-    customPrintln("Left:" + String(wallDistances[2]));
-    customPrintln("Right:" + String(wallDistances[3]));
-    customPrintln("FrontLeft:" + String(wallDistances[4]));
+    customPrintln("FrontRight:" + String(wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)]));
+    customPrintln("Back:" + String(wallDistances[static_cast<uint8_t>(VlxID::kBack)]));
+    customPrintln("Left:" + String(wallDistances[static_cast<uint8_t>(VlxID::kLeft)]));
+    customPrintln("Right:" + String(wallDistances[static_cast<uint8_t>(VlxID::kRight)]));
+    customPrintln("FrontLeft:" + String(wallDistances[static_cast<uint8_t>(VlxID::kFrontLeft)]));
     #endif
 
 }
@@ -179,11 +173,9 @@ uint8_t Movement::checkWallsDistances() {
     // FBLR
     uint8_t wallDetected = 0;
     for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
-        wallDetected = (wallDistances[i] < kMinWallDistance? 1:0) << i; 
+        wallDetected = (wallDistances[i] < kMinWallDistance? 1:0) << i;
     }
-    wallDetected = (wallDetected & (1 << kNumberOfVlx - 1)) << 0;
     return wallDetected;
-
     /* getAllWallsDistances(wallDistances);
     bool wallDetected = false;
     for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
@@ -201,9 +193,9 @@ double Movement::getDistanceToCenter() {
     double distanceRight = 0;
     distanceLeft = wallDistances[static_cast<uint8_t>(VlxID::kFrontLeft)];
     distanceRight = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
-    distanceLeft *= 100;
-    double distanceToCenter = ((uint8_t)distanceLeft % 15) - 2;
-    return distanceToCenter / 100.0;
+    distanceLeft *= kMToCm;
+    double distanceToCenter = ((uint8_t)distanceLeft % kTileLength) - kVlxOffset;
+    return distanceToCenter / kMToCm;
 }
 
 /* void decodingWalls(uint8_t wallDetected, bool &front, bool &back, bool &left, bool &right) {
@@ -213,6 +205,10 @@ double Movement::getDistanceToCenter() {
     right = (wallDetected & 0b1000) == 0b1000;
 
 } */
+
+double Movement::getWallDistance(const VlxID vlxId) {
+    return wallDistances[static_cast<uint8_t>(vlxId)];
+}
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
     double speeds[kNumberOfWheels];
@@ -227,6 +223,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
+
+    const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
     
     bool moveForward = false;
     switch (state)
@@ -242,8 +240,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 checkWallsDistances();
             } 
             
-            double desiredWallDistance = wallDistances[0] - targetDistance;
-            while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
+            const double desiredWallDistance = initialFrontWallDistance - targetDistance;
+            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
@@ -257,8 +255,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
-            const double desiredWallDistance = wallDistances[0]  + targetDistance;
-            while (hasTraveledWallDistance(desiredWallDistance, vlxFrontRight.getDistance(), moveForward) == false) {
+            const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
+            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
             
@@ -391,7 +389,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     if (timeTraveled_ < kSampleTimeTraveled) {
         return false;
     }
-
+    // TODO: Improve the way to calculate the average speed
     const double averageSpeed = (motor[static_cast<uint8_t>(MotorID::kBackLeft)].getSpeed() +
                                  motor[static_cast<uint8_t>(MotorID::kBackRight)].getSpeed() +
                                  motor[static_cast<uint8_t>(MotorID::kFrontLeft)].getSpeed() +
@@ -410,14 +408,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 
 bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward) {
     const double distanceDiff = (targetDistance - currentDistance);
-    if (distanceDiff > 0) {
-        moveForward = false;
-    } else {
-        moveForward = true;
-    }
-    if (abs(distanceDiff) < kMaxDistanceError) {
-        return true;
-    }
+    moveForward = distanceDiff <= 0;
 
-    return false;
+    return abs(distanceDiff) < kMaxDistanceError;
 }

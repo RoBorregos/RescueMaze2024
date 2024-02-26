@@ -29,6 +29,7 @@ class Movement {
         Motor motorFR_;
         Motor motorBL_;
         Motor motorBR_;
+        BNO bno_;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -45,6 +46,9 @@ class Movement {
         static constexpr double kBaseSpeedTurn_ = 0.07;
 
         static constexpr uint8_t kNumberOfVlx = 5;
+        const double kMToCm = 100.0;
+        const uint8_t kVlxOffset = 2; //cm
+        const uint8_t kTileLength = 30; //cm
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -133,6 +137,8 @@ class Movement {
         uint8_t checkWallsDistances();
 
         double getDistanceToCenter();
+
+        double getWallDistance(const VlxID vlxId);
 };
 
 #endif
