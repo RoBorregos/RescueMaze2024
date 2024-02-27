@@ -169,11 +169,11 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
 }
 
 uint8_t Movement::checkWallsDistances() {
-    // 0000
-    // FBLR
+    // 00000
+    // FBLRF
     uint8_t wallDetected = 0;
     for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
-        wallDetected = (wallDistances[i] < kMinWallDistance? 1:0) << i;
+        wallDetected |= (wallDistances[i] < kMinWallDistance? 1:0) << i;
     }
     return wallDetected;
     /* getAllWallsDistances(wallDistances);
