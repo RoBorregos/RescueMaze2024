@@ -1,4 +1,5 @@
 {
-    "sketch": "Tests\\TCS_test\\TCS_test.ino",
-    "board": "arduino:avr:mega"
+    "sketch": "algorithmArduino\\algorithmArduino.ino",
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560"
 }
