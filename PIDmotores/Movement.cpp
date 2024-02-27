@@ -210,6 +210,22 @@ double Movement::getWallDistance(const VlxID vlxId) {
     return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
+void Movement::goForward() {
+    moveMotors(MovementState::kForward, 0, 0.3);
+}
+
+void Movement::goBackward() {
+    moveMotors(MovementState::kBackward, 0, 0.3);
+}
+
+void Movement::turnLeft() {
+    moveMotors(MovementState::kTurnLeft, 270, 0);
+}
+
+void Movement::turnRight() {
+    moveMotors(MovementState::kTurnRight, 90, 0);
+}
+
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
@@ -241,8 +257,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             } 
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
-            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
-                moveMotorsInADirection(targetOrientation, moveForward);
+            if (getWallDistance(VlxID::kFrontRight) < getWallDistance(VlxID::kBack)) {
+                while (hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                }
+            } else {
+                while (hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                }
             }
 
             stopMotors();
@@ -256,10 +278,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
 
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
-            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
-                moveMotorsInADirection(targetOrientation, moveForward);
+            if (getWallDistance(VlxID::kFrontRight) < getWallDistance(VlxID::kBack)) {
+                while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                }
+            } else {
+                while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kBack), moveForward) == false) {
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                }
             }
-            
+
             stopMotors();
             
             break;

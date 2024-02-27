@@ -21,13 +21,14 @@ bool VLX::init() {
         customPrintln(mux_.hasAddress(0x70));
         count++;
         if (count > 1000) {
-            customPrintln("Test the VLX" + String(vlxId_));
+            customPrintln("Test the VLX: ");
+            customPrint(static_cast<uint8_t>(vlxId_));
             return false;
         }
     }
-        customPrintln("VLX OK");
-        itWorks_ = true;
-        return true;
+    customPrintln("VLX OK");
+    itWorks_ = true;
+    return true;
     
 }
 
