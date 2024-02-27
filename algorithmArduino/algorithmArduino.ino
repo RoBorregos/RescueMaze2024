@@ -9,74 +9,7 @@ using namespace etl;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> maze = {
-        // {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-        // {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
-        // {'#', ' ', '#', ' ', '#', ' ', '#', '#', '#', '#', '#'},
-        // {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#'}, // 3.
-        // {'#', ' ', '#', '#', '#', ' ', '#', ' ', '#', '#', '#'},
-        // {'#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', '#'}, // 5.
-        // {'#', ' ', '#', '#', '#', ' ', '#', '#', ' ', ' ', '#'},
-        // {'#', ' ', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 7.
-        // {'#', ' ', '#', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
-        // {'#', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'}, // 9.
-        // {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
-        {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
-        {'#', ' ', ' ', 'r', '#', ' ', '#', 'l', ' ', ' ', '#'}, // 3.
-        {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
-        {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-};
-etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> mazeSecondLevel = {
-    {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-    {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
-    {'#', ' ', ' ', ' ', '#', '#', '#', ' ', ' ', ' ', '#'},
-    {'#', ' ', ' ', 'r', ' ', ' ', ' ', 'l', ' ', ' ', '#'}, // 3.
-    {'#', ' ', ' ', ' ', '#', '#', '#', ' ', ' ', ' ', '#'},
-    {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
-    {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-};
-
-// void printMaze(const etl::vector<etl::vector<char,kMaxMapSize>,kMaxMapSize>& mazeToPrint) {
-//     for (int i = 0; i < mazeToPrint.size(); ++i) {
-//         for (int j = 0; j < mazeToPrint[i].size(); j++) {
-//             etl::cout << mazeToPrint[i][j] << " ";
-//         }
-//         cout << endl;
-//     }
-// }
-
-void printPath(etl::stack <coord, kMaxMapSize> path) {
-    etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> newMaze = maze;
-    int lastX = path.top().x;
-    int lastY = path.top().y;
-    path.pop();
-    newMaze[lastY][lastX] = 'S';
-    while (!path.empty()) {
-        if (path.top().x == lastX) {
-            if (path.top().y > lastY) {
-                newMaze[lastY+1][lastX] = '/';
-            } else {
-                newMaze[lastY-1][lastX] = '^';
-            }
-        } else {
-            if (path.top().x>lastX) {
-                newMaze[lastY][lastX+1] = '>';
-            } else {
-                newMaze[lastY][lastX-1] = '<';
-            }
-        }
-        lastX = path.top().x;
-        lastY = path.top().y;
-        path.pop();
-    }
-    newMaze[lastY][lastX] = 'E';
-    // printMaze(newMaze);
-    return;
-}
-
+// TODO: add to all maps their own vector of whatever they're storing.
 void dijsktra(const coord& start, const coord& end, Map& map) {
     Map explored = Map("bool");
     // etl::unordered_map<coord, bool, kMaxMapSize> explored;
@@ -134,8 +67,6 @@ void dijsktra(const coord& start, const coord& end, Map& map) {
         current = previousPositions.getCoord(current);
     }
     path.push(start);
-    // print path.
-    printPath(path);
     return;
 }
 

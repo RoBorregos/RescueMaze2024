@@ -38,6 +38,7 @@ void Map::addCoord(const coord& c, const coord& position) {
 }
 
 Tile* Map::getTile(const coord& position) {
+    // TODO: iterate and return i
     for (auto& i : this->indexes) {
         if (i == position) {
             return &this->tiles[&i - &this->indexes[0]];

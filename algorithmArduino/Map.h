@@ -15,6 +15,7 @@ const int kMaxMapSize = 50;
 
 class Map{
     public:
+        // TODO: just leave indexes as a vector of coords.
         etl::vector<coord, kMaxMapSize> indexes;
         etl::vector<Tile, kMaxMapSize> tiles;
         etl::vector<bool, kMaxMapSize> bools;

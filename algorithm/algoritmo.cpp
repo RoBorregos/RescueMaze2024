@@ -309,4 +309,7 @@ multiple heights
 - maps to array storage
 - checkpoint storage
 - black tiles storage and check
+
+(24/02/2024):
+- arduino integration
 */
