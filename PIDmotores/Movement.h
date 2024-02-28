@@ -37,8 +37,8 @@ class Movement {
         float errorPrevOrientation_;
         float errorAcumuladoOrientation_;
 
-        long long int ticsCounter_ = 0;
-        int pidTics_ = 0;
+        long long uint8_t ticsCounter_ = 0;
+        uint8_t pidTics_ = 0;
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
@@ -141,13 +141,13 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward();
+        void goForward(uint8_t currentDirection);
 
-        void goBackward();
+        void goBackward(uint8_t currentDirection);
 
-        void turnLeft();
+        void turnLeft(uint8_t currentDirection);
 
-        void turnRight();
+        void turnRight(uint8_t currentDirection);
 };
 
 #endif
