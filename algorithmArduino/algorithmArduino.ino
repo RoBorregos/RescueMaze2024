@@ -9,7 +9,46 @@ using namespace etl;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-// TODO: add to all maps their own vector of whatever they're storing.
+int robotOrientation = 0;
+coord robotCoord = coord{1,1,1};
+
+void turnRobot(const int& targetOrientation) {
+    int difference = targetOrientation - robotOrientation;
+    if (difference == 0) {
+        return;
+    }
+    if (difference == 90 || difference == -270) {
+        // turnRight(targetOrientation);
+        robotOrientation = (robotOrientation + 90) % 360;
+    } else if (difference == -90 || difference == 270) {
+        // turnLeft(targetOrientation);
+        robotOrientation = (robotOrientation + 270) % 360;
+    } else if (difference == 180 || difference == -180) {
+        // turnRight(targetOrientation);
+        // turnRight(targetOrientation);
+        robotOrientation = (robotOrientation + 180) % 360;
+    }
+    return;
+}
+
+void followPath(etl::stack<coord, kMaxMapSize>& path) {
+    while(!path.empty()) {
+        coord next = path.top();
+        path.pop();
+        if (next.x > robotCoord.x) {
+            turnRobot(270);
+        } else if (next.x < robotCoord.x) {
+            turnRobot(90);
+        } else if (next.y > robotCoord.y) {
+            turnRobot(0);
+        } else if (next.y < robotCoord.y) {
+            turnRobot(180);
+        }
+        // goForward(robotOrientation);
+        robotCoord = next;
+    }
+}
+
 void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const etl::vector<Tile, kMaxMapSize>& tiles) {
     // Map exploredMap = Map(); // not really necessary.
     etl::vector<bool, kMaxMapSize> explored;
@@ -65,6 +104,7 @@ void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const e
         current = previousPositions[tilesMap.getIndex(current)];
     }
     path.push(start);
+    followPath(path);
     return;
 }
 
@@ -133,7 +173,6 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
     etl::vector<bool, kMaxMapSize> visited;
     etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
-    coord robotCoord = coord{1,1,1};
     tilesMap.positions.push_back(robotCoord);
     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
     unvisited.push(robotCoord);
@@ -158,7 +197,6 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
         if (visitedFlag) {
             continue;
         }
-        // go to tile. TODO
         dijsktra(robotCoord, currentTileCoord, tilesMap, tiles);
         robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
