@@ -27,7 +27,10 @@ class VLX {
         VL53L0X_RangingMeasurementData_t measure_;
         SingleEMAFilter<double> singleEMAFilter = SingleEMAFilter<double>(0.1);
 
-        const double kMmInM = 1000.00;
+        static constexpr double kMmInM_ = 1000.00;
+
+        static constexpr double kMaxInitAttempts_ = 1000;
+
         VlxID vlxId_;
         bool itWorks_ = false;
 
