@@ -20,7 +20,7 @@ bool VLX::init() {
         customPrint(mux_.hasAddress(VLX_ADDR));
         customPrintln(mux_.hasAddress(0x70));
         count++;
-        if (count > 1000) {
+        if (count > kMaxInitAttempts_) {
             customPrintln("Test the VLX: ");
             customPrint(static_cast<uint8_t>(vlxId_));
             return false;
@@ -45,7 +45,7 @@ void VLX::updateDistance() {
 
 double VLX::getDistance() {
     updateDistance();
-    const double measure = (measure_.RangeMilliMeter / kMmInM);
+    const double measure = (measure_.RangeMilliMeter / kMmInM_);
     singleEMAFilter.addValue(measure);
     
     return singleEMAFilter.getLowPass();
