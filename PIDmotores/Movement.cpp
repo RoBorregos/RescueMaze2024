@@ -7,13 +7,6 @@
 
 #define DEBUG_MOVEMENT 0
 
-enum class TileDirection {
-    kUp = 0,
-    kDown = 1,
-    kLeft = 2,
-    kRight = 3,
-    kNone
-};
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();

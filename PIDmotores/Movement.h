@@ -20,6 +20,13 @@ enum class MovementState{
     kTurnRight
 };
 
+enum class TileDirection {
+    kUp = 0,
+    kDown = 1,
+    kLeft = 2,
+    kRight = 3,
+    kNone
+};
 
 class Movement {
     private:
@@ -36,8 +43,8 @@ class Movement {
         float errorPrevOrientation_;
         float errorAcumuladoOrientation_;
 
-        long long uint8_t ticsCounter_ = 0;
-        uint8_t pidTics_ = 0;
+        long long ticsCounter_ = 0;
+        long long pidTics_ = 0;
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
@@ -151,6 +158,8 @@ class Movement {
         void turnLeft(uint8_t currentDirection);
 
         void turnRight(uint8_t currentDirection);
+
+        bool checkWallsDistances(TileDirection &tileDirection, uint8_t currentDirection);
 };
 
 #endif
