@@ -3,13 +3,10 @@
 
 #include "CustomSerial.h"
 #include "Movement.h"
-#include "Motor.h"
+// #include "Motor.h"
 #include "Pins.h"
-#include "BNO.h"
+// #include "BNO.h"
 #include "Encoder.h"
-#include "Map.h"
-
-using namespace etl;
 
 Movement robot;
 
@@ -19,7 +16,7 @@ bool hasArrived = false;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-int robotOrientation = 0;
+uint8_t robotOrientation = 0;
 coord robotCoord = coord{1,1,1};
 
 void turnRobot(const int& targetOrientation) {
@@ -28,14 +25,14 @@ void turnRobot(const int& targetOrientation) {
         return;
     }
     if (difference == 90 || difference == -270) {
-        // turnRight(targetOrientation);
+        robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 90) % 360;
     } else if (difference == -90 || difference == 270) {
-        // turnLeft(targetOrientation);
+        robot.turnLeft(targetOrientation);
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        // turnRight(targetOrientation);
-        // turnRight(targetOrientation);
+        robot.turnRight(targetOrientation);
+        robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
 }
@@ -45,15 +42,15 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
         coord next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
-            // turnRobot(270);
+            turnRobot(270);
         } else if (next.x < robotCoord.x) {
-            // turnRobot(90);
+            turnRobot(90);
         } else if (next.y > robotCoord.y) {
-            // turnRobot(0);
+            turnRobot(0);
         } else if (next.y < robotCoord.y) {
-            // turnRobot(180);
+            turnRobot(180);
         }
-        // goForward(robotOrientation);
+        robot.goForward(robotOrientation);
         robotCoord = next;
     }
 }
@@ -141,7 +138,7 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
     coord nextTileCoord;
     TileDirection oppositeDirection;
     // explore the map.
-    while (unvisited.size() != 256){
+    while (unvisited.size() != 256){ // !unvisited.empty()) 
         delay(1000);
         // get the next tile to explore.
         coord currentTileCoord = unvisited.top();
@@ -194,7 +191,7 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                wall = checkWallsDistances(direction, robotOrientation);
+                wall = robot.checkWallsDistances(direction, robotOrientation);
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);

@@ -167,7 +167,7 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     #endif
 }
 
-bool Movement::checkWallsDistances(TileDirection &tileDirection, uint8_t currentDirection) {
+bool Movement::checkWallsDistances(const TileDirection &tileDirection, uint8_t currentDirection) {
     switch (tileDirection) {
     case (TileDirection::kUp): {
         switch (currentDirection) {

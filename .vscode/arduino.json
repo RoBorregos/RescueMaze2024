@@ -1,5 +1,6 @@
 {
     "sketch": "PIDmotores\\PIDmotores.ino",
-    "board": "arduino:avr:uno",
-    "port": "COM12"
+    "board": "arduino:avr:mega",
+    "port": "COM12",
+    "configuration": "cpu=atmega2560"
 }

@@ -17,7 +17,7 @@
             "intelliSenseMode": "gcc-x64",
             "includePath": [
                 "C:\\Users\\tacol\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-                "C:\\Users\\tacol\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\standard",
+                "C:\\Users\\tacol\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
                 "C:\\Users\\tacol\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
                 "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
                 "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_BNO055",
@@ -37,7 +37,7 @@
             "defines": [
                 "F_CPU=16000000L",
                 "ARDUINO=10607",
-                "ARDUINO_AVR_UNO",
+                "ARDUINO_AVR_MEGA2560",
                 "ARDUINO_ARCH_AVR",
                 "__DBL_MIN_EXP__=(-125)",
                 "__HQ_FBIT__=15",

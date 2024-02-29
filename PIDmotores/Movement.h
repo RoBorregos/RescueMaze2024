@@ -4,6 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
+#include "Map.h"
 
 enum class compass{
     kNorth,
@@ -18,14 +19,6 @@ enum class MovementState{
     kBackward,
     kTurnLeft,
     kTurnRight
-};
-
-enum class TileDirection {
-    kUp = 0,
-    kDown = 1,
-    kLeft = 2,
-    kRight = 3,
-    kNone
 };
 
 class Movement {
@@ -159,7 +152,7 @@ class Movement {
 
         void turnRight(uint8_t currentDirection);
 
-        bool checkWallsDistances(TileDirection &tileDirection, uint8_t currentDirection);
+        bool checkWallsDistances(const TileDirection &tileDirection, uint8_t currentDirection);
 };
 
 #endif
