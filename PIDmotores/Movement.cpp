@@ -3,9 +3,9 @@
 #include "Pins.h"
 #include "CustomSerial.h"
 #include "VLX.h"
+//#include "LimitSwitch.h"
 
 #define DEBUG_MOVEMENT 0
-
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
