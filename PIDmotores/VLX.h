@@ -13,8 +13,8 @@
 
 enum class VlxID {
     kFrontRight = 0,
-    kBack = 1,
-    kLeft = 2,
+    kLeft = 1,
+    kBack = 2,
     kRight = 3,
     kFrontLeft = 4,
     kNone

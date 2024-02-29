@@ -167,7 +167,24 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     #endif
 }
 
-bool Movement::checkWallsDistances(const TileDirection &tileDirection, uint8_t currentDirection) {
+int Movement::getIndexFromVlxID(const int value, const int array[]) {
+    
+    for (int i = 0; i < kNumberOfVlx; ++i) {
+        const int currentValue = array[i];
+        if (currentValue == value) {
+            return i;
+        }
+    }
+    return i;
+}
+
+bool Movement::checkWallsDistances(const TileDirection &targetTileDirection, const int currentOrientation) {
+    const int targetOrientations[] = {0, 90, 180, 270};
+    const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + getIndexFromVlxID(currentOrientation, targetOrientations)) % kTileDirections;
+    const VlxID vlxID = static_cast<VlxID>(vlxIndex);
+    return getWallDistance(vlxID) < kMinWallDistance;
+    
+    /* 
     switch (tileDirection) {
     case (TileDirection::kUp): {
         switch (currentDirection) {
@@ -297,8 +314,8 @@ bool Movement::checkWallsDistances(const TileDirection &tileDirection, uint8_t c
         }
         break;
     }
-    return false;
-    }	
+    return false; 
+    }	*/
 }
 
 uint8_t Movement::checkWallsDistances() {
@@ -326,20 +343,20 @@ double Movement::getWallDistance(const VlxID vlxId) {
     return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
-void Movement::goForward(uint8_t currentDirection) {
-    moveMotors(MovementState::kForward, currentDirection, 0.3);
+void Movement::goForward(const double targetOrientation) {
+    moveMotors(MovementState::kForward, targetOrientation, kOneTileDistance);
 }
 
-void Movement::goBackward(uint8_t currentDirection) {
-    moveMotors(MovementState::kBackward, currentDirection, 0.3);
+void Movement::goBackward(const double targetOrientation) {
+    moveMotors(MovementState::kBackward, targetOrientation, kOneTileDistance);
 }
 
-void Movement::turnLeft(uint8_t currentDirection) {
-    moveMotors(MovementState::kTurnLeft, currentDirection, 0);
+void Movement::turnLeft(const double targetOrientation) {
+    moveMotors(MovementState::kTurnLeft, targetOrientation, 0);
 }
 
-void Movement::turnRight(uint8_t currentDirection) {
-    moveMotors(MovementState::kTurnRight, currentDirection, 0);
+void Movement::turnRight(const double targetOrientation) {
+    moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {

@@ -76,6 +76,10 @@ class Movement {
 
         static constexpr long long kOneSecInMs = 1000;
 
+        static constexpr long long kOneTileDistance = 30; //cm
+
+        static constexpr long long kTileDirections = 4;
+
 
         PID pidForward_;
         PID pidBackward_;
@@ -144,15 +148,17 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward(uint8_t currentDirection);
+        void goForward(const double targetOrientation);
 
-        void goBackward(uint8_t currentDirection);
+        void goBackward(const double targetOrientation);
 
-        void turnLeft(uint8_t currentDirection);
+        void turnLeft(const double targetOrientation);
 
-        void turnRight(uint8_t currentDirection);
+        void turnRight(const double targetOrientation);
 
-        bool checkWallsDistances(const TileDirection &tileDirection, uint8_t currentDirection);
+        bool checkWallsDistances(const TileDirection &targetTileDirection, const int currentOrientation);
+
+        int getIndexFromVlxID(const int value, const int array[]);
 };
 
 #endif
