@@ -20,14 +20,6 @@ enum class MovementState{
     kTurnRight
 };
 
-enum class TileDirection {
-    kUp = 0,
-    kDown = 1,
-    kLeft = 2,
-    kRight = 3,
-    kNone
-};
-
 class Movement {
     private:
         PID pid_;
@@ -44,8 +36,8 @@ class Movement {
         float errorPrevOrientation_;
         float errorAcumuladoOrientation_;
 
-        long long int ticsCounter_ = 0;
-        int pidTics_ = 0;
+        long long ticsCounter_ = 0;
+        long long pidTics_ = 0;
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
@@ -54,10 +46,10 @@ class Movement {
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
-        static constexpr int kNumberOfVlx = 5;
+        static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
-        const int kVlxOffset = 2; //cm
-        const int kTileLength = 30; //cm
+        const uint8_t kVlxOffset = 2; //cm
+        const uint8_t kTileLength = 30; //cm
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -80,7 +72,7 @@ class Movement {
         static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
-        static constexpr int kNumberOfWheels = 4;
+        static constexpr uint8_t kNumberOfWheels = 4;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -145,8 +137,6 @@ class Movement {
         void setupVlx(const VlxID vlxId);
 
         void getAllWallsDistances(double wallDistances[kNumberOfVlx]);
-
-        bool checkWallsDistances(TileDirection &tileDirection, uint8_t currentDirection);
 
         uint8_t checkWallsDistances();
 

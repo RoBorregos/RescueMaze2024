@@ -10,18 +10,13 @@ enum class LimitSwitchID {
 
 class LimitSwitch {
     private:
-        bool leftState_;
-        bool rightState_;
-        bool lastState_;
         bool state_;
 
     public:
         LimitSwitch();
         void initLimitSwitch();
-        bool leftState();
-        bool rightState();
-        bool read(LimitSwitchID id);
-        void getLimitSwitchState();
+        bool getState(LimitSwitchID id);
+        void printLimitSwitchState();
 };
 
 #endif
