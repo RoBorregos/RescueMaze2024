@@ -4,6 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
+#include "LimitSwitch.h"
 
 enum class compass{
     kNorth,
