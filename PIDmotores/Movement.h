@@ -20,7 +20,6 @@ enum class MovementState{
     kTurnRight
 };
 
-constexpr VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
 class Movement {
     private:
@@ -45,6 +44,8 @@ class Movement {
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
 
+        // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
+
         static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
@@ -55,6 +56,8 @@ class Movement {
         double distancePrev_ = 0;
 
         double timePrev_ = 0;
+
+        VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
         double sampleTime_ = 100;
 

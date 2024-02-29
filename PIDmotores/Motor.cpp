@@ -77,7 +77,7 @@ void Motor::initEncoder() {
     }
 } 
 
-void Motor::    setupMotor(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
+void Motor::setupMotor(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin_ = pwmPin;
     this->digitalOne_ = digitalOne;
     this->digitalTwo_ = digitalTwo;
