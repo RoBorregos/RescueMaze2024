@@ -3,6 +3,7 @@
 
 #include "Motor.h"
 #include "BNO.h"
+#include "VLX.h"
 
 enum class compass{
     kNorth,
@@ -27,8 +28,10 @@ class Movement {
         Motor motorFR_;
         Motor motorBL_;
         Motor motorBR_;
+        BNO bno_;
 
-        unsigned long nextTime_;
+        unsigned long prevTimeTraveled_;
+        double allDistanceTraveled_ = 0; 
   
         float errorPrevOrientation_;
         float errorAcumuladoOrientation_;
@@ -38,15 +41,45 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
+        static constexpr double kBaseSpeedForward_ = 0.14;
+        static constexpr double kBaseSpeedTurn_ = 0.07;
+
+        // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
+
+        static constexpr uint8_t kNumberOfVlx = 5;
+        const double kMToCm = 100.0;
+        const uint8_t kVlxOffset = 2; //cm
+        const uint8_t kTileLength = 30; //cm
+
+        double currentDistance_ = 0;
+        double targetDistance_ = 0;
+        double distancePrev_ = 0;
+
+        double timePrev_ = 0;
+
+        VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
+
+        double sampleTime_ = 100;
 
         Motor motor[4];
 
-        static constexpr double kMaxOrientationError = 0.8;
+        VLX vlx[kNumberOfVlx];
+
+        double wallDistances[kNumberOfVlx];
+
+        const double kMinWallDistance = 0.0775; // 7.75 cm
+
+        static constexpr double kMaxDistanceError = 0.01;
+
+        static constexpr double kMaxOrientationError = 0.9;
         static constexpr uint8_t kNumberOfWheels = 4;
 
-        PID pidForward;
-        PID pidBackward;
-        PID pidTurn;
+        static constexpr long long kOneSecInMs = 1000;
+
+
+        PID pidForward_;
+        PID pidBackward_;
+        PID pidTurn_;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -56,22 +89,23 @@ class Movement {
         constexpr static double kIBackward = 0.0;
         constexpr static double kDBackward = 0.0;
 
-        constexpr static double kPTurn = 0.010;
+        constexpr static double kPTurn = 0.00005;
         constexpr static double kITurn = 0.0;
-        constexpr static double kDTurn = 0.008;
+        constexpr static double kDTurn = 0.00019;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
-        constexpr static double kTurnMinOutput{0.05};
+        constexpr static double kTurnMinOutput{0.050};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{100};
+        constexpr static long kSampleTimeTraveled{50};
 
     public:
         Movement();
 
         void setup();
         
-        void setupInternal(MotorID motorId);
+        void setupInternal(const MotorID motorId);
 
         void stopMotors();
 
@@ -87,11 +121,36 @@ class Movement {
         double getFrontRightSpeed();    
 
         uint8_t getOrientation(const compass currentOrientation);
-        bool moveMotors(const MovementState state, const double targetOrientation);
+        
+        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
         void setSpeed(const double speed);
+
+        bool hasTraveledDistanceWithSpeed(const double distance);
+
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward);
+
+        void moveMotorsInADirection(double targetOrientation, bool moveForward);
+
+        void setupVlx(const VlxID vlxId);
+
+        void getAllWallsDistances(double wallDistances[kNumberOfVlx]);
+
+        uint8_t checkWallsDistances();
+
+        double getDistanceToCenter();
+
+        double getWallDistance(const VlxID vlxId);
+
+        void goForward();
+
+        void goBackward();
+
+        void turnLeft();
+
+        void turnRight();
 };
 
 #endif

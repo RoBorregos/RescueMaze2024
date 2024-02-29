@@ -6,32 +6,84 @@
 #include "Encoder.h"
 
 Movement robot;
+
 double targetOrientation = 0.0;
 unsigned long iterations = 0;
+bool hasArrived = false;
 
 void setup(){
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
     robot.setup();
-    
+    /* robot.moveMotors(MovementState::kForward, 0, 1.5);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 1.64);
+    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
+    robot.moveMotors(MovementState::kForward, 90, 1.70);
+    robot.moveMotors(MovementState::kTurnRight, 180, 0);
+    robot.moveMotors(MovementState::kForward, 180, 1.5); */
+    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     /* for (int i = 0; i < 1000; ++i) {
         robot.moveMotors(MovementState::kForward, 0);
     } */
-    
+
+    /* while (true) {
+        vlx1.printDistance();
+        delay(1000);
+    } */
+
     /* while (robot.moveMotors(MovementState::kTurnRight, 0) == false) {
         customPrintln("Turning right");
     }
     customPrintln("Arrived to 0"); */
+    //robot.moveMotors(MovementState::kForward, 0, 0.3);
+    //robot.moveMotors(MovementState::kBackward, 0, 0.3);
 }
     
 void loop() {
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
-
+    robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);
+    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    //robot.moveMotors(MovementState::kForward, 0, 0.5);
+    //robot.moveMotors(MovementState::kBackward, 0, 0);
+    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
     
-    //robot.moveMotors(MovementState::kForward, 0);
-    robot.moveMotors(MovementState::kTurnLeft, 270);
+
+   /*  robot.moveMotors(MovementState::kForward, 0, 1.5);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 1.64);
+    robot.moveMotors(MovementState::kTurnLeft, 89, 0);
+    robot.moveMotors(MovementState::kForward, 91, 1.75);
+    robot.moveMotors(MovementState::kTurnRight, 180, 0);
+    robot.moveMotors(MovementState::kForward, 180, 1.5); */
+
     
+    // robot.moveMotors(MovementState::kBackward, 0, 0.5);
+    
+    /* digitalWrite(18, HIGH);
+    digitalWrite(19, LOW);
+    analogWrite(23, 200); */
+
+    /* if (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false) {
+        customPrintln("Moving forward...");
+    }
+    else {
+        customPrintln("Arrived");
+        hasArrived = true;
+    } */
+
+   /*  while (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false){
+        delay(100);
+    }
+    delay(1000);
+    while (hasArrived == false && robot.moveMotors(MovementState::kBackward, 0, 0.5) == false){
+        delay(100);
+    }
+    hasArrived = true; */
+
     /* for (int i = 0; i < 1000; ++i) {
         robot.moveMotors(MovementState::kForward, 0);
     } */
@@ -65,7 +117,7 @@ void loop() {
     
     ++iterations;
 
-    //LEER TICS DE LOS ENCODERS
+    //LEER VELOCIDAD 
     customPrint("BACK_LEFT: ");
     customPrintln(robot.getBackLeftSpeed());
     customPrint("FRONT_LEFT: ");
@@ -75,7 +127,7 @@ void loop() {
     customPrint("FRONT_RIGHT: ");
     customPrintln(robot.getFrontRightSpeed()); 
 
-    delay(200);
+    delay(70);
 
     
     

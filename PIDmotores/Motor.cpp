@@ -13,7 +13,7 @@ Motor::Motor() {
     this->errorPrev_ = 0;
     this->errorAcumulado_ = 0;
     this->motorId_ = MotorID::kNone;
-    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_, 0, 0);
 }
 
 Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t pwmPin, const uint8_t encoderA, const MotorID motorid) {
@@ -26,7 +26,7 @@ Motor::Motor(const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t p
     this->encoders_[1] = 0;
     this->encoders_[2] = 0;
     this->encoders_[3] = 0;
-    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_);
+    this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_, 0, 0);
 }
 
 uint8_t Motor::getEncoderA() {
@@ -46,8 +46,8 @@ long long Motor::getEpochTics() {
 }
 
 void Motor::initMotor() {
-    motorSetup(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
-    motorStop(0);
+    setupMotor(pwmPin_, digitalOne_, digitalTwo_, encoderA_, motorId_);
+    motorStop();
 }
 
 void Motor::initEncoder() {
@@ -77,7 +77,7 @@ void Motor::initEncoder() {
     }
 } 
 
-void Motor::motorSetup(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
+void Motor::setupMotor(const uint8_t pwmPin, const uint8_t digitalOne, const uint8_t digitalTwo, const uint8_t encoderA, const MotorID motorid) {
     this->pwmPin_ = pwmPin;
     this->digitalOne_ = digitalOne;
     this->digitalTwo_ = digitalTwo;
@@ -121,9 +121,8 @@ void Motor::motorBackward(uint8_t pwm) {
     currentState_ = MotorState::kBackward;
 }
 
-void Motor::motorStop(uint8_t pwm) {
-    pwm = 0;
-    analogWrite(pwmPin_, pwm);
+void Motor::motorStop() {
+    analogWrite(pwmPin_, 0);
 
     if (currentState_ == MotorState::kStop) {
         return;
@@ -132,6 +131,8 @@ void Motor::motorStop(uint8_t pwm) {
     digitalWrite(digitalOne_, LOW);
     digitalWrite(digitalTwo_, LOW);
 
+    previousTics_ = totalTics_;
+    currentSpeed_ = 0;
     currentState_ = MotorState::kStop;
 }
 
@@ -142,13 +143,13 @@ void Motor::setPwmAndDirection(const uint8_t pwm, const MotorState direction) {
     } else if (direction == MotorState::kBackward) {
         motorBackward(pwm);
     } else {
-        motorStop(0);
+        motorStop();
     }
 }
 
 void Motor::setSpeedAndDirection(const double speed, const MotorState direction) {
     if (direction == MotorState::kStop) {
-        motorStop(0);
+        motorStop();
         return;
     } 
     const uint8_t pwm = speedToPwm(speed);

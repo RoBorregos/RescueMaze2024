@@ -3,24 +3,24 @@
 
 namespace Pins {
     constexpr uint8_t pwmPin[4] = {
-        27, // BACK_LEFT
-        16, // FRONT_LEFT
-        26, // BACK_RIGHT
-        23  // FRONT_RIGHT
+        23, // BACK_LEFT
+        26, // FRONT_LEFT
+        16, // BACK_RIGHT
+        27  // FRONT_RIGHT
     };
 
     constexpr uint8_t digitalOne[4] = {
-        32, // BACK_LEFT
-        17, // FRONT_LEFT
-        25, // BACK_RIGHT
-        18  // FRONT_RIGHT
+        18, // BACK_LEFT
+        25, // FRONT_LEFT
+        5, // BACK_RIGHT
+        32  // FRONT_RIGHT
     };  
 
     constexpr uint8_t digitalTwo[4] = {
-        14, // BACK_LEFT
-        5, // FRONT_LEFT
-        33, // BACK_RIGHT
-        19  // FRONT_RIGHT
+        19, // BACK_LEFT
+        33, // FRONT_LEFT
+        17, // BACK_RIGHT
+        14  // FRONT_RIGHT
     };
 
     constexpr uint8_t encoderA[4] = {
@@ -28,6 +28,14 @@ namespace Pins {
         36, // FRONT_LEFT
         35, // BACK_RIGHT
         39  // FRONT_RIGHT
+    };
+
+    constexpr uint8_t vlxPins[5] = {
+        6, // FRONT_RIGHT
+        5, // BACK 3
+        4, // LEFT
+        1,  // RIGHT
+        3  // FRONT_LEFT
     };
 }
 #endif
