@@ -3,7 +3,7 @@
 #include "Pins.h"
 #include "CustomSerial.h"
 #include "VLX.h"
-//#include "LimitSwitch.h"
+#include "LimitSwitch.h"
 
 #define DEBUG_MOVEMENT 0
 
@@ -238,6 +238,24 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             moveForward = true;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
+
+                if (limitSwitch_.leftState() && !limitSwitch_.rightState()) {
+                    
+                }
+                /*  Step 1: 1
+                        Check LimitSwitches
+                    Step 2: 2
+                        Left LimitSwitch on
+                        Right LimitSwitch off
+                    Step 3: 4
+                        Save the LastState of the motors
+                    Step 4; 3
+                        Left turn few angles
+                        Backward
+                        Right turn few angles the same as left
+                    Step 5; 5
+                        Recover the LastState of the motors                     
+                */
                 checkWallsDistances();
             } 
             

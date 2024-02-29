@@ -36,6 +36,7 @@ class Movement {
         Motor motorBL_;
         Motor motorBR_;
         BNO bno_;
+        LimitSwitch limitSwitch_;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 

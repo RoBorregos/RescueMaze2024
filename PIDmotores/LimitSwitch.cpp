@@ -1,5 +1,6 @@
 #include "LimitSwitch.h"
 #include "Pins.h"
+#include "CustomSerial.h"
 
 LimitSwitch::LimitSwitch() {
     state_ = false;
@@ -29,6 +30,8 @@ bool LimitSwitch::read(LimitSwitchID id) {
 }
 
 void LimitSwitch::getLimitSwitchState() {
-    leftState();
-    rightState();
-} 
+    customPrint("Left: ");
+    customPrint(leftState());
+    customPrint(" Right: ");
+    customPrintln(rightState());
+}
