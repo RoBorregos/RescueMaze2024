@@ -1,8 +1,6 @@
 // make sure that we do not rely on the STL.
 #define ETL_NO_STL
 
-// #include<etl/unordered_map.h>
-
 #include "Map.h"
 
 using namespace etl;
@@ -28,7 +26,6 @@ void turnRobot(const int& targetOrientation) {
         // turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
-    return;
 }
 
 void followPath(etl::stack<coord, kMaxMapSize>& path) {
@@ -36,13 +33,13 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
         coord next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
-            turnRobot(270);
+            // turnRobot(270);
         } else if (next.x < robotCoord.x) {
-            turnRobot(90);
+            // turnRobot(90);
         } else if (next.y > robotCoord.y) {
-            turnRobot(0);
+            // turnRobot(0);
         } else if (next.y < robotCoord.y) {
-            turnRobot(180);
+            // turnRobot(180);
         }
         // goForward(robotOrientation);
         robotCoord = next;
@@ -50,18 +47,15 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
 }
 
 void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const etl::vector<Tile, kMaxMapSize>& tiles) {
-    // Map exploredMap = Map(); // not really necessary.
     etl::vector<bool, kMaxMapSize> explored;
-    // Map distanceMap = Map();
     etl::vector<int, kMaxMapSize> distance;
-    // Map previousPositionsMap = Map();
     etl::vector<coord, kMaxMapSize> previousPositions;
     etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
-    for (int i = tilesMap.positions.size() - 1; i >= 0; --i) { // -1?
+    for (int i = tilesMap.positions.size() - 1; i >= 0; --i) {
+        //push_back
         distance[i] = INT_MAX;
         explored[i] = false;
-        // explored[it->first] = false;
     }
     distance[tilesMap.getIndex(start)] = 0;
     explored[tilesMap.getIndex(start)] = true;
@@ -105,7 +99,6 @@ void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const e
     }
     path.push(start);
     followPath(path);
-    return;
 }
 
 bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
@@ -169,6 +162,7 @@ bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>
 // }
 
 void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
+    Serial.println("inicio DFS");
     Map visitedMap = Map();
     etl::vector<bool, kMaxMapSize> visited;
     etl::stack<coord, kMaxMapSize> unvisited;
@@ -182,7 +176,8 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
     coord nextTileCoord;
     TileDirection oppositeDirection;
     // explore the map.
-    while (!unvisited.empty()) {
+    while (unvisited.size() != 256){
+        delay(1000);
         // get the next tile to explore.
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
@@ -198,6 +193,11 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
             continue;
         }
         dijsktra(robotCoord, currentTileCoord, tilesMap, tiles);
+        Serial.print("currentTileCoord: ");
+        Serial.print(currentTileCoord.x);
+        Serial.print(" ");
+        Serial.println(currentTileCoord.y);
+    Serial.println(unvisited.size());
         robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
         visited.push_back(true);
@@ -206,22 +206,22 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
             wall = false;
             switch(direction) {
                 case TileDirection::kRight:
-                    // nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y,checkRamp(maze, direction, currentTileCoord)};
+                    nextTileCoord = coord{currentTileCoord.x+2,currentTileCoord.y,1}; // checkRamp(direction);
                     currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
                     oppositeDirection = TileDirection::kLeft;
                     break;
                 case TileDirection::kUp:
-                    // nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2,checkRamp(maze, direction, currentTileCoord)};
+                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y+2,1}; // checkRamp(direction);
                     currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
                     oppositeDirection = TileDirection::kDown;
                     break;
                 case TileDirection::kLeft:
-                    // nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y,checkRamp(maze, direction, currentTileCoord)};
+                    nextTileCoord = coord{currentTileCoord.x-2,currentTileCoord.y,1}; // checkRamp(direction);
                     currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
                     oppositeDirection = TileDirection::kRight;
                     break;
                 case TileDirection::kDown:
-                    // nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2,checkRamp(maze, direction, currentTileCoord)};
+                    nextTileCoord = coord{currentTileCoord.x,currentTileCoord.y-2,1}; // checkRamp(direction);
                     currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
                     oppositeDirection = TileDirection::kUp;
                     break;
@@ -229,27 +229,20 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                if (currentTileCoord.z == 1 && nextTileCoord.z == 1) {
-                    // wall = checkForWall(maze, direction, currentTileCoord);
-                } else {
-                    // wall = checkForWall(mazeSecondLevel, direction, currentTileCoord);
-                }
-                //cout<<nextTileCoord.x<<" "<<nextTileCoord.y<<" "<<nextTileCoord.z<<" "<<wall<<endl;
+                wall = true; // por ahora
+                // wall = checkForWall(direction);
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
                 Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
                 if (nextTile->position_ == kInvalidPosition) {
                      nextTile->setPosition(nextTileCoord);
-                    // map[nextTileCoord].setPosition(nextTileCoord);
                 }
                 // Link the two adjacent Tiles.
                 currentTile->addAdjacentTile(direction, nextTile, wall);
                 nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
                 // Check if there's a wall between the two adjacent Tiles.
                 if (!wall) {
-                    // maze[currentTileCoord.y][currentTileCoord.x] = 'o';
-                    // maze[nextTileCoord.y][nextTileCoord.x] = 'o';
                     // if the tile has not been visited, add it to the queue.
                     visitedFlag = false;
                     for (int i=0; i<visitedMap.positions.size(); i++) {
@@ -259,21 +252,36 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
                         }
                     }
                     if(!visitedFlag) {
+                        Serial.print("nextTileCoord: ");
+                        Serial.print(nextTileCoord.x);
+                        Serial.print(" ");
+                        Serial.println(nextTileCoord.y);
+                        delay(500);
                         unvisited.push(nextTileCoord);
                     }
                 }
             }
         }
+        Serial.println(unvisited.size());
     }
-    return;
+    Serial.println("termino BFS");
+}
+
+void startAlgorithm() {
+    Map tilesMap = Map();
+    etl::vector<Tile, kMaxMapSize> tiles;
+    Serial.println("startAlgorithm");
+    depthFirstSearch(tilesMap, tiles);
 }
 
 void setup() {
-    Serial.begin(9600);
-    Map tilesMap = Map();
-    etl::vector<Tile, kMaxMapSize> tiles;
-    depthFirstSearch(tilesMap, tiles); // hash problem.
+    // Serial.begin(9600);
+    // Map tilesMap = Map();
+    // etl::vector<Tile, kMaxMapSize> tiles;
+    // Serial.println("setup");
+    // depthFirstSearch(tilesMap, tiles);
 }
 void loop() {
-
+    Serial.println("termino");
+    delay(5000);
 }

@@ -1,12 +1,9 @@
-
 #include "Movement.h"
 #include "Pins.h"
 #include "CustomSerial.h"
 #include "VLX.h"
 
-
 #define DEBUG_MOVEMENT 0
-
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
