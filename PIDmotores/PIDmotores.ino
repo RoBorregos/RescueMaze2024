@@ -3,9 +3,7 @@
 
 #include "CustomSerial.h"
 #include "Movement.h"
-// #include "Motor.h"
 #include "Pins.h"
-// #include "BNO.h"
 #include "Encoder.h"
 
 Movement robot;
@@ -16,7 +14,7 @@ bool hasArrived = false;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-uint8_t robotOrientation = 0;
+uint16_t robotOrientation = 0;
 coord robotCoord = coord{1,1,1};
 
 void turnRobot(const int& targetOrientation) {

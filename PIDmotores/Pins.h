@@ -32,8 +32,8 @@ namespace Pins {
 
     constexpr uint8_t vlxPins[5] = {
         6, // FRONT_RIGHT
-        5, // BACK 3
         4, // LEFT
+        5, // BACK 3
         1,  // RIGHT
         3  // FRONT_LEFT
     };

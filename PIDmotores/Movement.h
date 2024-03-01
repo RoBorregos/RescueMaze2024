@@ -4,7 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
-#include "Map.h"
+#include "Tile.h"
 
 enum class compass{
     kNorth,
@@ -47,6 +47,11 @@ class Movement {
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
         static constexpr uint8_t kNumberOfVlx = 5;
+
+        static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+
+        static constexpr uint8_t kNumberOfTargetOrientations = 5;
+
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
@@ -156,9 +161,9 @@ class Movement {
 
         void turnRight(const double targetOrientation);
 
-        bool checkWallsDistances(const TileDirection &targetTileDirection, const int currentOrientation);
+        bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
 
-        int getIndexFromVlxID(const int value, const int array[]);
+        uint8_t getIndexFromArray(const int value, const int array[]);
 };
 
 #endif
