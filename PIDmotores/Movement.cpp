@@ -167,154 +167,29 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     #endif
 }
 
-int Movement::getIndexFromVlxID(const int value, const int array[]) {
-    for (int i = 0; i < kNumberOfVlx; ++i) {
+uint8_t Movement::getIndexFromArray(const int value, const int array[]) {
+    
+    for (uint8_t i = 0; i < kNumberOfTargetOrientations; ++i) {
         const int currentValue = array[i];
         if (currentValue == value) {
             return i;
+        } 
+        
+        if (!array[i].find(value)) {
+            return -1;
         }
     }
     return -1;
 }
 
-bool Movement::checkWallsDistances(const TileDirection &targetTileDirection, const int currentOrientation) {
-    const int targetOrientations[] = {0, 90, 180, 270};
-    const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + getIndexFromVlxID(currentOrientation, targetOrientations)) % kTileDirections;
+bool Movement::checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation) {
+    
+    if (getIndexFromArray(currentOrientation, kTargetOrientations) == -1) {
+        return false;
+    }
+    const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + getIndexFromArray(currentOrientation, kTargetOrientations)) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
     return getWallDistance(vlxID) < kMinWallDistance;
-    
-    /* 
-    switch (tileDirection) {
-    case (TileDirection::kUp): {
-        switch (currentDirection) {
-            case (0): {
-                if (getWallDistance(VlxID::kFrontRight) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (90): {
-                if (getWallDistance(VlxID::kLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (180): {
-                if (getWallDistance(VlxID::kBack) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (270): {
-                if (getWallDistance(VlxID::kRight) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-        }
-        if (wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)] < kMinWallDistance) {
-            return true;
-        }
-        break;
-    }
-    case (TileDirection::kDown): {
-        switch (currentDirection) {
-            case (0): {
-                if (getWallDistance(VlxID::kBack) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (90): {
-                if (getWallDistance(VlxID::kRight) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (180): {
-                if (getWallDistance(VlxID::kFrontLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (270): {
-                if (getWallDistance(VlxID::kLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-        }
-        if (wallDistances[static_cast<uint8_t>(VlxID::kBack)] < kMinWallDistance) {
-            return true;
-        }
-        break;
-    }
-    case (TileDirection::kLeft): {
-        switch (currentDirection) {
-            case (0): {
-                if (getWallDistance(VlxID::kLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (90): {
-                if (getWallDistance(VlxID::kBack) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (180): {
-                if (getWallDistance(VlxID::kRight) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (270): {
-                if (getWallDistance(VlxID::kFrontLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-        }
-        if (wallDistances[static_cast<uint8_t>(VlxID::kLeft)] < kMinWallDistance) {
-            return true;
-        }
-        break;
-    }
-    case (TileDirection::kRight): {
-        switch (currentDirection) {
-            case (0): {
-                if (getWallDistance(VlxID::kRight) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (90): {
-                if (getWallDistance(VlxID::kFrontLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (180): {
-                if (getWallDistance(VlxID::kLeft) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-            case (270): {
-                if (getWallDistance(VlxID::kBack) < kMinWallDistance) {
-                    return true;
-                }
-                break;
-            }
-        }
-        if (wallDistances[static_cast<uint8_t>(VlxID::kRight)] < kMinWallDistance) {
-            return true;
-        }
-        break;
-    }
-    return false; 
-    }	*/
 }
 
 uint8_t Movement::checkWallsDistances() {
