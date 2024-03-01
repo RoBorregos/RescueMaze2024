@@ -10,13 +10,13 @@
 
 Movement robot;
 
-double targetOrientation = 0.0;
+// double targetOrientation = 0.0; pq global?
 unsigned long iterations = 0;
 bool hasArrived = false;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
-uint8_t robotOrientation = 0;
+int robotOrientation = 0;
 coord robotCoord = coord{1,1,1};
 
 void turnRobot(const int& targetOrientation) {
@@ -31,7 +31,6 @@ void turnRobot(const int& targetOrientation) {
         robot.turnLeft(targetOrientation);
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        robot.turnRight(targetOrientation);
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }

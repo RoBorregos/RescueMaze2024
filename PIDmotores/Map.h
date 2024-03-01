@@ -16,7 +16,7 @@
 #include<etl/vector.h>
 #include<etl/stack.h>
 
-const int kMaxMapSize = 150;
+const uint8_t kMaxMapSize = 150;
 
 class Map{
     public:

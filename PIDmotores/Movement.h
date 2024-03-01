@@ -126,7 +126,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance);
+        void moveMotors(const MovementState state, const int targetOrientation, const int targetDistance);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -148,13 +148,13 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward(const double targetOrientation);
+        void goForward(const int targetOrientation);
 
-        void goBackward(const double targetOrientation);
+        void goBackward(const int targetOrientation);
 
-        void turnLeft(const double targetOrientation);
+        void turnLeft(const int targetOrientation);
 
-        void turnRight(const double targetOrientation);
+        void turnRight(const int targetOrientation);
 
         bool checkWallsDistances(const TileDirection &targetTileDirection, const int currentOrientation);
 
