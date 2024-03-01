@@ -207,6 +207,8 @@ void Movement::turnLeft() {
 }
 
 void Movement::turnRight() {
+    // target= currentAngle +deltaAngle 
+    // target = target < 0? 360 + target: target % 360;
     moveMotors(MovementState::kTurnRight, 90, 0);
 }
 
@@ -238,16 +240,22 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
-                if (limitSwitch_.getState(LimitSwitchID::kLeft) == true && limitSwitch_.getState(LimitSwitchID::kRight) == false) {
+                if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == true && limitSwitch_[1].getState(LimitSwitchID::kRight) == false) {
                     // Turn a few angles to the left
                     /* 
                     Something like this 
+                    MOVE DELTA_ANGLE TO LEFT
+                    MOVE BACKWARD X DISTANCE
+
+                    moveMotors(MovementState::kTurnRight, - * DELTA_ANGLE, 0);
+                    moveMotors(MovementState::kForward, 0, x_distance);
+
                     moveMotors(MovementState::kTurnLeft, currentOrientation + 5, 0);
                     moveMotors(MovementState::kBackward, 0, 0.1);
                     moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
                     then return to the previous state
                     */
-                } else if (limitSwitch_.getState(LimitSwitchID::kLeft) == false && limitSwitch_.getState(LimitSwitchID::kLeft) == true) {
+                } else if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == false && limitSwitch_[1].getState(LimitSwitchID::kLeft) == true) {
 
                     // Turn a few angles to the right
                     /* 
@@ -306,74 +314,61 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
-            while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                #if DEBUG_MOVEMENT
-                customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
-                #endif
-                const unsigned long timeDiff = millis() - timePrev_;
-                if (timeDiff < sampleTime_) {
-                    currentOrientation = bno_.getOrientationX();
-                    continue;
-                }
-                //customPrintln(abs(targetOrientation - currentOrientation));
-
-                pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
-                if (turnLeft) {
-                    setMotorsDirections(MovementState::kTurnLeft, directions); 
-                } else {
-                    setMotorsDirections(MovementState::kTurnRight, directions); 
-                }
-
-                speeds[frontLeftIndex] = speedLeft;
-                speeds[backLeftIndex] = speedLeft;
-                speeds[frontRightIndex] = speedLeft;
-                speeds[backRightIndex] = speedLeft;
-
-                setSpeedsAndDirections(speeds, directions);
-                
-                timePrev_ = millis();
-                
-            }
-            
-            stopMotors();
+            turnMotors(targetOrientation, targetDistance, currentOrientation);
 
             break;
         }
         case (MovementState::kTurnRight): {
-            while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
-                #if DEBUG_MOVEMENT
-                customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
-                #endif
-                const unsigned long timeDiff = millis() - timePrev_;
-                if (timeDiff < sampleTime_) {
-                    currentOrientation = bno_.getOrientationX();
-                    continue;
-                }
-                //customPrintln(abs(targetOrientation - currentOrientation));
-
-                pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
-                if (turnLeft) {
-                    setMotorsDirections(MovementState::kTurnLeft, directions); 
-                } else {
-                    setMotorsDirections(MovementState::kTurnRight, directions); 
-                }
-
-                speeds[frontLeftIndex] = speedLeft;
-                speeds[backLeftIndex] = speedLeft;
-                speeds[frontRightIndex] = speedLeft;
-                speeds[backRightIndex] = speedLeft;
-
-                setSpeedsAndDirections(speeds, directions);
-
-                timePrev_ = millis();
-                
-            }
+            turnMotors(targetOrientation, targetDistance, currentOrientation);
             
             stopMotors();
 
             break;
         }
     }
+}
+
+void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){
+    double speeds[kNumberOfWheels];
+    MotorState directions[kNumberOfWheels]; 
+    double speedLeft = 0;
+    double speedRight = 0;
+    bool turnLeft = false;
+    const uint8_t frontLeftIndex = static_cast<uint8_t>(MotorID::kFrontLeft);
+    const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
+    const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
+    const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
+    while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+        #if DEBUG_MOVEMENT
+        customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
+        #endif
+        const unsigned long timeDiff = millis() - timePrev_;
+        if (timeDiff < sampleTime_) {
+            currentOrientation = bno_.getOrientationX();
+            continue;
+        }
+        //customPrintln(abs(targetOrientation - currentOrientation));
+
+        pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
+        if (turnLeft) {
+            setMotorsDirections(MovementState::kTurnLeft, directions); 
+        } else {
+            setMotorsDirections(MovementState::kTurnRight, directions); 
+        }
+
+        speeds[frontLeftIndex] = speedLeft;
+        speeds[backLeftIndex] = speedLeft;
+        speeds[frontRightIndex] = speedLeft;
+        speeds[backRightIndex] = speedLeft;
+
+        setSpeedsAndDirections(speeds, directions);
+
+        timePrev_ = millis();
+        
+    }
+    
+    stopMotors();
+    
 }
 
 void Movement::updateTics(MotorID motorId) {

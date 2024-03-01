@@ -29,7 +29,7 @@ class Movement {
         Motor motorBL_;
         Motor motorBR_;
         BNO bno_;
-        LimitSwitch limitSwitch_;
+        LimitSwitch limitSwitch_[2];
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -152,6 +152,8 @@ class Movement {
         void turnLeft();
 
         void turnRight();
+
+        void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
 };
 
 #endif

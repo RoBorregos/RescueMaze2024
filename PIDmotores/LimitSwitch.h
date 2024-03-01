@@ -11,12 +11,12 @@ enum class LimitSwitchID {
 class LimitSwitch {
     private:
         bool state_;
+        LimitSwitchID id_;
 
     public:
         LimitSwitch();
-        void initLimitSwitch();
-        bool getState(LimitSwitchID id);
-        void printLimitSwitchState();
+        void initLimitSwitch(uint8_t pin);
+        bool getState(const LimitSwitchID id);
 };
 
 #endif
