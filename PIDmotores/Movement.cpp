@@ -175,7 +175,7 @@ uint8_t Movement::getIndexFromArray(const int value, const int array[]) {
             return i;
         } 
         
-        if (!array[i].find(value)) {
+        if (array[i] != value) {
             return -1;
         }
     }

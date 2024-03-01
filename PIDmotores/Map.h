@@ -5,7 +5,7 @@
 
 #include<Arduino.h>
 
-#include "Tile.h"
+#include "coord.h"
 
 #include"Embedded_Template_Library.h"
 //C:\Users\tacol\Documents\Arduino\libraries\ArduinoSTL\src\new_handler.cpp
@@ -17,6 +17,7 @@
 #include<etl/stack.h>
 
 const uint8_t kMaxMapSize = 150;
+const uint8_t kInvalidIndex = -1;
 
 class Map{
     public:

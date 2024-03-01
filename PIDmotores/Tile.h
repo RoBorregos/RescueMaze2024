@@ -3,7 +3,7 @@
 
 #include<Arduino.h>
 
-#include "coord.h"
+#include "Map.h"
 
 enum class TileDirection {
     kUp = 0,
@@ -21,14 +21,16 @@ constexpr int kCheckpointBit = 7;
 
 constexpr int kMinWeight = 1;
 
+constexpr uint8_t kNumberOfDirections = 4;
+
 constexpr coord kInvalidPosition = coord{1000,1000,1000};
 
 class Tile{
     public:
         // TODO: SAVE RAMP INFORMATION.
         coord position_;
-        Tile *adjacentTiles_[4];
-        int weights_[4];
+        Tile *adjacentTiles_[kNumberOfDirections];
+        int weights_[kNumberOfDirections];
         char data_;
         Tile();
         Tile(const coord& position);

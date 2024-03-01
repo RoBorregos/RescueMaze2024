@@ -5,10 +5,10 @@ Map::Map() {
 }
 
 int Map::getIndex(const coord &position) const {
-    for (int i = 0; i < this->positions.size(); i++) {
+    for (uint8_t i = 0; i < this->positions.size(); ++i) {
         if (this->positions[i] == position) {
             return i;
         }
     }
-    return -1;
+    return kInvalidIndex;
 }
