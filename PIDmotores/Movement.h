@@ -31,6 +31,11 @@ class Movement {
         BNO bno_;
         LimitSwitch limitSwitch_[2];
 
+        MovementState currentState_;
+        MovementState lastState_;
+
+        double deltaOrientation_ = 30.0;
+
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
   
@@ -154,6 +159,10 @@ class Movement {
         void turnRight();
 
         void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
+
+        MovementState getCurrentState();
+
+        void saveLastState(const MovementState state);
 };
 
 #endif

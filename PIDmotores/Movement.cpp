@@ -9,6 +9,7 @@
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
+    this->currentState_
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
@@ -241,15 +242,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == true && limitSwitch_[1].getState(LimitSwitchID::kRight) == false) {
-                    // Turn a few angles to the left
+                    saveLastState(currentState_);
+                    moveMotors(MovementState::kTurnLeft, currentOrientation + deltaOrientation_, 0);
+                    moveMotors(MovementState::kBackward, 0, 0.1);
+                    moveMotors(MovementState::kTurnRight, currentOrientation - deltaOrientation_, 0);
+                    // Then return to the previous state 
+
+                    //moveMotors(lastState_, currentOrientation, lastTargetDistance_);
+                    
                     /* 
                     Something like this 
-                    MOVE DELTA_ANGLE TO LEFT
-                    MOVE BACKWARD X DISTANCE
-
-                    moveMotors(MovementState::kTurnRight, - * DELTA_ANGLE, 0);
-                    moveMotors(MovementState::kForward, 0, x_distance);
-
                     moveMotors(MovementState::kTurnLeft, currentOrientation + 5, 0);
                     moveMotors(MovementState::kBackward, 0, 0.1);
                     moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
@@ -369,6 +371,14 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     
     stopMotors();
     
+}
+
+MovementState Movement::getCurrentState() {
+    return currentState_;
+}
+
+void Movement::saveLastState(const MovementState state) {
+    lastState_ = state;
 }
 
 void Movement::updateTics(MotorID motorId) {
