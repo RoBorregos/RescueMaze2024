@@ -9,7 +9,7 @@
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
-    this->currentState_
+    this->currentState_;
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
@@ -322,8 +322,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kTurnRight): {
             turnMotors(targetOrientation, targetDistance, currentOrientation);
-            
-            stopMotors();
 
             break;
         }
@@ -333,13 +331,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
-    double speedLeft = 0;
-    double speedRight = 0;
+    double speed = 0;
     bool turnLeft = false;
-    const uint8_t frontLeftIndex = static_cast<uint8_t>(MotorID::kFrontLeft);
-    const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
-    const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
-    const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
         #if DEBUG_MOVEMENT
         customPrintln("ErrorOrientation:" + String(pidTurn.computeErrorOrientation(targetOrientation, currentOrientation)));
@@ -349,19 +342,17 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
             currentOrientation = bno_.getOrientationX();
             continue;
         }
-        //customPrintln(abs(targetOrientation - currentOrientation));
 
-        pidTurn_.computeTurn(targetOrientation, currentOrientation, speedLeft, turnLeft);
+        pidTurn_.computeTurn(targetOrientation, currentOrientation, speed, turnLeft);
         if (turnLeft) {
             setMotorsDirections(MovementState::kTurnLeft, directions); 
         } else {
             setMotorsDirections(MovementState::kTurnRight, directions); 
         }
-
-        speeds[frontLeftIndex] = speedLeft;
-        speeds[backLeftIndex] = speedLeft;
-        speeds[frontRightIndex] = speedLeft;
-        speeds[backRightIndex] = speedLeft;
+        
+        for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
+            speeds[i] = speed;
+        }
 
         setSpeedsAndDirections(speeds, directions);
 

@@ -12,6 +12,7 @@ class LimitSwitch {
     private:
         bool state_;
         LimitSwitchID id_;
+        uint8_t pin_;
 
     public:
         LimitSwitch();
