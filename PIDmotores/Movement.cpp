@@ -174,19 +174,17 @@ uint8_t Movement::getIndexFromArray(const int value, const int array[]) {
         if (currentValue == value) {
             return i;
         } 
-        
-        if (array[i] != value) {
-            return -1;
-        }
+
     }
     return -1;
 }
 
 bool Movement::checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation) {
-    
-    if (getIndexFromArray(currentOrientation, kTargetOrientations) == -1) {
+    bool offArray = getIndexFromArray(currentOrientation, kTargetOrientations) == kOffArray;
+    if (offArray) {
         return false;
     }
+
     const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + getIndexFromArray(currentOrientation, kTargetOrientations)) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
     return getWallDistance(vlxID) < kMinWallDistance;

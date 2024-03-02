@@ -48,9 +48,11 @@ class Movement {
 
         static constexpr uint8_t kNumberOfVlx = 5;
 
+        static constexpr uint8_t kOffArray = -1;
+
         static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
 
-        static constexpr uint8_t kNumberOfTargetOrientations = 5;
+        static constexpr uint8_t kNumberOfTargetOrientations = 4;
 
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
