@@ -9,7 +9,6 @@
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
-    this->currentState_;
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
@@ -238,13 +237,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kForward): {
             moveForward = true;
+            currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == true && limitSwitch_[1].getState(LimitSwitchID::kRight) == false) {
                     saveLastState(currentState_);
                     moveMotors(MovementState::kTurnLeft, currentOrientation + deltaOrientation_, 0);
-                    moveMotors(MovementState::kBackward, 0, 0.1);
+                    moveMotors(MovementState::kBackward, 0, 0.05);
                     moveMotors(MovementState::kTurnRight, currentOrientation - deltaOrientation_, 0);
                     // Then return to the previous state 
 

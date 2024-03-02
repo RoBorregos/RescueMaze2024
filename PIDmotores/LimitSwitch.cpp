@@ -1,5 +1,4 @@
 #include "LimitSwitch.h"
-#include "Pins.h"
 #include "CustomSerial.h"
 
 LimitSwitch::LimitSwitch() {
