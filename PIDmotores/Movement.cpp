@@ -235,13 +235,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kForward): {
             moveForward = true;
+            bool crashSide = true;
             currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (limitSwitch_[0].getState() == true && limitSwitch_[1].getState() == false) {
-                    
-                    correctionAfterCrash(currentOrientation);
+                    correctionAfterCrash(crashSide ,currentOrientation);
                     // Then return to the previous state 
 
                     //moveMotors(lastState_, currentOrientation, lastTargetDistance_);
@@ -254,7 +254,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     then return to the previous state
                     */
                 } else if (limitSwitch_[0].getState() == false && limitSwitch_[1].getState() == true) {
-
+                    crashSide = false;
+                    correctionAfterCrash(crashSide, currentOrientation);
                     // Turn a few angles to the right
                     /* 
                     Something like this 
@@ -263,8 +264,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     moveMotors(MovementState::kTurnLeft, currentOrientation + 5, 0);
                     then return to the previous state
                     */
-                } else {
-                    // Do nothing
                 }
                 /*  Step 1: 1
                         Check LimitSwitches
@@ -326,9 +325,15 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
 void Movement::correctionAfterCrash(const bool crashSide, double &currentOrientation) {
     saveLastState(getCurrentState());
-    moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
-    moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_);
-    moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+    if (crashSide) {
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+    } else {
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+    }
 }
 
 double Movement::getOrientation(const double orientation) {
