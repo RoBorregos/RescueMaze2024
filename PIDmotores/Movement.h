@@ -165,7 +165,9 @@ class Movement {
 
         void saveLastState(const MovementState state);
 
-        void correctionAfterCrash(double &currentOrientation);
+        void correctionAfterCrash(const bool crashSide, double &currentOrientation);
+
+        double getOrientation(const double orientation);
 };
 
 #endif

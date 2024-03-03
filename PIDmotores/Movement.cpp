@@ -207,8 +207,6 @@ void Movement::turnLeft() {
 }
 
 void Movement::turnRight() {
-    // target= currentAngle +deltaAngle 
-    // target = target < 0? 360 + target: target % 360;
     moveMotors(MovementState::kTurnRight, 90, 0);
 }
 
@@ -326,11 +324,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-void Movement::correctionAfterCrash(double &currentOrientation) {
-    saveLastState(currentState_);
-    moveMotors(MovementState::kTurnLeft, currentOrientation + crashDeltaOrientation_, 0);
-    moveMotors(MovementState::kBackward, currentOrientation + crashDeltaOrientation_, crashDeltaDistance_);
-    moveMotors(MovementState::kTurnRight, currentOrientation - crashDeltaOrientation_, 0);
+void Movement::correctionAfterCrash(const bool crashSide, double &currentOrientation) {
+    saveLastState(getCurrentState());
+    moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+    moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_);
+    moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+}
+
+double Movement::getOrientation(const double orientation) {
+    if (orientation < 0) {
+        return 360 + orientation;
+    } else if (orientation > 360) {
+        return orientation - 360;
+    } else {
+        return orientation;
+    }
 }
 
 void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){
