@@ -241,7 +241,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
-                if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == true && limitSwitch_[1].getState(LimitSwitchID::kRight) == false) {
+                if (limitSwitch_[0].getState() == true && limitSwitch_[1].getState() == false) {
                     
                     correctionAfterCrash(currentOrientation);
                     // Then return to the previous state 
@@ -255,7 +255,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
                     then return to the previous state
                     */
-                } else if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == false && limitSwitch_[1].getState(LimitSwitchID::kLeft) == true) {
+                } else if (limitSwitch_[0].getState() == false && limitSwitch_[1].getState() == true) {
 
                     // Turn a few angles to the right
                     /* 

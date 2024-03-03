@@ -24,4 +24,3 @@ void LimitSwitch::printState() {
     Serial.print(" state: ");
     Serial.println(state_);
 }
-```
