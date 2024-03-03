@@ -174,7 +174,6 @@ int8_t Movement::getIndexFromArray(const int value, const int array[], const uin
         if (currentValue == value) {
             return i;
         } 
-
     }
 
     return -1;
@@ -183,7 +182,9 @@ int8_t Movement::getIndexFromArray(const int value, const int array[], const uin
 bool Movement::checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation) {
     const int8_t orientationIndex = getIndexFromArray(currentOrientation, kTargetOrientations, kNumberOfTargetOrientations);
     if (orientationIndex == kOffArray) {
+        #if DEBUG_MOVEMENT
         customPrintln("Orientation not found in the array.");
+        #endif
         return false;
     }
 
