@@ -62,6 +62,8 @@ class Movement {
         double targetDistance_ = 0;
         double distancePrev_ = 0;
 
+        double crashDistance_ = 0;
+
         double timePrev_ = 0;
 
         VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};

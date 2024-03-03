@@ -235,13 +235,15 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kForward): {
             moveForward = true;
-            bool crashSide = true;
+            bool crashLeft = true;
             currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
-                if (limitSwitch_[0].getState() == true && limitSwitch_[1].getState() == false) {
-                    correctionAfterCrash(crashSide ,currentOrientation);
+                if (limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kLeft)].getState() == true && limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kRight)].getState() == false) {
+                    crashLeft = true;
+                    correctionAfterCrash(crashLeft, currentOrientation);
+                    allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
                     // Then return to the previous state 
 
                     //moveMotors(lastState_, currentOrientation, lastTargetDistance_);
@@ -253,9 +255,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
                     then return to the previous state
                     */
-                } else if (limitSwitch_[0].getState() == false && limitSwitch_[1].getState() == true) {
-                    crashSide = false;
-                    correctionAfterCrash(crashSide, currentOrientation);
+                } else if (limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kLeft)].getState() == false && limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kRight)].getState() == true) {
+                    crashLeft = false;
+                    correctionAfterCrash(crashLeft, currentOrientation);
+                    allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
                     // Turn a few angles to the right
                     /* 
                     Something like this 
@@ -323,9 +326,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-void Movement::correctionAfterCrash(const bool crashSide, double &currentOrientation) {
+void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation) {
     saveLastState(getCurrentState());
-    if (crashSide) {
+    if (crashLeft) {
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
@@ -338,7 +341,7 @@ void Movement::correctionAfterCrash(const bool crashSide, double &currentOrienta
 
 double Movement::getOrientation(const double orientation) {
     if (orientation < 0) {
-        return 360 + orientation;
+        return orientation + 360;
     } else if (orientation > 360) {
         return orientation - 360;
     } else {
@@ -387,6 +390,8 @@ MovementState Movement::getCurrentState() {
 }
 
 void Movement::saveLastState(const MovementState state) {
+    crashDistance_ = allDistanceTraveled_;
+    allDistanceTraveled_ = 0;
     lastState_ = state;
 }
 
