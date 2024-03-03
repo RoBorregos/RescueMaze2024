@@ -167,7 +167,7 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     #endif
 }
 
-uint8_t Movement::getIndexFromArray(const int value, const int array[]) {
+int8_t Movement::getIndexFromArray(const int value, const int array[], const uint8_t kNumberOfTargetOrientations) {
     
     for (uint8_t i = 0; i < kNumberOfTargetOrientations; ++i) {
         const int currentValue = array[i];
@@ -176,16 +176,18 @@ uint8_t Movement::getIndexFromArray(const int value, const int array[]) {
         } 
 
     }
+
     return -1;
 }
 
 bool Movement::checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation) {
-    bool offArray = getIndexFromArray(currentOrientation, kTargetOrientations) == kOffArray;
-    if (offArray) {
+    const int8_t orientationIndex = getIndexFromArray(currentOrientation, kTargetOrientations, kNumberOfTargetOrientations);
+    if (orientationIndex == kOffArray) {
+        customPrintln("Orientation not found in the array.");
         return false;
     }
 
-    const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + getIndexFromArray(currentOrientation, kTargetOrientations)) % kTileDirections;
+    const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + orientationIndex) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
     return getWallDistance(vlxID) < kMinWallDistance;
 }
@@ -215,23 +217,23 @@ double Movement::getWallDistance(const VlxID vlxId) {
     return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
-void Movement::goForward(const int targetOrientation) {
+void Movement::goForward(const double targetOrientation) {
     moveMotors(MovementState::kForward, targetOrientation, kOneTileDistance);
 }
 
-void Movement::goBackward(const int targetOrientation) {
+void Movement::goBackward(const double targetOrientation) {
     moveMotors(MovementState::kBackward, targetOrientation, kOneTileDistance);
 }
 
-void Movement::turnLeft(const int targetOrientation) {
+void Movement::turnLeft(const double targetOrientation) {
     moveMotors(MovementState::kTurnLeft, targetOrientation, 0);
 }
 
-void Movement::turnRight(const int targetOrientation) {
+void Movement::turnRight(const double targetOrientation) {
     moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
 
-void Movement::moveMotors(const MovementState state, const int targetOrientation, const int targetDistance) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation, const int targetDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno_.getOrientationX();
