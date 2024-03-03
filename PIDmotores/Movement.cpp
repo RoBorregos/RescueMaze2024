@@ -242,10 +242,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (limitSwitch_[0].getState(LimitSwitchID::kLeft) == true && limitSwitch_[1].getState(LimitSwitchID::kRight) == false) {
-                    saveLastState(currentState_);
-                    moveMotors(MovementState::kTurnLeft, currentOrientation + deltaOrientation_, 0);
-                    moveMotors(MovementState::kBackward, 0, 0.05);
-                    moveMotors(MovementState::kTurnRight, currentOrientation - deltaOrientation_, 0);
+                    
+                    correctionAfterCrash(currentOrientation);
                     // Then return to the previous state 
 
                     //moveMotors(lastState_, currentOrientation, lastTargetDistance_);
@@ -326,6 +324,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
     }
+}
+
+void Movement::correctionAfterCrash(double &currentOrientation) {
+    saveLastState(currentState_);
+    moveMotors(MovementState::kTurnLeft, currentOrientation + crashDeltaOrientation_, 0);
+    moveMotors(MovementState::kBackward, currentOrientation + crashDeltaOrientation_, crashDeltaDistance_);
+    moveMotors(MovementState::kTurnRight, currentOrientation - crashDeltaOrientation_, 0);
 }
 
 void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){

@@ -17,7 +17,8 @@ class LimitSwitch {
     public:
         LimitSwitch();
         void initLimitSwitch(uint8_t pin);
-        bool getState(const LimitSwitchID id);
+        bool getState();
+        void printState();
 };
 
 #endif

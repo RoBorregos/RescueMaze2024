@@ -34,7 +34,8 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
-        double deltaOrientation_ = 30.0;
+        double crashDeltaOrientation_ = 30.0;
+        double crashDeltaDistance_ = 0.05;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -163,6 +164,8 @@ class Movement {
         MovementState getCurrentState();
 
         void saveLastState(const MovementState state);
+
+        void correctionAfterCrash(double &currentOrientation);
 };
 
 #endif

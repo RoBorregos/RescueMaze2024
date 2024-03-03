@@ -17,3 +17,11 @@ bool LimitSwitch::getState() {
     state_ = (val == HIGH);
     return state_;
 }
+
+void LimitSwitch::printState() {
+    Serial.print("LimitSwitch ");
+    Serial.print(static_cast<int>(id_));
+    Serial.print(" state: ");
+    Serial.println(state_);
+}
+```
