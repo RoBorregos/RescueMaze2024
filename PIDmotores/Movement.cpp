@@ -168,7 +168,6 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
 }
 
 int8_t Movement::getIndexFromArray(const int value, const int array[], const uint8_t arraySize) {
-    
     for (uint8_t i = 0; i < arraySize; ++i) {
         const int currentValue = array[i];
         if (currentValue == value) {
