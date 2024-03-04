@@ -167,7 +167,7 @@ class Movement {
 
         bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
 
-        int8_t getIndexFromArray(const int value, const int array[], const uint8_t kNumberOfTargetOrientations);
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
 };
 
 #endif

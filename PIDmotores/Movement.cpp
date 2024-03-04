@@ -167,9 +167,9 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     #endif
 }
 
-int8_t Movement::getIndexFromArray(const int value, const int array[], const uint8_t kNumberOfTargetOrientations) {
+int8_t Movement::getIndexFromArray(const int value, const int array[], const uint8_t arraySize) {
     
-    for (uint8_t i = 0; i < kNumberOfTargetOrientations; ++i) {
+    for (uint8_t i = 0; i < arraySize; ++i) {
         const int currentValue = array[i];
         if (currentValue == value) {
             return i;
@@ -190,6 +190,7 @@ bool Movement::checkWallsDistances(const TileDirection targetTileDirection, cons
 
     const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + orientationIndex) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
+    
     return getWallDistance(vlxID) < kMinWallDistance;
 }
 
