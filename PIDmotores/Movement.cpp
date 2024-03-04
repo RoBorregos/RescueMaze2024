@@ -239,21 +239,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             bool crashLeft = true;
-            correctingOrientation = false;
             currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
                     crashLeft = true;
-                    correctingOrientation = true;
                     correctionAfterCrash(crashLeft, currentOrientation);
-                    allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
                 } else if (limitSwitch_[leftLimitSwitch].getState() == false && limitSwitch_[rightLimitSwitch].getState() == true) {
                     crashLeft = false;
-                    correctingOrientation = true;
                     correctionAfterCrash(crashLeft, currentOrientation);
-                    allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
                 }
     
                 checkWallsDistances();
@@ -261,7 +256,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance
-            while (hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false && correctingOrientation == false) {
+            while (hasTraveledWallDistance(correctingOrientation == false && desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
@@ -300,17 +295,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation) {
+void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation, bool &correctingOrientation) {
+    correctingOrientation = true;
     saveLastState(getCurrentState());
     if (crashLeft) {
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0, correctingOrientation);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_, correctingOrientation);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+        allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
     } else {
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0, correctingOrientation);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_, correctingOrientation);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        allDistanceTraveled_ = crashDistance_ - crashDeltaDistance_;
     }
+    retrieveLastState();
 }
 
 double Movement::getOrientation(const double orientation) {
@@ -363,10 +362,16 @@ MovementState Movement::getCurrentState() {
     return currentState_;
 }
 
-void Movement::saveLastState(const MovementState state) {
+void Movement::saveLastState(const MovementState state, double &targetOrientation, double &targetDistance) {
     crashDistance_ = allDistanceTraveled_;
+    targetOrientation_ = targetOrientation;
+    targetDistance_ = targetDistance;
     allDistanceTraveled_ = 0;
     lastState_ = state;
+}
+
+void Movement::retrieveLastState() {
+    moveMotors(lastState_, targetOrientation_, targetDistance_); 
 }
 
 void Movement::updateTics(MotorID motorId) {

@@ -24,12 +24,8 @@ enum class MovementState{
 class Movement {
     private:
         PID pid_;
-        Motor motorFL_;
-        Motor motorFR_;
-        Motor motorBL_;
-        Motor motorBR_;
         BNO bno_;
-        LimitSwitch limitSwitch_[2];
+        LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         MovementState currentState_;
         MovementState lastState_;
@@ -53,6 +49,8 @@ class Movement {
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
+        static constexpr uint8_t kNumberOfLimitSwitches = 2;
+
         static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
@@ -66,11 +64,11 @@ class Movement {
 
         double timePrev_ = 0;
 
-        VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
+        VlxID vlxDirections[kNumberOfVlx] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
         double sampleTime_ = 100;
 
-        Motor motor[4];
+        Motor motor[kNumberOfWheels];
 
         VLX vlx[kNumberOfVlx];
 
@@ -85,6 +83,7 @@ class Movement {
 
         static constexpr long long kOneSecInMs = 1000;
 
+        double targetOrientation_ = 0;
 
         PID pidForward_;
         PID pidBackward_;
@@ -167,7 +166,9 @@ class Movement {
 
         void saveLastState(const MovementState state);
 
-        void correctionAfterCrash(const bool crashSide, double &currentOrientation);
+        void retrieveLastState();
+
+        void correctionAfterCrash(const bool crashSide, double &currentOrientation, bool &correctingOrientation);
 
         double getOrientation(const double orientation);
 };
