@@ -210,7 +210,7 @@ void Movement::turnRight() {
     moveMotors(MovementState::kTurnRight, 90, 0);
 }
 
-void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool correctingOrientation) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno_.getOrientationX();
@@ -221,6 +221,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const uint8_t frontRightIndex = static_cast<uint8_t>(MotorID::kFrontRight);
     const uint8_t backLeftIndex = static_cast<uint8_t>(MotorID::kBackLeft);
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
+
+    const uint8_t leftLimitSwitch = static_cast<uint8_t>(LimitSwitchID::kLeft);
+    const uint8_t rightLimitSwitch = static_cast<uint8_t>(LimitSwitchID::kRight);
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
@@ -236,58 +239,29 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             bool crashLeft = true;
+            correctingOrientation = false;
             currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
-                if (limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kLeft)].getState() == true && limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kRight)].getState() == false) {
+                if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
                     crashLeft = true;
+                    correctingOrientation = true;
                     correctionAfterCrash(crashLeft, currentOrientation);
                     allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
-                    // Then return to the previous state 
-
-                    //moveMotors(lastState_, currentOrientation, lastTargetDistance_);
-                    
-                    /* 
-                    Something like this 
-                    moveMotors(MovementState::kTurnLeft, currentOrientation + 5, 0);
-                    moveMotors(MovementState::kBackward, 0, 0.1);
-                    moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
-                    then return to the previous state
-                    */
-                } else if (limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kLeft)].getState() == false && limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kRight)].getState() == true) {
+                } else if (limitSwitch_[leftLimitSwitch].getState() == false && limitSwitch_[rightLimitSwitch].getState() == true) {
                     crashLeft = false;
+                    correctingOrientation = true;
                     correctionAfterCrash(crashLeft, currentOrientation);
                     allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
-                    // Turn a few angles to the right
-                    /* 
-                    Something like this 
-                    moveMotors(MovementState::kTurnRight, currentOrientation - 5, 0);
-                    moveMotors(MovementState::kBackward, 0, 0.1);
-                    moveMotors(MovementState::kTurnLeft, currentOrientation + 5, 0);
-                    then return to the previous state
-                    */
                 }
-                /*  Step 1: 1
-                        Check LimitSwitches
-                    Step 2: 2
-                        Left LimitSwitch on
-                        Right LimitSwitch off
-                    Step 3: 4
-                        Save the LastState of the motors
-                    Step 4; 3
-                        Left turn few angles
-                        Backward
-                        Right turn few angles the same as left
-                    Step 5; 5
-                        Recover the LastState of the motors                     
-                */
+    
                 checkWallsDistances();
             } 
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance
-            while (hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+            while (hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false && correctingOrientation == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
@@ -304,7 +278,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false && correctingOrientation == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
