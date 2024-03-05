@@ -30,7 +30,7 @@ class Movement {
         MovementState lastState_;
 
         double crashDeltaOrientation_ = 30.0;
-        double crashDeltaDistance_ = 0.05;
+        double crashDeltaDistance_ = 0.08;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -119,6 +119,8 @@ class Movement {
         void setup();
         
         void setupInternal(const MotorID motorId);
+
+        void setupLimitSwitch(const LimitSwitchID limitSwitchId);
 
         void stopMotors();
 

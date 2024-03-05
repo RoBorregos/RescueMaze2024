@@ -1,7 +1,7 @@
 #include "PID.h"
 #include "CustomSerial.h"
 
-#define DEBUG_PID 1
+#define DEBUG_PID 0
 
 PID::PID() {
     timePrev_ = millis();

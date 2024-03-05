@@ -21,7 +21,7 @@ Movement::Movement() {
 
 void Movement::setup() {
     this->prevTimeTraveled_ = millis();
-    // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by writing an unused pid it will work with all the pids
+    // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by first writing an unused pid it will work with all the pids
     this->pidDummy_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
@@ -38,6 +38,12 @@ void Movement::setup() {
     setupVlx(VlxID::kLeft);
     setupVlx(VlxID::kRight);
     setupVlx(VlxID::kFrontLeft);
+
+    setupLimitSwitch(LimitSwitchID::kLeft);
+    setupLimitSwitch(LimitSwitchID::kRight);
+/*     limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kLeft)].initLimitSwitch(static_cast<uint8_t>(LimitSwitchID::kLeft));
+    limitSwitch_[static_cast<uint8_t>(LimitSwitchID::kRight)].initLimitSwitch(static_cast<uint8_t>(LimitSwitchID::kRight));
+ */
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -54,6 +60,11 @@ void Movement::setupVlx(const VlxID vlxId) {
     const uint8_t index = static_cast<uint8_t>(vlxId);
     vlx[index].setMux(Pins::vlxPins[index]);
     vlx[index].init();
+}
+
+void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
+    const uint8_t index = static_cast<uint8_t>(limitSwitchId);
+    limitSwitch_[index].initLimitSwitch(Pins::limitSwitchPins[index]);
 }
 
 void Movement::stopMotors() {
@@ -288,9 +299,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false && correctingOrientation == false) {
+            /* while (hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false && correctingOrientation == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
-            }
+            } */
 
             stopMotors();
             
@@ -313,14 +324,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation, bool &correctingOrientation) {
     correctingOrientation = false;
     saveLastState(getCurrentState(), currentOrientation);
-    if (crashLeft) {
+    if (!crashLeft) {
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, correctingOrientation);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0, correctingOrientation);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_, correctingOrientation);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_/2, correctingOrientation);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
         allDistanceTraveled_ = crashDistance_ + crashDeltaDistance_;
     } else {
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, correctingOrientation);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0, correctingOrientation);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_, correctingOrientation);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, correctingOrientation);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
         allDistanceTraveled_ = crashDistance_ - crashDeltaDistance_;
     }
@@ -335,6 +348,24 @@ double Movement::getOrientation(const double orientation) {
     } else {
         return orientation;
     }
+}
+
+void Movement::saveLastState(const MovementState state, double &targetOrientation) {
+    crashDistance_ = allDistanceTraveled_;
+    targetOrientation_ = targetOrientation;
+    allDistanceTraveled_ = 0;
+    lastState_ = state;
+    
+    customPrintln("CrashDistance:" + String(crashDistance_));
+    customPrintln("TargetOrientation:" + String(targetOrientation_));
+}
+
+void Movement::retrieveLastState() {
+    customPrintln("Retrieving last state");
+    
+    customPrintln("CrashDistance:" + String(crashDistance_));
+    customPrintln("TargetOrientation:" + String(targetOrientation_));
+    moveMotors(lastState_, targetOrientation_, targetDistance_); 
 }
 
 void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){
@@ -377,16 +408,6 @@ MovementState Movement::getCurrentState() {
     return currentState_;
 }
 
-void Movement::saveLastState(const MovementState state, double &targetOrientation) {
-    crashDistance_ = allDistanceTraveled_;
-    targetOrientation_ = targetOrientation;
-    allDistanceTraveled_ = 0;
-    lastState_ = state;
-}
-
-void Movement::retrieveLastState() {
-    moveMotors(lastState_, targetOrientation_, targetDistance_); 
-}
 
 void Movement::updateTics(MotorID motorId) {
     const uint8_t index = static_cast<uint8_t>(motorId);

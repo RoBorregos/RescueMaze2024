@@ -19,6 +19,8 @@ class LimitSwitch {
         void initLimitSwitch(const uint8_t pin);
         bool getState();
         void printState();
+        void LimitSwitchActive();
+        void initLimitSwitchInternal();
 };
 
 #endif
