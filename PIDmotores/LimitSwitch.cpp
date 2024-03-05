@@ -14,6 +14,7 @@ void LimitSwitch::initLimitSwitch(const uint8_t pin) {
 
 bool LimitSwitch::getState() {
     const uint8_t val = digitalRead(pin_);
+    //customPrintln("Val:" + String(val) + " Pin:" + String(pin_) + " State:" + String(state_));
     state_ = (val == HIGH);
     return state_;
 }

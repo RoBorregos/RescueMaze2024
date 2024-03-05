@@ -25,7 +25,6 @@ class Movement {
     private:
         PID pid_;
         BNO bno_;
-        LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         MovementState currentState_;
         MovementState lastState_;
@@ -51,10 +50,14 @@ class Movement {
 
         static constexpr uint8_t kNumberOfLimitSwitches = 2;
 
+        LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
+
         static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
+
+        bool correctingOrientation_ = false;
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -68,6 +71,8 @@ class Movement {
 
         double sampleTime_ = 100;
 
+        static constexpr uint8_t kNumberOfWheels = 4;
+
         Motor motor[kNumberOfWheels];
 
         VLX vlx[kNumberOfVlx];
@@ -79,7 +84,6 @@ class Movement {
         static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
-        static constexpr uint8_t kNumberOfWheels = 4;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -164,7 +168,7 @@ class Movement {
 
         MovementState getCurrentState();
 
-        void saveLastState(const MovementState state);
+        void saveLastState(const MovementState state, double &targetOrientation);
 
         void retrieveLastState();
 

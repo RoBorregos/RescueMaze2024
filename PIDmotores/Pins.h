@@ -39,8 +39,8 @@ namespace Pins {
     };
 
     constexpr uint8_t limitSwitchPins[2] = {
-        2, // LEFT
-        15  // RIGHT
+        13, // LEFT
+        23  // RIGHT
     };
 
 }
