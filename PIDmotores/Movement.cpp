@@ -21,6 +21,8 @@ Movement::Movement() {
 
 void Movement::setup() {
     this->prevTimeTraveled_ = millis();
+    // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by writing an unused pid it will work with all the pids
+    this->pidDummy_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
@@ -136,7 +138,7 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
     if (moveForward) {
-        pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        this->pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
         speeds[frontLeftIndex] = speedLeft;
         speeds[backLeftIndex] = speedLeft;
         speeds[frontRightIndex] = speedRight;

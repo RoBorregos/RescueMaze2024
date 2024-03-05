@@ -59,7 +59,7 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
     errorSum_ += error;
     errorSum_ = constrain(errorSum_, kMaxErrorSum_ * -1, kMaxErrorSum_);
     const double errorDeriv = (error - errorPrev_) / (timeDiff);
-    const double outputModifier = kP_ * error + kI_ * errorSum_ + kD_ * errorDeriv;
+    const double outputModifier = this->kP_ * error + kI_ * errorSum_ + kD_ * errorDeriv;
     errorPrev_ = error;
     if (timeDiff < kSampleTime_) {
         #if DEBUG_PID
@@ -83,7 +83,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     #if DEBUG_PID
     customPrintln("ERRORORIENTATION:" + String(errorOrientation));
     customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    customPrintln("KP" + String(kP_));
+    customPrintln("KP" + String(this->kP_));
     customPrintln("KI" + String(kI_));
     customPrintln("KD" + String(kD_));
     customPrintln("kMinOutput_" + String(kMinOutput_));

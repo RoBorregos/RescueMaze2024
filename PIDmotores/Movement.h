@@ -89,6 +89,7 @@ class Movement {
 
         double targetOrientation_ = 0;
 
+        PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
