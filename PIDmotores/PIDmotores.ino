@@ -1,7 +1,11 @@
+// make sure that we do not rely on the STL.
+// #define ETL_NO_STL
+// #include"Embedded_Template_Library.h"
+// #include<etl/vector.h>
+// #include<etl/stack.h>
+
 #include "map.h"
 #include "Tile.h"
-#include "Vector.h"
-#include "Stack.h"
 #include "TileDirection.h"
 #include "coord.h"
 #include "CustomSerial.h"
@@ -38,8 +42,8 @@ void turnRobot(const int targetOrientation) {
     }
 }
 
-void followPath(Stack<coord>& path) {
-    while(!path.isEmpty()) {
+void followPath(etl::stack<coord, kMaxMapSize>& path) {
+    while(!path.empty()) {
         const coord& next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
@@ -56,26 +60,26 @@ void followPath(Stack<coord>& path) {
     }
 }
 
-void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const Vector<Tile>& tiles) {
-    Vector<bool> explored;
-    Vector<int> distance;
-    Vector<coord> previousPositions;
-    Stack<coord> path;
+void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const etl::vector<Tile, kMaxMapSize>& tiles) {
+    etl::vector<bool, kMaxMapSize> explored;
+    etl::vector<int, kMaxMapSize> distance;
+    etl::vector<coord, kMaxMapSize> previousPositions;
+    etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
-    for (int i = tilesMap.positions.getSize() - 1; i >= 0; --i) {
+    for (int i = tilesMap.positions.size() - 1; i >= 0; --i) {
         distance.push_back(INT_MAX);
         explored.push_back(false);
     }
-    distance.getData(tilesMap.getIndex(start)) = 0;
-    explored.getData(tilesMap.getIndex(start)) = true;
+    distance[tilesMap.getIndex(start)] = 0;
+    explored[tilesMap.getIndex(start)] = true;
     // explore the map.
     coord currentCoord = start;
     int minDistance;
-    while (!explored.getData(tilesMap.getIndex(end))) {
+    while (!explored[tilesMap.getIndex(end)]) {
         // update distance.
         for (int i = 0; i < 4; i++) {
             const TileDirection& direction = directions[i];
-            const Tile& currentTile = tiles.getData(tilesMap.getIndex(currentCoord));
+            const Tile& currentTile = tiles[tilesMap.getIndex(currentCoord)];
             const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
             // check if there's an adjecent tile and there's no wall.
             //TODO: check if the tile to explore is black
@@ -90,7 +94,7 @@ void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const V
         }
         // find next tile.
         minDistance = INT_MAX;
-        for (int i = tilesMap.positions.getSize() - 1; i >= 0; --i) {
+        for (int i = tilesMap.positions.size() - 1; i >= 0; --i) {
             const coord& current = tilesMap.positions[i];
             const int currentDistance = distance[tilesMap.getIndex(current)];
             if (currentDistance < minDistance && !explored[tilesMap.getIndex(current)]) {
@@ -138,7 +142,7 @@ void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
     unvisited.push(robotCoord);
     // explore the map.
-    while (unvisited.size() != 256){ // !unvisited.empty()) 
+    while (unvisited.size() != 256){ // !unvisited.empty())
         delay(1000);
         // get the next tile to explore.
         coord currentTileCoord = unvisited.top();

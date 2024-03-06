@@ -6,8 +6,8 @@ Map::Map() {
 }
 
 int Map::getIndex(const coord &position) const {
-    for (uint8_t i = 0; i < this->positions.getSize(); ++i) {
-        if (this->positions.getData(i) == position) {
+    for (uint8_t i = 0; i < this->positions.size(); ++i) {
+        if (this->positions[i] == position) {
             return i;
         }
     }

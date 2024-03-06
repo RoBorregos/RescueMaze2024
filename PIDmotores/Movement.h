@@ -50,7 +50,8 @@ class Movement {
 
         // static constexpr uint8_t kOffArray = -1;
 
-        static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+        // static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+        const int kTargetOrientations[4] = {0, 90, 180, 270};
 
         static constexpr uint8_t kNumberOfTargetOrientations = 4;
 
