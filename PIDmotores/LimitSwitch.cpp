@@ -20,13 +20,11 @@ void LimitSwitch::initLimitSwitchInternal() {
 
 bool LimitSwitch::getState() {
     const uint8_t val = digitalRead(pin_);
-    if (val == 1) {
+    if (val == HIGH) {
         customPrintln("LimitSwitch is active");
         state_ = true;
-        return state_;
     } else {
         state_ = false;
-        return state_;
     }
     return state_;
 }
@@ -43,8 +41,8 @@ void LimitSwitch::LimitSwitchActive() {
 }
 
 void LimitSwitch::printState() {
-    Serial.print("LimitSwitch ");
-    Serial.print(static_cast<int>(id_));
-    Serial.print(" state: ");
-    Serial.println(state_);
+    customPrint("LimitSwitch ");
+    customPrint(static_cast<int>(id_));
+    customPrint(" state: ");
+    customPrintln(state_);
 }
