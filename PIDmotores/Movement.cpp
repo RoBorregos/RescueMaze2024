@@ -237,7 +237,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
     const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
-    
+    delay(1000);
     bool moveForward = false;
     switch (state)
     {
@@ -257,11 +257,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
                     customPrintln("Crash left");
                     crashLeft = true;
-                    correctionAfterCrash(crashLeft, currentOrientation, correctingOrientation_);
+                    correctionAfterCrash(crashLeft, currentOrientation, useWallDistance);
                 } else if (limitSwitch_[leftLimitSwitch].getState() == false && limitSwitch_[rightLimitSwitch].getState() == true) {
                     customPrintln("Crash right");
                     crashLeft = false;
-                    correctionAfterCrash(crashLeft, currentOrientation, correctingOrientation_);
+                    correctionAfterCrash(crashLeft, currentOrientation, useWallDistance);
                 }
     
                 checkWallsDistances();
@@ -312,21 +312,23 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation, bool &useWallDistance) {
     useWallDistance = false;
     saveLastState(getCurrentState(), currentOrientation);
+    moveMotors(MovementState::kStop, 0, 0);
     if (crashLeft == false) {
+        #if DEBUG_MOVEMENT
         customPrintln("Crash right--------");
+        #endif
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, useWallDistance);
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation + crashDeltaOrientation_), 0, useWallDistance);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0, useWallDistance);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_/2, useWallDistance);
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
-
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
     } else {
+        #if DEBUG_MOVEMENT
         customPrintln("Crash left--------");
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), 10.0, useWallDistance);
-/*         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, useWallDistance);
+        #endif
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_/2, useWallDistance);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0, useWallDistance);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_/2, useWallDistance);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
- */     
     }
     retrieveLastState();
 }
