@@ -30,7 +30,7 @@ class Movement {
         MovementState lastState_;
 
         double crashDeltaOrientation_ = 20.0;
-        double crashDeltaDistance_ = 0.07;
+        double crashDeltaDistance_ = 0.02;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 

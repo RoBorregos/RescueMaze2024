@@ -31,7 +31,9 @@ PID::PID(const double kP, const double kI, const double kD) {
     kD_ = kD;
 
     errorPrev_ = 0;
+    #if DEBUG_PID
     customPrintln("kP3:" + String(kP));
+    #endif
 }
 
 void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
@@ -65,7 +67,7 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
     errorSum_ += error;
     errorSum_ = constrain(errorSum_, kMaxErrorSum_ * -1, kMaxErrorSum_);
     const double errorDeriv = (error - errorPrev_) / (timeDiff);
-    const double outputModifier = this->kP_ * error + kI_ * errorSum_ + kD_ * errorDeriv;
+    const double outputModifier = kP_ * error + kI_ * errorSum_ + kD_ * errorDeriv;
     errorPrev_ = error;
     if (timeDiff < kSampleTime_) {
         #if DEBUG_PID
