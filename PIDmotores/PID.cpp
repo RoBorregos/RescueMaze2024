@@ -7,7 +7,9 @@ PID::PID() {
     timePrev_ = millis();
     errorPrev_ = 0;
 
+    #if DEBUG_PID
     customPrintln("kP_1:" + String(kP_));
+    #endif
 
 }
 
@@ -17,31 +19,35 @@ PID::PID(const double kP, const double kI, const double kD, const double minOutp
     kBaseModifier_ = baseModifier;
     kMaxOrientationError_ = kMaxOrientationError;
     setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxOrientationError);
+    #if DEBUG_PID
     customPrintln("kP9:" + String(kP));
+    #endif
 }
 
 PID::PID(const double kP, const double kI, const double kD) {
     timePrev_ = millis();
-    this->kP_ = kP;
-    this->kI_ = kI;
-    this->kD_ = kD;
+    kP_ = kP;
+    kI_ = kI;
+    kD_ = kD;
 
     errorPrev_ = 0;
     customPrintln("kP3:" + String(kP));
 }
 
 void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
-    this->kP_ = kP;
-    this->kI_ = kI;
-    this->kD_ = kD;
+    kP_ = kP;
+    kI_ = kI;
+    kD_ = kD;
     kMinOutput_ = minOutput;
     kMaxOutput_ = maxOutput;
     kMaxErrorSum_ = maxErrorSum;
     kSampleTime_ = sampleTime;
     kBaseModifier_ = baseModifier;
     kMaxOrientationError_ = maxOrientationError;
+    #if DEBUG_PID
     customPrintln("kP:" + String(kP));
     customPrintln("kP_" + String(kP_));
+    #endif
 }
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {

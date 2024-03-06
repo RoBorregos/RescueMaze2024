@@ -29,8 +29,8 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
-        double crashDeltaOrientation_ = 30.0;
-        double crashDeltaDistance_ = 0.10;
+        double crashDeltaOrientation_ = 10.0;
+        double crashDeltaDistance_ = 0.07;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -57,7 +57,7 @@ class Movement {
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
 
-        bool correctingOrientation_ = false;
+        bool useWallDistance_ = false;
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -137,7 +137,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool correctingOrientation = false);
+        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance = false);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -175,7 +175,7 @@ class Movement {
 
         void retrieveLastState();
 
-        void correctionAfterCrash(const bool crashSide, double &currentOrientation, bool &correctingOrientation);
+        void correctionAfterCrash(const bool crashSide, double &currentOrientation, bool &useWallDistance);
 
         double getOrientation(const double orientation);
 };
