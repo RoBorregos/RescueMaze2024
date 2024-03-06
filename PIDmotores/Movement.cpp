@@ -237,7 +237,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
     const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
-
     bool moveForward = false;
     switch (state)
     {
@@ -247,7 +246,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kForward): {
             moveForward = true;
-            bool crashLeft = true;
             currentState_ = MovementState::kForward;
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
@@ -263,9 +261,15 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance
-            while (hasTraveledWallDistance(useWallDistance == true && desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
+
+                if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
+                    correctionAfterCrash(true, currentOrientation, useWallDistance);
+                } else if (limitSwitch_[leftLimitSwitch].getState() == false && limitSwitch_[rightLimitSwitch].getState() == true) {
+                    correctionAfterCrash(false, currentOrientation, useWallDistance);
+                }
             }
 
             stopMotors();
@@ -281,7 +285,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            while (useWallDistance == false && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             } 
 
@@ -348,10 +352,6 @@ void Movement::saveLastState(const MovementState state, double &targetOrientatio
 }
 
 void Movement::retrieveLastState() {
-    customPrintln("Retrieving last state");
-    
-    customPrintln("CrashDistance:" + String(crashDistance_));
-    customPrintln("TargetOrientation:" + String(targetOrientation_));
     allDistanceTraveled_ = crashDistance_ - crashDeltaDistance_;
 }
 
