@@ -250,6 +250,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 moveMotorsInADirection(targetOrientation, moveForward);
 
+                // TODO: Make its own function named checkForCrashAndCorrect()
                 if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
                     correctionAfterCrash(true, currentOrientation, useWallDistance);
                 } else if (limitSwitch_[leftLimitSwitch].getState() == false && limitSwitch_[rightLimitSwitch].getState() == true) {
@@ -307,7 +308,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 }
 
-void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrientation, bool &useWallDistance) {
+void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientation, bool useWallDistance) {
     useWallDistance = false;
     saveLastState(getCurrentState(), currentOrientation);
     moveMotors(MovementState::kStop, 0, 0);
@@ -316,7 +317,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrienta
         customPrintln("Crash right--------");
         #endif
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0, useWallDistance);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
     } else {
@@ -324,7 +325,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double &currentOrienta
         customPrintln("Crash left--------");
         #endif
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0, useWallDistance);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
     }
