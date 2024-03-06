@@ -1,3 +1,6 @@
+#ifndef coord_h
+#define coord_h
+
 struct coord{
     int x;
     int y;
@@ -16,11 +19,4 @@ struct coord{
     }
 };
 
-// namespace std{
-//     template<>
-//     struct hash<coord>{
-//         size_t operator()(const coord& c) const{
-//             return hash<int>()(c.x)^hash<int>()(c.y)^hash<int>()(c.z);
-//         }
-//     };
-// }
+#endif

@@ -4,7 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
-#include "Tile.h"
+#include "TileDirection.h"
 
 enum class compass{
     kNorth,
@@ -48,7 +48,7 @@ class Movement {
 
         static constexpr uint8_t kNumberOfVlx = 5;
 
-        static constexpr uint8_t kOffArray = -1;
+        // static constexpr uint8_t kOffArray = -1;
 
         static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
 

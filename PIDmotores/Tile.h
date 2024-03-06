@@ -3,23 +3,16 @@
 
 #include<Arduino.h>
 
-#include "Map.h"
-
-enum class TileDirection {
-    kUp = 0,
-    kLeft = 1,
-    kDown = 2,
-    kRight = 3,
-    kNone
-};
+#include "coord.h"
+#include "TileDirection.h"
 
 // Bits 0-3 are reserved for the walls. 
-constexpr int kVictimBit = 4;
-constexpr int kObstacleBit = 5;
-constexpr int kBlackTileBit = 6;
-constexpr int kCheckpointBit = 7;
+constexpr uint8_t kVictimBit = 4;
+constexpr uint8_t kObstacleBit = 5;
+constexpr uint8_t kBlackTileBit = 6;
+constexpr uint8_t kCheckpointBit = 7;
 
-constexpr int kMinWeight = 1;
+constexpr uint8_t kMinWeight = 1;
 
 constexpr uint8_t kNumberOfDirections = 4;
 
