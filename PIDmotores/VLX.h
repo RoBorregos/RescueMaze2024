@@ -29,7 +29,7 @@ class VLX {
 
         static constexpr double kMmInM_ = 1000.00;
 
-        static constexpr double kMaxInitAttempts_ = 1000;
+        static constexpr double kMaxInitAttempts_ = 5;
 
         VlxID vlxId_;
         bool itWorks_ = false;

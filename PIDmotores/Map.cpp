@@ -1,7 +1,7 @@
 #include "Map.h"
 
 Map::Map() {
-    // this->positions.reserve(kMaxMapSize);
+    this->positions.reserve(kMaxMapSize);
     // this->positions = Vector<coord>();
 }
 
