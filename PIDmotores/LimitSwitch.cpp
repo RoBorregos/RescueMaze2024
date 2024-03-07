@@ -15,7 +15,7 @@ void LimitSwitch::initLimitSwitch(const uint8_t pin) {
 }
 
 void LimitSwitch::initLimitSwitchInternal() {
-    pinMode(pin_, INPUT);
+    pinMode(pin_, INPUT_PULLUP);
     #if DEBUG_LIMIT_SWITCH
     customPrintln("LimitSwitch initialized");
     #endif
