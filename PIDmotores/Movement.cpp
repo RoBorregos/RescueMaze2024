@@ -250,27 +250,26 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             currentState_ = MovementState::kForward;
-            /* customPrintln("LeftLimitSwitch:" + String(limitSwitch_[leftLimitSwitch].getState()));
-            customPrintln("RightLimitSwitch:" + String(limitSwitch_[rightLimitSwitch].getState()));
-            delay(1000); */
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
-                double timeDiff = millis() - timePrev_;
-                if (timeDiff < 1000) {
-                    crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                    crashRight = limitSwitch_[rightLimitSwitch].getState();
-                }
+                crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                crashRight = limitSwitch_[rightLimitSwitch].getState();
+                
                 moveMotorsInADirection(targetOrientation, moveForward);
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
                 if (crashLeft == true && crashRight == false) {
+                    #if DEBUG_MOVEMENT
                     customPrintln("Crash left-");
                     correctionAfterCrash(true, currentOrientation, useWallDistance);
+                    #endif
                 }
                 
                 if (crashRight == true && crashLeft == false) {
+                    #if DEBUG_MOVEMENT
                     customPrintln("Crash right-");
                     customPrintln("Encodersssss");
+                    #endif
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
     
@@ -283,11 +282,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
 
-                if (limitSwitch_[leftLimitSwitch].getState() == true && limitSwitch_[rightLimitSwitch].getState() == false) {
+                if (crashLeft == true && crashRight == false) {
                     correctionAfterCrash(true, currentOrientation, useWallDistance);
                 }
 
-                if (limitSwitch_[rightLimitSwitch].getState() == true && limitSwitch_[leftLimitSwitch].getState() == false) {
+                if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
             }
@@ -307,7 +306,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // TODO: change the way to check the wall distance
             while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
-            } 
+            }
 
             stopMotors();
             
@@ -369,8 +368,10 @@ void Movement::saveLastState(const MovementState state, double &targetOrientatio
     allDistanceTraveled_ = 0;
     lastState_ = state;
     
+    #if DEBUG_MOVEMENT
     customPrintln("CrashDistance:" + String(crashDistance_));
     customPrintln("TargetOrientation:" + String(targetOrientation_));
+    #endif
 }
 
 void Movement::retrieveLastState() {

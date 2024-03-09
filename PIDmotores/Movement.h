@@ -137,7 +137,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance = false);
+        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance = true);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
