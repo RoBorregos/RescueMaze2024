@@ -14,6 +14,8 @@ bool hasArrived = false;
 void setup(){
     Serial.begin(115200);
     while (!Serial) delay(10); // wait for serial port to open!
+    customPrintln("Serial ready");
+    delay(1000);
     robot.setup();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
@@ -41,8 +43,9 @@ void setup(){
 }
     
 void loop() {
-    // WARNING: by using a while or for loop here, the robot will not follow the instruction
-    robot.moveMotors(MovementState::kForward, 0, 1);
+    
+    
+    robot.moveMotors(MovementState::kForward, 0, 10);
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
@@ -115,7 +118,7 @@ void loop() {
         delay(10000);
     } */
     
-    ++iterations;
+   /*  ++iterations;
 
     //LEER VELOCIDAD 
     customPrint("BACK_LEFT: ");
@@ -127,7 +130,7 @@ void loop() {
     customPrint("FRONT_RIGHT: ");
     customPrintln(robot.getFrontRightSpeed()); 
 
-    delay(70);
+    delay(70); */
 
     
     

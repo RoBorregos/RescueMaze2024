@@ -7,9 +7,9 @@
 class PID {
     private:
 
-        double kP_{0};
-        double kI_{0};
-        double kD_{0};
+        double kP_{0.0};
+        double kI_{0.0};
+        double kD_{0.0};
 
         double errorSum_{0};
         double errorPrev_{0};

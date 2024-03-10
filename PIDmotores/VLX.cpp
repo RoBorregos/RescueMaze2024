@@ -21,8 +21,8 @@ bool VLX::init() {
         customPrintln(mux_.hasAddress(0x70));
         count++;
         if (count > kMaxInitAttempts_) {
-            customPrintln("Test the VLX: ");
-            customPrint(static_cast<uint8_t>(vlxId_));
+            customPrint("Test the VLX: ");
+            customPrintln(static_cast<uint8_t>(vlxId_));
             return false;
         }
     }
