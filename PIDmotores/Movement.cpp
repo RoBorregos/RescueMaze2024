@@ -277,7 +277,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
-            // TODO: Change the way to check the wall distance
+            // TODO: Change the way to check the wall distance  
             while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
