@@ -85,6 +85,10 @@ class Movement {
 
         static constexpr double kMaxOrientationError = 0.9;
 
+        static constexpr double kMaxRampOrientation = 25.0;
+
+        static constexpr double kMinRampOrientation = 20.0;
+
         static constexpr long long kOneSecInMs = 1000;
 
         double targetOrientation_ = 0;
@@ -178,6 +182,8 @@ class Movement {
         void correctionAfterCrash(const bool crashSide, double currentOrientation, bool useWallDistance);
 
         double getOrientation(const double orientation);
+
+        bool rampDetected();
 };
 
 #endif

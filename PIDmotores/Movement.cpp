@@ -236,6 +236,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     bool crashRight = false;
     bool crashLeft = false;
+    
+    bool rampDetect = false;
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
@@ -256,6 +258,18 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
+                
+                while (rampDetected()) {
+                    rampDetect = true;
+
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Ramp detected");
+                    #endif
+                    stopMotors();
+                    delay(1000);
+                    
+                    break;
+                }
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
                 if (crashLeft == true && crashRight == false) {
@@ -278,7 +292,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance  
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+            while (useWallDistance == true && !rampDetected() && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
@@ -497,4 +511,13 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     moveForward = distanceDiff <= 0;
 
     return abs(distanceDiff) < kMaxDistanceError;
+}
+
+bool Movement::rampDetected() {
+    double currentOrientationY = bno_.getOrientationY();
+    customPrintln("OrientationY:" + String(currentOrientationY));
+    if (currentOrientationY >= kMinRampOrientation && currentOrientationY <= kMaxRampOrientation) {
+        return true;
+    }
+    return false;
 }
