@@ -1,10 +1,26 @@
+// #include"Embedded_Template_Library.h"
+// #include<etl/vector.h>
+// #include<etl/stack.h>
+// #include "map.h"
+// #include "Tile.h"
+// #include "TileDirection.h"
+// #include "coord.h"
+// #include "CustomSerial.h"
 // #include "Movement.h"
+// #include "Pins.h"
+// #include "Encoder.h"
+
+// #define DEBUG_ALGORITHM 1
+
+// Movement robot;
+
+// unsigned long iterations = 0;
+// bool hasArrived = false;
 
 // constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
 // uint16_t robotOrientation = 0;
 // coord robotCoord = coord{1,1,1};
-// Movement robot;
 
 // void turnRobot(const int targetOrientation) {
 //     int difference = targetOrientation - robotOrientation;
@@ -59,8 +75,7 @@
 //     int minDistance;
 //     while (!explored[tilesMap.getIndex(end)]) {
 //         // update distance.
-//         for (int i = 0; i < 4; i++) {
-//             const TileDirection& direction = directions[i];
+//         for (const TileDirection& direction : directions) {
 //             const Tile& currentTile = tiles[tilesMap.getIndex(currentCoord)];
 //             const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
 //             // check if there's an adjecent tile and there's no wall.
@@ -84,6 +99,7 @@
 //                 currentCoord = current;
 //             }
 //         }
+
 //         explored[tilesMap.getIndex(currentCoord)] = true;
 //     }
 //     // find path.
@@ -92,25 +108,26 @@
 //         path.push(current);
 //         current = previousPositions[tilesMap.getIndex(current)];
 //     }
+
 //     path.push(start);
-//     followPath(path);
+//     // followPath(path);
 // }
 
-// bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
-//     switch(direction) {
-//         case TileDirection::kRight:
-//             return maze[currentTileCoord.y][currentTileCoord.x + 1] == '#';
-//         case TileDirection::kUp:
-//             return maze[currentTileCoord.y + 1][currentTileCoord.x] == '#';
-//         case TileDirection::kLeft:
-//             return maze[currentTileCoord.y][currentTileCoord.x - 1] == '#';
-//         case TileDirection::kDown:
-//             return maze[currentTileCoord.y - 1][currentTileCoord.x] == '#';
-//     }
-// }
+// // bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
+// //     switch(direction) {
+// //         case TileDirection::kRight:
+// //             return maze[currentTileCoord.y][currentTileCoord.x + 1] == '#';
+// //         case TileDirection::kUp:
+// //             return maze[currentTileCoord.y + 1][currentTileCoord.x] == '#';
+// //         case TileDirection::kLeft:
+// //             return maze[currentTileCoord.y][currentTileCoord.x - 1] == '#';
+// //         case TileDirection::kDown:
+// //             return maze[currentTileCoord.y - 1][currentTileCoord.x] == '#';
+// //     }
+// // }
 
 // void depthFirstSearch(Map& tilesMap, etl::vector<Tile, kMaxMapSize>& tiles) {
-//     Serial.println("inicio DFS");
+//     customPrintln(robotCoord.x);
 //     Map visitedMap = Map();
 //     etl::vector<bool, kMaxMapSize> visited;
 //     etl::stack<coord, kMaxMapSize> unvisited;
@@ -120,32 +137,38 @@
 //     bool visitedFlag;
 //     coord nextTileCoord;
 //     TileDirection oppositeDirection;
-//     tilesMap.positions.push_back(robotCoord);
-//     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
 //     unvisited.push(robotCoord);
+//     #if DEBUG_ALGORITHM
+//     customPrintln("inicio DFS");
+//     #endif
 //     // explore the map.
-//     while (unvisited.size() != 256){ // !unvisited.empty()) 
-//         delay(1000);
+//     while (!unvisited.empty()){ // unvisited.size() != 256
 //         // get the next tile to explore.
 //         coord currentTileCoord = unvisited.top();
 //         unvisited.pop();
 //         // check if the tile has been visited.
 //         visitedFlag = false;
-//         for (int i=0; i<visitedMap.positions.size(); i++) {
+//         for (int i=0; i<visitedMap.positions.size(); ++i) {
 //             if (visitedMap.positions[i] == currentTileCoord) {
 //                 visitedFlag = true;
 //                 break;
 //             }
 //         }
+
 //         if (visitedFlag) {
 //             continue;
 //         }
+
 //         dijsktra(robotCoord, currentTileCoord, tilesMap, tiles);
-//         Serial.print("currentTileCoord: ");
-//         Serial.print(currentTileCoord.x);
-//         Serial.print(" ");
-//         Serial.println(currentTileCoord.y);
-//         Serial.println(unvisited.size());
+//         #if DEBUG_ALGORITHM
+//         customPrint("currentTileCoord: ");
+//         customPrint(currentTileCoord.x);
+//         // customPrint(" ");
+//         // customPrint(currentTileCoord.y);
+//         // customPrintln(unvisited.size());
+//         // customPrintln("After dijsktra");
+//         customPrintln("ti");
+//         #endif
 //         robotCoord = currentTileCoord;
 //         visitedMap.positions.push_back(currentTileCoord);
 //         visited.push_back(true);
@@ -177,7 +200,8 @@
 //             // check if the tile has not been checked.
 //             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
 //                 // check for a wall.
-//                 wall = robot.checkWallsDistances(direction, robotOrientation);
+//                 // wall = robot.checkWallsDistances(direction, robotOrientation);
+//                 wall = false;
 //                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
 //                 tilesMap.positions.push_back(nextTileCoord);
 //                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
@@ -192,32 +216,39 @@
 //                 if (!wall) {
 //                     // if the tile has not been visited, add it to the queue.
 //                     visitedFlag = false;
-//                     for (int i=0; i<visitedMap.positions.size(); i++) {
+//                     for (int i = 0; i < visitedMap.positions.size(); ++i) {
 //                         if (visitedMap.positions[i] == nextTileCoord) {
 //                             visitedFlag = true;
 //                             break;
 //                         }
 //                     }
+
 //                     if(!visitedFlag) {
-//                         Serial.print("nextTileCoord: ");
-//                         Serial.print(nextTileCoord.x);
-//                         Serial.print(" ");
-//                         Serial.println(nextTileCoord.y);
-//                         delay(500);
+//                         #if DEBUG_ALGORITHM
+//                         customPrintln("finished loop");
+//                         // customPrint("nextTileCoord: ");
+//                         // customPrint(nextTileCoord.x);
+//                         // customPrint(" ");
+//                         // customPrintln(nextTileCoord.y);
+//                         #endif
 //                         unvisited.push(nextTileCoord);
 //                     }
 //                 }
 //             }
 //         }
-//         Serial.println(unvisited.size());
 //     }
-//     Serial.println("termino BFS");
+//     #if DEBUG_ALGORITHM
+//     customPrintln("termino DFS");
+//     #endif
 // }
 
 // void startAlgorithm() {
-//     robot.setup();
 //     Map tilesMap = Map();
 //     etl::vector<Tile, kMaxMapSize> tiles;
-//     Serial.println("startAlgorithm");
+//     tilesMap.positions.push_back(robotCoord);
+//     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
+//     #if DEBUG_ALGORITHM
+//     customPrintln("Start algorithm");
+//     #endif
 //     depthFirstSearch(tilesMap, tiles);
 // }
