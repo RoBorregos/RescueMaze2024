@@ -221,10 +221,17 @@ uint8_t Movement::checkWallsDistances() {
 double Movement::getDistanceToCenter() {
     double distanceLeft = 0;
     double distanceRight = 0;
+
+    customPrintln("DistanceLeft__:" + String(distanceLeft));
+    customPrintln("DistanceRight__:" + String(distanceRight));
     distanceLeft = wallDistances[static_cast<uint8_t>(VlxID::kFrontLeft)];
     distanceRight = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
+    customPrintln("DistanceLeft:" + String(distanceLeft));
+    customPrintln("DistanceRight:" + String(distanceRight));
     distanceLeft *= kMToCm;
+    customPrintln("DistanceLeft*kMToCm:" + String(distanceLeft));
     double distanceToCenter = ((uint8_t)distanceLeft % kTileLength) - kVlxOffset;
+    customPrintln("DistanceToCenter:" + String(distanceToCenter));
     return distanceToCenter / kMToCm;
 }
 
@@ -233,6 +240,7 @@ double Movement::getWallDistance(const VlxID vlxId) {
 }
 
 void Movement::goForward(const double targetOrientation) {
+    customPrintln("Moving forward in goForward()");
     moveMotors(MovementState::kForward, targetOrientation, kOneTileDistance);
 }
 
@@ -249,6 +257,7 @@ void Movement::turnRight(const double targetOrientation) {
 }
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance) {
+    customPrintln("targetDistance:" + String(targetDistance));
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno_.getOrientationX();
@@ -270,6 +279,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
     bool moveForward = false;
+    
+    prevTimeTraveled_ = millis();
+
     switch (state)
     {
         case (MovementState::kStop): {
@@ -281,7 +293,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             currentState_ = MovementState::kForward;
 
             customPrintln("Moving forward");
+            customPrintln("TargetDistance:" + String(targetDistance));
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
+                customPrintln("Hasn't traveled distance");
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
@@ -305,14 +319,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
                 checkWallsDistances();
             }
+            customPrintln(hasTraveledDistanceWithSpeed(targetDistance) == true? "Has traveled distance":"Hasn't traveled distance");
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
+            stopMotors();
             // TODO: Change the way to check the wall distance
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
+            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
+                customPrintln("Travelling with wall distance");
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
-                moveMotorsInADirection(targetOrientation, moveForward);
+                //moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (crashLeft == true && crashRight == false) {
                     correctionAfterCrash(true, currentOrientation, useWallDistance);
@@ -321,7 +338,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
-            }
+            } 
 
             stopMotors();
             
@@ -502,6 +519,9 @@ uint8_t Movement::getOrientation(const compass currentOrientation) {
 
 bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
+    customPrintln("TimeTraveled:" + String(timeTraveled_));
+    customPrintln("prevTimeTraveled_:" + String(prevTimeTraveled_));
+    customPrintln("millis():" + String(millis()));
     if (timeTraveled_ < kSampleTimeTraveled) {
         return false;
     }
@@ -514,18 +534,25 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     const double distanceTraveled = averageSpeed * (timeTraveled_ / (double)kOneSecInMs);
 
     allDistanceTraveled_ += distanceTraveled;
+    customPrintln("allDistanceTraveled___:" + String(allDistanceTraveled_));
     prevTimeTraveled_ = millis();
     if (allDistanceTraveled_ >= distance) {
         allDistanceTraveled_ = 0;
+        customPrintln("allDistanceTraveled_:" + String(allDistanceTraveled_));
+        customPrintln("TRUE");
         return true;
     }
-    
+    customPrintln("FALSE");
     return false;
 }
 
 bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward) {
-    const double distanceDiff = (targetDistance - currentDistance);
-    moveForward = distanceDiff <= 0;
 
+    const double distanceDiff = (targetDistance - currentDistance);
+    moveForward = distanceDiff <= 0.0;
+    customPrintln("CurrentDistance:" + String(currentDistance));
+    customPrintln("DistanceDiff:" + String(distanceDiff));
+    customPrintln("targetDistance:" + String(targetDistance));
+    customPrintln("MoveForward:" + String(moveForward));
     return abs(distanceDiff) < kMaxDistanceError;
 }

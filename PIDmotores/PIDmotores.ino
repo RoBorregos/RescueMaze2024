@@ -67,6 +67,7 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
         }
         customPrintln("robotOrientation: " + String(robotOrientation));
         robot.goForward(robotOrientation);
+        customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
         robotCoord = next;
     }
 }
@@ -289,7 +290,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    startAlgorithm();
+    robot.goForward(0);
+    //startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
@@ -320,7 +322,6 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
-    //robot.moveMotors(MovementState::kForward, 0, 1.5);
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);
