@@ -66,6 +66,8 @@ class Movement {
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
 
+        const bool kOffArray = false;
+        
         bool useWallDistance_ = false;
 
         double currentDistance_ = 0;
@@ -191,6 +193,10 @@ class Movement {
         void correctionAfterCrash(const bool crashSide, double currentOrientation, bool useWallDistance);
 
         double getOrientation(const double orientation);
+
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
+
+        bool checkWallsDistances(const TileDirection targetDirection, const double currentOrientation);
 };
 
 #endif
