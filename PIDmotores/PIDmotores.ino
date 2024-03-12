@@ -20,6 +20,9 @@ Movement robot;
 unsigned long iterations = 0;
 bool hasArrived = false;
 
+Map tilesMap = Map();
+etl::vector<Tile, kMaxMapSize> tiles;
+
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
 uint16_t robotOrientation = 0;
@@ -61,21 +64,25 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
     }
 }
 
-void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const etl::vector<Tile, kMaxMapSize>& tiles) {
-    etl::vector<bool, kMaxMapSize> explored;
-    etl::vector<int, kMaxMapSize> distance;
-    etl::vector<coord, kMaxMapSize> previousPositions;
+etl::vector<bool, kMaxMapSize> explored;
+etl::vector<int, kMaxMapSize> distance;
+etl::vector<coord, kMaxMapSize> previousPositions;
+
+void dijsktra(const coord& start, const coord& end) {
     etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
-    for (int i = tilesMap.positions.size() - 1; i >= 0; --i) {
-        distance.push_back(INT_MAX);
-        explored.push_back(false);
+    customPrintln("before distance");
+    for (int i = 0; i < distance.size(); ++i) {
+        distance[i] = INT_MAX;
+        explored[i] = false;
+        previousPositions[i] = kInvalidPosition;
     }
     distance[tilesMap.getIndex(start)] = 0;
     explored[tilesMap.getIndex(start)] = true;
     // explore the map.
     coord currentCoord = start;
     int minDistance;
+    customPrintln("before while");
     while (!explored[tilesMap.getIndex(end)]) {
         // update distance.
         for (const TileDirection& direction : directions) {
@@ -105,13 +112,14 @@ void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const e
 
         explored[tilesMap.getIndex(currentCoord)] = true;
     }
+    customPrintln("before path");
     // find path.
     coord current = end;
     while (current != start) {
         path.push(current);
         current = previousPositions[tilesMap.getIndex(current)];
     }
-
+    customPrintln("before followPath");
     path.push(start);
     followPath(path);
 }
@@ -129,7 +137,12 @@ void dijsktra(const coord& start, const coord& end, const Map& tilesMap, const e
 //     }
 // }
 
-void depthFirstSearch(Map tilesMap, etl::vector<Tile, kMaxMapSize> tiles) {
+void depthFirstSearch() {
+    for (int i = 0; i < kMaxMapSize; ++i) {
+        distance.push_back(INT_MAX);
+        explored.push_back(false);
+        previousPositions.push_back(kInvalidPosition);
+    }
     Map visitedMap = Map();
     etl::vector<bool, kMaxMapSize> visited;
     etl::stack<coord, kMaxMapSize> unvisited;
@@ -160,8 +173,8 @@ void depthFirstSearch(Map tilesMap, etl::vector<Tile, kMaxMapSize> tiles) {
         if (visitedFlag) {
             continue;
         }
-
-        dijsktra(robotCoord, currentTileCoord, tilesMap, tiles);
+        customPrintln("before dijsktra");
+        dijsktra(robotCoord, currentTileCoord);
         #if DEBUG_ALGORITHM
         customPrint("currentTileCoord: ");
         customPrint(currentTileCoord.x);
@@ -175,17 +188,17 @@ void depthFirstSearch(Map tilesMap, etl::vector<Tile, kMaxMapSize> tiles) {
         visited.push_back(true);
         // check walls the 4 adjacent tiles.
         for (const TileDirection& direction : directions) {
-            #if DEBUG_ALGORITHM
-            customPrint("direction: ");
-            customPrintln(static_cast<int>(direction));
-            delay(5000);
-            #endif
-            wall = robot.checkWallsDistances(direction, robotOrientation);
-            #if DEBUG_ALGORITHM
-            customPrint("wall: ");
-            customPrintln(wall);
-            delay(2500);
-            #endif
+            // #if DEBUG_ALGORITHM
+            // customPrint("direction: ");
+            // customPrintln(static_cast<int>(direction));
+            // delay(5000);
+            // #endif
+            wall = false;
+            // #if DEBUG_ALGORITHM
+            // customPrint("wall: ");
+            // customPrintln(wall);
+            // delay(2500);
+            // #endif
             switch(direction) {
                 case TileDirection::kRight:
                     nextTileCoord = coord{currentTileCoord.x + 2, currentTileCoord.y, 1}; // checkRamp(direction);
@@ -253,22 +266,20 @@ void depthFirstSearch(Map tilesMap, etl::vector<Tile, kMaxMapSize> tiles) {
 }
 
 void startAlgorithm() {
-    Map tilesMap = Map();
-    etl::vector<Tile, kMaxMapSize> tiles;
+    
     tilesMap.positions.push_back(robotCoord);
     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
     #if DEBUG_ALGORITHM
     customPrintln("Start algorithm");
     #endif
-    depthFirstSearch(tilesMap, tiles);
+    depthFirstSearch();
 }
 
 void setup(){
     Serial.begin(9600);
-    while (!Serial) delay(10); // wait for serial port to open!
+    // while (!Serial) delay(10); // wait for serial port to open!
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
-    #elif DEBUG_ALGORITHM == 0
     #endif
     robot.setup();
     startAlgorithm();
@@ -300,7 +311,7 @@ void setup(){
 void loop() {
     #if DEBUG_ALGORITHM
     customPrintln("Loop");
-    delay(5000);
+    delay(1000);
     #endif
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);

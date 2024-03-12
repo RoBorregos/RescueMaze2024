@@ -11,7 +11,7 @@
 //C:\Users\tacol\Documents\Arduino\libraries\Embedded_Template_Library_-_ETL\src\etl\initializer_list.h
 //error lines 204-217
 
-const uint8_t kMaxMapSize = 150;
+const uint8_t kMaxMapSize = 150; //150 80
 const uint8_t kInvalidIndex = -1;
 
 class Map{
