@@ -67,7 +67,7 @@ class Movement {
         const uint8_t kTileLength = 30; //cm
 
         const bool kOffArray = false;
-        
+
         bool useWallDistance_ = false;
 
         double currentDistance_ = 0;

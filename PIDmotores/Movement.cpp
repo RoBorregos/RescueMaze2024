@@ -6,7 +6,12 @@
 #define DEBUG_MOVEMENT 0
 
 Movement::Movement() {
-    
+    this->prevTimeTraveled_ = millis();
+    this->motor[kNumberOfWheels];
+    this->pidDummy_.setTunnings(0, 0, 0, 0, 0, 0, 0, 0, 0);
+    this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
+    this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
 }
 
 void Movement::setup() {
@@ -275,6 +280,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             moveForward = true;
             currentState_ = MovementState::kForward;
 
+            customPrintln("Moving forward");
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
@@ -323,6 +329,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             moveForward = false;
+            customPrintln("Moving backward");
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }

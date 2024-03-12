@@ -47,18 +47,25 @@ void turnRobot(const int targetOrientation) {
 }
 
 void followPath(etl::stack<coord, kMaxMapSize>& path) {
+    customPrintln("before !path.empty()");
+    customPrintln(path.size());
     while(!path.empty()) {
         const coord& next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
+            customPrintln("right");
             turnRobot(270);
         } else if (next.x < robotCoord.x) {
+            customPrintln("left");
             turnRobot(90);
         } else if (next.y > robotCoord.y) {
+            customPrintln("up");
             turnRobot(0);
         } else if (next.y < robotCoord.y) {
+            customPrintln("down");
             turnRobot(180);
         }
+        customPrintln("robotOrientation: " + String(robotOrientation));
         robot.goForward(robotOrientation);
         robotCoord = next;
     }
@@ -313,6 +320,7 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
+    //robot.moveMotors(MovementState::kForward, 0, 1.5);
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);
