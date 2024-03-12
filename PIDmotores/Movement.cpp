@@ -514,7 +514,7 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 }
 
 bool Movement::rampDetected() {
-    double currentOrientationY = bno_.getOrientationY();
+    const double currentOrientationY = bno_.getOrientationY();
     customPrintln("OrientationY:" + String(currentOrientationY));
     if (currentOrientationY >= kMinRampOrientation && currentOrientationY <= kMaxRampOrientation) {
         return true;
