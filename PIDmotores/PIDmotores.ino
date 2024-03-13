@@ -203,7 +203,9 @@ void depthFirstSearch() {
             continue;
         }
         customPrintln("before dijsktra");
-        dijsktra(robotCoord, currentTileCoord);
+        if (robotCoord != currentTileCoord) {
+            dijsktra(robotCoord, currentTileCoord);
+        }
         #if DEBUG_ALGORITHM
         customPrint("currentTileCoord: ");
         customPrint(currentTileCoord.x);
@@ -261,7 +263,6 @@ void depthFirstSearch() {
                 else {
                     screenPrint("No wall found");
                 }
-                // wall = false;
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
