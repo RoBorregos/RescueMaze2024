@@ -1,5 +1,8 @@
 // uncomment to use the ETL without the STL when using mega2560
 // #define ETL_NO_STL
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include<Arduino.h>
 #include"Embedded_Template_Library.h"
 #include<etl/vector.h>
@@ -12,6 +15,12 @@
 #include "Movement.h"
 #include "Pins.h"
 #include "Encoder.h"
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 1
 
@@ -27,6 +36,18 @@ constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown
 
 uint16_t robotOrientation = 0;
 coord robotCoord = coord{1,1,1};
+
+void screenPrint(const String& output){
+    display.clearDisplay();
+    display.setTextSize(3);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    display.println(output);
+    display.display();
+    #if DEBUG_ALGORITHM
+    delay(2500);
+    #endif
+}
 
 void turnRobot(const int targetOrientation) {
     int difference = targetOrientation - robotOrientation;
@@ -224,8 +245,15 @@ void depthFirstSearch() {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                // wall = robot.checkWallsDistances(direction, robotOrientation);
-                wall = false;
+                screenPrint("Checking wall");
+                wall = robot.checkWallsDistances(direction, robotOrientation);
+                if (wall) {
+                    screenPrint("Wall found");
+                }
+                else {
+                    screenPrint("No wall found");
+                }
+                // wall = false;
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
@@ -278,6 +306,10 @@ void startAlgorithm() {
 void setup(){
     Serial.begin(9600);
     // while (!Serial) delay(10); // wait for serial port to open!
+    if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+        customPrintln(F("SSD1306 allocation failed"));
+        for(;;);
+    }
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
     #endif
