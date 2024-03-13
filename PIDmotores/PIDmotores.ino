@@ -68,19 +68,27 @@ void turnRobot(const int targetOrientation) {
 }
 
 void followPath(etl::stack<coord, kMaxMapSize>& path) {
+    customPrintln("before !path.empty()");
+    customPrintln(path.size());
     while(!path.empty()) {
         const coord& next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
+            customPrintln("right");
             turnRobot(270);
         } else if (next.x < robotCoord.x) {
+            customPrintln("left");
             turnRobot(90);
         } else if (next.y > robotCoord.y) {
+            customPrintln("up");
             turnRobot(0);
         } else if (next.y < robotCoord.y) {
+            customPrintln("down");
             turnRobot(180);
         }
+        customPrintln("robotOrientation: " + String(robotOrientation));
         robot.goForward(robotOrientation);
+        customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
         robotCoord = next;
     }
 }
@@ -314,7 +322,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    startAlgorithm();
+    robot.goForward(0);
+    //startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);

@@ -7,6 +7,10 @@ PID::PID() {
     timePrev_ = millis();
     errorPrev_ = 0;
 
+    #if DEBUG_PID
+    customPrintln("kP_1:" + String(kP_));
+    #endif
+
 }
 
 PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxOrientationError) {
@@ -15,6 +19,9 @@ PID::PID(const double kP, const double kI, const double kD, const double minOutp
     kBaseModifier_ = baseModifier;
     kMaxOrientationError_ = kMaxOrientationError;
     setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxOrientationError);
+    #if DEBUG_PID
+    customPrintln("kP9:" + String(kP));
+    #endif
 }
 
 PID::PID(const double kP, const double kI, const double kD) {
@@ -24,6 +31,9 @@ PID::PID(const double kP, const double kI, const double kD) {
     kD_ = kD;
 
     errorPrev_ = 0;
+    #if DEBUG_PID
+    customPrintln("kP3:" + String(kP));
+    #endif
 }
 
 void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
@@ -36,6 +46,10 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
     kSampleTime_ = sampleTime;
     kBaseModifier_ = baseModifier;
     kMaxOrientationError_ = maxOrientationError;
+    #if DEBUG_PID
+    customPrintln("kP:" + String(kP));
+    customPrintln("kP_" + String(kP_));
+    #endif
 }
 
 double PID::computeErrorOrientation(const double targetOrientation, const double currentOrientation) {
@@ -77,6 +91,15 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     #if DEBUG_PID
     customPrintln("ERRORORIENTATION:" + String(errorOrientation));
     customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+    customPrintln("KP" + String(this->kP_));
+    customPrintln("KI" + String(kI_));
+    customPrintln("KD" + String(kD_));
+    customPrintln("kMinOutput_" + String(kMinOutput_));
+    customPrintln("kMaxOutput_" + String(kMaxOutput_));
+    customPrintln("kMaxErrorSum_" + String(kMaxErrorSum_));
+    customPrintln("kSampleTime_" + String(kSampleTime_));
+    customPrintln("kBaseModifier_" + String(kBaseModifier_));
+    customPrintln("kMaxOrientationError_" + String(kMaxOrientationError_));
     #endif
 
     outputLeft = kBaseModifier_;

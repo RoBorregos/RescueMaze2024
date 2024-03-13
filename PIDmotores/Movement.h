@@ -5,6 +5,7 @@
 #include "BNO.h"
 #include "VLX.h"
 #include "TileDirection.h"
+#include "LimitSwitch.h"
 
 enum class compass{
     kNorth,
@@ -24,11 +25,13 @@ enum class MovementState{
 class Movement {
     private:
         PID pid_;
-        Motor motorFL_;
-        Motor motorFR_;
-        Motor motorBL_;
-        Motor motorBR_;
         BNO bno_;
+
+        MovementState currentState_;
+        MovementState lastState_;
+
+        double crashDeltaOrientation_ = 20.0;
+        double crashDeltaDistance_ = 0.02;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -46,6 +49,10 @@ class Movement {
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
+        static constexpr uint8_t kNumberOfLimitSwitches = 2;
+
+        LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
+
         static constexpr uint8_t kNumberOfVlx = 5;
 
         // static constexpr uint8_t kOffArray = -1;
@@ -61,17 +68,23 @@ class Movement {
 
         const bool kOffArray = false;
 
+        bool useWallDistance_ = false;
+
         double currentDistance_ = 0;
         double targetDistance_ = 0;
         double distancePrev_ = 0;
 
+        double crashDistance_ = 0;
+
         double timePrev_ = 0;
 
-        VlxID vlxDirections[5] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
+        VlxID vlxDirections[kNumberOfVlx] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
         double sampleTime_ = 100;
 
-        Motor motor[4];
+        static constexpr uint8_t kNumberOfWheels = 4;
+
+        Motor motor[kNumberOfWheels];
 
         VLX vlx[kNumberOfVlx];
 
@@ -82,15 +95,16 @@ class Movement {
         static constexpr double kMaxDistanceError = 0.01;
 
         static constexpr double kMaxOrientationError = 0.9;
-        static constexpr uint8_t kNumberOfWheels = 4;
 
         static constexpr long long kOneSecInMs = 1000;
 
-        static constexpr long long kOneTileDistance = 0.3; //m
+        static constexpr double kOneTileDistance = 0.3; //m
 
         static constexpr long long kTileDirections = 4;
 
+        double targetOrientation_ = 0;
 
+        PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
@@ -121,6 +135,8 @@ class Movement {
         
         void setupInternal(const MotorID motorId);
 
+        void setupLimitSwitch(const LimitSwitchID limitSwitchId);
+
         void stopMotors();
 
         void setPwmsAndDirections(const uint8_t pwms[4], const MotorState directions[4]);
@@ -136,7 +152,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, const int targetDistance);
+        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance = true);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -166,9 +182,21 @@ class Movement {
 
         void turnRight(const double targetOrientation);
 
-        bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
+        void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
+
+        MovementState getCurrentState();
+
+        void saveLastState(const MovementState state, double &targetOrientation);
+
+        void retrieveLastState();
+
+        void correctionAfterCrash(const bool crashSide, double currentOrientation, bool useWallDistance);
+
+        double getOrientation(const double orientation);
 
         int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
+
+        bool checkWallsDistances(const TileDirection targetDirection, const double currentOrientation);
 };
 
 #endif
