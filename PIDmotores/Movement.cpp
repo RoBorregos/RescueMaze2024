@@ -203,6 +203,8 @@ bool Movement::checkWallsDistances(const TileDirection targetTileDirection, cons
 
     const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + orientationIndex) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
+
+    customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + String(kMinWallDistance) + " = " + String(getWallDistance(vlxID) < kMinWallDistance));
     
     return getWallDistance(vlxID) < kMinWallDistance;
 }
@@ -325,7 +327,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             stopMotors();
             // TODO: Change the way to check the wall distance
             while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
-                customPrintln("Travelling with wall distance");
+                
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
@@ -338,9 +340,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
-            } 
+            }  
 
-            stopMotors();
+            //stopMotors();
             
             break;
         }
@@ -519,9 +521,7 @@ uint8_t Movement::getOrientation(const compass currentOrientation) {
 
 bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
-    customPrintln("TimeTraveled:" + String(timeTraveled_));
-    customPrintln("prevTimeTraveled_:" + String(prevTimeTraveled_));
-    customPrintln("millis():" + String(millis()));
+    //customPrintln("TimeTraveled:" + String(timeTraveled_));
     if (timeTraveled_ < kSampleTimeTraveled) {
         return false;
     }
@@ -533,16 +533,21 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     
     const double distanceTraveled = averageSpeed * (timeTraveled_ / (double)kOneSecInMs);
 
+    //customPrintln("averageSpeed: " + String(averageSpeed));
+    //customPrintln("timeTraveled: " + String(timeTraveled_));
+    //customPrintln("kOneInSecMs: " + String(kOneSecInMs));
     allDistanceTraveled_ += distanceTraveled;
-    customPrintln("allDistanceTraveled___:" + String(allDistanceTraveled_));
+    //customPrintln("distanceTraveled: " + String(distanceTraveled));
+
+    //customPrintln("allDistanceTraveled___:" + String(allDistanceTraveled_));
     prevTimeTraveled_ = millis();
     if (allDistanceTraveled_ >= distance) {
         allDistanceTraveled_ = 0;
-        customPrintln("allDistanceTraveled_:" + String(allDistanceTraveled_));
-        customPrintln("TRUE");
+        //customPrintln("allDistanceTraveled_:" + String(allDistanceTraveled_));
+        //customPrintln("TRUE");
         return true;
     }
-    customPrintln("FALSE");
+    //customPrintln("FALSE");
     return false;
 }
 

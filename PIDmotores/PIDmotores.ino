@@ -322,8 +322,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    robot.goForward(0);
-    //startAlgorithm();
+    //robot.goForward(0);
+    startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
