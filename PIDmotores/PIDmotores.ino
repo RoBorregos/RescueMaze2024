@@ -232,8 +232,8 @@ void depthFirstSearch() {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                // wall = robot.checkWallsDistances(direction, robotOrientation);
-                wall = false;
+                wall = robot.checkWallsDistances(direction, robotOrientation);
+                // wall = false;
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
                 tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
@@ -290,8 +290,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    robot.goForward(0);
-    //startAlgorithm();
+    //robot.goForward(0);
+    startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
