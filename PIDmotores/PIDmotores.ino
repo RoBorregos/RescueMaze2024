@@ -23,6 +23,9 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 0
+#define USING_SCREEN 1
+#define DEBUG_MERGE 1
+#define MOVEMENT 1
 
 Movement robot;
 
@@ -39,12 +42,12 @@ coord robotCoord = coord{1,1,1};
 
 void screenPrint(const String& output){
     display.clearDisplay();
-    display.setTextSize(3);
+    display.setTextSize(2);
     display.setTextColor(WHITE);
     display.setCursor(0, 10);
     display.println(output);
     display.display();
-    #if DEBUG_ALGORITHM
+    #if USING_SCREEN
     delay(2500);
     #endif
 }
@@ -68,27 +71,76 @@ void turnRobot(const int targetOrientation) {
 }
 
 void followPath(etl::stack<coord, kMaxMapSize>& path) {
-    customPrintln("before !path.empty()");
+    #if DEBUG_MERGE
+    customPrint("path size: ");
     customPrintln(path.size());
+    #endif
     while(!path.empty()) {
         const coord& next = path.top();
         path.pop();
-        if (next.x > robotCoord.x) {
+        #if DEBUG_MERGE
+        customPrint("from: ");
+        customPrint(robotCoord.x);
+        customPrint(" ");
+        customPrintln(robotCoord.y);
+        customPrint("to: ");
+        customPrint(next.x);
+        customPrint(" ");
+        customPrintln(next.y);
+        #endif
+        if (next.x < robotCoord.x) {
+            #if DEBUG_MERGE
             customPrintln("left");
+            #endif
+            #if USING_SCREEN
+            screenPrint("left");
+            #endif
+            #if MOVEMENT
             turnRobot(270);
-        } else if (next.x < robotCoord.x) {
+            #endif
+        } else if (next.x > robotCoord.x) {
+            #if DEBUG_MERGE
             customPrintln("right");
+            #endif
+            #if USING_SCREEN
+            screenPrint("right");
+            #endif
+            #if MOVEMENT
             turnRobot(90);
+            #endif
         } else if (next.y > robotCoord.y) {
+            #if DEBUG_MERGE
             customPrintln("up");
+            #endif
+            #if USING_SCREEN
+            screenPrint("up");
+            #endif
+            #if MOVEMENT
             turnRobot(0);
+            #endif
         } else if (next.y < robotCoord.y) {
+            #if DEBUG_MERGE
             customPrintln("down");
+            #endif
+            #if USING_SCREEN
+            screenPrint("down");
+            #endif
+            #if MOVEMENT
             turnRobot(180);
+            #endif
         }
-        customPrintln("robotOrientation: " + String(robotOrientation));
+        if(robotCoord == next) {
+            continue;
+        }
+        #if MOVEMENT
         robot.goForward(robotOrientation);
+        #elif USING_SCREEN
+        screenPrint("forward");
+        #endif
+        #if DEBUG_ALGORITHM
+        customPrintln("robotOrientation: " + String(robotOrientation));
         customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
+        #endif
         robotCoord = next;
     }
 }
@@ -100,7 +152,9 @@ etl::vector<coord, kMaxMapSize> previousPositions;
 void dijsktra(const coord& start, const coord& end) {
     etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
+    #if DEBUG_ALGORITHM 
     customPrintln("before distance");
+    #endif
     for (int i = 0; i < distance.size(); ++i) {
         distance[i] = INT_MAX;
         explored[i] = false;
@@ -111,7 +165,9 @@ void dijsktra(const coord& start, const coord& end) {
     // explore the map.
     coord currentCoord = start;
     int minDistance;
+    #if DEBUG_ALGORITHM 
     customPrintln("before while");
+    #endif
     while (!explored[tilesMap.getIndex(end)]) {
         // update distance.
         for (const TileDirection& direction : directions) {
@@ -141,14 +197,18 @@ void dijsktra(const coord& start, const coord& end) {
 
         explored[tilesMap.getIndex(currentCoord)] = true;
     }
+    #if DEBUG_ALGORITHM 
     customPrintln("before path");
+    #endif
     // find path.
     coord current = end;
     while (current != start) {
         path.push(current);
         current = previousPositions[tilesMap.getIndex(current)];
     }
+    #if DEBUG_ALGORITHM 
     customPrintln("before followPath");
+    #endif
     path.push(start);
     followPath(path);
 }
@@ -202,11 +262,11 @@ void depthFirstSearch() {
         if (visitedFlag) {
             continue;
         }
-        customPrintln("before dijsktra");
-        if (robotCoord != currentTileCoord) {
-            dijsktra(robotCoord, currentTileCoord);
-        }
-        #if DEBUG_ALGORITHM
+        #if DEBUG_ALGORITHM 
+        customPrintln("before dijsktra"); 
+        #endif
+        dijsktra(robotCoord, currentTileCoord);
+        #if DEBUG_ALGORITHM || DEBUG_MERGE
         customPrint("currentTileCoord: ");
         customPrint(currentTileCoord.x);
         customPrint(" ");
@@ -214,22 +274,15 @@ void depthFirstSearch() {
         customPrint("unisited size: ");
         customPrintln(unvisited.size());
         #endif
+        #if USING_SCREEN
+        screenPrint("currentTileCoord:   " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        #endif
         robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
         visited.push_back(true);
         // check walls the 4 adjacent tiles.
         for (const TileDirection& direction : directions) {
-            // #if DEBUG_ALGORITHM
-            // customPrint("direction: ");
-            // customPrintln(static_cast<int>(direction));
-            // delay(5000);
-            // #endif
             wall = false;
-            // #if DEBUG_ALGORITHM
-            // customPrint("wall: ");
-            // customPrintln(wall);
-            // delay(2500);
-            // #endif
             switch(direction) {
                 case TileDirection::kRight:
                     nextTileCoord = coord{currentTileCoord.x + 2, currentTileCoord.y, 1}; // checkRamp(direction);
@@ -255,13 +308,54 @@ void depthFirstSearch() {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                customPrintln("Checking wall");
                 wall = robot.checkWallsDistances(direction, robotOrientation);
                 if (wall) {
+                    #if DEBUG_ALGORITHM
                     customPrintln("Wall found");
+                    #endif
+                    #if USING_SCREEN
+                    switch (direction)
+                    {
+                    case TileDirection::kUp:
+                        screenPrint("Wall found up");
+                        break;
+                    case TileDirection::kDown:
+                        screenPrint("Wall found down");
+                        break;
+                    case TileDirection::kLeft:
+                        screenPrint("Wall found left");
+                        break;
+                    case TileDirection::kRight:
+                        screenPrint("Wall found right");
+                        break;
+                    default:
+                        break;
+                    }
+                    #endif
                 }
                 else {
+                    #if DEBUG_ALGORITHM
                     customPrintln("No wall found");
+                    #endif
+                    #if USING_SCREEN
+                    switch (direction)
+                    {
+                    case TileDirection::kUp:
+                        screenPrint("No wall found up");
+                        break;
+                    case TileDirection::kDown:
+                        screenPrint("No wall found down");
+                        break;
+                    case TileDirection::kLeft:
+                        screenPrint("No wall found left");
+                        break;
+                    case TileDirection::kRight:
+                        screenPrint("No wall found right");
+                        break;
+                    default:
+                        break;
+                    }
+                    #endif
                 }
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
@@ -285,7 +379,7 @@ void depthFirstSearch() {
                     }
 
                     if(!visitedFlag) {
-                        #if DEBUG_ALGORITHM
+                        #if DEBUG_ALGORITHM || DEBUG_MERGE
                         customPrint("nextTileCoord: ");
                         customPrint(nextTileCoord.x);
                         customPrint(" ");
@@ -303,7 +397,6 @@ void depthFirstSearch() {
 }
 
 void startAlgorithm() {
-    
     tilesMap.positions.push_back(robotCoord);
     tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
     #if DEBUG_ALGORITHM
@@ -315,10 +408,12 @@ void startAlgorithm() {
 void setup(){
     Serial.begin(9600);
     // while (!Serial) delay(10); // wait for serial port to open!
+    #if USING_SCREEN
     if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
         customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
+    #endif
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
     #endif
