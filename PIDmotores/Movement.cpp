@@ -166,12 +166,12 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     timePrev_ = millis();
 }
 
-void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
+void Movement::getAllWallsDistances(double wallDistances_[kNumberOfVlx]) {
     for (const auto& vlxDirection : vlxDirections) {
         const uint8_t index = static_cast<uint8_t>(vlxDirection);
-        wallDistances[index] = getWallDistance(vlxDirection);
+        wallDistances_[index] = getWallDistance(vlxDirection);
         customPrint("VLX:" + String(index)) ;
-        customPrintln("WallDistance:" + String(wallDistances[index]));
+        customPrintln("WallDistance:" + String(wallDistances_[index]));
     }
 
     #if DEBUG_MOVEMENT
@@ -196,10 +196,12 @@ int8_t Movement::getIndexFromArray(const int value, const int array[], const uin
 
 bool Movement::checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation) {
     const int8_t orientationIndex = getIndexFromArray(currentOrientation, kTargetOrientations, kNumberOfTargetOrientations);
-    if (orientationIndex == kOffArray) {
+
+    if (orientationIndex >= kNumberOfTargetOrientations || orientationIndex < kOffArray) {
         #if DEBUG_MOVEMENT
         customPrintln("Orientation not found in the array.");
         #endif
+        customPrintln("Orientation not found in the array.");
         return false;
     }
 
@@ -216,7 +218,7 @@ uint8_t Movement::checkWallsDistances() {
     // FBLRF
     uint8_t wallDetected = 0;
     for (uint8_t i = 0; i < kNumberOfVlx; ++i) {
-        wallDetected |= (wallDistances[i] < kMinWallDistance? 1:0) << i;
+        wallDetected |= (wallDistances_[i] < kMinWallDistance? 1:0) << i;
     }
 
     return wallDetected;
@@ -228,8 +230,8 @@ double Movement::getDistanceToCenter() {
 
     customPrintln("DistanceLeft__:" + String(distanceLeft));
     customPrintln("DistanceRight__:" + String(distanceRight));
-    distanceLeft = wallDistances[static_cast<uint8_t>(VlxID::kFrontLeft)];
-    distanceRight = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
+    distanceLeft = wallDistances_[static_cast<uint8_t>(VlxID::kFrontLeft)];
+    distanceRight = wallDistances_[static_cast<uint8_t>(VlxID::kFrontRight)];
     customPrintln("DistanceLeft:" + String(distanceLeft));
     customPrintln("DistanceRight:" + String(distanceRight));
     distanceLeft *= kMToCm;
@@ -240,7 +242,9 @@ double Movement::getDistanceToCenter() {
 }
 
 double Movement::getWallDistance(const VlxID vlxId) {
-    return wallDistances[static_cast<uint8_t>(vlxId)];
+    //customPrintln("wallDistances: " + String(vlx[static_cast<uint8_t>(vlxId)].getDistance()));
+    return vlx[static_cast<uint8_t>(vlxId)].getRawDistance();
+    // return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
 void Movement::goForward(const double targetOrientation) {
@@ -284,9 +288,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     bool crashRight = false;
     bool crashLeft = false;
 
-    getAllWallsDistances(&wallDistances[kNumberOfVlx]);
+    getAllWallsDistances(&wallDistances_[kNumberOfVlx]);
 
-    const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
+    const uint8_t initialFrontWallDistance = wallDistances_[static_cast<uint8_t>(VlxID::kFrontRight)];
     bool moveForward = false;
     
     prevTimeTraveled_ = millis();

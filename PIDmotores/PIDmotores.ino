@@ -74,10 +74,10 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
         const coord& next = path.top();
         path.pop();
         if (next.x > robotCoord.x) {
-            customPrintln("right");
+            customPrintln("left");
             turnRobot(270);
         } else if (next.x < robotCoord.x) {
-            customPrintln("left");
+            customPrintln("right");
             turnRobot(90);
         } else if (next.y > robotCoord.y) {
             customPrintln("up");
@@ -255,13 +255,13 @@ void depthFirstSearch() {
             // check if the tile has not been checked.
             if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                 // check for a wall.
-                screenPrint("Checking wall");
+                customPrintln("Checking wall");
                 wall = robot.checkWallsDistances(direction, robotOrientation);
                 if (wall) {
-                    screenPrint("Wall found");
+                    customPrintln("Wall found");
                 }
                 else {
-                    screenPrint("No wall found");
+                    customPrintln("No wall found");
                 }
                 // create a pointer to the next tile and asign its coordenate if it's a new Tile.
                 tilesMap.positions.push_back(nextTileCoord);
@@ -326,7 +326,7 @@ void setup(){
     
     //robot.goForward(0);
     
-    //startAlgorithm();
+    startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
@@ -357,8 +357,8 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
-    robot.goForward(0);
-    delay(100);
+    /* robot.goForward(0);
+    delay(100); */
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);
