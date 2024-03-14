@@ -22,7 +22,7 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-#define DEBUG_ALGORITHM 1
+#define DEBUG_ALGORITHM 0
 
 Movement robot;
 
@@ -322,8 +322,10 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
+    
     //robot.goForward(0);
-    startAlgorithm();
+    
+    //startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
@@ -354,6 +356,8 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
+    robot.goForward(0);
+    delay(100);
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);
     //robot.setSpeed(0);

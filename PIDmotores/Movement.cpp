@@ -29,10 +29,10 @@ void Movement::setup() {
     Wire.begin();
     // TODO: Make a loop in which it setup the VLXs
     setupVlx(VlxID::kFrontRight);
-    setupVlx(VlxID::kBack);
     setupVlx(VlxID::kLeft);
+    setupVlx(VlxID::kBack);
     setupVlx(VlxID::kRight);
-    setupVlx(VlxID::kFrontLeft);
+    setupVlx(VlxID::kFrontLeft); 
 
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
@@ -170,6 +170,8 @@ void Movement::getAllWallsDistances(double wallDistances[kNumberOfVlx]) {
     for (const auto& vlxDirection : vlxDirections) {
         const uint8_t index = static_cast<uint8_t>(vlxDirection);
         wallDistances[index] = getWallDistance(vlxDirection);
+        customPrint("VLX:" + String(index)) ;
+        customPrintln("WallDistance:" + String(wallDistances[index]));
     }
 
     #if DEBUG_MOVEMENT
@@ -243,6 +245,11 @@ double Movement::getWallDistance(const VlxID vlxId) {
 
 void Movement::goForward(const double targetOrientation) {
     customPrintln("Moving forward in goForward()");
+    /* customPrintln((double)vlx[0].getRawDistance());
+    customPrintln((double)vlx[1].getRawDistance());
+    customPrintln((double)vlx[2].getRawDistance());
+    customPrintln((double)vlx[3].getRawDistance()); */
+    //getAllWallsDistances(&wallDistances[kNumberOfVlx]);
     moveMotors(MovementState::kForward, targetOrientation, kOneTileDistance);
 }
 
@@ -297,7 +304,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             customPrintln("Moving forward");
             customPrintln("TargetDistance:" + String(targetDistance));
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
-                customPrintln("Hasn't traveled distance");
+                //customPrintln("Hasn't traveled distance");
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
@@ -326,7 +333,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             stopMotors();
             // TODO: Change the way to check the wall distance
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
+            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
                 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
@@ -340,7 +347,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
-            }  
+            }   */
 
             //stopMotors();
             
