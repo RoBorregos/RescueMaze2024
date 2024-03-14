@@ -312,4 +312,9 @@ multiple heights
 
 (24/02/2024):
 - arduino integration
+
+(12/03/2024):
+- testing and debugging arduino integration on field
+
+
 */
