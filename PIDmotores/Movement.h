@@ -18,7 +18,8 @@ enum class MovementState{
     kForward,
     kBackward,
     kTurnLeft,
-    kTurnRight
+    kTurnRight,
+    kRamp
 };
 
 class Movement {
