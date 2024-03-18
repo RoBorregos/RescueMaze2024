@@ -170,8 +170,8 @@ void Movement::getAllWallsDistances(double wallDistances_[kNumberOfVlx]) {
     for (const auto& vlxDirection : vlxDirections) {
         const uint8_t index = static_cast<uint8_t>(vlxDirection);
         wallDistances_[index] = getWallDistance(vlxDirection);
-        customPrint("VLX:" + String(index)) ;
-        customPrintln("WallDistance:" + String(wallDistances_[index]));
+        //customPrint("VLX:" + String(index)) ;
+        //customPrintln("WallDistance:" + String(wallDistances_[index]));
     }
 
     #if DEBUG_MOVEMENT
@@ -208,9 +208,9 @@ bool Movement::checkWallsDistances(const TileDirection targetTileDirection, cons
     const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + orientationIndex) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
 
-    customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + String(kMinWallDistance) + " = " + String(getWallDistance(vlxID) < kMinWallDistance));
+    customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + "0.15" + " = " + String(getWallDistance(vlxID) < 0.15));
     
-    return getWallDistance(vlxID) < kMinWallDistance;
+    return getWallDistance(vlxID) < 0.15;
 }
 
 uint8_t Movement::checkWallsDistances() {
@@ -243,7 +243,7 @@ double Movement::getDistanceToCenter() {
 
 double Movement::getWallDistance(const VlxID vlxId) {
     //customPrintln("wallDistances: " + String(vlx[static_cast<uint8_t>(vlxId)].getDistance()));
-    return vlx[static_cast<uint8_t>(vlxId)].getRawDistance();
+    return vlx[static_cast<uint8_t>(vlxId)].getDistance();
     // return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
@@ -290,7 +290,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     getAllWallsDistances(&wallDistances_[kNumberOfVlx]);
 
-    const uint8_t initialFrontWallDistance = wallDistances_[static_cast<uint8_t>(VlxID::kFrontRight)];
+    const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getDistance();
     bool moveForward = false;
     
     prevTimeTraveled_ = millis();
@@ -330,19 +330,22 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
     
-                checkWallsDistances();
-            }
-            customPrintln(hasTraveledDistanceWithSpeed(targetDistance) == true? "Has traveled distance":"Hasn't traveled distance");
-            
-            const double desiredWallDistance = initialFrontWallDistance - targetDistance;
+                //checkWallsDistances();
+            } 
+            //customPrintln(hasTraveledDistanceWithSpeed(targetDistance) == true? "Has traveled distance":"Hasn't traveled distance");
+            // customPrintln("InitialFrontWallDistance:" + String(initialFrontWallDistance));
+            // customPrintln("TargetDistance__:" + String(targetDistance));
+            const double desiredWallDistance = initialFrontWallDistance + targetDistance;
+            // customPrintln("DesiredWallDistance:" + String(desiredWallDistance));
             stopMotors();
+            // delay(2000);
             // TODO: Change the way to check the wall distance
             /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
                 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
-                //moveMotorsInADirection(targetOrientation, moveForward);
+                moveMotorsInADirection(targetOrientation, moveForward);
 
                 if (crashLeft == true && crashRight == false) {
                     correctionAfterCrash(true, currentOrientation, useWallDistance);
@@ -351,9 +354,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
-            }   */
+            }  
 
-            //stopMotors();
+            stopMotors(); */
             
             break;
         }
@@ -564,11 +567,11 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 
 bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward) {
 
+    customPrintln("targetDistance:" + String(targetDistance));
     const double distanceDiff = (targetDistance - currentDistance);
-    moveForward = distanceDiff <= 0.0;
+    moveForward = distanceDiff < 0;
     customPrintln("CurrentDistance:" + String(currentDistance));
     customPrintln("DistanceDiff:" + String(distanceDiff));
-    customPrintln("targetDistance:" + String(targetDistance));
     customPrintln("MoveForward:" + String(moveForward));
     return abs(distanceDiff) < kMaxDistanceError;
 }

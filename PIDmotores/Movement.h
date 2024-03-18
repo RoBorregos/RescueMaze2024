@@ -90,9 +90,9 @@ class Movement {
 
         double wallDistances_[kNumberOfVlx];
 
-        const double kMinWallDistance = 0.09; // 7.75 cm 0.0775 m
+        const double kMinWallDistance = 0.15; // 7.75 cm 0.0775 m
 
-        static constexpr double kMaxDistanceError = 0.01;
+        static constexpr double kMaxDistanceError = 0.02;
 
         static constexpr double kMaxOrientationError = 0.9;
 

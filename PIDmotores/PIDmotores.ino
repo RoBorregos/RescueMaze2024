@@ -48,7 +48,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    delay(2500);
+    // delay(2500);
     #endif
 }
 
@@ -419,8 +419,32 @@ void setup(){
     #endif
     robot.setup();
     
-    //robot.goForward(0);
-    
+    // robot.goForward(0);
+    /* if(robot.checkWallsDistances(TileDirection::kUp, 180)) {
+        screenPrint("Wall found up");
+    }
+    else {
+        screenPrint("No wall found up");
+    }
+    if(robot.checkWallsDistances(TileDirection::kDown, 180)) {
+        screenPrint("Wall found down");
+    }
+    else {
+        screenPrint("No wall found down");
+    }
+    if(robot.checkWallsDistances(TileDirection::kLeft, 180)) {
+        screenPrint("Wall found left");
+    }
+    else {
+        screenPrint("No wall found left");
+    }
+    if(robot.checkWallsDistances(TileDirection::kRight, 180)) {
+        screenPrint("Wall found right");
+    }
+    else {
+        screenPrint("No wall found right");
+    } */
+
     startAlgorithm();
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
