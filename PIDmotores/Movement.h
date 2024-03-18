@@ -87,7 +87,7 @@ class Movement {
 
         static constexpr double kMaxRampOrientation = 25.0;
 
-        static constexpr double kMinRampOrientation = 20.0;
+        static constexpr double kMinRampOrientation = 17.0;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -184,6 +184,8 @@ class Movement {
         double getOrientation(const double orientation);
 
         bool rampDetected();
+
+        void motorsInRamp(const bool rampDeteced, double currentOrientation,bool useWallDistance);
 };
 
 #endif
