@@ -116,18 +116,21 @@ class Movement {
 
         // TCS
         TCS tcs_;
-        static constexpr uint8_t kTCSPrecision = 100;
-        static constexpr uint8_t kTCSColorAmount = 3;
-        static constexpr char colorList[kTCSColorAmount + 1] = {"RNB"};
-        static constexpr uint8_t colors[kTCSColorAmount][3] = {
-            {100,100,100},
-            {300,500,550}
+        static constexpr int kPrecision = 100;
+        static constexpr uint8_t kColorAmount = 3;
+        static constexpr char colorList[kColorAmount + 1] = {"RNB"};
+        static constexpr int colors[kColorAmount][3] = {
+            // RED
+            {257, 75, 71},
+            // BLACK
+            {80, 44, 34},
+            // BLUE
+            {97,99,141}
         };
-
-        static constexpr int colorThresholds[kTCSColorAmount][6] = {
-            {0, 100, 0, 100, 0, 100},
-            {0, 100, 0, 100, 0, 100},
-            {0, 100, 0, 100, 0, 100}
+        static constexpr int colorThresholds[kColorAmount][6] = {
+            {220, 270, 60, 80, 50, 75},
+            {76, 86, 33, 56, 30, 45},
+            {85, 110, 80, 140, 120, 170}
         };
 
 
@@ -199,6 +202,8 @@ class Movement {
         void correctionAfterCrash(const bool crashSide, double currentOrientation, bool useWallDistance);
 
         double getOrientation(const double orientation);
+
+        void printTCS();
 };
 
 #endif

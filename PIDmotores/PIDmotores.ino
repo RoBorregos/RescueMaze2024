@@ -44,8 +44,8 @@ void setup(){
     
 void loop() {
     
-    
-    robot.moveMotors(MovementState::kForward, 0, 10);
+    robot.printTCS();
+    //robot.moveMotors(MovementState::kForward, 0, 10);
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);

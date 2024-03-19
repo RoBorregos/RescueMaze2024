@@ -6,6 +6,10 @@
 
 #define DEBUG_MOVEMENT 0
 
+constexpr char Movement::colorList[];
+constexpr int Movement::colors[Movement::kColorAmount][3];
+constexpr int Movement::colorThresholds[Movement::kColorAmount][6];
+
 Movement::Movement() {
     
 }
@@ -58,8 +62,9 @@ void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
 }
 
 void Movement::setupTCS() {
-    tcs_.init(colors, kTCSColorAmount, colorList, colorThresholds);
-    tcs_.setPrecision(10);
+    tcs_.setMux(Pins::tcsPins[0]);
+    tcs_.setPrecision(kPrecision);
+    tcs_.init(colors, kColorAmount, colorList, colorThresholds);
 }
 
 
@@ -505,4 +510,9 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     moveForward = distanceDiff <= 0;
 
     return abs(distanceDiff) < kMaxDistanceError;
+}
+
+void Movement::printTCS() {
+    tcs_.printRGB();
+    tcs_.getColor();
 }
