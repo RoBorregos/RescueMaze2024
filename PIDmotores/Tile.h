@@ -24,6 +24,7 @@ class Tile{
         coord position_;
         Tile *adjacentTiles_[kNumberOfDirections];
         int weights_[kNumberOfDirections];
+        int weight_;
         char data_;
         Tile();
         Tile(const coord& position);
@@ -31,13 +32,13 @@ class Tile{
         void setPosition(const coord& position);
         void setWall(const TileDirection direction, const bool wall);
         bool hasWall(const TileDirection direction) const;
-        bool hasVictim();
+        bool hasVictim() const;
         void setVictim();
-        bool hasObstacle();
+        bool hasObstacle() const;
         void setObstacle();
-        bool hasBlackTile();
+        bool hasBlackTile() const;
         void setBlackTile();
-        bool hasCheckpoint();
+        bool hasCheckpoint() const;
         void setCheckpoint();
 };
 

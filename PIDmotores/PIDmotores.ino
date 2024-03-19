@@ -34,6 +34,9 @@ bool hasArrived = false;
 
 Map tilesMap = Map();
 etl::vector<Tile, kMaxMapSize> tiles;
+etl::vector<bool, kMaxMapSize> explored;
+etl::vector<int, kMaxMapSize> distance;
+etl::vector<coord, kMaxMapSize> previousPositions;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
@@ -145,10 +148,6 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
     }
 }
 
-etl::vector<bool, kMaxMapSize> explored;
-etl::vector<int, kMaxMapSize> distance;
-etl::vector<coord, kMaxMapSize> previousPositions;
-
 void dijsktra(const coord& start, const coord& end) {
     etl::stack<coord, kMaxMapSize> path;
     // initialize distance.
@@ -173,10 +172,11 @@ void dijsktra(const coord& start, const coord& end) {
         for (const TileDirection& direction : directions) {
             const Tile& currentTile = tiles[tilesMap.getIndex(currentCoord)];
             const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
+            const Tile& adjacentTile = tiles[tilesMap.getIndex(adjacentCoord)];
             // check if there's an adjecent tile and there's no wall.
-            //TODO: check if the tile to explore is black
-            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction)) {
-                const int weight = currentTile.weights_[static_cast<int>(direction)] + distance[tilesMap.getIndex(currentCoord)];
+            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction) && !adjacentTile.hasBlackTile()) {
+                // const int weight = currentTile.weights_[static_cast<int>(direction)] + distance[tilesMap.getIndex(currentCoord)];
+                const int weight = adjacentTile.weight_ + distance[tilesMap.getIndex(currentCoord)];
                 // check if the new weight to visit the adjecent tile is less than the current weight.
                 if (weight < distance[tilesMap.getIndex(adjacentCoord)]) {
                     distance[tilesMap.getIndex(adjacentCoord)] = weight;
