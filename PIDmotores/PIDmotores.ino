@@ -44,7 +44,9 @@ void setup(){
     
 void loop() {
     
-    robot.printTCS();
+    //robot.printTCS();
+    customPrintln(robot.getTCSInfo());
+    
     //robot.moveMotors(MovementState::kForward, 0, 10);
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);

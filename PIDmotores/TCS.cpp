@@ -134,14 +134,14 @@ bool TCS::inRange(uint8_t colorInput, uint8_t colorRegistered) {
     return (((colorRegistered - precision_) <= colorInput) && (colorInput <= (colorRegistered + precision_)));
 }
 
-bool TCS::inRangeThreshold(double lowerBound, const double colorDetection, double upperBound) {
+bool TCS::inRangeThreshold(double lowerBound, double colorDetection, double upperBound) {
     if (lowerBound > upperBound) {
         double temp = lowerBound;
         lowerBound = upperBound;
         upperBound = temp;
     }
 
-    return (lowerBound <= colorDetection) || (colorDetection <= upperBound);
+    return (lowerBound <= colorDetection) && (colorDetection <= upperBound);
 }
 
 char TCS::getColorWithPrecision() {
@@ -169,6 +169,11 @@ char TCS::getColorWithThresholds() {
     if (colorThresholds_ == nullptr) {
         return getColorWithPrecision();
     }
+/*     customPrintln("Using thresholds");
+    customPrintln("Red:\t"); customPrintln(red_);
+    customPrintln("\tGreen:\t"); customPrintln(green_);
+    customPrintln("\tBlue:\t"); customPrintln(blue_); */
+
 
     updateRGBC();
 

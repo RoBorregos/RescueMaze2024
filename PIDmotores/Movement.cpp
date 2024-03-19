@@ -269,7 +269,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
-                moveMotorsInADirection(targetOrientation, moveForward);
+                //moveMotorsInADirection(targetOrientation, moveForward);
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
                 if (crashLeft == true && crashRight == false) {
@@ -518,9 +518,10 @@ void Movement::printTCS() {
     tcs_.getColor();
 }
 
-void Movement::getTCSInfo() {
-    return tcs.getColorWithThresholds();
-}
+char Movement::getTCSInfo() {
+    //rgbTCS();
+    return tcs_.getColorWithThresholds();
+} 
 
 void Movement::rgbTCS() {
     tcs_.printRGB();
@@ -535,8 +536,8 @@ void Movement::checkTCS() {
     tcs_.printColorList();
 }
 
-char Movement::checkColors() {
-    char color = s->getTCSInfo();
+/* char Movement::checkColors() {
+    char color = tgetTCSInfo();
     bool checkPoint = false;
 
     if (color == 'n') {
@@ -547,7 +548,7 @@ char Movement::checkColors() {
     } else if (color == 'r') {
         checkPoint = isCheckPoint();
     }
-}
+} */
 
 bool Movement::isCheckPoint() {
     return tcs_.getColor() == 'r';

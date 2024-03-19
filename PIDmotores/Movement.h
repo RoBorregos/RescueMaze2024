@@ -116,6 +116,7 @@ class Movement {
 
         // TCS
         TCS tcs_;
+        TCS *t = nullptr;
         static constexpr int kPrecision = 100;
         static constexpr uint8_t kColorAmount = 3;
         static constexpr char colorList[kColorAmount + 1] = {"RNB"};
@@ -130,7 +131,7 @@ class Movement {
         static constexpr int colorThresholds[kColorAmount][6] = {
             {220, 270, 60, 80, 50, 75},
             {76, 86, 33, 56, 30, 45},
-            {85, 110, 80, 140, 120, 170}
+            {85, 150, 80, 140, 120, 175}
         };
 
 
@@ -205,7 +206,7 @@ class Movement {
 
         void printTCS();
 
-        void getTCSInfo();
+        char getTCSInfo();
 
         void rgbTCS();
 
