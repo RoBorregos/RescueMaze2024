@@ -265,6 +265,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             currentState_ = MovementState::kForward;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
+                checkColors();
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
