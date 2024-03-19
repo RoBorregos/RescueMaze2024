@@ -237,7 +237,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     bool crashRight = false;
     bool crashLeft = false;
     
-    bool rampDetect = false;
+    bool rampDetected = false;
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
@@ -256,21 +256,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
-                rampDetect = rampDetected();
+                rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
                 
-                if (rampDetect) {
+                if (rampDetected) {
 
                     #if DEBUG_MOVEMENT
                     customPrintln("Ramp detected");
                     #endif
                     useWallDistance = false;
-                    currentState_ = MovementState::kRamp;
-                    stopMotors();
-                    break;
-                    
-                    //motorsInRamp(rampDetect, currentOrientation, useWallDistance);
+                    moveMotors(MovementState::kRamp, 0, 0);
                     
                 }
 
@@ -346,15 +342,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kRamp): {
             customPrintln("kRamp");
-            rampDetect = rampDetected();
-            while (rampDetect) {
+            rampDetected = isRamp();
+            while (rampDetected) {
                 moveMotorsInADirection(getOrientation(currentOrientation), true);
-                rampDetect = rampDetected();
+                rampDetected = isRamp();
             }
-            double timePrev = millis();
-            unsigned long timeDiff = millis() - timePrev;
-            while (timeDiff < 750) {
-                timeDiff = millis() - timePrev;
+            stopMotors();
+            delay(2000);
+            const unsigned long timePrevRamp = millis();
+            unsigned long timeDiff = millis() - timePrevRamp;
+            while (timeDiff < kTimeAfterRamp) {
+                timeDiff = millis() - timePrevRamp;
                 moveMotorsInADirection(getOrientation(currentOrientation), true);
                 
             }
@@ -390,27 +388,6 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
     retrieveLastState();
 }
 
-void Movement::motorsInRamp(bool rampDetect, double currentOrientation, bool useWallDistance) {
-    useWallDistance = false;
-    saveLastState(getCurrentState(), currentOrientation);
-    moveMotors(MovementState::kStop, 0, 0);
-    while (rampDetect) {
-        customPrintln("Moving in ramp");
-        moveMotorsInADirection(getOrientation(currentOrientation), true);
-        //moveMotors(MovementState::kForward, getOrientation(currentOrientation), 0.3, useWallDistance);
-        customPrintln("OMG");
-        rampDetect = rampDetected();
-    }
-    timePrev_ = millis();
-    unsigned long timeDiff = millis() - timePrev_;
-   /*  while (timeDiff < 200) {
-        timeDiff = millis() - timePrev_;
-        moveMotorsInADirection(getOrientation(currentOrientation), true);
-    } */
-    retrieveLastState();
-    customPrintln("RETURNING");
-
-}
 
 double Movement::getOrientation(const double orientation) {
     if (orientation < 0) {
@@ -557,14 +534,20 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     return abs(distanceDiff) < kMaxDistanceError;
 }
 
-bool Movement::rampDetected() {
+bool Movement::isRamp() {
     
     const double currentOrientationY = bno_.getOrientationY();
     customPrintln("OrientationY:" + String(currentOrientationY));
-    if (currentOrientationY >= kMinRampOrientation) {
+    #if DEBUG_MOVEMENT
+    #endif
+    if (currentOrientationY >= kMinRampOrientation || currentOrientationY <= -kMinRampOrientation) {
+        #if DEBUG_MOVEMENT
         customPrintln("TRUE");
+        #endif
         return true;
     }
+    #ifndef DEBUG_MOVEMENT
     customPrintln("FALSE");
+    #endif
     return false;
 }
