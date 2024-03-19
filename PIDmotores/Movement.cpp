@@ -32,6 +32,8 @@ void Movement::setup() {
 
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
+
+    setupTCS();
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -54,6 +56,12 @@ void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
     const uint8_t index = static_cast<uint8_t>(limitSwitchId);
     limitSwitch_[index].initLimitSwitch(Pins::limitSwitchPins[index]);
 }
+
+void Movement::setupTCS() {
+    tcs_.init(colors, kTCSColorAmount, colorList, colorThresholds);
+    tcs_.setPrecision(10);
+}
+
 
 void Movement::stopMotors() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {

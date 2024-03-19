@@ -5,6 +5,7 @@
 #include "BNO.h"
 #include "VLX.h"
 #include "LimitSwitch.h"
+#include "TCS.h"
 
 enum class compass{
     kNorth,
@@ -113,6 +114,24 @@ class Movement {
         constexpr static long kSampleTime{100};
         constexpr static long kSampleTimeTraveled{50};
 
+        // TCS
+        TCS tcs_;
+        static constexpr uint8_t kTCSPrecision = 100;
+        static constexpr uint8_t kTCSColorAmount = 3;
+        static constexpr char colorList[kTCSColorAmount + 1] = {"RNB"};
+        static constexpr uint8_t colors[kTCSColorAmount][3] = {
+            {100,100,100},
+            {300,500,550}
+        };
+
+        static constexpr int colorThresholds[kTCSColorAmount][6] = {
+            {0, 100, 0, 100, 0, 100},
+            {0, 100, 0, 100, 0, 100},
+            {0, 100, 0, 100, 0, 100}
+        };
+
+
+
     public:
         Movement();
 
@@ -121,6 +140,8 @@ class Movement {
         void setupInternal(const MotorID motorId);
 
         void setupLimitSwitch(const LimitSwitchID limitSwitchId);
+
+        void setupTCS();
 
         void stopMotors();
 

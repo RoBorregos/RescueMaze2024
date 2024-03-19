@@ -3,6 +3,7 @@
 
 #include "Adafruit_TCS34725.h"
 #include "MUX.h"
+#include "CustomSerial.h"
 
 // TODO: check which address is the correct one
 #define TCS_ADDR 0x30 
@@ -11,8 +12,8 @@ class TCS {
     private:
         Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
         MUX mux;
-        uint8_t colors = 3;
-        uint8_t precision;
+        int colors = 3;
+        int precision;
         const char *colorList;
         double red;
         double green;

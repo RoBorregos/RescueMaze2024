@@ -6,12 +6,12 @@ TCS::TCS() {
 }
 
 TCS::TCS(uint8_t posMux) {
-    mux.setPos(posMux);
+    mux.setNewChannel(posMux);
     setDefaultValues();
 }
 
 TCS::TCS(uint8_t posMux, uint8_t precision) {
-    mux.setPos(posMux);
+    mux.setNewChannel(posMux);
     setDefaultValues();
     this->precision = precision;
 }
