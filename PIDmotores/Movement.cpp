@@ -545,9 +545,6 @@ char Movement::checkColors() {
     } else if (color == 'b') {
         delay(5000);
     } else if (color == 'r') {
-        moveMotors(MovementState::kStop, 0, 0);
-        moveMotors(MovementState::kForward, 0, 0.15);
-    } else if (color == 'r') {
         checkPoint = isCheckPoint();
     }
 }
