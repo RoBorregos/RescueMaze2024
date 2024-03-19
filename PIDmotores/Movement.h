@@ -204,6 +204,18 @@ class Movement {
         double getOrientation(const double orientation);
 
         void printTCS();
+
+        void getTCSInfo();
+
+        void rgbTCS();
+
+        void rgbTCSClear();
+
+        void checkTCS();
+
+        char checkColors();
+
+        bool isCheckPoint();
 };
 
 #endif

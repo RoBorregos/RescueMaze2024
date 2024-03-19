@@ -513,6 +513,44 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 }
 
 void Movement::printTCS() {
-    tcs_.printRGB();
+    this->tcs_.printRGB();
     tcs_.getColor();
+}
+
+void Movement::getTCSInfo() {
+    return tcs.getColorWithThresholds();
+}
+
+void Movement::rgbTCS() {
+    tcs_.printRGB();
+}
+
+void Movement::rgbTCSClear() {
+    tcs_.printRGBC();
+}
+
+void Movement::checkTCS() {
+    tcs_.printColorMatrix();
+    tcs_.printColorList();
+}
+
+char Movement::checkColors() {
+    char color = s->getTCSInfo();
+    bool checkPoint = false;
+
+    if (color == 'n') {
+        moveMotors(MovementState::kStop, 0, 0);
+        moveMotors(MovementState::kBackward, 0, 0.15);
+    } else if (color == 'b') {
+        delay(5000);
+    } else if (color == 'r') {
+        moveMotors(MovementState::kStop, 0, 0);
+        moveMotors(MovementState::kForward, 0, 0.15);
+    } else if (color == 'r') {
+        checkPoint = isCheckPoint();
+    }
+}
+
+bool Movement::isCheckPoint() {
+    return tcs_.getColor() == 'r';
 }
