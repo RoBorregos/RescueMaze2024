@@ -2,8 +2,8 @@ int Encoder = 0;
 
 void setup (){
     Serial.begin(115200);
-    pinMode(35,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(35),captureCallback,RISING);
+    pinMode(39,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(39),captureCallback,RISING);
 }  
 
 void captureCallback(){
