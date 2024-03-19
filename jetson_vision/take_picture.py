@@ -32,18 +32,31 @@ def gstreamer_pipeline(
 
 def show_camera():
     window_title = "CSI Camera"
-    print(gstreamer_pipeline(flip_method=0))
+    #print(gstreamer_pipeline(flip_method=0))
     video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if video_capture.isOpened():
         try:
-            ret, frame = video_capture.read()
-            if not ret:
-                print("Error: Unable to capture frame.")
-                video_capture.release()  # Release the camera device
-                exit()
-            cv2.imshow("Frame", frame)
-            cv2.waitKey(0) 
-            cv2.imwrite("./pictures/pic.jpg", frame)
+            window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
+            while True:
+                ret_val, frame = video_capture.read()
+                # Check to see if the user closed the window
+                # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
+                # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
+                if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
+                    cv2.imshow(window_title, frame)
+                else:
+                    break 
+                keyCode = cv2.waitKey(10) & 0xFF
+                # Stop the program on the ESC key or 'q'
+                if keyCode == ord('p'):
+                    cagada = input("nombre del archivo:")
+                    cv2.imwrite(f"./dataset/a/{cagada}.jpg", frame)
+                if keyCode == 27 or keyCode == ord('q'):
+                    break
+                
+            
+            
+            
 
         finally:
             video_capture.release()
