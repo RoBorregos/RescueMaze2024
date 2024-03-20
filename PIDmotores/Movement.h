@@ -185,6 +185,8 @@ class Movement {
         double getOrientation(const double orientation);
 
         bool isRamp();
+
+        void rampMovement();
 };
 
 #endif

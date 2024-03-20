@@ -219,6 +219,10 @@ void Movement::turnRight() {
     moveMotors(MovementState::kTurnRight, 90, 0);
 }
 
+void Movement::rampMovement() {
+    moveMotors(MovementState::kRamp, 0, 0);
+}
+
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
@@ -361,6 +365,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 }
+
 
 void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientation, bool useWallDistance) {
     useWallDistance = false;
