@@ -205,6 +205,8 @@ class Movement {
         bool isRamp();
 
         void rampMovement();
+
+        int directionRamp();
 };
 
 #endif
