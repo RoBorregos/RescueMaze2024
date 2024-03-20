@@ -23,7 +23,13 @@ void BNO::setupBNO() {
 void BNO::updateBNO(sensors_event_t &event) {
     bno.getEvent(&event);
 }
+
 double BNO::getOrientationX() {
     updateBNO(event);
     return event.orientation.x;
+}
+
+double BNO::getOrientationY() {
+    updateBNO(event);
+    return event.orientation.y;
 }
