@@ -265,7 +265,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
                 
                 if (rampDetected) {
-
                     #if DEBUG_MOVEMENT
                     customPrintln("Ramp detected");
                     #endif
@@ -287,7 +286,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     #endif
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
+                #if DEBUG_MOVEMENT
                 customPrintln("targetDistance:" + String(targetDistance));
+                #endif
     
                 checkWallsDistances();
             }
@@ -539,8 +540,8 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 bool Movement::isRamp() {
     
     const double currentOrientationY = bno_.getOrientationY();
-    customPrintln("OrientationY:" + String(currentOrientationY));
     #if DEBUG_MOVEMENT
+    customPrintln("OrientationY:" + String(currentOrientationY));
     #endif
     if (currentOrientationY >= kMinRampOrientation || currentOrientationY <= -kMinRampOrientation) {
         #if DEBUG_MOVEMENT
