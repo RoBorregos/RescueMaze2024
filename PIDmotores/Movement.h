@@ -19,7 +19,8 @@ enum class MovementState{
     kForward,
     kBackward,
     kTurnLeft,
-    kTurnRight
+    kTurnRight,
+    kRamp
 };
 
 class Movement {
@@ -70,6 +71,8 @@ class Movement {
 
         bool useWallDistance_ = false;
 
+        const unsigned long kTimeAfterRamp = 750;
+
         double currentDistance_ = 0;
         double targetDistance_ = 0;
         double distancePrev_ = 0;
@@ -95,6 +98,8 @@ class Movement {
         static constexpr double kMaxDistanceError = 0.02;
 
         static constexpr double kMaxOrientationError = 0.9;
+
+        static constexpr double kMinRampOrientation = 17.0;
 
         static constexpr long long kOneSecInMs = 1000;
 
@@ -197,6 +202,9 @@ class Movement {
         int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
 
         bool checkWallsDistances(const TileDirection targetDirection, const double currentOrientation);
+        bool isRamp();
+
+        void rampMovement();
 };
 
 #endif

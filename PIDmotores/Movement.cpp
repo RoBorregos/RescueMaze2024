@@ -269,6 +269,10 @@ void Movement::turnRight(const double targetOrientation) {
     moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
 
+void Movement::rampMovement() {
+    moveMotors(MovementState::kRamp, 0, 0);
+}
+
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance) {
     customPrintln("targetDistance:" + String(targetDistance));
     double speeds[kNumberOfWheels];
@@ -287,6 +291,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     bool crashRight = false;
     bool crashLeft = false;
+    
+    bool rampDetected = false;
 
     getAllWallsDistances(&wallDistances_[kNumberOfVlx]);
 
@@ -311,15 +317,23 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 //customPrintln("Hasn't traveled distance");
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
+                rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
+                
+                if (rampDetected) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Ramp detected");
+                    #endif
+                    useWallDistance = false;
+                }
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
                 if (crashLeft == true && crashRight == false) {
                     #if DEBUG_MOVEMENT
                     customPrintln("Crash left-");
-                    correctionAfterCrash(true, currentOrientation, useWallDistance);
                     #endif
+                    correctionAfterCrash(true, currentOrientation, useWallDistance);
                 }
                 
                 if (crashRight == true && crashLeft == false) {
@@ -329,6 +343,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     #endif
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
+                #if DEBUG_MOVEMENT
+                customPrintln("targetDistance:" + String(targetDistance));
+                #endif
     
                 //checkWallsDistances();
             } 
@@ -338,10 +355,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance + targetDistance;
             // customPrintln("DesiredWallDistance:" + String(desiredWallDistance));
             stopMotors();
-            // delay(2000);
-            // TODO: Change the way to check the wall distance
-            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance() , moveForward) == false) {
-                
+
+            // TODO: Change the way to check the wall distance  
+            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance(), moveForward) == false) {
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 
@@ -354,9 +370,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (crashRight == true && crashLeft == false) {
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
-            }  
+            } 
+            */
 
-            stopMotors(); */
+            //stopMotors(); 
             
             break;
         }
@@ -389,8 +406,30 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             break;
         }
+        case (MovementState::kRamp): {
+            #if DEBUG_MOVEMENT
+            customPrintln("kRamp");
+            #endif
+            rampDetected = isRamp();
+            while (rampDetected) {
+                moveMotorsInADirection(getOrientation(currentOrientation), true);
+                rampDetected = isRamp();
+            }
+
+            stopMotors();
+            const unsigned long timePrevRamp = millis();
+            unsigned long timeDiff = millis() - timePrevRamp;
+            while (timeDiff < kTimeAfterRamp) {
+                timeDiff = millis() - timePrevRamp;
+                moveMotorsInADirection(getOrientation(currentOrientation), true);
+            }
+
+            stopMotors();
+            break;
+        }
     }
 }
+
 
 void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientation, bool useWallDistance) {
     useWallDistance = false;
@@ -412,8 +451,6 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
-
-        
     }
     retrieveLastState();
 }
@@ -574,4 +611,22 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     customPrintln("DistanceDiff:" + String(distanceDiff));
     customPrintln("MoveForward:" + String(moveForward));
     return abs(distanceDiff) < kMaxDistanceError;
+}
+
+bool Movement::isRamp() {
+    
+    const double currentOrientationY = bno_.getOrientationY();
+    #if DEBUG_MOVEMENT
+    customPrintln("OrientationY:" + String(currentOrientationY));
+    #endif
+    if (currentOrientationY >= kMinRampOrientation || currentOrientationY <= -kMinRampOrientation) {
+        #if DEBUG_MOVEMENT
+        customPrintln("TRUE");
+        #endif
+        return true;
+    }
+    #ifndef DEBUG_MOVEMENT
+    customPrintln("FALSE");
+    #endif
+    return false;
 }

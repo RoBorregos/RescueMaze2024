@@ -18,6 +18,7 @@ class BNO {
         void setupBNO();
         void updateBNO(sensors_event_t &event);
         double getOrientationX();
+        double getOrientationY();
 };
 
 #endif
