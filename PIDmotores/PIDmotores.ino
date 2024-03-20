@@ -37,6 +37,7 @@ etl::vector<Tile, kMaxMapSize> tiles;
 etl::vector<bool, kMaxMapSize> explored;
 etl::vector<int, kMaxMapSize> distance;
 etl::vector<coord, kMaxMapSize> previousPositions;
+etl::stack<coord, kMaxMapSize> path;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
@@ -51,7 +52,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    // delay(1000);
+    delay(1500);
     #endif
 }
 
@@ -73,13 +74,13 @@ void turnRobot(const int targetOrientation) {
     }
 }
 
-void followPath(etl::stack<coord, kMaxMapSize>& path) {
+void followPath() {
     #if DEBUG_MERGE
     customPrint("path size: ");
     customPrintln(path.size());
     #endif
     while(!path.empty()) {
-        const coord& next = path.top();
+        const coord next = path.top();
         path.pop();
         #if DEBUG_MERGE
         customPrint("from: ");
@@ -149,7 +150,12 @@ void followPath(etl::stack<coord, kMaxMapSize>& path) {
 }
 
 void dijsktra(const coord& start, const coord& end) {
-    etl::stack<coord, kMaxMapSize> path;
+    // screenPrint(String(end.x) + " " + String(end.y));
+    customPrintln(end.x + " " + end.y);
+    // empthy path.
+    while (!path.empty()) {
+        path.pop();
+    }
     // initialize distance.
     #if DEBUG_ALGORITHM 
     customPrintln("before distance");
@@ -209,8 +215,8 @@ void dijsktra(const coord& start, const coord& end) {
     #if DEBUG_ALGORITHM 
     customPrintln("before followPath");
     #endif
-    path.push(start); // maybe not necessary.
-    followPath(path);
+    // path.push(start); // maybe not necessary.
+    followPath();
 }
 
 // bool checkForWall(const etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize>& maze, const TileDirection& direction, const coord& currentTileCoord) {
@@ -233,7 +239,7 @@ void depthFirstSearch() {
         previousPositions.push_back(kInvalidPosition);
     }
     Map visitedMap = Map();
-    etl::vector<bool, kMaxMapSize> visited;
+    etl::vector<bool, kMaxMapSize> visited; // Maybe not necessary.
     etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
     bool wall;
@@ -252,10 +258,14 @@ void depthFirstSearch() {
         unvisited.pop();
         // check if the tile has been visited.
         visitedFlag = false;
+        customPrint("visitedMap size = ");
+        customPrintln(visitedMap.positions.size());
         for (int i=0; i<visitedMap.positions.size(); ++i) {
             if (visitedMap.positions[i] == currentTileCoord) {
-                visitedFlag = true;
-                break;
+                if (visited[i] == true) {
+                    visitedFlag = true;
+                    break;
+                }
             }
         }
 
@@ -271,7 +281,7 @@ void depthFirstSearch() {
         customPrint(currentTileCoord.x);
         customPrint(" ");
         customPrintln(currentTileCoord.y);
-        customPrint("unisited size: ");
+        customPrint("unvisited size: ");
         customPrintln(unvisited.size());
         #endif
         #if USING_SCREEN
@@ -316,11 +326,13 @@ void depthFirstSearch() {
             // Link the two adjacent Tiles.
             currentTile->addAdjacentTile(direction, nextTile, wall);
             nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
-            visitedFlag = false;
+            visitedFlag = false; // Maybe not necessary.
             for (int i = 0; i < visitedMap.positions.size(); ++i) {
                 if (visitedMap.positions[i] == nextTileCoord) {
-                    visitedFlag = true;
-                    break;
+                    if (visited[i] == true) {
+                        visitedFlag = true;
+                        break;
+                    }
                 }
             }
 
@@ -421,11 +433,13 @@ void depthFirstSearch() {
                     // Check if there's a wall between the two adjacent Tiles.
                     if (!wall) {
                         // if the tile has not been visited, add it to the queue.
-                        visitedFlag = false;
+                        visitedFlag = false; //maybe not necessary.
                         for (int i = 0; i < visitedMap.positions.size(); ++i) {
                             if (visitedMap.positions[i] == nextTileCoord) {
-                                visitedFlag = true;
-                                break;
+                                if (visited[i] == true) {
+                                    visitedFlag = true;
+                                    break;
+                                }
                             }
                         }
 
