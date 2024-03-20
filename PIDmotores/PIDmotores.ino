@@ -25,7 +25,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #define DEBUG_ALGORITHM 0
 #define USING_SCREEN 1
 #define DEBUG_MERGE 1
-#define MOVEMENT 0
+#define MOVEMENT 1
 
 Movement robot;
 
@@ -51,7 +51,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    delay(2500);
+    // delay(1000);
     #endif
 }
 
@@ -358,6 +358,7 @@ void depthFirstSearch() {
                 // check if the tile has not been checked.
                 if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                     // check for a wall.
+                    customPrintln(robotOrientation);
                     wall = robot.checkWallsDistances(direction, robotOrientation);
                     if (wall) {
                         #if DEBUG_ALGORITHM
@@ -469,6 +470,7 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
+    startAlgorithm();
     
     // robot.goForward(0);
     /* if(robot.checkWallsDistances(TileDirection::kUp, 180)) {
@@ -496,7 +498,7 @@ void setup(){
         screenPrint("No wall found right");
     } */
 
-    startAlgorithm();
+
     // robot.goForward();
 
     // robot.turnLeft();
@@ -537,6 +539,49 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
+    // for (int robotOrientation = 0; robotOrientation < 360; robotOrientation += 90){
+    //     customPrintln("Orientation: " + String(robotOrientation));
+    //     for (TileDirection direction : directions) {
+    //         if (robot.checkWallsDistances(direction, robotOrientation)) {
+    //             switch (direction)
+    //             {
+    //             case TileDirection::kUp:
+    //                 screenPrint("Wall found up");
+    //                 break;
+    //             case TileDirection::kDown:
+    //                 screenPrint("Wall found down");
+    //                 break;
+    //             case TileDirection::kLeft:
+    //                 screenPrint("Wall found left");
+    //                 break;
+    //             case TileDirection::kRight:
+    //                 screenPrint("Wall found right");
+    //                 break;
+    //             default:
+    //                 break;
+    //             }
+    //         }
+    //         else {
+    //             switch (direction)
+    //             {
+    //             case TileDirection::kUp:
+    //                 screenPrint("No wall found up");
+    //                 break;
+    //             case TileDirection::kDown:
+    //                 screenPrint("No wall found down");
+    //                 break;
+    //             case TileDirection::kLeft:
+    //                 screenPrint("No wall found left");
+    //                 break;
+    //             case TileDirection::kRight:
+    //                 screenPrint("No wall found right");
+    //                 break;
+    //             default:
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // }
     /* robot.goForward(0);
     delay(100); */
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
