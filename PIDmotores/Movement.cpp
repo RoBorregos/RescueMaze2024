@@ -270,8 +270,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     customPrintln("Ramp detected");
                     #endif
                     useWallDistance = false;
-                    moveMotors(MovementState::kRamp, 0, 0);
-                    
                 }
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
@@ -345,21 +343,23 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kRamp): {
+            #if DEBUG_MOVEMENT
             customPrintln("kRamp");
+            #endif
             rampDetected = isRamp();
             while (rampDetected) {
                 moveMotorsInADirection(getOrientation(currentOrientation), true);
                 rampDetected = isRamp();
             }
+
             stopMotors();
-            delay(2000);
             const unsigned long timePrevRamp = millis();
             unsigned long timeDiff = millis() - timePrevRamp;
             while (timeDiff < kTimeAfterRamp) {
                 timeDiff = millis() - timePrevRamp;
                 moveMotorsInADirection(getOrientation(currentOrientation), true);
-                
             }
+
             stopMotors();
             break;
         }
@@ -387,12 +387,9 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
-
-        
     }
     retrieveLastState();
 }
-
 
 double Movement::getOrientation(const double orientation) {
     if (orientation < 0) {
