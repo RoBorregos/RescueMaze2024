@@ -280,112 +280,160 @@ void depthFirstSearch() {
         robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
         visited.push_back(true);
-        // check walls the 4 adjacent tiles.
-        for (const TileDirection& direction : directions) {
-            wall = false;
-            switch(direction) {
-                case TileDirection::kRight:
-                    nextTileCoord = coord{currentTileCoord.x + 2, currentTileCoord.y, 1}; // checkRamp(direction);
-                    currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
-                    oppositeDirection = TileDirection::kLeft;
+        currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
+        //check for ramp
+        if (robot.isRamp()) {
+            currentTile->weight_ = 2;
+            robot.moveMotors(MovementState::kRamp, 0, 0); // move only one Tile
+            TileDirection direction;
+            switch (robotOrientation) {
+                case 0:
+                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z + 1};
+                    direction = TileDirection::kUp;
                     break;
-                case TileDirection::kUp:
-                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 2, 1}; // checkRamp(direction);
-                    currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
-                    oppositeDirection = TileDirection::kDown;
+                case 90:
+                    nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z + 1};
+                    direction = TileDirection::kRight;
                     break;
-                case TileDirection::kLeft:
-                    nextTileCoord = coord{currentTileCoord.x - 2, currentTileCoord.y, 1}; // checkRamp(direction);
-                    currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
-                    oppositeDirection = TileDirection::kRight;
+                case 180:
+                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z + 1};
+                    direction = TileDirection::kDown;
                     break;
-                case TileDirection::kDown:
-                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 2, 1}; // checkRamp(direction);
-                    currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
-                    oppositeDirection = TileDirection::kUp;
+                case 270:
+                    nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z + 1};
+                    direction = TileDirection::kLeft;
                     break;
             }
-            // check if the tile has not been checked.
-            if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
-                // check for a wall.
-                wall = robot.checkWallsDistances(direction, robotOrientation);
-                if (wall) {
-                    #if DEBUG_ALGORITHM
-                    customPrintln("Wall found");
-                    #endif
-                    #if USING_SCREEN
-                    switch (direction)
-                    {
-                    case TileDirection::kUp:
-                        screenPrint("Wall found up");
+            tilesMap.positions.push_back(nextTileCoord);
+            tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
+            Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
+            if (nextTile->position_ == kInvalidPosition) {
+                nextTile->setPosition(nextTileCoord);
+            }
+            // Link the two adjacent Tiles.
+            currentTile->addAdjacentTile(direction, nextTile, wall);
+            nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
+            visitedFlag = false;
+            for (int i = 0; i < visitedMap.positions.size(); ++i) {
+                if (visitedMap.positions[i] == nextTileCoord) {
+                    visitedFlag = true;
+                    break;
+                }
+            }
+
+            if(!visitedFlag) {
+                #if DEBUG_ALGORITHM || DEBUG_MERGE
+                customPrint("nextTileCoord: ");
+                customPrint(nextTileCoord.x);
+                customPrint(" ");
+                customPrintln(nextTileCoord.y);
+                #endif
+                unvisited.push(nextTileCoord);
+            }
+        } else {
+            // check walls the 4 adjacent tiles.
+            for (const TileDirection& direction : directions) {
+                wall = false;
+                switch(direction) {
+                    case TileDirection::kRight:
+                        nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z}; // checkRamp(direction);
+                        oppositeDirection = TileDirection::kLeft;
                         break;
-                    case TileDirection::kDown:
-                        screenPrint("Wall found down");
+                    case TileDirection::kUp:
+                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z}; // checkRamp(direction);
+                        oppositeDirection = TileDirection::kDown;
                         break;
                     case TileDirection::kLeft:
-                        screenPrint("Wall found left");
-                        break;
-                    case TileDirection::kRight:
-                        screenPrint("Wall found right");
-                        break;
-                    default:
-                        break;
-                    }
-                    #endif
-                }
-                else {
-                    #if DEBUG_ALGORITHM
-                    customPrintln("No wall found");
-                    #endif
-                    #if USING_SCREEN
-                    switch (direction)
-                    {
-                    case TileDirection::kUp:
-                        screenPrint("No wall found up");
+                        nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z}; // checkRamp(direction);
+                        oppositeDirection = TileDirection::kRight;
                         break;
                     case TileDirection::kDown:
-                        screenPrint("No wall found down");
+                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z}; // checkRamp(direction);
+                        oppositeDirection = TileDirection::kUp;
                         break;
-                    case TileDirection::kLeft:
-                        screenPrint("No wall found left");
-                        break;
-                    case TileDirection::kRight:
-                        screenPrint("No wall found right");
-                        break;
-                    default:
-                        break;
-                    }
-                    #endif
                 }
-                // create a pointer to the next tile and asign its coordenate if it's a new Tile.
-                tilesMap.positions.push_back(nextTileCoord);
-                tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
-                Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
-                if (nextTile->position_ == kInvalidPosition) {
-                     nextTile->setPosition(nextTileCoord);
-                }
-                // Link the two adjacent Tiles.
-                currentTile->addAdjacentTile(direction, nextTile, wall);
-                nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
-                // Check if there's a wall between the two adjacent Tiles.
-                if (!wall) {
-                    // if the tile has not been visited, add it to the queue.
-                    visitedFlag = false;
-                    for (int i = 0; i < visitedMap.positions.size(); ++i) {
-                        if (visitedMap.positions[i] == nextTileCoord) {
-                            visitedFlag = true;
+                // check if the tile has not been checked.
+                if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
+                    // check for a wall.
+                    wall = robot.checkWallsDistances(direction, robotOrientation);
+                    if (wall) {
+                        #if DEBUG_ALGORITHM
+                        customPrintln("Wall found");
+                        #endif
+                        #if USING_SCREEN
+                        switch (direction)
+                        {
+                        case TileDirection::kUp:
+                            screenPrint("Wall found up");
+                            break;
+                        case TileDirection::kDown:
+                            screenPrint("Wall found down");
+                            break;
+                        case TileDirection::kLeft:
+                            screenPrint("Wall found left");
+                            break;
+                        case TileDirection::kRight:
+                            screenPrint("Wall found right");
+                            break;
+                        default:
                             break;
                         }
-                    }
-
-                    if(!visitedFlag) {
-                        #if DEBUG_ALGORITHM || DEBUG_MERGE
-                        customPrint("nextTileCoord: ");
-                        customPrint(nextTileCoord.x);
-                        customPrint(" ");
-                        customPrintln(nextTileCoord.y);
                         #endif
-                        unvisited.push(nextTileCoord);
+                    }
+                    else {
+                        #if DEBUG_ALGORITHM
+                        customPrintln("No wall found");
+                        #endif
+                        #if USING_SCREEN
+                        switch (direction)
+                        {
+                        case TileDirection::kUp:
+                            screenPrint("No wall found up");
+                            break;
+                        case TileDirection::kDown:
+                            screenPrint("No wall found down");
+                            break;
+                        case TileDirection::kLeft:
+                            screenPrint("No wall found left");
+                            break;
+                        case TileDirection::kRight:
+                            screenPrint("No wall found right");
+                            break;
+                        default:
+                            break;
+                        }
+                        #endif
+                    }
+                    // create a pointer to the next tile and asign its coordenate if it's a new Tile.
+                    tilesMap.positions.push_back(nextTileCoord);
+                    tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
+                    Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
+                    if (nextTile->position_ == kInvalidPosition) {
+                        nextTile->setPosition(nextTileCoord);
+                    }
+                    // Link the two adjacent Tiles.
+                    currentTile->addAdjacentTile(direction, nextTile, wall);
+                    nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
+                    // Check if there's a wall between the two adjacent Tiles.
+                    if (!wall) {
+                        // if the tile has not been visited, add it to the queue.
+                        visitedFlag = false;
+                        for (int i = 0; i < visitedMap.positions.size(); ++i) {
+                            if (visitedMap.positions[i] == nextTileCoord) {
+                                visitedFlag = true;
+                                break;
+                            }
+                        }
+
+                        if(!visitedFlag) {
+                            #if DEBUG_ALGORITHM || DEBUG_MERGE
+                            customPrint("nextTileCoord: ");
+                            customPrint(nextTileCoord.x);
+                            customPrint(" ");
+                            customPrintln(nextTileCoord.y);
+                            #endif
+                            unvisited.push(nextTileCoord);
+                        }
                     }
                 }
             }
