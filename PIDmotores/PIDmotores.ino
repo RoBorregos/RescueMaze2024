@@ -25,7 +25,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #define DEBUG_ALGORITHM 0
 #define USING_SCREEN 1
 #define DEBUG_MERGE 1
-#define MOVEMENT 1
+#define MOVEMENT 0
 
 Movement robot;
 
@@ -51,7 +51,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    // delay(2500);
+    delay(2500);
     #endif
 }
 
@@ -209,7 +209,7 @@ void dijsktra(const coord& start, const coord& end) {
     #if DEBUG_ALGORITHM 
     customPrintln("before followPath");
     #endif
-    path.push(start);
+    path.push(start); // maybe not necessary.
     followPath(path);
 }
 
@@ -283,27 +283,30 @@ void depthFirstSearch() {
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {
+            screenPrint("Ramp found");
             currentTile->weight_ = 2;
             robot.moveMotors(MovementState::kRamp, 0, 0); // move only one Tile
             TileDirection direction;
+            // check robots orientation to know the next Tile.
             switch (robotOrientation) {
                 case 0:
-                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z + 1};
+                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kUp;
                     break;
                 case 90:
-                    nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z + 1};
+                    nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kRight;
                     break;
                 case 180:
-                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z + 1};
+                    nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kDown;
                     break;
                 case 270:
-                    nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z + 1};
+                    nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kLeft;
                     break;
             }
+            // create a pointer to the next tile and asign its coordenate if it's a new Tile.
             tilesMap.positions.push_back(nextTileCoord);
             tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
             Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];

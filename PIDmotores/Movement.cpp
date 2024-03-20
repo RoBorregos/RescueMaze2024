@@ -243,7 +243,7 @@ double Movement::getDistanceToCenter() {
 
 double Movement::getWallDistance(const VlxID vlxId) {
     //customPrintln("wallDistances: " + String(vlx[static_cast<uint8_t>(vlxId)].getDistance()));
-    return vlx[static_cast<uint8_t>(vlxId)].getDistance();
+    return vlx[static_cast<uint8_t>(vlxId)].getRawDistance();
     // return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
@@ -315,8 +315,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             customPrintln("TargetDistance:" + String(targetDistance));
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 //customPrintln("Hasn't traveled distance");
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
+                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                // crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);

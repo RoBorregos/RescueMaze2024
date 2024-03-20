@@ -34,7 +34,7 @@ namespace Pins {
         3, // FRONT_RIGHT
         1, // BACK 
         2, // LEFT
-        4,  // RIGHT
+        4, // RIGHT
         0  // FRONT_LEFT
     };
 
