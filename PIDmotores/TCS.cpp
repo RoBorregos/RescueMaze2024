@@ -19,7 +19,9 @@ TCS::TCS(const uint8_t posMux, const int precision) {
 void TCS::init() {
     mux.selectChannel();
     if (!tcs.begin()) {
+        #if DEBUG_TCS
         customPrintln("No TCS34725 found ... check your connections");
+        #endif
     }
 }
 
@@ -63,39 +65,46 @@ void TCS::updateRGBC() {
     mux.selectChannel();
     tcs.setInterrupt(false);
     delay(millisToWait_);
-    uint16_t red_r;
-    uint16_t green_r;
-    uint16_t blue_r;
-    uint16_t clear_r;
-    tcs.getRawData(&red_r, &green_r, &blue_r, &clear_r);
-    red_ = red_r;
-    green_ = green_r;
-    blue_ = blue_r;
+    uint16_t redR;
+    uint16_t greenR;
+    uint16_t blueR;
+    uint16_t clearR;
+    tcs.getRawData(&redR, &greenR, &blueR, &clearR);
+    red_ = redR;
+    green_ = greenR;
+    blue_ = blueR;
     tcs.setInterrupt(true);
 }
 
 void TCS::printRGB() {
     updateRGBC();
+    #if DEBUG_TCS
     customPrint("R:\t"); customPrint(red_);
     customPrint("\tG:\t"); customPrint(green_);
     customPrint("\tB:\t"); customPrint(blue_);
     customPrint("\n");
+    #endif
 }
 
 void TCS::printRGBC() {
     double t = millis();
     updateRGBC();
-
+    #if DEBUG_TCS
     customPrint("Time:\t"); customPrintln(millis() - t);
     customPrint("R:\t"); customPrintln(red_);
     customPrint("G:\t"); customPrintln(green_);
     customPrint("B:\t"); customPrintln(blue_);
+    #endif
 }
 
 void TCS::printColor() {
+    #if DEBUG_TCS
     customPrint("Color:\t");
+    #endif
     const char color = (colors_) ? getColorWithPrecision() : getColor();
+    #if DEBUG_TCS
     customPrintln(color);
+    #endif
 }
 
 void TCS::setMux(const uint8_t posMux) {
@@ -113,20 +122,30 @@ char TCS::getColor() {
     if (red_ < kMaxRedValueInBlue_  && green_ > kMinGreenValueInBlue_ && blue_ > kMinBlueValueInBlue_) {
         // blue
         colorLetter = 'b';
+        #if DEBUG_TCS
         customPrintln("blue");
+        #endif
     } else if (red_ > kMinRedValueInRed_ && green_ < kMaxGreenValueInRed_ && blue_ < kMaxBlueValueInRed_) {
         // red
         colorLetter = kRedColor_;
+        #if DEBUG_TCS
         customPrintln("red");
+        #endif
     } else if (red_ < kMaxRedValueInBlack_ && green_ < kMaxGreenValueInBlack_ && blue_ < kMaxBlueValueInBlack_) {
         // black
         colorLetter = kBlackColor_;
+        #if DEBUG_TCS
         customPrintln("black");
+        #endif
     } else {
         colorLetter = kUndifinedColor_;
+        #if DEBUG_TCS
         customPrintln("unknown");
+        #endif
     }
+    #if DEBUG_TCS
     customPrint("colorLetter: "); customPrintln(colorLetter);
+    #endif
     return colorLetter;
 }
 
@@ -241,7 +260,9 @@ char TCS::getColorMode(const int sampleSize, const double certainity) {
 
 void TCS::printColorMatrix() {
     if (colors_ == nullptr) {
+        #ifndef DEBUG_TCS
         customPrintln("No colors registered");
+        #endif
         return;
     }
 

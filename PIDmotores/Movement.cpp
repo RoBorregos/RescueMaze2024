@@ -574,8 +574,8 @@ void Movement::checkTCS() {
     tcs_.printColorList();
 }
 
-/* char Movement::checkColors() {
-    char color = tgetTCSInfo();
+char Movement::checkColors() {
+    char color = getTCSInfo();
     bool checkPoint = false;
 
     if (color == 'n') {
@@ -586,10 +586,12 @@ void Movement::checkTCS() {
     } else if (color == 'r') {
         checkPoint = isCheckPoint();
     }
-} */
+}
 
 bool Movement::isCheckPoint() {
     return tcs_.getColor() == 'r';
+}
+
 bool Movement::isRamp() {
     
     const double currentOrientationY = bno_.getOrientationY();
