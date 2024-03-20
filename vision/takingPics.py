@@ -22,7 +22,7 @@ cv2.imshow("Frame", frame)
 cv2.waitKey(0)  # Wait for a key press to exit
 
 # Save the captured frame as an image
-cv2.imwrite("../vision/pic.jpg", frame)
+cv2.imwrite("vision/pic.jpg", frame)
 
 # Release the camera device
 cap.release()
