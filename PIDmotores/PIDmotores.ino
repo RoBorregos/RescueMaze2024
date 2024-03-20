@@ -7,7 +7,7 @@
 #include"Embedded_Template_Library.h"
 #include<etl/vector.h>
 #include<etl/stack.h>
-#include "map.h"
+#include "Map.h"
 #include "Tile.h"
 #include "TileDirection.h"
 #include "coord.h"
