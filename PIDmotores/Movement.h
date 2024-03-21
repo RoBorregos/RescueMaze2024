@@ -49,6 +49,8 @@ class Movement {
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
 
+        static constexpr bool kOffArray = false;
+
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
         static constexpr uint8_t kNumberOfLimitSwitches = 2;
