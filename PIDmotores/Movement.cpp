@@ -245,8 +245,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     //getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
-    const double initialFrontWallDistance = vlx[0].getRawDistance();
-    const double initialBackWallDistance = vlx[1].getRawDistance();
+    const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+    const double initialBackWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     bool moveForward = false;
     switch (state)
     {
@@ -610,7 +610,7 @@ bool Movement::isRamp() {
 double Movement::weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront) {
     double vlxDistanceTraveled = 0; // initialVlxDistanceFront - currentDistance;
     
-    if (currentDistanceBack > 1 && currentDistanceFront > 1) {
+    if (currentDistanceBack > kUnreachableDistance && currentDistanceFront > kUnreachableDistance) {
         customPrintln("Usar solo el encoder");
         customPrintln("-----------------------------");
        return allDistanceTraveled_;
@@ -628,6 +628,6 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
     customPrintln("AllDistanceTraveled:" + String(allDistanceTraveled_));
     customPrintln("VlxDistanceTraveled:" + String(vlxDistanceTraveled));
     customPrintln("WeightMovement:" + String(allDistanceTraveled_ * 0.2 + vlxDistanceTraveled_ * 0.8));
-    return (allDistanceTraveled_ * 0.1 + vlxDistanceTraveled * 0.9);
+    return (allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx);
     
 }

@@ -94,6 +94,12 @@ class Movement {
 
         double targetOrientation_ = 0;
 
+        const double kUnreachableDistance = 0.60;
+
+        static constexpr double kWeightEncoders = 0.1;
+
+        static constexpr double kWeightVlx = 0.9;
+
         PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
