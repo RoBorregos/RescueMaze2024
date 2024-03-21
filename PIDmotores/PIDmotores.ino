@@ -16,14 +16,22 @@ void setup(){
     while (!Serial) delay(10); // wait for serial port to open!
     customPrintln("Serial ready");
     robot.setup();
+
+    
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    
     // robot.goForward();
 
     // robot.turnLeft();
-    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    //robot.moveMotors(MovementState::kForward, 0, 0.3);
+    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
     if (robot.isRamp()){
         robot.moveMotors(MovementState::kRamp, 0, 0);
     }
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0); */
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
@@ -62,7 +70,7 @@ void loop() {
     //robot.moveMotors(MovementState::kBackward, 0, 0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    
+  
 
    /*  robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
