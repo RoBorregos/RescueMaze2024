@@ -22,8 +22,8 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-#define DEBUG_ALGORITHM 0
-#define USING_SCREEN 1
+#define DEBUG_ALGORITHM 1
+#define USING_SCREEN 0
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
 
@@ -42,7 +42,7 @@ etl::stack<coord, kMaxMapSize> path;
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
 uint16_t robotOrientation = 0;
-coord robotCoord = coord{1,1,1};
+coord robotCoord = coord{0,0,0};
 
 void screenPrint(const String& output){
     display.clearDisplay();
@@ -171,18 +171,17 @@ void dijsktra(const coord& start, const coord& end) {
     coord currentCoord = start;
     int minDistance;
     #if DEBUG_ALGORITHM 
-    customPrintln("before while");
+    customPrintln("before while"); //error in while
     #endif
     while (!explored[tilesMap.getIndex(end)]) {
+        customPrintln(String(currentCoord.x) + " " + String(currentCoord.y));
         // update distance.
         for (const TileDirection& direction : directions) {
             const Tile& currentTile = tiles[tilesMap.getIndex(currentCoord)];
             const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
-            const Tile& adjacentTile = tiles[tilesMap.getIndex(adjacentCoord)];
             // check if there's an adjecent tile and there's no wall.
-            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction) && !adjacentTile.hasBlackTile()) {
-                // const int weight = currentTile.weights_[static_cast<int>(direction)] + distance[tilesMap.getIndex(currentCoord)];
-                const int weight = adjacentTile.weight_ + distance[tilesMap.getIndex(currentCoord)];
+            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction) && !tiles[tilesMap.getIndex(adjacentCoord)].hasBlackTile()) {
+                const int weight = tiles[tilesMap.getIndex(adjacentCoord)].weight_ + distance[tilesMap.getIndex(currentCoord)];
                 // check if the new weight to visit the adjecent tile is less than the current weight.
                 if (weight < distance[tilesMap.getIndex(adjacentCoord)]) {
                     distance[tilesMap.getIndex(adjacentCoord)] = weight;
@@ -190,9 +189,10 @@ void dijsktra(const coord& start, const coord& end) {
                 }
             }
         }
+        customPrintln("after for");
         // find next tile.
         minDistance = INT_MAX;
-        for (int i = tilesMap.positions.size() - 1; i >= 0; --i) {
+        for (int i = 0; i < tilesMap.positions.size(); ++i) {
             const coord& current = tilesMap.positions[i];
             const int currentDistance = distance[tilesMap.getIndex(current)];
             if (currentDistance < minDistance && !explored[tilesMap.getIndex(current)]) {
@@ -239,12 +239,10 @@ void depthFirstSearch() {
         previousPositions.push_back(kInvalidPosition);
     }
     Map visitedMap = Map();
-    etl::vector<bool, kMaxMapSize> visited; // Maybe not necessary.
     etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
     bool wall;
     bool alreadyConnected;
-    bool visitedFlag;
     coord nextTileCoord;
     TileDirection oppositeDirection;
     unvisited.push(robotCoord);
@@ -257,19 +255,9 @@ void depthFirstSearch() {
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
         // check if the tile has been visited.
-        visitedFlag = false;
         customPrint("visitedMap size = ");
         customPrintln(visitedMap.positions.size());
-        for (int i=0; i<visitedMap.positions.size(); ++i) {
-            if (visitedMap.positions[i] == currentTileCoord) {
-                if (visited[i] == true) {
-                    visitedFlag = true;
-                    break;
-                }
-            }
-        }
-
-        if (visitedFlag) {
+        if (visitedMap.getIndex(currentTileCoord) != kInvalidIndex) {
             continue;
         }
         #if DEBUG_ALGORITHM 
@@ -289,7 +277,6 @@ void depthFirstSearch() {
         #endif
         robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
-        visited.push_back(true);
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {
@@ -326,25 +313,16 @@ void depthFirstSearch() {
             // Link the two adjacent Tiles.
             currentTile->addAdjacentTile(direction, nextTile, wall);
             nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
-            visitedFlag = false; // Maybe not necessary.
-            for (int i = 0; i < visitedMap.positions.size(); ++i) {
-                if (visitedMap.positions[i] == nextTileCoord) {
-                    if (visited[i] == true) {
-                        visitedFlag = true;
-                        break;
-                    }
-                }
+            if (visitedMap.getIndex(nextTileCoord) != kInvalidIndex) {
+                continue;
             }
-
-            if(!visitedFlag) {
-                #if DEBUG_ALGORITHM || DEBUG_MERGE
-                customPrint("nextTileCoord: ");
-                customPrint(nextTileCoord.x);
-                customPrint(" ");
-                customPrintln(nextTileCoord.y);
-                #endif
-                unvisited.push(nextTileCoord);
-            }
+            unvisited.push(nextTileCoord);
+            #if DEBUG_ALGORITHM || DEBUG_MERGE
+            customPrint("nextTileCoord: ");
+            customPrint(nextTileCoord.x);
+            customPrint(" ");
+            customPrintln(nextTileCoord.y);
+            #endif
         } else {
             // check walls the 4 adjacent tiles.
             for (const TileDirection& direction : directions) {
@@ -373,9 +351,6 @@ void depthFirstSearch() {
                     customPrintln(robotOrientation);
                     wall = robot.checkWallsDistances(direction, robotOrientation);
                     if (wall) {
-                        #if DEBUG_ALGORITHM
-                        customPrintln("Wall found");
-                        #endif
                         #if USING_SCREEN
                         switch (direction)
                         {
@@ -397,9 +372,6 @@ void depthFirstSearch() {
                         #endif
                     }
                     else {
-                        #if DEBUG_ALGORITHM
-                        customPrintln("No wall found");
-                        #endif
                         #if USING_SCREEN
                         switch (direction)
                         {
@@ -433,25 +405,16 @@ void depthFirstSearch() {
                     // Check if there's a wall between the two adjacent Tiles.
                     if (!wall) {
                         // if the tile has not been visited, add it to the queue.
-                        visitedFlag = false; //maybe not necessary.
-                        for (int i = 0; i < visitedMap.positions.size(); ++i) {
-                            if (visitedMap.positions[i] == nextTileCoord) {
-                                if (visited[i] == true) {
-                                    visitedFlag = true;
-                                    break;
-                                }
-                            }
+                        if (visitedMap.getIndex(nextTileCoord) != kInvalidIndex) {
+                            continue;
                         }
-
-                        if(!visitedFlag) {
-                            #if DEBUG_ALGORITHM || DEBUG_MERGE
-                            customPrint("nextTileCoord: ");
-                            customPrint(nextTileCoord.x);
-                            customPrint(" ");
-                            customPrintln(nextTileCoord.y);
-                            #endif
-                            unvisited.push(nextTileCoord);
-                        }
+                        unvisited.push(nextTileCoord);
+                        // #if DEBUG_ALGORITHM || DEBUG_MERGE
+                        // customPrint("nextTileCoord: ");
+                        // customPrint(nextTileCoord.x);
+                        // customPrint(" ");
+                        // customPrintln(nextTileCoord.y);
+                        // #endif
                     }
                 }
             }

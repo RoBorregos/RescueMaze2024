@@ -9,6 +9,7 @@ Tile::Tile(){
     }
 
     this->data_ = '\0';
+    this->weight_ = 0;
 }
 
 Tile::Tile(const coord& position) {
@@ -20,6 +21,7 @@ Tile::Tile(const coord& position) {
     }
 
     this->data_ = '\0';
+    this->weight_ = 0;
 }
 
 void Tile::setWall(const TileDirection direction, const bool wall) {
