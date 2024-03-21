@@ -23,7 +23,7 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 1
-#define USING_SCREEN 0
+#define USING_SCREEN 1
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
 
@@ -150,13 +150,12 @@ void followPath() {
 }
 
 void dijsktra(const coord& start, const coord& end) {
-    // screenPrint(String(end.x) + " " + String(end.y));
-    customPrintln(end.x + " " + end.y);
-    // empthy path.
+    customPrintln("End coord: " + String(end.x) + " " + String(end.y));
+    // empty path.
     while (!path.empty()) {
         path.pop();
     }
-    // initialize distance.
+    // initialize vectors.
     #if DEBUG_ALGORITHM 
     customPrintln("before distance");
     #endif
@@ -198,9 +197,9 @@ void dijsktra(const coord& start, const coord& end) {
             if (currentDistance < minDistance && !explored[tilesMap.getIndex(current)]) {
                 minDistance = currentDistance;
                 currentCoord = current;
+                customPrintln(String(currentDistance) + " " + String(current.x) + " " + String(current.y));
             }
         }
-
         explored[tilesMap.getIndex(currentCoord)] = true;
     }
     #if DEBUG_ALGORITHM 
