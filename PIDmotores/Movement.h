@@ -58,6 +58,12 @@ class Movement {
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
 
+        const double kHalfTile = 15.0; //cm
+
+        const double kLargeOfRobot = 19.9; //cm
+
+        double cmToCenterFront = 0;
+
         bool useWallDistance_ = false;
 
         const unsigned long kTimeAfterRamp = 750;
@@ -84,7 +90,7 @@ class Movement {
 
         const double kMinWallDistance = 0.0775; // 7.75 cm
 
-        static constexpr double kMaxDistanceError = 0.06;
+        static constexpr double kMaxDistanceError = 0.03;
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -94,11 +100,13 @@ class Movement {
 
         double targetOrientation_ = 0;
 
-        const double kUnreachableDistance = 0.60;
+        const double kUnreachableDistance = 1.0;
 
         static constexpr double kWeightEncoders = 0.1;
 
         static constexpr double kWeightVlx = 0.9;
+
+        const int counterMovements_ = 0;
 
         PID pidDummy_;
         PID pidForward_;
@@ -197,6 +205,8 @@ class Movement {
         void rampMovement();
 
         double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
+
+        bool centerInTile();
 };
 
 #endif
