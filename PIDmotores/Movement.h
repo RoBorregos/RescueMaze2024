@@ -84,7 +84,7 @@ class Movement {
 
         const double kMinWallDistance = 0.0775; // 7.75 cm
 
-        static constexpr double kMaxDistanceError = 0.01;
+        static constexpr double kMaxDistanceError = 0.06;
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -98,6 +98,8 @@ class Movement {
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+
+        double vlxDistanceTraveled_;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -150,7 +152,7 @@ class Movement {
 
         bool hasTraveledDistanceWithSpeed(const double distance);
 
-        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward);
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward, double initialVlxDistance);
 
         void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
@@ -187,6 +189,8 @@ class Movement {
         bool isRamp();
 
         void rampMovement();
+
+        double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 };
 
 #endif

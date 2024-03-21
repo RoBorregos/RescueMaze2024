@@ -243,9 +243,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
-    getAllWallsDistances(&wallDistances[kNumberOfVlx]);
+    //getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
-    const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
+    const double initialFrontWallDistance = vlx[0].getRawDistance();
+    const double initialBackWallDistance = vlx[1].getRawDistance();
     bool moveForward = false;
     switch (state)
     {
@@ -256,10 +257,34 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             currentState_ = MovementState::kForward;
+            bool flag = false;
+            if (initialFrontWallDistance < 0.45){
+                flag = true;
+                while (useWallDistance == true && hasTraveledWallDistance(0.06, vlx[0].getRawDistance(), moveForward, initialFrontWallDistance) == false) {
+                    // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                    // crashRight = limitSwitch_[rightLimitSwitch].getState();
+                    customPrintln("InitialFrontWallDistance:" + String(initialFrontWallDistance));
+                    customPrintln("targetDistance:" + String(targetDistance));
+                    customPrintln(vlx[0].getRawDistance());
+                    customPrintln(vlx[1].getRawDistance());
+                    customPrintln(vlx[2].getRawDistance());
+                    customPrintln(vlx[3].getRawDistance());
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                    customPrintln("DesiredWallDistance:" + String(0.06));
 
-            while (hasTraveledDistanceWithSpeed(targetDistance) == false){
+                    if (crashLeft == true && crashRight == false) {
+                        correctionAfterCrash(true, currentOrientation, useWallDistance);
+                    }
+
+                    if (crashRight == true && crashLeft == false) {
+                        correctionAfterCrash(false, currentOrientation, useWallDistance);
+                    }
+
+                }
+            }
+            /* while ((vlx[0].getRawDistance() <= 0.06 && hasTraveledDistanceWithSpeed(targetDistance) == false) == false){
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
+                crashRight = limitSwitch_[rightLimitSwitch].getState(); 
                 rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
@@ -290,26 +315,51 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 customPrintln("targetDistance:" + String(targetDistance));
                 #endif
     
-                checkWallsDistances();
-            }
+                //checkWallsDistances();
+            } */
             
-            const double desiredWallDistance = initialFrontWallDistance - targetDistance;
-            // TODO: Change the way to check the wall distance  
-            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getDistanceToCenter(), moveForward) == false) {
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
+            // const double desiredWallDistance = initialFrontWallDistance - targetDistance;
+            while (!flag && weightMovemnt(vlx[1].getRawDistance(), vlx[0].getRawDistance(), initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
+
+                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                // crashRight = limitSwitch_[rightLimitSwitch].getState(); 
+                rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
-
-                if (crashLeft == true && crashRight == false) {
-                    correctionAfterCrash(true, currentOrientation, useWallDistance);
+                
+                if (rampDetected) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Ramp detected");
+                    #endif
+                    useWallDistance = false;
                 }
 
+                // TODO: Make its own function named checkForCrashAndCorrect()
+                if (crashLeft == true && crashRight == false) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Crash left-");
+                    #endif
+                    correctionAfterCrash(true, currentOrientation, useWallDistance);
+                }
+                
                 if (crashRight == true && crashLeft == false) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Crash right-");
+                    customPrintln("Encodersssss");
+                    #endif
                     correctionAfterCrash(false, currentOrientation, useWallDistance);
                 }
 
-            } */
+                #if DEBUG_MOVEMENT
+                customPrintln("targetDistance:" + String(targetDistance));
+                #endif
+
+                hasTraveledDistanceWithSpeed(targetDistance);
+                // hasTraveledWallDistance(desiredWallDistance, vlx[0].getRawDistance(), moveForward, initialFrontWallDistance);
+            }
+            allDistanceTraveled_ = 0;
+
+            // TODO: Change the way to check the wall distance  
 
             stopMotors();
             
@@ -324,9 +374,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
-            }
+            } */
 
             stopMotors();
             
@@ -522,19 +572,21 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
-    if (allDistanceTraveled_ >= distance) {
+   /*  if (allDistanceTraveled_ >= distance) {
         allDistanceTraveled_ = 0;
         return true;
-    }
+    } */
     
     return false;
 }
 
-bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward) {
+bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward, double initialVlxDistance) {
     const double distanceDiff = (targetDistance - currentDistance);
-    moveForward = distanceDiff <= 0;
-
+    //moveForward = distanceDiff < 0;
+    customPrintln("DistanceDiff:" + String(distanceDiff));
+    // vlxDistanceTraveled_ =  initialVlxDistance - currentDistance;
     return abs(distanceDiff) < kMaxDistanceError;
+
 }
 
 bool Movement::isRamp() {
@@ -553,4 +605,29 @@ bool Movement::isRamp() {
     customPrintln("FALSE");
     #endif
     return false;
+}
+
+double Movement::weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront) {
+    double vlxDistanceTraveled = 0; // initialVlxDistanceFront - currentDistance;
+    
+    if (currentDistanceBack > 1 && currentDistanceFront > 1) {
+        customPrintln("Usar solo el encoder");
+        customPrintln("-----------------------------");
+       return allDistanceTraveled_;
+    } else if (currentDistanceBack < currentDistanceFront) {
+        customPrintln("Usar solo el VLX de atras");
+        customPrintln("-----------------------------");
+        vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
+    } else {
+        customPrintln("Usar solo el VLX de adelante");
+        customPrintln("-----------------------------");
+        vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
+    }
+    customPrintln(String(currentDistanceBack));
+    
+    customPrintln("AllDistanceTraveled:" + String(allDistanceTraveled_));
+    customPrintln("VlxDistanceTraveled:" + String(vlxDistanceTraveled));
+    customPrintln("WeightMovement:" + String(allDistanceTraveled_ * 0.2 + vlxDistanceTraveled_ * 0.8));
+    return (allDistanceTraveled_ * 0.1 + vlxDistanceTraveled * 0.9);
+    
 }
