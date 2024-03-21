@@ -1,2 +1,5 @@
+.vscode/*
+# .algorithm/agoritmo.exe
+# .algorithm/tempCodeRunnerFile.cpp
 .vscode
 *.json

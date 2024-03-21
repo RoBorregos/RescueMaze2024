@@ -4,6 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
+#include "TileDirection.h"
 #include "LimitSwitch.h"
 #include "TCS.h"
 
@@ -55,6 +56,14 @@ class Movement {
         LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         static constexpr uint8_t kNumberOfVlx = 5;
+
+        // static constexpr uint8_t kOffArray = -1;
+
+        // static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+        const int kTargetOrientations[4] = {0, 90, 180, 270};
+
+        static constexpr uint8_t kNumberOfTargetOrientations = 4;
+
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
@@ -87,9 +96,9 @@ class Movement {
 
         VLX vlx[kNumberOfVlx];
 
-        double wallDistances[kNumberOfVlx];
+        double wallDistances_[kNumberOfVlx];
 
-        const double kMinWallDistance = 0.0775; // 7.75 cm
+        const double kMinWallDistance = 0.15; // 7.75 cm 0.0775 m
 
         static constexpr double kMaxDistanceError = 0.03;
 
@@ -98,6 +107,10 @@ class Movement {
         static constexpr double kMinRampOrientation = 17.0;
 
         static constexpr long long kOneSecInMs = 1000;
+
+        static constexpr double kOneTileDistance = 0.27; //m
+
+        static constexpr long long kTileDirections = 4;
 
         double targetOrientation_ = 0;
 
@@ -205,13 +218,13 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward();
+        void goForward(const double targetOrientation);
 
-        void goBackward();
+        void goBackward(const double targetOrientation);
 
-        void turnLeft();
+        void turnLeft(const double targetOrientation);
 
-        void turnRight();
+        void turnRight(const double targetOrientation);
 
         void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
 
@@ -238,6 +251,9 @@ class Movement {
         char checkColors();
 
         bool isCheckPoint();
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
+
+        bool checkWallsDistances(const TileDirection targetDirection, const double currentOrientation);
         bool isRamp();
 
         void rampMovement();
@@ -245,6 +261,7 @@ class Movement {
         double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 
         bool centerInTile();
+        int directionRamp();
 };
 
 #endif
