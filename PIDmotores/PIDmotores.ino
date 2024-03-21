@@ -23,7 +23,7 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 1
-#define USING_SCREEN 0
+#define USING_SCREEN 1
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
 
@@ -52,7 +52,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    delay(1500);
+    delay(1000);
     #endif
 }
 

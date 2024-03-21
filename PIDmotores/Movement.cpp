@@ -614,11 +614,14 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 }
 
 bool Movement::isRamp() {
+    
     const double currentOrientationY = bno_.getOrientationY();
+    customPrintln("OrientationY:" + String(bno_.getOrientationY()));
     #if DEBUG_MOVEMENT
     customPrintln("OrientationY:" + String(currentOrientationY));
     #endif
     if (currentOrientationY >= kMinRampOrientation || currentOrientationY <= -kMinRampOrientation) {
+        customPrintln("TRUE");
         #if DEBUG_MOVEMENT
         customPrintln("TRUE");
         #endif
