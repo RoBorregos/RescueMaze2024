@@ -33,8 +33,8 @@ namespace Pins {
     constexpr uint8_t vlxPins[5] = {
         // PINES DEFINIDOS EL DIA 20 DE MARZO JALAN BIEN CAMBIARLO EN EL
         0,  // FRONT_LEFT
-        2, // LEFT
         1, // BACK
+        2, // LEFT
         4,  // RIGHT
         3 // FRONT_RIGHT
     };

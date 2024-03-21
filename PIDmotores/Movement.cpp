@@ -319,7 +319,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             } */
             
             // const double desiredWallDistance = initialFrontWallDistance - targetDistance;
-            while (!flag && weightMovemnt(vlx[1].getRawDistance(), vlx[0].getRawDistance(), initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
+            while (!flag && weightMovemnt(vlx[2].getRawDistance(), vlx[0].getRawDistance(), initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
 
                 // crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 // crashRight = limitSwitch_[rightLimitSwitch].getState(); 
