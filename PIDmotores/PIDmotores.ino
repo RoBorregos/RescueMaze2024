@@ -23,9 +23,10 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 1
-#define USING_SCREEN 1
+#define USING_SCREEN 0
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
+#define NO_ROBOT 0
 
 Movement robot;
 
@@ -43,6 +44,16 @@ constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown
 
 uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
+
+// etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> maze = {
+//     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
+//     {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
+//     {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
+//     {'#', ' ', ' ', ' ', '#', ' ', '#', ' ', ' ', ' ', '#'}, // 3.
+//     {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
+//     {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
+//     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
+// };
 
 void screenPrint(const String& output){
     display.clearDisplay();
@@ -159,13 +170,14 @@ void dijsktra(const coord& start, const coord& end) {
     #if DEBUG_ALGORITHM 
     customPrintln("before distance");
     #endif
-    for (int i = 0; i < distance.size(); ++i) {
+    for (int i = 0; i < tilesMap.positions.size(); ++i) {
         distance[i] = INT_MAX;
         explored[i] = false;
         previousPositions[i] = kInvalidPosition;
     }
-    distance[tilesMap.getIndex(start)] = 0;
-    explored[tilesMap.getIndex(start)] = true;
+    const int startIndex = tilesMap.getIndex(start);
+    distance[startIndex] = 0;
+    explored[startIndex] = true;
     // explore the map.
     coord currentCoord = start;
     int minDistance;
@@ -173,22 +185,30 @@ void dijsktra(const coord& start, const coord& end) {
     customPrintln("before while"); //error in while
     #endif
     while (!explored[tilesMap.getIndex(end)]) {
-        customPrintln(String(currentCoord.x) + " " + String(currentCoord.y));
-        // update distance.
+        customPrintln("Current tile: " + String(currentCoord.x) + " " + String(currentCoord.y));
+        // Get current tile.
+        const int currentCoordIndex = tilesMap.getIndex(currentCoord);
+        const Tile& currentTile = tiles[currentCoordIndex];
+        // update adjecent tiles distances.
         for (const TileDirection& direction : directions) {
-            const Tile& currentTile = tiles[tilesMap.getIndex(currentCoord)];
-            const coord& adjacentCoord = currentTile.adjacentTiles_[static_cast<int>(direction)]->position_;
-            // check if there's an adjecent tile and there's no wall.
-            if (currentTile.adjacentTiles_[static_cast<int>(direction)] != NULL && !currentTile.hasWall(direction) && !tiles[tilesMap.getIndex(adjacentCoord)].hasBlackTile()) {
-                const int weight = tiles[tilesMap.getIndex(adjacentCoord)].weight_ + distance[tilesMap.getIndex(currentCoord)];
-                // check if the new weight to visit the adjecent tile is less than the current weight.
-                if (weight < distance[tilesMap.getIndex(adjacentCoord)]) {
-                    distance[tilesMap.getIndex(adjacentCoord)] = weight;
-                    previousPositions[tilesMap.getIndex(adjacentCoord)] = currentCoord;
+            const int staticDirection = static_cast<int>(direction);
+            // check if there's an adjecent tile.
+            if (currentTile.adjacentTiles_[staticDirection] != NULL) { // isn't entering here
+                const coord& adjacentCoord = currentTile.adjacentTiles_[staticDirection]->position_;
+                const int adjacentCoordIndex = tilesMap.getIndex(adjacentCoord);
+                customPrintln("adjecent coord at: " + String(adjacentCoord.x) + " " + String(adjacentCoord.y));
+                // check if there's a wall between the two adjacent tiles and if there isn't a hole.
+                if (!currentTile.hasWall(direction) && !tiles[adjacentCoordIndex].hasBlackTile()) {
+                    const int weight = tiles[adjacentCoordIndex].weight_ + distance[currentCoordIndex];
+                    // check if the new weight to visit the adjecent tile is less than the current weight.
+                    if (weight < distance[adjacentCoordIndex]) {
+                        customPrintln("updated weight: " + String(weight));
+                        distance[adjacentCoordIndex] = weight;
+                        previousPositions[adjacentCoordIndex] = currentCoord;
+                    }
                 }
             }
         }
-        customPrintln("after for");
         // find next tile.
         minDistance = INT_MAX;
         for (int i = 0; i < tilesMap.positions.size(); ++i) {
@@ -197,7 +217,7 @@ void dijsktra(const coord& start, const coord& end) {
             if (currentDistance < minDistance && !explored[tilesMap.getIndex(current)]) {
                 minDistance = currentDistance;
                 currentCoord = current;
-                customPrintln(String(currentDistance) + " " + String(current.x) + " " + String(current.y));
+                customPrintln("lowest distance: " + String(currentDistance) + " of " + String(current.x) + " " + String(current.y));
             }
         }
         explored[tilesMap.getIndex(currentCoord)] = true;
