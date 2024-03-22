@@ -73,6 +73,7 @@ def generate_bbox(img):
 def post_processing(img,dilate):
     size_img = cv2.resize(img,(100,100))
     size_img = cv2.dilate(size_img, None, iterations=dilate)
+    size_img = cv2.resize(img,(32,32))
     return size_img
     
 
@@ -87,7 +88,7 @@ if video_capture.isOpened():
             new_img = generate_bbox(new_img)
             if new_img != "":
                 
-                new_img = post_processing(new_img,3)
+                new_img = post_processing(new_img,4)
                 cv2.imshow("Final", new_img)
 
 
