@@ -16,11 +16,11 @@ Default 1920x1080 displayd in a 1/4 size window
 
 def gstreamer_pipeline(
     sensor_id=0,
-    capture_width=1920,
-    capture_height=1080,
-    display_width=960,
-    display_height=540,
-    framerate=30,
+    capture_width=640,
+    capture_height=480,
+    display_width=640,
+    display_height=480,
+    framerate=90,
     flip_method=0,
 ):
     return (
