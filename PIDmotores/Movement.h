@@ -126,6 +126,10 @@ class Movement {
         static constexpr uint8_t kColorAmount = 3;
         static constexpr uint8_t kColorThresholdsAmount = 6;
         const char colorList[kColorAmount + 1] = {"RNB"};
+
+        // ==============================================================================================
+        // In the competence the colors will may be different so we need to change the values by testing
+        // ==============================================================================================
         const int colors[kColorAmount][kColorAmount] = {
             // RED
             {257, 75, 71},
@@ -134,6 +138,7 @@ class Movement {
             // BLUE
             {97,99,141}
         };
+        
         const int colorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
             {76, 86, 33, 56, 30, 45},
