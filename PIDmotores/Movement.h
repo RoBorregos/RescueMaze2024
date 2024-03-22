@@ -124,8 +124,9 @@ class Movement {
         TCS *t = nullptr;
         static constexpr int kPrecision = 100;
         static constexpr uint8_t kColorAmount = 3;
+        static constexpr uint8_t kColorThresholdsAmount = 6;
         const char colorList[kColorAmount + 1] = {"RNB"};
-        const int colors[kColorAmount][3] = {
+        const int colors[kColorAmount][kColorAmount] = {
             // RED
             {257, 75, 71},
             // BLACK
@@ -133,7 +134,7 @@ class Movement {
             // BLUE
             {97,99,141}
         };
-        const int colorThresholds[kColorAmount][6] = {
+        const int colorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
             {76, 86, 33, 56, 30, 45},
             {85, 150, 80, 140, 120, 175}

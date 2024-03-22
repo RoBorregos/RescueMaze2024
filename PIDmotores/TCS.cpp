@@ -25,7 +25,7 @@ void TCS::init() {
     }
 }
 
-void TCS::init(const int colors[][3], const int colorAmount) {
+void TCS::init(const int colors[][kColorAmount_], const int colorAmount) {
     this->colors_ = colors;
     this->colorAmount_ = colorAmount;
     init();

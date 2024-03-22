@@ -15,7 +15,6 @@ class TCS {
 
         static constexpr int kColorAmount_ = 3;
 
-        static constexpr int kColorThresholdsAmount_ = 6;
 
         int colorAmount_ = 3;
         int precision_;
@@ -25,9 +24,11 @@ class TCS {
         float blue_;
         const int (*colors_)[kColorAmount_];
 
+        static constexpr int kColorThresholdsAmount_ = 6;
         const int (*colorThresholds_)[kColorThresholdsAmount_];
 
         static constexpr int kColumnAmount_ = 3;
+
 
         static constexpr int kPrecision_ = 10;
 
@@ -85,7 +86,7 @@ class TCS {
 
         void init(const int colors[][kColumnAmount_], const int colorAmount, const char colorList[]);
 
-        void init(const int colors[][kColumnAmount_], const int colorAmount, const char colorList[], const int colorThresholds[][6]);
+        void init(const int colors[][kColumnAmount_], const int colorAmount, const char colorList[], const int colorThresholds[][kColorThresholdsAmount_]);
 
         void setMux(const uint8_t posMux);
 

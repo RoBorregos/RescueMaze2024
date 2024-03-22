@@ -6,8 +6,6 @@
 
 #define DEBUG_MOVEMENT 0
 
-
-
 Movement::Movement() {
     
 }
@@ -64,7 +62,6 @@ void Movement::setupTCS() {
     tcs_.setPrecision(kPrecision);
     tcs_.init(colors, kColorAmount, colorList, colorThresholds);
 }
-
 
 void Movement::stopMotors() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
@@ -272,7 +269,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             checkpointTile_ = false;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
+                customPrintln("Distance:" + String(allDistanceTraveled_));
                 checkColors();
+                customPrintln("Color:" + String(getTCSInfo()));
+                customPrintln("blackTile" + String(blackTile_));
+                if (wasBlackTile()) {
+                    customPrintln("Black tile detected");
+                    return;
+                }
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
@@ -578,17 +582,25 @@ void Movement::checkTCS() {
 char Movement::checkColors() {
     char color = getTCSInfo();
 
-    if (color == 'n') {
+    if (color == 'N') {
         blackTile_ = true;
-        moveMotors(MovementState::kStop, targetOrientation_, targetDistance_);
+        double desiredDistance = allDistanceTraveled_;
+        targetDistance_ = desiredDistance;
+        customPrintln("blackTile__" + String(blackTile_));
+        stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
-        wasBlackTile();
-    } else if (color == 'b') {
+        return color;
+    } else if (color == 'B') {
         blueTile_ = true;
+        stopMotors();
         delay(5000);
-    } else if (color == 'r') {
+        return color;
+    } else if (color == 'R') {
         checkpointTile_ = true;
+        stopMotors();
+        return color;
     }
+    return color;
 }
 
 bool Movement::isCheckPoint() {
@@ -614,22 +626,13 @@ bool Movement::isRamp() {
 }
 
 bool Movement::wasBlackTile() {
-    if (blackTile_ == true) {
-        return true;
-    }
-    return false;
+    return blackTile_;
 }
 
 bool Movement::isBlueTile() {
-    if (blueTile_ == true) {
-        return true;
-    }
-    return false;
+    return blueTile_;
 }
 
 bool Movement::isCheckpointTile() {
-    if (checkpointTile_ == true) {
-        return true;
-    }
-    return false;
+    return checkpointTile_;
 }
