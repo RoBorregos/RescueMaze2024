@@ -59,21 +59,16 @@ camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
 video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
 #video_capture = cv2.VideoCapture(camera_source)
 
-def generate_bbox(img,frame,text="",showbbox=False):
+def generate_bbox(img):
     mask_ = Image.fromarray(img)
     bbox = mask_.getbbox()
-    if bbox is not None and showbbox:
+    if bbox is not None :
         x1,y1,x2,y2 = bbox
-        frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
-        if text:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-        return True 
-    elif bbox is not None:
-        return True
+        frame = img[x1:x2,y1:y2]
     else:
-        frame = frame
-        return False
+        frame =""
+    
+    return frame
 
 
 if video_capture.isOpened():
@@ -84,6 +79,10 @@ if video_capture.isOpened():
             cv2.imshow("binary", binary_img)      
             rotated = rotate_image(binary_img)
             cv2.imshow("Rotated", rotated)
+            final_cut = generate_bbox(rotated)
+            
+            if final_cut != "":
+                cv2.imshow("Final", final_cut)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
