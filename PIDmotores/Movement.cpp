@@ -336,6 +336,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             moveForward = false;
+            
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
@@ -343,9 +344,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
-            }
+            } */
 
             stopMotors();
             
@@ -586,6 +587,7 @@ char Movement::checkColors() {
         blackTile_ = true;
         double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
+        allDistanceTraveled_ = 0;
         customPrintln("blackTile__" + String(blackTile_));
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
