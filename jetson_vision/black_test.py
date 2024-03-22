@@ -1,123 +1,92 @@
 import cv2
 import numpy as np
+import camera_activate
+import time as t 
+from PIL import Image
 
 
-def gstreamer_pipeline(
-    sensor_id=0,
-    capture_width=640,
-    capture_height=480,
-    display_width=640,
-    display_height=480,
-    framerate=90,
-    flip_method=0,
-):
-    return (
-        "nvarguscamerasrc sensor-id=%d ! "
-        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
-        "nvvidconv flip-method=%d ! "
-        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
-        "videoconvert ! "
-        "video/x-raw, format=(string)BGR ! appsink"
-        % (
-            sensor_id,
-            capture_width,
-            capture_height,
-            framerate,
-            flip_method,
-            display_width,
-            display_height,
-        )
-    )
+def areaFilter(minArea, inputImage):
+    # Perform an area filter on the binary blobs:
+    componentsNumber, labeledImage, componentStats, componentCentroids = \
+        cv2.connectedComponentsWithStats(inputImage, connectivity=4)
+    # Get the indices/labels of the remaining components based on the area stat
+    # (skip the background component at index 0)
+    remainingComponentLabels = [i for i in range(1, componentsNumber) if componentStats[i][4] >= minArea]
+    # Filter the labeled pixels based on the remaining labels,
+    # assign pixel intensity to 255 (uint8) for the remaining pixels
+    filteredImage = np.where(np.isin(labeledImage, remainingComponentLabels) == True, 255, 0).astype('uint8')
 
-def empty(a):
-    pass
+    return filteredImage
 
-def stackImages(scale,imgArray):
-    rows = len(imgArray)
-    cols = len(imgArray[0])
-    rowsAvailable = isinstance(imgArray[0], list)
-    width = imgArray[0][0].shape[1]
-    height = imgArray[0][0].shape[0]
-    if rowsAvailable:
-        for x in range ( 0, rows):
-            for y in range(0, cols):
-                if imgArray[x][y].shape[:2] == imgArray[0][0].shape [:2]:
-                    imgArray[x][y] = cv2.resize(imgArray[x][y], (0, 0), None, scale, scale)
-                else:
-                    imgArray[x][y] = cv2.resize(imgArray[x][y], (imgArray[0][0].shape[1], imgArray[0][0].shape[0]), None, scale, scale)
-                if len(imgArray[x][y].shape) == 2: imgArray[x][y]= cv2.cvtColor( imgArray[x][y], cv2.COLOR_GRAY2BGR)
-        imageBlank = np.zeros((height, width, 3), np.uint8)
-        hor = [imageBlank]*rows
-        hor_con = [imageBlank]*rows
-        for x in range(0, rows):
-            hor[x] = np.hstack(imgArray[x])
-        ver = np.vstack(hor)
+
+def rotate_image(binary_img):
+    coords = np.column_stack(np.where(binary_img > 0))
+    angle = cv2.minAreaRect(coords)[-1]
+    if angle < -45:
+        angle = -(90 + angle)
     else:
-        for x in range(0, rows):
-            if imgArray[x].shape[:2] == imgArray[0].shape[:2]:
-                imgArray[x] = cv2.resize(imgArray[x], (0, 0), None, scale, scale)
-            else:
-                imgArray[x] = cv2.resize(imgArray[x], (imgArray[0].shape[1], imgArray[0].shape[0]), None,scale, scale)
-            if len(imgArray[x].shape) == 2: imgArray[x] = cv2.cvtColor(imgArray[x], cv2.COLOR_GRAY2BGR)
-        hor= np.hstack(imgArray)
-        ver = hor
-    return ver
+        angle = -angle
+    (h, w) = binary_img.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(binary_img, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    return rotated
 
-cv2.namedWindow("TrackBars")
-cv2.resizeWindow("TrackBars",640,240)
-cv2.createTrackbar("Hue Min","TrackBars",0,179,empty)
-cv2.createTrackbar("Hue Max","TrackBars",19,179,empty)
-cv2.createTrackbar("Sat Min","TrackBars",110,255,empty)
-cv2.createTrackbar("Sat Max","TrackBars",240,255,empty)
-cv2.createTrackbar("Val Min","TrackBars",153,255,empty)
-cv2.createTrackbar("Val Max","TrackBars",255,255,empty)
-cv2.createTrackbar("pack1","TrackBars",0,100,empty)
-cv2.createTrackbar("pack2","TrackBars",0,100,empty)
-cv2.createTrackbar("pack3","TrackBars",0,100,empty)
+def process_image(img):
+    imgFloat = img.astype(np.float) / 255.0
+    kChannel = 1 - np.max(imgFloat, axis=2)
+    kChannel = (255*kChannel).astype(np.uint8)
+    #cv2.imshow('kChannel', kChannel)
+    binaryThresh = 170
+    _, binaryImage = cv2.threshold(kChannel, binaryThresh, 255, cv2.THRESH_BINARY)
+    #cv2.imshow("binary", binaryImage)
+    kernelSize = 3
+    opIterations = 2
+    morphKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernelSize, kernelSize))
+    binaryImage = cv2.morphologyEx(binaryImage, cv2.MORPH_CLOSE, morphKernel, None, None, opIterations, cv2.BORDER_REFLECT101)
+    #cv2.imshow("binary2", binaryImage)
+    #dudoso
+    minArea = 1000
+    filteredImage = areaFilter(minArea, binaryImage)
+    #cv2.imshow("filtered", filteredImage)
+    return filteredImage
 
 
+    
+camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
 
 
-video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
+#video_capture = cv2.VideoCapture(camera_source)
+
+def generate_bbox(img,frame,text="",showbbox=False):
+    mask_ = Image.fromarray(img)
+    bbox = mask_.getbbox()
+    if bbox is not None and showbbox:
+        x1,y1,x2,y2 = bbox
+        frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
+        if text:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        return True 
+    elif bbox is not None:
+        return True
+    else:
+        frame = frame
+        return False
+
+
 if video_capture.isOpened():
     try:
         while True:
             ret_val, img = video_capture.read()
-            img
-            imgHSV = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-            h_min = cv2.getTrackbarPos("Hue Min","TrackBars")
-            h_max = cv2.getTrackbarPos("Hue Max", "TrackBars")
-            s_min = cv2.getTrackbarPos("Sat Min", "TrackBars")
-            s_max = cv2.getTrackbarPos("Sat Max", "TrackBars")
-            v_min = cv2.getTrackbarPos("Val Min", "TrackBars")
-            v_max = cv2.getTrackbarPos("Val Max", "TrackBars")
-            pack1 = cv2.getTrackbarPos("pack1", "TrackBars") /100.0
-            pack2 = cv2.getTrackbarPos("pack2", "TrackBars") /100.0
-            pack3 = cv2.getTrackbarPos("pack3", "TrackBars") /100.0
+            binary_img = process_image(img)
+            cv2.imshow("binary", binary_img)      
+            rotated = rotate_image(binary_img)
+            cv2.imshow("Rotated", rotated)
 
-            print(h_min,h_max,s_min,s_max,v_min,v_max)
-
-            imgHSV[:,:,0] = imgHSV[:,:,0] * pack1
-
-            imgHSV[:,:,1] = imgHSV[:,:,1] * pack2
-
-            imgHSV[:,:,2] = imgHSV[:,:,2] * pack3
-
-            lower = np.array([h_min,s_min,v_min])
-            upper = np.array([h_max,s_max,v_max])
-            mask = cv2.inRange(imgHSV,lower,upper)  
-            imgResult = cv2.bitwise_and(img,img,mask=mask)
-
-
-            # cv2.imshow("Original",img)
-            # cv2.imshow("HSV",imgHSV)
-            # cv2.imshow("Mask", mask)
-            # cv2.imshow("Result", imgResult)
-
-            imgStack = stackImages(0.6,([img,imgHSV],[mask,imgResult]))
-            cv2.imshow("Stacked Images", imgStack)
-
-            cv2.waitKey(1)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
     finally:
             video_capture.release()
             cv2.destroyAllWindows()

@@ -66,7 +66,7 @@ if video_capture.isOpened():
             # cv2.imshow("Original",img)
             # cv2.imshow("Red",img_red)
             # cv2.imshow("Yellow",img_yellow)
-            cv2.imshow("Blue",img_blue)
+            #cv2.imshow("Blue",img_blue)
             
             #Break with q key
             if cv2.waitKey(1) & 0xFF == ord('q'):
