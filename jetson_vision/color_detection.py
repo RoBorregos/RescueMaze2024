@@ -1,8 +1,12 @@
 import cv2
 import numpy as np
 import camera_activate
+from PIL import Image
 
-def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0 , dilate=0):
+
+camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
+
+def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0,dilate=0):
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     imgHSV = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     imgHSV[:,:,0] = imgHSV[:,:,0] * hue
@@ -18,23 +22,49 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
 
     return imgResult
      
+def generate_bbox(img,frame,text=""):
+    mask_ = Image.fromarray(img)
+    bbox = mask_.getbbox()
+    if bbox is not None:
+        x1,y1,x2,y2 = bbox
+        frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
+        if text:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        return True
+    else:
+        frame = frame
+        return False
+    
+    
 
-video_capture = cv2.VideoCapture(camera_activate.gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
+#video_capture = cv2.VideoCapture(camera_source)
 
 if video_capture.isOpened():
     try:
         while True:
             ret_val, img = video_capture.read()
+
+            #PROCESS IMG FOR COLOR SEGMENTATION
             img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
             img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
             img_blue = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
 
-            cv2.imshow("Original",img)
-            cv2.imshow("Red",img_red)
-            cv2.imshow("Yellow",img_yellow)
-            cv2.imshow("Blue",img_blue)
+            #BOUNDING BOX GENERATION
+            frame = img.copy()
+            generate_bbox(img_red,frame,"Red")
+            generate_bbox(img_yellow,frame,"Yellow")
+            generate_bbox(img_blue,frame,"Blue")
 
-
+            #DISPLAY
+            cv2.imshow("bounding",frame)
+            # cv2.imshow("Original",img)
+            # cv2.imshow("Red",img_red)
+            # cv2.imshow("Yellow",img_yellow)
+            # cv2.imshow("Blue",img_blue)
+            
+            #Break with q key
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     finally:
