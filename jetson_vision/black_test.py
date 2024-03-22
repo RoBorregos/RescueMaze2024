@@ -29,7 +29,7 @@ def rotate_image(binary_img):
     (h, w) = binary_img.shape[:2]
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(binary_img, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    rotated = cv2.warpAffine(binary_img, M, (w, h), flags=cv2.INTER_CUBIC)
     return rotated
 
 def process_image(img):
@@ -64,25 +64,32 @@ def generate_bbox(img):
     bbox = mask_.getbbox()
     if bbox is not None :
         x1,y1,x2,y2 = bbox
-        frame = img[x1:x2,y1:y2]
+        frame = img[y1:y2,x1:x2]
     else:
         frame =""
     
     return frame
 
+def post_processing(img,dilate):
+    size_img = cv2.resize(img,(100,100))
+    size_img = cv2.dilate(size_img, None, iterations=dilate)
+    return size_img
+    
 
 if video_capture.isOpened():
     try:
         while True:
             ret_val, img = video_capture.read()
             binary_img = process_image(img)
-            cv2.imshow("binary", binary_img)      
-            rotated = rotate_image(binary_img)
-            cv2.imshow("Rotated", rotated)
-            final_cut = generate_bbox(rotated)
-            
-            if final_cut != "":
-                cv2.imshow("Final", final_cut)
+            #cv2.imshow("binary", binary_img)      
+            new_img = rotate_image(binary_img)
+            #cv2.imshow("Rotated", new_img)
+            new_img = generate_bbox(new_img)
+            if new_img != "":
+                
+                new_img = post_processing(new_img,3)
+                cv2.imshow("Final", new_img)
+
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break

@@ -50,7 +50,7 @@ if video_capture.isOpened():
 
             #PROCESS IMG FOR COLOR SEGMENTATION
             img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
-            img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
+            img_yellow = get_color(img,6,39,0,255,0,255,0.58,1.7,1.03,2.04,2,5,5)
             img_blue = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
 
             #BOUNDING BOX GENERATION
