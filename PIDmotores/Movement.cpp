@@ -6,9 +6,7 @@
 
 #define DEBUG_MOVEMENT 0
 
-constexpr char Movement::colorList[];
-constexpr int Movement::colors[Movement::kColorAmount][3];
-constexpr int Movement::colorThresholds[Movement::kColorAmount][6];
+
 
 Movement::Movement() {
     
@@ -269,6 +267,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             currentState_ = MovementState::kForward;
+            blackTile_ = false;
+            blueTile_ = false;
+            checkpointTile_ = false;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 checkColors();
@@ -576,15 +577,17 @@ void Movement::checkTCS() {
 
 char Movement::checkColors() {
     char color = getTCSInfo();
-    bool checkPoint = false;
 
     if (color == 'n') {
-        moveMotors(MovementState::kStop, 0, 0);
-        moveMotors(MovementState::kBackward, 0, 0.15);
+        blackTile_ = true;
+        moveMotors(MovementState::kStop, targetOrientation_, targetDistance_);
+        moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
+        wasBlackTile();
     } else if (color == 'b') {
+        blueTile_ = true;
         delay(5000);
     } else if (color == 'r') {
-        checkPoint = isCheckPoint();
+        checkpointTile_ = true;
     }
 }
 
@@ -607,5 +610,26 @@ bool Movement::isRamp() {
     #ifndef DEBUG_MOVEMENT
     customPrintln("FALSE");
     #endif
+    return false;
+}
+
+bool Movement::wasBlackTile() {
+    if (blackTile_ == true) {
+        return true;
+    }
+    return false;
+}
+
+bool Movement::isBlueTile() {
+    if (blueTile_ == true) {
+        return true;
+    }
+    return false;
+}
+
+bool Movement::isCheckpointTile() {
+    if (checkpointTile_ == true) {
+        return true;
+    }
     return false;
 }
