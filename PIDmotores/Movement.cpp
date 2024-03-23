@@ -636,5 +636,6 @@ int Movement::directionRamp() {
         return 1;
     } else if (currentOrientationY <= -kMinRampOrientation) {
         return -1;
-    } 
+    }
+    return 0;
 }
