@@ -1,2 +1,5 @@
 .vscode
 *.json
+jetson_vision/__pycache__/
+jetson_vision/dataset/
+jetson_vision/dataset_two/
