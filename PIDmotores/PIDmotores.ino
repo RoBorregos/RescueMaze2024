@@ -411,9 +411,12 @@ void depthFirstSearch() {
                         }
                         #endif
                     }
+                    // Creates a new tile if the next tile doesn't exist.
+                    if (tilesMap.getIndex(nextTileCoord) == kInvalidIndex) {
+                        tilesMap.positions.push_back(nextTileCoord);
+                        tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
+                    }
                     // create a pointer to the next tile and asign its coordenate if it's a new Tile.
-                    tilesMap.positions.push_back(nextTileCoord);
-                    tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
                     Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
                     if (nextTile->position_ == kInvalidPosition) {
                         nextTile->setPosition(nextTileCoord);
