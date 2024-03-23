@@ -39,7 +39,7 @@ class VLX {
         VLX(const uint8_t posMux);
         void setMux(const uint8_t posMux);
         double getDistance();
-        uint16_t getRawDistance();
+        double getRawDistance();
         bool init();
         void updateDistance();
 

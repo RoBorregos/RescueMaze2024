@@ -32,10 +32,12 @@ bool VLX::init() {
     
 }
 
-uint16_t VLX::getRawDistance() {
+double VLX::getRawDistance() {
     updateDistance();
 
-    return measure_.RangeMilliMeter;
+    const double measure = (measure_.RangeMilliMeter / kMmInM_);
+
+    return measure;
 }
 
 void VLX::updateDistance() {
