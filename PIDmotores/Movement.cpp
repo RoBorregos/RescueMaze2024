@@ -251,7 +251,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
-    counter_ = 0;
+    blueTileCounter_ = 0;
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
@@ -272,7 +272,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
-                if (counter_ < 1) {
+                if (blueTileCounter_ < 1) {
                     // TODO: Optimize the time when it is blue tile
                     checkColors();
                 }
@@ -563,33 +563,23 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 }
 
 void Movement::printTCS() {
-    this->tcs_.printRGB();
+    tcs_.printRGB();
     tcs_.getColor();
 }
 
 char Movement::getTCSInfo() {
-    //rgbTCS();
     return tcs_.getColorWithThresholds();
 } 
-
-void Movement::rgbTCS() {
-    tcs_.printRGB();
-}
 
 void Movement::rgbTCSClear() {
     tcs_.printRGBC();
 }
 
-void Movement::checkTCS() {
-    tcs_.printColorMatrix();
-    tcs_.printColorList();
-}
-
 char Movement::checkColors() {
-    char color = getTCSInfo();
+    const char color = getTCSInfo();
     if (color == 'N') {
         blackTile_ = true;
-        double desiredDistance = allDistanceTraveled_;
+        const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
         allDistanceTraveled_ = 0;
         customPrintln("blackTile__" + String(blackTile_));
@@ -597,7 +587,7 @@ char Movement::checkColors() {
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
     } else if (color == 'B') {
-        counter_++;
+        ++blueTileCounter_;
         blueTile_ = true;
         stopMotors();
         delay(5000);
@@ -608,10 +598,6 @@ char Movement::checkColors() {
         return color;
     }
     return color;
-}
-
-bool Movement::isCheckPoint() {
-    return tcs_.getColor() == 'r';
 }
 
 bool Movement::isRamp() {

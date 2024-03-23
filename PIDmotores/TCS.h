@@ -16,50 +16,50 @@ class TCS {
         static constexpr int kColorAmount_ = 3;
 
 
-        int colorAmount_ = 3;
-        int precision_;
+        int8_t colorAmount_ = 3;
+        int8_t precision_;
         const char *colorList_;
         float red_;
         float green_;
         float blue_;
-        const int (*colors_)[kColorAmount_];
+        const int8_t (*colors_)[kColorAmount_];
 
-        static constexpr int kColorThresholdsAmount_ = 6;
-        const int (*colorThresholds_)[kColorThresholdsAmount_];
+        static constexpr int8_t kColorThresholdsAmount_ = 6;
+        const int8_t (*colorThresholds_)[kColorThresholdsAmount_];
 
-        static constexpr int kColumnAmount_ = 3;
+        static constexpr int8_t kColumnAmount_ = 3;
 
 
-        static constexpr int kPrecision_ = 10;
+        static constexpr int8_t kPrecision_ = 10;
 
-        static constexpr int millisToWait_ = 50;
+        static constexpr int8_t millisToWait_ = 50;
 
-        static constexpr int kMaxRedValueInBlue_ = 110;
-        static constexpr int kMinRedValueInBlue_ = 85;
+        static constexpr int8_t kMaxRedValueInBlue_ = 110;
+        static constexpr int8_t kMinRedValueInBlue_ = 85;
 
-        static constexpr int kMaxGreenValueInBlue_ = 140;
-        static constexpr int kMinGreenValueInBlue_ = 80;
+        static constexpr int8_t kMaxGreenValueInBlue_ = 140;
+        static constexpr int8_t kMinGreenValueInBlue_ = 80;
 
-        static constexpr int kMaxBlueValueInBlue_ = 170;
-        static constexpr int kMinBlueValueInBlue_ = 75;
+        static constexpr int8_t kMaxBlueValueInBlue_ = 170;
+        static constexpr int8_t kMinBlueValueInBlue_ = 75;
 
-        static constexpr int kMaxRedValueInRed_ = 270;
-        static constexpr int kMinRedValueInRed_ = 150;
+        static constexpr int8_t kMaxRedValueInRed_ = 270;
+        static constexpr int8_t kMinRedValueInRed_ = 150;
 
-        static constexpr int kMaxGreenValueInRed_ = 80;
-        static constexpr int kMinGreenValueInRed_ = 60;
+        static constexpr int8_t kMaxGreenValueInRed_ = 80;
+        static constexpr int8_t kMinGreenValueInRed_ = 60;
 
-        static constexpr int kMaxBlueValueInRed_ = 75;
-        static constexpr int kMinBlueValueInRed_ = 50;
+        static constexpr int8_t kMaxBlueValueInRed_ = 75;
+        static constexpr int8_t kMinBlueValueInRed_ = 50;
 
-        static constexpr int kMinRedValueInBlack_ = 76;
-        static constexpr int kMaxRedValueInBlack_ = 86;
+        static constexpr int8_t kMinRedValueInBlack_ = 76;
+        static constexpr int8_t kMaxRedValueInBlack_ = 86;
 
-        static constexpr int kMinGreenValueInBlack_ = 33;
-        static constexpr int kMaxGreenValueInBlack_ = 56;
+        static constexpr int8_t kMinGreenValueInBlack_ = 33;
+        static constexpr int8_t kMaxGreenValueInBlack_ = 56;
 
-        static constexpr int kMinBlueValueInBlack_ = 30;
-        static constexpr int kMaxBlueValueInBlack_ = 45;
+        static constexpr int8_t kMinBlueValueInBlack_ = 30;
+        static constexpr int8_t kMaxBlueValueInBlack_ = 45;
 
 
         static constexpr char kRedColor_ = 'r';
@@ -82,11 +82,11 @@ class TCS {
 
         void init();
 
-        void init(const int colors[][kColumnAmount_], const int colorAmount);
+        void init(const int8_t colors[][kColumnAmount_], const int8_t colorAmount);
 
-        void init(const int colors[][kColumnAmount_], const int colorAmount, const char colorList[]);
+        void init(const int8_t colors[][kColumnAmount_], const int8_t colorAmount, const char colorList[]);
 
-        void init(const int colors[][kColumnAmount_], const int colorAmount, const char colorList[], const int colorThresholds[][kColorThresholdsAmount_]);
+        void init(const int8_t colors[][kColumnAmount_], const int8_t colorAmount, const char colorList[], const int8_t colorThresholds[][kColorThresholdsAmount_]);
 
         void setMux(const uint8_t posMux);
 
