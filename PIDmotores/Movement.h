@@ -149,6 +149,8 @@ class Movement {
         bool blueTile_ = false;
         bool checkpointTile_ = false;
 
+        int counter_ = 0;
+
     public:
         Movement();
 

@@ -19,7 +19,8 @@ void setup(){
     // robot.goForward();
 
     // robot.turnLeft();
-    robot.moveMotors(MovementState::kForward, 0, 1);
+    robot.moveMotors(MovementState::kForward, 0, 0.15);
+    robot.moveMotors(MovementState::kForward, 0, 0.15);
     /* if (robot.isRamp()){
         robot.moveMotors(MovementState::kRamp, 0, 0);
     }
@@ -52,7 +53,7 @@ void setup(){
 void loop() {
     
     //robot.printTCS();
-    customPrintln(robot.getTCSInfo());
+    //customPrintln(robot.getTCSInfo());
     
     //robot.moveMotors(MovementState::kForward, 0, 10);
     //robot.setSpeed(0);

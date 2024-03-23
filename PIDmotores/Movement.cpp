@@ -251,6 +251,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
+    counter_ = 0;
+
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
     const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
@@ -270,7 +272,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
-                checkColors();
+                if (counter_ < 1) {
+                    // TODO: Optimize the time when it is blue tile
+                    checkColors();
+                }
                 customPrintln("Color:" + String(getTCSInfo()));
                 customPrintln("blackTile" + String(blackTile_));
                 if (wasBlackTile()) {
@@ -582,7 +587,6 @@ void Movement::checkTCS() {
 
 char Movement::checkColors() {
     char color = getTCSInfo();
-
     if (color == 'N') {
         blackTile_ = true;
         double desiredDistance = allDistanceTraveled_;
@@ -593,6 +597,7 @@ char Movement::checkColors() {
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
     } else if (color == 'B') {
+        counter_++;
         blueTile_ = true;
         stopMotors();
         delay(5000);
