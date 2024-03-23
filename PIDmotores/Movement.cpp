@@ -248,6 +248,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
     const double initialBackWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     bool moveForward = false;
+    
+    // A way to reset the encoders
+    if (state == MovementState::kStop && hasWallBehind()) {
+        stopMotors();
+        // approach the wall
+        if (!encodersReset){
+            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.1, useWallDistance);
+            encodersReset = true;
+            allDistanceTraveled_ = 0;
+        }
+    }
     switch (state)
     {
         case (MovementState::kStop): {
@@ -326,7 +337,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (!flag && weightMovemnt(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance(), initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
 
                 // crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                // crashRight = limitSwitch_[rightLimitSwitch].getState(); 
+                // crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
 
                 
@@ -603,7 +614,6 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     // vlxDistanceTraveled_ =  initialVlxDistance - currentDistance;
     customPrint("RETURN:" + String(abs(distanceDiff) < kMaxDistanceError));
     return abs(distanceDiff) < kMaxDistanceError;
-
 }
 
 bool Movement::isRamp() {
@@ -660,4 +670,8 @@ bool Movement::centerInTile() {
         return true;
     }
     return false;
+}
+
+bool Movement::hasWallBehind() {
+    return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.06;
 }

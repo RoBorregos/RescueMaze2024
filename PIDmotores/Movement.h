@@ -108,6 +108,8 @@ class Movement {
 
         const int counterMovements_ = 0;
 
+        bool encodersReset = false;
+
         PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
@@ -207,6 +209,8 @@ class Movement {
         double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 
         bool centerInTile();
+
+        bool hasWallBehind();
 };
 
 #endif
