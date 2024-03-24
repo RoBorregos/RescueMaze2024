@@ -127,7 +127,7 @@ class Movement {
         const char colorList[kColorAmount + 1] = {"RNB"};
 
         // ==============================================================================================
-        // In the competence the colors will may be different so we need to change the values by testing
+        // In the competence the colors may be different so we need to change the values by testing
         // ==============================================================================================
         const int16_t colors[kColorAmount][kColorAmount] = {
             // RED

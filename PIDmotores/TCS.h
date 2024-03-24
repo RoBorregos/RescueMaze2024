@@ -65,7 +65,7 @@ class TCS {
         static constexpr char kRedColor_ = 'r';
         static constexpr char kBlueColor_ = 'b';
         static constexpr char kBlackColor_ = 'n';
-        static constexpr char kUndifinedColor_ = 'u';
+        static constexpr char kUndefinedColor_ = 'u';
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
 

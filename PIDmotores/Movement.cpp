@@ -270,6 +270,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blackTile_ = false;
             blueTile_ = false;
             checkpointTile_ = false;
+            finishMovement_ = false;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
@@ -318,10 +319,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
     
                 checkWallsDistances();
-                finishMovement_ = false;
             }
 
             finishMovement_ = true;
+            checkColors();
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance  
