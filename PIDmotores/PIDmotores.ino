@@ -18,9 +18,12 @@ void setup(){
     robot.setup();
     // robot.goForward();
 
+    robot.goForward();
+    robot.goForward();
+    robot.goForward();
+
     // robot.turnLeft();
-    robot.moveMotors(MovementState::kForward, 0, 0.15);
-    robot.moveMotors(MovementState::kForward, 0, 0.15);
+    
     /* if (robot.isRamp()){
         robot.moveMotors(MovementState::kRamp, 0, 0);
     }

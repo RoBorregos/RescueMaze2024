@@ -253,6 +253,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     blueTileCounter_ = 0;
 
+
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
     const uint8_t initialFrontWallDistance = wallDistances[static_cast<uint8_t>(VlxID::kFrontRight)];
@@ -272,12 +273,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
-                if (blueTileCounter_ < 1) {
-                    // TODO: Optimize the time when it is blue tile
-                    checkColors();
-                }
+            
+                // TODO: Optimize the time when it is blue tile
+                checkColors();
+                
+                #if DEBUG_MOVEMENT
                 customPrintln("Color:" + String(getTCSInfo()));
                 customPrintln("blackTile" + String(blackTile_));
+                #endif
                 if (wasBlackTile()) {
                     customPrintln("Black tile detected");
                     return;
@@ -315,7 +318,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
     
                 checkWallsDistances();
+                finishMovement_ = false;
             }
+
+            finishMovement_ = true;
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance  
@@ -586,11 +592,14 @@ char Movement::checkColors() {
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
-    } else if (color == 'B') {
-        ++blueTileCounter_;
-        blueTile_ = true;
-        stopMotors();
-        delay(5000);
+    } else if (color == 'B' && finishMovement_ == true) {
+        if (blueTileCounter_ < 1) {
+            ++blueTileCounter_;
+            blueTile_ = true;
+            stopMotors();
+            customPrintln("DETECTED BLUE TILE");
+            delay(5000);
+        }
         return color;
     } else if (color == 'R') {
         checkpointTile_ = true;

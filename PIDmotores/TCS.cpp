@@ -25,20 +25,12 @@ void TCS::init() {
     }
 }
 
-void TCS::init(const int8_t colors[][kColorAmount_], const int8_t colorAmount) {
+void TCS::init(const int16_t colors[][3], const int8_t colorAmount, const char colorList[], const int16_t colorThresholds[][6]) {
+    this->colorThresholds_ = colorThresholds;
+    this->colorList_ = colorList;
     this->colors_ = colors;
     this->colorAmount_ = colorAmount;
     init();
-}
-
-void TCS::init(const int8_t colors[][3], const int8_t colorAmount, const char colorList[]) {
-    this->colorList_ = colorList;
-    init(colors, colorAmount);
-}
-
-void TCS::init(const int8_t colors[][3], const int8_t colorAmount, const char colorList[], const int8_t colorThresholds[][6]) {
-    this->colorThresholds_ = colorThresholds;
-    init(colors, colorAmount, colorList);
 }
 
 void TCS::setDefaultValues() {
@@ -121,7 +113,7 @@ char TCS::getColor() {
     // TODO: check each color
     if (red_ < kMaxRedValueInBlue_  && green_ > kMinGreenValueInBlue_ && blue_ > kMinBlueValueInBlue_) {
         // blue
-        colorLetter = 'b';
+        colorLetter = kBlueColor_;
         #if DEBUG_TCS
         customPrintln("blue");
         #endif
@@ -177,10 +169,14 @@ char TCS::getColorWithPrecision() {
     #endif
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
-        if (inRange(red_, colors_[i][0]) && inRange(green_, colors_[i][1]) && inRange(blue_, colors_[i][2])) {
+        if (inRange(red_, colors_[i][0]) &&
+            inRange(green_, colors_[i][1]) &&
+            inRange(blue_, colors_[i][2])) {
+
             return colorList_[i];
         }
     }
+
     return kUndifinedColor_;
 }
 
@@ -196,9 +192,11 @@ char TCS::getColorWithThresholds() {
         if (inRangeThreshold(colorThresholds_[i][0], red_, colorThresholds_[i][1]) &&
             inRangeThreshold(colorThresholds_[i][2], green_, colorThresholds_[i][3]) &&
             inRangeThreshold(colorThresholds_[i][4], blue_, colorThresholds_[i][5])) {
+
             return colorList_[i];
         }
     }
+
     return kUndifinedColor_;
 }
 
@@ -221,7 +219,7 @@ char TCS::getColorKReps(const int reps) {
 
 char TCS::getColorMode(const int sampleSize, const double certainity) {
     uint8_t mode = 0;
-    uint8_t unknown = sampleSize;
+    uint16_t unknown = sampleSize;
     uint8_t repetitions[colorAmount_];
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
@@ -257,6 +255,7 @@ char TCS::getColorMode(const int sampleSize, const double certainity) {
 }
 
 void TCS::printColorMatrix() {
+    #if DEBUG_TCS
     if (colors_ == nullptr) {
         #ifndef DEBUG_TCS
         customPrintln("No colors registered");
@@ -275,23 +274,25 @@ void TCS::printColorMatrix() {
         customPrintln(colors[i][2]);
         #endif
     }
+    #endif
 }
 
 void TCS::printColorList() {
+#if DEBUG_TCS
     if (colorList_ == nullptr) {
-        #if DEBUG_TCS
+        
         customPrintln("No colors registered");
-        #endif
+        
         return;
     }
     for (uint8_t i = 0; i < colorAmount_; ++i) {
-        #if DEBUG_TCS
+        
         customPrint(colorList[i]);
         customPrint("\t");
-        #endif
+        
     }
-    #if DEBUG_TCS
     customPrintln("");
-    #endif
+    
+#endif
 }
 
