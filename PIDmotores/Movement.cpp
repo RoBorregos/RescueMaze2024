@@ -60,7 +60,7 @@ void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
 void Movement::setupTCS() {
     tcs_.setMux(Pins::tcsPins[0]);
     tcs_.setPrecision(kPrecision);
-    tcs_.init(colors, kColorAmount, colorList, colorThresholds);
+    tcs_.init(kColors, kColorAmount, kColorList, kColorThresholds);
 }
 
 void Movement::stopMotors() {
@@ -585,7 +585,7 @@ void Movement::rgbTCSClear() {
 
 char Movement::checkColors() {
     const char color = getTCSInfo();
-    if (color == blackColor) {
+    if (color == kBlackColor) {
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
@@ -594,15 +594,14 @@ char Movement::checkColors() {
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
-    } else if (color == blueColor && finishedMovement_ == true) {
-        
+    } else if (color == kBlueColor && finishedMovement_ == true) {
         blueTile_ = true;
         stopMotors();
         customPrintln("DETECTED BLUE TILE");
-        delay(5000);
+        delay(fiveSeconds_);
         
         return color;
-    } else if (color == redColor) {
+    } else if (color == kRedColor) {
         checkpointTile_ = true;
         stopMotors();
         return color;

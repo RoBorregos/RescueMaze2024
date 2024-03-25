@@ -124,15 +124,15 @@ class Movement {
         static constexpr int kPrecision = 100;
         static constexpr uint8_t kColorAmount = 3;
         static constexpr uint8_t kColorThresholdsAmount = 6;
-        const char colorList[kColorAmount + 1] = {"RNB"};
-        const char blueColor = 'B';
-        const char blackColor = 'N';
-        const char redColor = 'R';
+        const char kColorList[kColorAmount + 1] = {"RNB"};
+        static constexpr char kBlueColor = 'B';
+        static constexpr char kBlackColor = 'N';
+        static constexpr char kRedColor = 'R';
 
         // ==============================================================================================
         // In the competition the colors may be different so we need to change the values by testing
         // ==============================================================================================
-        const int16_t colors[kColorAmount][kColorAmount] = {
+        const int16_t kColors[kColorAmount][kColorAmount] = {
             // RED
             {257, 75, 71},
             // BLACK
@@ -141,7 +141,7 @@ class Movement {
             {97,99,141}
         };
         
-        const int16_t colorThresholds[kColorAmount][kColorThresholdsAmount] {
+        const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
             {65, 86, 33, 56, 25, 45},
             {85, 150, 80, 140, 120, 175}
@@ -154,6 +154,8 @@ class Movement {
         int blueTileCounter_ = 0;
 
         bool finishedMovement_ = false;
+
+        int fiveSeconds_ = 5000;
 
     public:
         Movement();
