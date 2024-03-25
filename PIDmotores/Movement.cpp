@@ -443,6 +443,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             moveForward = true;
             moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
         }
+        encodersReset = false;
+        resetRoutine = false;
+        counterMovements_ = 0;
         customPrintln("finish");
         /* while (centerInTile() == false) {
             if (centerInTile() == true) {
