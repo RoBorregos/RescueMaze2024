@@ -106,9 +106,11 @@ class Movement {
 
         static constexpr double kWeightVlx = 0.9;
 
-        const int counterMovements_ = 0;
+        int counterMovements_ = 0;
 
         bool encodersReset = false;
+
+        bool resetRoutine = false;
 
         PID pidDummy_;
         PID pidForward_;
@@ -116,6 +118,8 @@ class Movement {
         PID pidTurn_;
 
         double vlxDistanceTraveled_;
+
+        double distanceToCenter_;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -156,7 +160,7 @@ class Movement {
         double getBackLeftSpeed();
         double getBackRightSpeed();
         double getFrontLeftSpeed();
-        double getFrontRightSpeed();    
+        double getFrontRightSpeed();
 
         uint8_t getOrientation(const compass currentOrientation);
         
@@ -165,6 +169,8 @@ class Movement {
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
         void setSpeed(const double speed);
+
+        bool hasTraveledDistanceWithSpeedForBackward(const double distance);
 
         bool hasTraveledDistanceWithSpeed(const double distance);
 
@@ -211,6 +217,8 @@ class Movement {
         bool centerInTile();
 
         bool hasWallBehind();
-};
+
+        void resetOrientation();
+    };
 
 #endif

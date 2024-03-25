@@ -189,11 +189,11 @@ uint8_t Movement::checkWallsDistances() {
 }
 
 double Movement::getDistanceToCenter() {
-    double distanceLeft = 0;
-    distanceLeft = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-    distanceLeft *= kMToCm;
+    double distanceBack = 0;
+    distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
+    distanceBack *= kMToCm;
     
-    cmToCenterFront = ((uint8_t)distanceLeft % kTileLength) * 30;
+    cmToCenterFront = ((uint8_t)distanceBack % kTileLength) * 30;
 
     return cmToCenterFront;
 }
@@ -248,17 +248,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
     const double initialBackWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     bool moveForward = false;
-    
-    // A way to reset the encoders
-    if (state == MovementState::kStop && hasWallBehind()) {
-        stopMotors();
-        // approach the wall
-        if (!encodersReset){
-            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.1, useWallDistance);
-            encodersReset = true;
-            allDistanceTraveled_ = 0;
-        }
-    }
+    counterMovements_++;
+    customPrintln("CounterMovements:" + String(counterMovements_));
     switch (state)
     {
         case (MovementState::kStop): {
@@ -282,10 +273,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     // customPrintln(vlx[3].getRawDistance());
                     moveMotorsInADirection(targetOrientation, moveForward);
                     //customPrintln("DesiredWallDistance:" + String(0.06)); 
-                    /* if (counterMovements_ >= 4 && vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.06) {
+                    if (counterMovements_ >= 4 && vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.10) {
                         flag = false;
                         break;
-                    } */
+                    }
 
                     if (crashLeft == true && crashRight == false) {
                         correctionAfterCrash(true, currentOrientation, useWallDistance);
@@ -342,16 +333,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
-                /* if (counterMovements_ >= 4 && vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.06) {
-                    while (centerInTile() == false) {
-                        if (centerInTile() == true) {
-                            moveForward = true;
-                            moveMotors(MovementState::kForward, targetOrientation, (cmToCenterFront/1000), moveForward);
-                            break;
-                        }
-                        break;
-                    }
-                } */
                 
                 if (rampDetected) {
                     #if DEBUG_MOVEMENT
@@ -381,7 +362,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
 
                 hasTraveledDistanceWithSpeed(targetDistance);
-                customPrintln("////////////////////////");
+                // customPrintln("////////////////////////");
                 // hasTraveledWallDistance(desiredWallDistance, vlx[0].getRawDistance(), moveForward, initialFrontWallDistance);
             }
             allDistanceTraveled_ = 0;
@@ -394,7 +375,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             moveForward = false;
-            while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+            while (hasTraveledDistanceWithSpeedForBackward(targetDistance) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
@@ -441,7 +422,48 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             stopMotors();
             break;
         }
+        // A way to reset the encoders
     }
+    customPrintln("counterMovements_:" + String(counterMovements_));
+    customPrintln("vlxBack" + String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
+
+    if (!resetRoutine && counterMovements_ >= 4 && hasWallBehind() ) {
+        customPrintln("Encoders reset_______");
+        customPrintln("////////////////////////");
+        stopMotors();
+        resetRoutine = true;
+        if (!encodersReset){
+            customPrintln("Approach the wall");
+            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
+            encodersReset = true;
+            allDistanceTraveled_ = 0;
+        }
+        if (centerInTile() == true) {
+            customPrintln("Center in tile");
+            moveForward = true;
+            moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
+        }
+        customPrintln("finish");
+        /* while (centerInTile() == false) {
+            if (centerInTile() == true) {
+                moveForward = true;
+                moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
+
+                break;
+            }
+        } */
+    }
+    /* if (state == MovementState::kStop && hasWallBehind()) {
+        customPrintln("Has wall behind");
+        stopMotors();
+        // approach the wall
+        if (!encodersReset){
+            customPrintln("Encoders reset");
+            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
+            encodersReset = true;
+            allDistanceTraveled_ = 0;
+        }
+    } */
 }
 
 
@@ -584,6 +606,30 @@ uint8_t Movement::getOrientation(const compass currentOrientation) {
     }
 }
 
+bool Movement::hasTraveledDistanceWithSpeedForBackward(const double distance) {
+    const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
+    if (timeTraveled_ < kSampleTimeTraveled) {
+        return false;
+    }
+    // TODO: Improve the way to calculate the average speed
+    const double averageSpeed = (motor[static_cast<uint8_t>(MotorID::kBackLeft)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kBackRight)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kFrontLeft)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kFrontRight)].getSpeed()) / kNumberOfWheels;
+    
+    const double distanceTraveled = averageSpeed * (timeTraveled_ / (double)kOneSecInMs);
+
+    allDistanceTraveled_ += distanceTraveled;
+    prevTimeTraveled_ = millis();
+    
+    if (allDistanceTraveled_ >= distance) {
+        allDistanceTraveled_ = 0;
+        return true;
+    }
+    
+    return false;
+}
+
 bool Movement::hasTraveledDistanceWithSpeed(const double distance){
     const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
     if (timeTraveled_ < kSampleTimeTraveled) {
@@ -599,7 +645,8 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
-   /*  if (allDistanceTraveled_ >= distance) {
+    // REMEBER TO COMMENT THIS WHEN THE ROBOT IT'S MOVING KFORWARD
+    /* if (allDistanceTraveled_ >= distance) {
         allDistanceTraveled_ = 0;
         return true;
     } */
@@ -610,9 +657,9 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance, bool &moveForward, double initialVlxDistance) {
     const double distanceDiff = (targetDistance - currentDistance);
     //moveForward = distanceDiff < 0;
-    customPrintln("DistanceDiff:" + String(distanceDiff));
+    // customPrintln("DistanceDiff:" + String(distanceDiff));
     // vlxDistanceTraveled_ =  initialVlxDistance - currentDistance;
-    customPrint("RETURN:" + String(abs(distanceDiff) < kMaxDistanceError));
+    // customPrint("RETURN:" + String(abs(distanceDiff) < kMaxDistanceError));
     return abs(distanceDiff) < kMaxDistanceError;
 }
 
@@ -638,22 +685,22 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
     double vlxDistanceTraveled = 0; // initialVlxDistanceFront - currentDistance;
     
     if (currentDistanceBack > kUnreachableDistance && currentDistanceFront > kUnreachableDistance) {
-        customPrintln("Usar solo el encoder");
-        customPrintln("-----------------------------");
+        // customPrintln("Usar solo el encoder");
+        // customPrintln("-----------------------------");
        return allDistanceTraveled_;
     } else if (currentDistanceBack < currentDistanceFront) {
-        customPrintln("Usar solo el VLX de atras");
-        customPrintln("-----------------------------");
+        // customPrintln("Usar solo el VLX de atras");
+        // customPrintln("-----------------------------");
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
     } else {
-        customPrintln("Usar solo el VLX de adelante");
-        customPrintln("-----------------------------");
+        // customPrintln("Usar solo el VLX de adelante");
+        // customPrintln("-----------------------------");
         vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
     }
-    customPrintln(String(currentDistanceBack));
+    // customPrintln(String(currentDistanceBack));
     
-    customPrintln("AllDistanceTraveled:" + String(allDistanceTraveled_));
-    customPrintln("VlxDistanceTraveled:" + String(vlxDistanceTraveled));
+    // customPrintln("AllDistanceTraveled:" + String(allDistanceTraveled_));
+    // customPrintln("VlxDistanceTraveled:" + String(vlxDistanceTraveled));
     return (allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx);
     
 }
@@ -662,16 +709,18 @@ bool Movement::centerInTile() {
     double distanceBack = 0;
     bool moveForward = false;
     distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
-    double distanceToCenter = getDistanceToCenter();
-    if (distanceBack >= 0.04 && distanceBack <= 0.06) {
+    distanceToCenter_ = getDistanceToCenter();
+    if (distanceBack <= 0.10) {
         moveForward = true;
-        distanceToCenter = (kTileLength - kLargeOfRobot) / 2;
-
+        distanceToCenter_ = kTileLength - kLargeOfRobot - distanceToCenter_;
+        distanceToCenter_ = distanceToCenter_ / kMToCm;
         return true;
     }
     return false;
 }
 
 bool Movement::hasWallBehind() {
-    return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.06;
+    customPrintln("BackDistance:" + String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
+    
+    return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.10;
 }
