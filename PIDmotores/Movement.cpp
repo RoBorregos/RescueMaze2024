@@ -422,51 +422,24 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             stopMotors();
             break;
         }
-        // A way to reset the encoders
     }
-    customPrintln("counterMovements_:" + String(counterMovements_));
-    customPrintln("vlxBack" + String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
 
     if (!resetRoutine && counterMovements_ >= 4 && hasWallBehind() ) {
-        customPrintln("Encoders reset_______");
-        customPrintln("////////////////////////");
         stopMotors();
         resetRoutine = true;
         if (!encodersReset){
-            customPrintln("Approach the wall");
             moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
             encodersReset = true;
             allDistanceTraveled_ = 0;
         }
         if (centerInTile() == true) {
-            customPrintln("Center in tile");
             moveForward = true;
             moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
         }
         encodersReset = false;
         resetRoutine = false;
         counterMovements_ = 0;
-        customPrintln("finish");
-        /* while (centerInTile() == false) {
-            if (centerInTile() == true) {
-                moveForward = true;
-                moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
-
-                break;
-            }
-        } */
     }
-    /* if (state == MovementState::kStop && hasWallBehind()) {
-        customPrintln("Has wall behind");
-        stopMotors();
-        // approach the wall
-        if (!encodersReset){
-            customPrintln("Encoders reset");
-            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
-            encodersReset = true;
-            allDistanceTraveled_ = 0;
-        }
-    } */
 }
 
 
