@@ -1,6 +1,6 @@
 #include "TCS.h"
 
-#define DEBUG_TCS 0
+#define DEBUG_TCS 1
 TCS::TCS() {
     setDefaultValues();
 }
@@ -162,10 +162,10 @@ char TCS::getColorWithPrecision() {
 
     updateRGBC();
     #if DEBUG_TCS
-    customPrint("R:\t"); customPrintln(red);
-    customPrint("G:\t"); customPrintln(green);
-    customPrint("B:\t"); customPrintln(blue);
-    customPrint("Precision:\t"); customPrintln(precision);
+    customPrint("R:\t"); customPrintln(red_);
+    customPrint("G:\t"); customPrintln(green_);
+    customPrint("B:\t"); customPrintln(blue_);
+    customPrint("Precision:\t"); customPrintln(precision_);
     #endif
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
@@ -184,8 +184,6 @@ char TCS::getColorWithThresholds() {
     if (colorThresholds_ == nullptr) {
         return getColorWithPrecision();
     }
-
-
     updateRGBC();
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
@@ -227,7 +225,7 @@ char TCS::getColorMode(const int sampleSize, const double certainity) {
     }
 
     for (uint8_t i = 0; i < sampleSize; ++i) {
-        char current = getColorWithPrecision();
+        const char current = getColorWithPrecision();
         if (current == kUndefinedColor_) {
             return kUndefinedColor_;
         }
@@ -246,7 +244,7 @@ char TCS::getColorMode(const int sampleSize, const double certainity) {
         }
         unknown -= repetitions[i];
     }
-    double probability = (repetitions[mode]) / (double)sampleSize;
+    const double probability = (repetitions[mode]) / (double)sampleSize;
 
     if (repetitions[mode] > unknown && probability > certainity) {
         return colorList_[mode];
@@ -262,13 +260,13 @@ void TCS::printColorMatrix() {
     }
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
-        customPrint(colorList[i]);
+        customPrint(colorList_[i]);
         customPrint(":\t");
-        customPrint(colors[i][0]);
+        customPrint(colors_[i][0]);
         customPrint("\t");
-        customPrint(colors[i][1]);
+        customPrint(colors_[i][1]);
         customPrint("\t");
-        customPrintln(colors[i][2]);
+        customPrintln(colors_[i][2]);
     }
     #endif
 }
@@ -281,7 +279,7 @@ void TCS::printColorList() {
     }
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
-        customPrint(colorList[i]);
+        customPrint(colorList_[i]);
         customPrint("\t");
     }
 

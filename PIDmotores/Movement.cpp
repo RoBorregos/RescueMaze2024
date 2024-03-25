@@ -251,7 +251,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
-    blueTileCounter_ = 0;
 
 
     getAllWallsDistances(&wallDistances[kNumberOfVlx]);
@@ -270,7 +269,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blackTile_ = false;
             blueTile_ = false;
             checkpointTile_ = false;
-            finishMovement_ = false;
+            finishedMovement_ = false;
+            blueTileCounter_ = 0;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
@@ -321,7 +321,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 checkWallsDistances();
             }
 
-            finishMovement_ = true;
+            finishedMovement_ = true;
             checkColors();
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
@@ -575,6 +575,7 @@ void Movement::printTCS() {
 }
 
 char Movement::getTCSInfo() {
+    printTCS();
     return tcs_.getColorWithThresholds();
 } 
 
@@ -584,7 +585,7 @@ void Movement::rgbTCSClear() {
 
 char Movement::checkColors() {
     const char color = getTCSInfo();
-    if (color == 'N') {
+    if (color == blackColor) {
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
@@ -593,16 +594,15 @@ char Movement::checkColors() {
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
-    } else if (color == 'B' && finishMovement_ == true) {
-        if (blueTileCounter_ < 1) {
-            ++blueTileCounter_;
-            blueTile_ = true;
-            stopMotors();
-            customPrintln("DETECTED BLUE TILE");
-            delay(5000);
-        }
+    } else if (color == blueColor && finishedMovement_ == true) {
+        
+        blueTile_ = true;
+        stopMotors();
+        customPrintln("DETECTED BLUE TILE");
+        delay(5000);
+        
         return color;
-    } else if (color == 'R') {
+    } else if (color == redColor) {
         checkpointTile_ = true;
         stopMotors();
         return color;
