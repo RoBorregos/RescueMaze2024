@@ -151,8 +151,6 @@ class Movement {
         bool blueTile_ = false;
         bool checkpointTile_ = false;
 
-        int blueTileCounter_ = 0;
-
         bool finishedMovement_ = false;
 
         static constexpr int kFiveSeconds_ = 5000;

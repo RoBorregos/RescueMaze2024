@@ -270,7 +270,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blueTile_ = false;
             checkpointTile_ = false;
             finishedMovement_ = false;
-            blueTileCounter_ = 0;
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 customPrintln("Distance:" + String(allDistanceTraveled_));
