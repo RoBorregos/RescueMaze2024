@@ -155,7 +155,7 @@ class Movement {
 
         bool finishedMovement_ = false;
 
-        int fiveSeconds_ = 5000;
+        static constexpr int kFiveSeconds_ = 5000;
 
     public:
         Movement();

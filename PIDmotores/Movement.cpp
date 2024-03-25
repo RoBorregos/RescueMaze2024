@@ -598,7 +598,7 @@ char Movement::checkColors() {
         blueTile_ = true;
         stopMotors();
         customPrintln("DETECTED BLUE TILE");
-        delay(fiveSeconds_);
+        delay(kFiveSeconds_);
         
         return color;
     } else if (color == kRedColor) {
