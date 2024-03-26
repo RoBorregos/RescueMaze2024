@@ -26,7 +26,7 @@ void BNO::updateBNO(sensors_event_t &event) {
 
 double BNO::getOrientationX() {
     updateBNO(event);
-    return event.orientation.x + phaseCorrection_;
+    return event.orientation.x - phaseCorrection_;
 }
 
 double BNO::getOrientationY() {
