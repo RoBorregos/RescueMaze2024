@@ -26,10 +26,14 @@ void BNO::updateBNO(sensors_event_t &event) {
 
 double BNO::getOrientationX() {
     updateBNO(event);
-    return event.orientation.x;
+    return event.orientation.x + phaseCorrection_;
 }
 
 double BNO::getOrientationY() {
     updateBNO(event);
     return event.orientation.y;
+}
+
+void BNO::setPhaseCorrection(const double phaseCorrection) {
+    phaseCorrection_ = phaseCorrection;
 }
