@@ -204,7 +204,7 @@ class Movement {
         bool checkWallsDistances(const TileDirection targetDirection, const double currentOrientation);
         bool isRamp();
 
-        void rampMovement();
+        void rampMovement(const double targetOrientation);
 
         int directionRamp();
 };

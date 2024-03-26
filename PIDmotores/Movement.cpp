@@ -269,8 +269,8 @@ void Movement::turnRight(const double targetOrientation) {
     moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
 
-void Movement::rampMovement() {
-    moveMotors(MovementState::kRamp, 0, 0);
+void Movement::rampMovement(const double targetOrientation) {
+    moveMotors(MovementState::kRamp, targetOrientation, 0);
 }
 
 void Movement::moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance) {
