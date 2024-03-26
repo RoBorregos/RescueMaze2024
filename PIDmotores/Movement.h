@@ -109,7 +109,7 @@ class Movement {
 
         bool encodersReset_ = false;
 
-        bool resetRoutine_ = false;
+        bool inResetRoutine_ = false;
 
         PID pidDummy_;
         PID pidForward_;
@@ -119,6 +119,8 @@ class Movement {
         double vlxDistanceTraveled_;
 
         double distanceToCenter_;
+
+        double wallBehindDistance_ = 0.10;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -173,7 +175,7 @@ class Movement {
 
         bool hasTraveledDistanceWithSpeed(const double distance);
 
-        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward, double initialVlxDistance);
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance);
 
         void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
