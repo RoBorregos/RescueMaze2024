@@ -301,7 +301,7 @@ void depthFirstSearch() {
         if (robot.isRamp()) {
             screenPrint("Ramp found");
             currentTile->weight_ = 2;
-            robot.moveMotors(MovementState::kRamp, 0, 0); // move only one Tile
+            robot.rampMovement();
             TileDirection direction;
             // check robots orientation to know the next Tile.
             switch (robotOrientation) {
@@ -322,11 +322,14 @@ void depthFirstSearch() {
                     direction = TileDirection::kLeft;
                     break;
             }
-            // create a pointer to the next tile and asign its coordenate if it's a new Tile.
-            tilesMap.positions.push_back(nextTileCoord);
-            tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
+            // Creates a new tile if the next tile doesn't exist.
+            if (tilesMap.getIndex(nextTileCoord) == kInvalidIndex) {
+                tilesMap.positions.push_back(nextTileCoord);
+                tiles[tilesMap.getIndex(nextTileCoord)] = Tile(nextTileCoord);
+            }
+            // Create a pointer to the next tile and asign its coordenate if it's a new Tile.
             Tile* nextTile = &tiles[tilesMap.getIndex(nextTileCoord)];
-            if (nextTile->position_ == kInvalidPosition) {
+            if (nextTile->position_ == kInvalidPosition) { // maybe can be moved to the if statement above.
                 nextTile->setPosition(nextTileCoord);
             }
             // Link the two adjacent Tiles.
