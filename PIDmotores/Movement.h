@@ -62,7 +62,6 @@ class Movement {
 
         const double kLargeOfRobot = 19.9; //cm
 
-        double cmToCenterFront = 0;
 
         bool useWallDistance_ = false;
 
@@ -108,9 +107,9 @@ class Movement {
 
         int counterMovements_ = 0;
 
-        bool encodersReset = false;
+        bool encodersReset_ = false;
 
-        bool resetRoutine = false;
+        bool resetRoutine_ = false;
 
         PID pidDummy_;
         PID pidForward_;
@@ -219,6 +218,8 @@ class Movement {
         bool hasWallBehind();
 
         void resetOrientation();
+
+        void resetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
     };
 
 #endif

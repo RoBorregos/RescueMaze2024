@@ -190,9 +190,9 @@ uint8_t Movement::checkWallsDistances() {
 
 double Movement::getDistanceToCenter() {
     double distanceBack = 0;
+    double cmToCenterFront = 0;
     distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     distanceBack *= kMToCm;
-    
     cmToCenterFront = ((uint8_t)distanceBack % kTileLength) * 30;
 
     return cmToCenterFront;
@@ -243,13 +243,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
-    //getAllWallsDistances(&wallDistances[kNumberOfVlx]);
-
     const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
     const double initialBackWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     bool moveForward = false;
-    counterMovements_++;
-    // counterMovements_ = 4;
+    ++counterMovements_;
+    
     customPrintln("CounterMovements:" + String(counterMovements_));
     switch (state)
     {
@@ -425,39 +423,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 
-    if (!resetRoutine && counterMovements_ >= 4 && hasWallBehind() ) {
-        stopMotors();
-        resetRoutine = true;
-        if (!encodersReset){
-            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
-            const double realOrientation = bno_.getOrientationX();
-            double phaseCorrection = realOrientation - currentOrientation;
-            customPrintln("currentOrientation:" + String(currentOrientation));
-            customPrintln("realOrientation:" + String(realOrientation));
-            // check if the second time the robot makes the update of the orientation
-            if (abs(phaseCorrection) < 180) {
-                customPrintln("1");
-                phaseCorrection = phaseCorrection;
-            } else if (realOrientation < currentOrientation) {
-                customPrintln("2");
-                phaseCorrection = 360 - abs(phaseCorrection);
-            } else {
-                customPrintln("3");
-                phaseCorrection = abs(phaseCorrection) - 360;
-            }
-            customPrintln("PhaseCorrection:" + String(phaseCorrection));
-            bno_.setPhaseCorrection(phaseCorrection);
-            encodersReset = true;
-            allDistanceTraveled_ = 0;
-        }
-        if (centerInTile() == true) {
-            moveForward = true;
-            moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
-        }
-        encodersReset = false;
-        resetRoutine = false;
-        counterMovements_ = 0;
-    }
+    resetWithBackWall(targetOrientation, currentOrientation, moveForward, useWallDistance);
 }
 
 
@@ -624,7 +590,7 @@ bool Movement::hasTraveledDistanceWithSpeedForBackward(const double distance) {
     return false;
 }
 
-bool Movement::hasTraveledDistanceWithSpeed(const double distance){
+bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
     if (timeTraveled_ < kSampleTimeTraveled) {
         return false;
@@ -639,11 +605,6 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance){
 
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
-    // REMEBER TO COMMENT THIS WHEN THE ROBOT IT'S MOVING KFORWARD
-    /* if (allDistanceTraveled_ >= distance) {
-        allDistanceTraveled_ = 0;
-        return true;
-    } */
     
     return false;
 }
@@ -682,7 +643,8 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
         // customPrintln("Usar solo el encoder");
         // customPrintln("-----------------------------");
        return allDistanceTraveled_;
-    } else if (currentDistanceBack < currentDistanceFront) {
+    }
+    if (currentDistanceBack < currentDistanceFront) {
         // customPrintln("Usar solo el VLX de atras");
         // customPrintln("-----------------------------");
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
@@ -701,11 +663,9 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
 
 bool Movement::centerInTile() {
     double distanceBack = 0;
-    bool moveForward = false;
     distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     distanceToCenter_ = getDistanceToCenter();
     if (distanceBack <= 0.10) {
-        moveForward = true;
         distanceToCenter_ = kTileLength - kLargeOfRobot - distanceToCenter_;
         distanceToCenter_ = distanceToCenter_ / kMToCm;
         return true;
@@ -717,4 +677,41 @@ bool Movement::hasWallBehind() {
     customPrintln("BackDistance:" + String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
     
     return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() < 0.10;
+}
+
+void Movement::resetWithBackWall(const double targetOrientation, double currentOrientation,bool moveForward ,bool useWallDistance){
+    if (!resetRoutine_ && counterMovements_ >= 4 && hasWallBehind() ) {
+        stopMotors();
+        resetRoutine_ = true;
+        if (!encodersReset_){
+            moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
+            const double realOrientation = bno_.getOrientationX();
+            double phaseCorrection = realOrientation - currentOrientation;
+            customPrintln("currentOrientation:" + String(currentOrientation));
+            customPrintln("realOrientation:" + String(realOrientation));
+            // check if the second time the robot makes the update of the orientation
+            if (abs(phaseCorrection) < 180) {
+                customPrintln("1");
+                phaseCorrection = phaseCorrection;
+            } else if (realOrientation < currentOrientation) {
+                customPrintln("2");
+                phaseCorrection = 360 - abs(phaseCorrection);
+            } else {
+                customPrintln("3");
+                phaseCorrection = abs(phaseCorrection) - 360;
+            }
+            customPrintln("PhaseCorrection:" + String(phaseCorrection));
+            bno_.setPhaseCorrection(phaseCorrection);
+            encodersReset_ = true;
+            allDistanceTraveled_ = 0;
+        }
+        if (centerInTile() == true) {
+            moveForward = true;
+            moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
+        }
+        encodersReset_ = false;
+        resetRoutine_ = false;
+        counterMovements_ = 0;
+    }
+
 }

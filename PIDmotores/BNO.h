@@ -10,11 +10,11 @@
 
 class BNO {
     private:
-        Adafruit_BNO055 bno;
-        sensors_event_t event;
+        Adafruit_BNO055 bno_;
+        sensors_event_t event_;
         double phaseCorrection_ = 0.0;
     public:
-        // TODO: AGREGAR MAS COMENTARIOS SOBRE FUNCIONAMIENTO
+        // TODO: Add more comments on how it works
         BNO();
         void setupBNO();
         void updateBNO(sensors_event_t &event);
