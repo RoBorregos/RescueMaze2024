@@ -431,18 +431,19 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         if (!encodersReset){
             moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15, useWallDistance);
             const double realOrientation = bno_.getOrientationX();
-            double phaseCorrection = 0.0;
+            double phaseCorrection = realOrientation - currentOrientation;
             customPrintln("currentOrientation:" + String(currentOrientation));
             customPrintln("realOrientation:" + String(realOrientation));
-            if (abs(realOrientation - currentOrientation) < 180) {
+            // check if the second time the robot makes the update of the orientation
+            if (abs(phaseCorrection) < 180) {
                 customPrintln("1");
-                phaseCorrection = realOrientation - currentOrientation;
+                phaseCorrection = phaseCorrection;
             } else if (realOrientation < currentOrientation) {
                 customPrintln("2");
-                phaseCorrection = 360 - abs(realOrientation - currentOrientation);
+                phaseCorrection = 360 - abs(phaseCorrection);
             } else {
                 customPrintln("3");
-                phaseCorrection = abs(realOrientation - currentOrientation) - 360;
+                phaseCorrection = abs(phaseCorrection) - 360;
             }
             customPrintln("PhaseCorrection:" + String(phaseCorrection));
             bno_.setPhaseCorrection(phaseCorrection);
