@@ -62,7 +62,6 @@ class Movement {
 
         const double kLargeOfRobot = 19.9; //cm
 
-        double cmToCenterFront = 0;
 
         bool useWallDistance_ = false;
 
@@ -106,7 +105,11 @@ class Movement {
 
         static constexpr double kWeightVlx = 0.9;
 
-        const int counterMovements_ = 0;
+        int counterMovements_ = 0;
+
+        bool encodersReset_ = false;
+
+        bool inResetRoutine_ = false;
 
         PID pidDummy_;
         PID pidForward_;
@@ -114,6 +117,10 @@ class Movement {
         PID pidTurn_;
 
         double vlxDistanceTraveled_;
+
+        double distanceToCenter_;
+
+        double wallBehindDistance_ = 0.10;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -154,7 +161,7 @@ class Movement {
         double getBackLeftSpeed();
         double getBackRightSpeed();
         double getFrontLeftSpeed();
-        double getFrontRightSpeed();    
+        double getFrontRightSpeed();
 
         uint8_t getOrientation(const compass currentOrientation);
         
@@ -164,9 +171,11 @@ class Movement {
 
         void setSpeed(const double speed);
 
+        bool hasTraveledDistanceWithSpeedForBackward(const double distance);
+
         bool hasTraveledDistanceWithSpeed(const double distance);
 
-        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward, double initialVlxDistance);
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance);
 
         void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
@@ -207,6 +216,12 @@ class Movement {
         double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 
         bool centerInTile();
-};
+
+        bool hasWallBehind();
+
+        void resetOrientation();
+
+        void resetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+    };
 
 #endif

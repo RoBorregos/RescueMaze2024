@@ -32,11 +32,11 @@ namespace Pins {
 
     constexpr uint8_t vlxPins[5] = {
         // Defined Pins on 20th of March
-        0,  // FRONT_LEFT
-        1, // BACK
-        2, // LEFT
-        4,  // RIGHT
-        3 // FRONT_RIGHT
+        0,  // FRONT_LEFT  fine
+        1, // LEFT         fine         
+        2, // BACK         fine
+        4,  // RIGHT       fine
+        3 // FRONT_RIGHT   fine
     };
 
     constexpr uint8_t limitSwitchPins[2] = {

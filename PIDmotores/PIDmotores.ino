@@ -17,12 +17,20 @@ void setup(){
     customPrintln("Serial ready");
     robot.setup();
 
+    // robot.moveMotors(MovementState::kStop, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.3);
+    // robot.moveMotors(MovementState::kForward, 0, 0.3);
     
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
     robot.moveMotors(MovementState::kForward, 0, 0.3);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 0.3);
     robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    
+
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3); 
+    robot.moveMotors(MovementState::kTurnLeft, 180, 0);
     // robot.goForward();
 
     // robot.turnLeft();
