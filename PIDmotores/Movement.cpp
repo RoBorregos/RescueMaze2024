@@ -606,9 +606,9 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
 
-    if (allDistanceTraveled_ >= distance) {
+    /* if (allDistanceTraveled_ >= distance) {
         return true;
-    }
+    } */
     
     return false;
 }

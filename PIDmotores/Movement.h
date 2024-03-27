@@ -120,7 +120,7 @@ class Movement {
 
         double distanceToCenter_;
 
-        double wallBehindDistance_ = 0.10;
+        double wallBehindDistance_ = 0.15;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
