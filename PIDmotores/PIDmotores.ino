@@ -23,7 +23,7 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 1
-#define USING_SCREEN 0
+#define USING_SCREEN 1
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
 #define NO_ROBOT 0
@@ -63,7 +63,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    delay(1500);
+    // delay(1500);
     #endif
 }
 
@@ -82,6 +82,7 @@ void turnRobot(const int targetOrientation) {
     } else if (difference == 180 || difference == -180) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
+        // robot.goBackward(targetOrientation); // TODO: fix this.
     }
 }
 
@@ -193,7 +194,7 @@ void dijsktra(const coord& start, const coord& end) {
         for (const TileDirection& direction : directions) {
             const int staticDirection = static_cast<int>(direction);
             // check if there's an adjecent tile.
-            if (currentTile.adjacentTiles_[staticDirection] != NULL) { // isn't entering here
+            if (currentTile.adjacentTiles_[staticDirection] != NULL) {
                 const coord& adjacentCoord = currentTile.adjacentTiles_[staticDirection]->position_;
                 const int adjacentCoordIndex = tilesMap.getIndex(adjacentCoord);
                 customPrintln("adjecent coord at: " + String(adjacentCoord.x) + " " + String(adjacentCoord.y));
@@ -225,7 +226,7 @@ void dijsktra(const coord& start, const coord& end) {
     #if DEBUG_ALGORITHM 
     customPrintln("before path");
     #endif
-    // find path.
+    // find and follow path.
     coord current = end;
     while (current != start) {
         path.push(current);
@@ -234,7 +235,6 @@ void dijsktra(const coord& start, const coord& end) {
     #if DEBUG_ALGORITHM 
     customPrintln("before followPath");
     #endif
-    // path.push(start); // maybe not necessary.
     followPath();
 }
 
@@ -301,25 +301,28 @@ void depthFirstSearch() {
         if (robot.isRamp()) {
             screenPrint("Ramp found");
             currentTile->weight_ = 2;
-            robot.rampMovement();
             TileDirection direction;
             // check robots orientation to know the next Tile.
             switch (robotOrientation) {
                 case 0:
                     nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kUp;
+                    oppositeDirection = TileDirection::kDown;
                     break;
                 case 90:
                     nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kRight;
+                    oppositeDirection = TileDirection::kLeft;
                     break;
                 case 180:
                     nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kDown;
+                    oppositeDirection = TileDirection::kUp;
                     break;
                 case 270:
                     nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z + robot.directionRamp()};
                     direction = TileDirection::kLeft;
+                    oppositeDirection = TileDirection::kRight;
                     break;
             }
             // Creates a new tile if the next tile doesn't exist.
@@ -333,8 +336,8 @@ void depthFirstSearch() {
                 nextTile->setPosition(nextTileCoord);
             }
             // Link the two adjacent Tiles.
-            currentTile->addAdjacentTile(direction, nextTile, wall);
-            nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
+            currentTile->addAdjacentTile(direction, nextTile, false);
+            nextTile->addAdjacentTile(oppositeDirection, currentTile, false);
             if (visitedMap.getIndex(nextTileCoord) != kInvalidIndex) {
                 continue;
             }
@@ -351,19 +354,19 @@ void depthFirstSearch() {
                 wall = false;
                 switch(direction) {
                     case TileDirection::kRight:
-                        nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z}; // checkRamp(direction);
+                        nextTileCoord = coord{currentTileCoord.x + 1, currentTileCoord.y, currentTileCoord.z};
                         oppositeDirection = TileDirection::kLeft;
                         break;
                     case TileDirection::kUp:
-                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z}; // checkRamp(direction);
+                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y + 1, currentTileCoord.z};
                         oppositeDirection = TileDirection::kDown;
                         break;
                     case TileDirection::kLeft:
-                        nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z}; // checkRamp(direction);
+                        nextTileCoord = coord{currentTileCoord.x - 1, currentTileCoord.y, currentTileCoord.z};
                         oppositeDirection = TileDirection::kRight;
                         break;
                     case TileDirection::kDown:
-                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z}; // checkRamp(direction);
+                        nextTileCoord = coord{currentTileCoord.x, currentTileCoord.y - 1, currentTileCoord.z};
                         oppositeDirection = TileDirection::kUp;
                         break;
                 }
@@ -445,6 +448,7 @@ void depthFirstSearch() {
             }
         }
     }
+    dijsktra(robotCoord, coord{0,0,0});
     #if DEBUG_ALGORITHM
     customPrintln("termino DFS");
     #endif
