@@ -613,6 +613,29 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     return false;
 }
 
+bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
+    const unsigned long timeTraveled_ = millis() - prevTimeTraveled_;
+    if (timeTraveled_ < kSampleTimeTraveled) {
+        return false;
+    }
+    // TODO: Improve the way to calculate the average speed
+    const double averageSpeed = (motor[static_cast<uint8_t>(MotorID::kBackLeft)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kBackRight)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kFrontLeft)].getSpeed() +
+                                 motor[static_cast<uint8_t>(MotorID::kFrontRight)].getSpeed()) / kNumberOfWheels;
+    
+    const double distanceTraveled = averageSpeed * (timeTraveled_ / (double)kOneSecInMs);
+
+    allDistanceTraveled_ += distanceTraveled;
+    prevTimeTraveled_ = millis();
+
+    if (allDistanceTraveled_ >= distance) {
+        return true;
+    }
+    
+    return false;
+}
+
 bool Movement::hasTraveledWallDistance(double targetDistance, double currentDistance) {
     const double distanceDiff = (targetDistance - currentDistance);
     //moveForward = distanceDiff < 0;
