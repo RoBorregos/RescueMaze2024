@@ -22,9 +22,9 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-#define DEBUG_ALGORITHM 1
+#define DEBUG_ALGORITHM 0
 #define USING_SCREEN 1
-#define DEBUG_MERGE 1
+#define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
 
@@ -46,8 +46,11 @@ constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown
 uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
 
-void updateLastCheckpointVisitedCoords() {
+coord lastCheckpointCoord = robotCoord;
+
+void updateLastCheckpoint(const coord& checkpointCoord) {
     lastCheckpointVisitedCoords = tilesMap.positions;
+    lastCheckpointCoord = checkpointCoord;
 }
 
 void restartOnLastCheckpoint(const coord& checkpointCoord) {
@@ -55,6 +58,19 @@ void restartOnLastCheckpoint(const coord& checkpointCoord) {
     robotOrientation = 0;
     tilesMap.positions = lastCheckpointVisitedCoords;
     depthFirstSearch();
+}
+
+void checkSerial() {
+    if (Serial.available() > 0) {
+        String input = Serial.readString();
+        if (input == "restart") {
+            restartOnLastCheckpoint(lastCheckpointCoord);
+        } else if (input == "H") {
+            // Drop 2 medkits.
+        } else if (input == "S") {
+            // Drop 1 medkit.
+        }
+    }
 }
 
 void screenPrint(const String& output){
@@ -164,7 +180,9 @@ void followPath() {
 }
 
 void dijsktra(const coord& start, const coord& end) {
+    #if DEBUG_ALGORITHM
     customPrintln("End coord: " + String(end.x) + " " + String(end.y));
+    #endif
     // empty path.
     while (!path.empty()) {
         path.pop();
@@ -188,7 +206,9 @@ void dijsktra(const coord& start, const coord& end) {
     customPrintln("before while"); //error in while
     #endif
     while (!explored[tilesMap.getIndex(end)]) {
+        #if DEBUG_ALGORITHM
         customPrintln("Current tile: " + String(currentCoord.x) + " " + String(currentCoord.y));
+        #endif
         // Get current tile.
         const int currentCoordIndex = tilesMap.getIndex(currentCoord);
         const Tile& currentTile = tiles[currentCoordIndex];
@@ -199,13 +219,17 @@ void dijsktra(const coord& start, const coord& end) {
             if (currentTile.adjacentTiles_[staticDirection] != NULL) {
                 const coord& adjacentCoord = currentTile.adjacentTiles_[staticDirection]->position_;
                 const int adjacentCoordIndex = tilesMap.getIndex(adjacentCoord);
+                #if DEBUG_ALGORITHM
                 customPrintln("adjecent coord at: " + String(adjacentCoord.x) + " " + String(adjacentCoord.y));
+                #endif
                 // check if there's a wall between the two adjacent tiles and if there isn't a hole.
                 if (!currentTile.hasWall(direction) && !tiles[adjacentCoordIndex].hasBlackTile()) {
                     const int weight = tiles[adjacentCoordIndex].weight_ + distance[currentCoordIndex];
                     // check if the new weight to visit the adjecent tile is less than the current weight.
                     if (weight < distance[adjacentCoordIndex]) {
+                        #if DEBUG_ALGORITHM
                         customPrintln("updated weight: " + String(weight));
+                        #endif
                         distance[adjacentCoordIndex] = weight;
                         previousPositions[adjacentCoordIndex] = currentCoord;
                     }
@@ -220,7 +244,9 @@ void dijsktra(const coord& start, const coord& end) {
             if (currentDistance < minDistance && !explored[tilesMap.getIndex(current)]) {
                 minDistance = currentDistance;
                 currentCoord = current;
+                #if DEBUG_ALGORITHM
                 customPrintln("lowest distance: " + String(currentDistance) + " of " + String(current.x) + " " + String(current.y));
+                #endif
             }
         }
         explored[tilesMap.getIndex(currentCoord)] = true;
@@ -277,8 +303,10 @@ void depthFirstSearch() {
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
         // check if the tile has been visited.
+        #if DEBUG_ALGORITHM
         customPrint("visitedMap size = ");
         customPrintln(visitedMap.positions.size());
+        #endif
         if (visitedMap.getIndex(currentTileCoord) != kInvalidIndex) {
             continue;
         }
@@ -376,7 +404,6 @@ void depthFirstSearch() {
                 // check if the tile has not been checked.
                 if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
                     // check for a wall.
-                    customPrintln(robotOrientation);
                     wall = robot.checkWallsDistances(direction, robotOrientation);
                     if (wall) {
                         #if USING_SCREEN
