@@ -1,5 +1,4 @@
 {
     "board": "esp32:esp32:esp32",
-    "port": "COM9",
-    "sketch": "PIDmotores\\PIDmotores.ino"
+    "port": "COM9"
 }

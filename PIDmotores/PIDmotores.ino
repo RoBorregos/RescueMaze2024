@@ -35,6 +35,7 @@ bool hasArrived = false;
 
 Map tilesMap = Map();
 etl::vector<Tile, kMaxMapSize> tiles;
+etl::vector<coord, kMaxMapSize> lastCheckpointVisitedCoords;
 etl::vector<bool, kMaxMapSize> explored;
 etl::vector<int, kMaxMapSize> distance;
 etl::vector<coord, kMaxMapSize> previousPositions;
@@ -45,15 +46,16 @@ constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown
 uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
 
-// etl::vector<etl::vector<char, kMaxMapSize>, kMaxMapSize> maze = {
-//     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-//     {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 1.
-//     {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
-//     {'#', ' ', ' ', ' ', '#', ' ', '#', ' ', ' ', ' ', '#'}, // 3.
-//     {'#', ' ', '#', '#', '#', ' ', '#', '#', '#', ' ', '#'},
-//     {'#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'}, // 5.
-//     {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-// };
+void updateLastCheckpointVisitedCoords() {
+    lastCheckpointVisitedCoords = tilesMap.positions;
+}
+
+void restartOnLastCheckpoint(const coord& checkpointCoord) {
+    robotCoord = checkpointCoord;
+    robotOrientation = 0;
+    tilesMap.positions = lastCheckpointVisitedCoords;
+    depthFirstSearch();
+}
 
 void screenPrint(const String& output){
     display.clearDisplay();
@@ -80,9 +82,9 @@ void turnRobot(const int targetOrientation) {
         robot.turnLeft(targetOrientation);
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        robot.turnRight(targetOrientation);
-        robotOrientation = (robotOrientation + 180) % 360;
-        // robot.goBackward(targetOrientation); // TODO: fix this.
+        // robot.turnRight(targetOrientation);
+        // robotOrientation = (robotOrientation + 180) % 360;
+        robot.goBackward(targetOrientation); // TODO: check if fixed.
     }
 }
 
@@ -264,6 +266,7 @@ void depthFirstSearch() {
     bool alreadyConnected;
     coord nextTileCoord;
     TileDirection oppositeDirection;
+    visitedMap.positions = lastCheckpointVisitedCoords;
     unvisited.push(robotCoord);
     #if DEBUG_ALGORITHM
     customPrintln("inicio DFS");
@@ -452,6 +455,7 @@ void depthFirstSearch() {
     #if DEBUG_ALGORITHM
     customPrintln("termino DFS");
     #endif
+    loop();
 }
 
 void startAlgorithm() {
