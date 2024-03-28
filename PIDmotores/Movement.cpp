@@ -36,6 +36,8 @@ void Movement::setup() {
 
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
+
+    setupTCS();
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -57,6 +59,12 @@ void Movement::setupVlx(const VlxID vlxId) {
 void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
     const uint8_t index = static_cast<uint8_t>(limitSwitchId);
     limitSwitch_[index].initLimitSwitch(Pins::limitSwitchPins[index]);
+}
+
+void Movement::setupTCS() {
+    tcs_.setMux(Pins::tcsPins[0]);
+    tcs_.setPrecision(kPrecision);
+    tcs_.init(kColors, kColorAmount, kColorList, kColorThresholds);
 }
 
 void Movement::stopMotors() {
@@ -294,7 +302,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     
     bool rampDetected = false;
 
-    getAllWallsDistances(&wallDistances_[kNumberOfVlx]);
+
+
+    getAllWallsDistances(&wallDistances[kNumberOfVlx]);
 
     const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getDistance();
     bool moveForward = false;
@@ -310,13 +320,29 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             currentState_ = MovementState::kForward;
+            blackTile_ = false;
+            blueTile_ = false;
+            checkpointTile_ = false;
+            finishedMovement_ = false;
 
             customPrintln("Moving forward");
             customPrintln("TargetDistance:" + String(targetDistance));
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
-                //customPrintln("Hasn't traveled distance");
-                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                // crashRight = limitSwitch_[rightLimitSwitch].getState();
+                customPrintln("Distance:" + String(allDistanceTraveled_));
+            
+                // TODO: Optimize the time when it is blue tile
+                checkColors();
+                
+                #if DEBUG_MOVEMENT
+                customPrintln("Color:" + String(getTCSInfo()));
+                customPrintln("blackTile" + String(blackTile_));
+                #endif
+                if (wasBlackTile()) {
+                    customPrintln("Black tile detected");
+                    return;
+                }
+                crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
@@ -347,15 +373,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 customPrintln("targetDistance:" + String(targetDistance));
                 #endif
     
-                //checkWallsDistances();
-            } 
-            //customPrintln(hasTraveledDistanceWithSpeed(targetDistance) == true? "Has traveled distance":"Hasn't traveled distance");
-            // customPrintln("InitialFrontWallDistance:" + String(initialFrontWallDistance));
-            // customPrintln("TargetDistance__:" + String(targetDistance));
-            const double desiredWallDistance = initialFrontWallDistance + targetDistance;
-            // customPrintln("DesiredWallDistance:" + String(desiredWallDistance));
-            stopMotors();
+                checkWallsDistances();
+            }
 
+            finishedMovement_ = true;
+            checkColors();
+            
+            const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             // TODO: Change the way to check the wall distance  
             /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance(), moveForward) == false) {
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
@@ -379,7 +403,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             moveForward = false;
-            customPrintln("Moving backward");
+            
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
@@ -613,6 +637,46 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     return abs(distanceDiff) < kMaxDistanceError;
 }
 
+void Movement::printTCS() {
+    tcs_.printRGB();
+    tcs_.getColor();
+}
+
+char Movement::getTCSInfo() {
+    printTCS();
+    return tcs_.getColorWithThresholds();
+} 
+
+void Movement::rgbTCSClear() {
+    tcs_.printRGBC();
+}
+
+char Movement::checkColors() {
+    const char color = getTCSInfo();
+    if (color == kBlackColor) {
+        blackTile_ = true;
+        const double desiredDistance = allDistanceTraveled_;
+        targetDistance_ = desiredDistance;
+        allDistanceTraveled_ = 0;
+        customPrintln("blackTile__" + String(blackTile_));
+        stopMotors();
+        moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
+        return color;
+    } else if (color == kBlueColor && finishedMovement_ == true) {
+        blueTile_ = true;
+        stopMotors();
+        customPrintln("DETECTED BLUE TILE");
+        delay(kFiveSeconds_);
+        
+        return color;
+    } else if (color == kRedColor) {
+        checkpointTile_ = true;
+        stopMotors();
+        return color;
+    }
+    return color;
+}
+
 bool Movement::isRamp() {
     const double currentOrientationY = bno_.getOrientationY();
     #if DEBUG_MOVEMENT
@@ -638,4 +702,16 @@ int Movement::directionRamp() {
         return -1;
     }
     return 0;
+}
+
+bool Movement::wasBlackTile() {
+    return blackTile_;
+}
+
+bool Movement::isBlueTile() {
+    return blueTile_;
+}
+
+bool Movement::isCheckpointTile() {
+    return checkpointTile_;
 }

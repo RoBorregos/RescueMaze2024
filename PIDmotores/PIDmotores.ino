@@ -507,43 +507,17 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    startAlgorithm();
-    
-    // robot.goForward(0);
-    /* if(robot.checkWallsDistances(TileDirection::kUp, 180)) {
-        screenPrint("Wall found up");
-    }
-    else {
-        screenPrint("No wall found up");
-    }
-    if(robot.checkWallsDistances(TileDirection::kDown, 180)) {
-        screenPrint("Wall found down");
-    }
-    else {
-        screenPrint("No wall found down");
-    }
-    if(robot.checkWallsDistances(TileDirection::kLeft, 180)) {
-        screenPrint("Wall found left");
-    }
-    else {
-        screenPrint("No wall found left");
-    }
-    if(robot.checkWallsDistances(TileDirection::kRight, 180)) {
-        screenPrint("Wall found right");
-    }
-    else {
-        screenPrint("No wall found right");
-    } */
-
-
     // robot.goForward();
 
     // robot.turnLeft();
+    
+    /* if (robot.isRamp()){
 
     /* robot.moveMotors(MovementState::kForward, 0, 0.3);
     if (robot.isRamp()){
         robot.moveMotors(MovementState::kRamp, 0, 0);
     }
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0); */
     robot.moveMotors(MovementState::kTurnLeft, 270, 0); */
 
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
@@ -573,6 +547,8 @@ void setup(){
     
 void loop() {
     #if DEBUG_ALGORITHM
+    //robot.printTCS();
+    //customPrintln(robot.getTCSInfo());
     customPrintln("Loop");
     delay(1000);
     #endif
@@ -623,6 +599,7 @@ void loop() {
     delay(100); */
     // WARNING: by using a while or for loop here, the robot will not follow the instruction
     // robot.moveMotors(MovementState::kForward, 0, 1);
+    //robot.moveMotors(MovementState::kForward, 0, 10);
     //robot.setSpeed(0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
