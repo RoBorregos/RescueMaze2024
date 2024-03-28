@@ -189,9 +189,8 @@ uint8_t Movement::checkWallsDistances() {
 }
 
 double Movement::getDistanceToCenter() {
-    double distanceBack = 0;
     double cmToCenterFront = 0;
-    distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
+    double distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     distanceBack *= kMToCm;
     cmToCenterFront = ((uint8_t)distanceBack % kTileLength) * 30;
 
@@ -656,15 +655,19 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
 }
 
 bool Movement::centerInTile() {
-    const double distanceBack = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     distanceToCenter_ = getDistanceToCenter();
     if (hasWallBehind()) {
-        distanceToCenter_ = kTileLength - kLargeOfRobot - distanceToCenter_;
+        distanceToCenter_ = (kTileLength - kLargeOfRobot) / 2;
         distanceToCenter_ = distanceToCenter_ / kMToCm;
         return true;
     }
 
     return false;
+}
+
+void Movement::distanceToCenterInTile() {
+    distanceToCenter_ = (kTileLength - kLargeOfRobot) / 2;
+    distanceToCenter_ = distanceToCenter_ / kMToCm;
 }
 
 bool Movement::hasWallBehind() {
@@ -684,6 +687,9 @@ void Movement::resetWithBackWall(const double targetOrientation, double currentO
         customPrintln("currentOrientation:" + String(currentOrientation));
         customPrintln("realOrientation:" + String(realOrientation));
         // check if the second time the robot makes the update of the orientation
+        if (phaseCorrection == 0.0) {
+            phaseCorrection = 0.0;
+        }
         if (abs(phaseCorrection) < 180) {
             customPrintln("1");
             phaseCorrection = phaseCorrection;
@@ -699,10 +705,10 @@ void Movement::resetWithBackWall(const double targetOrientation, double currentO
         encodersReset_ = true;
         allDistanceTraveled_ = 0;
         
-        if (centerInTile() == true) {
-            moveForward = true;
-            moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
-        }
+        moveForward = true;
+        customPrintln("DistanceToCenter:" + String(distanceToCenter_));
+        distanceToCenterInTile();
+        moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
         
         inResetRoutine_ = false;
         counterMovements_ = 0;

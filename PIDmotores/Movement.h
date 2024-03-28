@@ -217,6 +217,8 @@ class Movement {
 
         bool centerInTile();
 
+        void distanceToCenterInTile();
+
         bool hasWallBehind();
 
         void resetOrientation();
