@@ -81,7 +81,7 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    // delay(1500);
+    // delay(1000);
     #endif
 }
 
@@ -175,7 +175,16 @@ void followPath() {
         customPrintln("robotOrientation: " + String(robotOrientation));
         customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
         #endif
-        robotCoord = next;
+        if (robot.wasBlackTile()) {
+            tiles[tilesMap.getIndex(next)].setBlackTile();
+            screenPrint("Black tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
+        } else if (robot.isBlueTile()) {
+            robotCoord = next;
+            tiles[tilesMap.getIndex(robotCoord)].weight_ = kBlueTileWeight;
+            screenPrint("Blue tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
+        } else {
+            robotCoord = next;
+        }
     }
 }
 
@@ -313,6 +322,8 @@ void depthFirstSearch() {
         #if DEBUG_ALGORITHM 
         customPrintln("before dijsktra"); 
         #endif
+        screenPrint("robotCoord " + String(robotCoord.x) + " " + String(robotCoord.y));
+        screenPrint("Exploring " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         dijsktra(robotCoord, currentTileCoord);
         #if DEBUG_ALGORITHM || DEBUG_MERGE
         customPrint("currentTileCoord: ");
@@ -323,15 +334,19 @@ void depthFirstSearch() {
         customPrintln(unvisited.size());
         #endif
         #if USING_SCREEN
+        screenPrint("robotCoord " + String(robotCoord.x) + " " + String(robotCoord.y));
         screenPrint("currentTileCoord:   " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         #endif
-        robotCoord = currentTileCoord;
+        // robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
+        if (robot.wasBlackTile()) {
+            continue;
+        }
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {
             screenPrint("Ramp found");
-            currentTile->weight_ = 2;
+            currentTile->weight_ = kRampWeight;
             TileDirection direction;
             // check robots orientation to know the next Tile.
             switch (robotOrientation) {
@@ -478,6 +493,7 @@ void depthFirstSearch() {
             }
         }
     }
+    screenPrint("End of DFS");
     dijsktra(robotCoord, coord{0,0,0});
     #if DEBUG_ALGORITHM
     customPrintln("termino DFS");
@@ -577,6 +593,7 @@ void setup(){
 }
     
 void loop() {
+    screenPrint("Loop");
     #if DEBUG_ALGORITHM
     customPrintln("Loop");
     delay(1000);

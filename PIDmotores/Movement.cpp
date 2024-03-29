@@ -299,12 +299,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
     bool crashRight = false;
     bool crashLeft = false;
-    
     bool rampDetected = false;
-
-
-
-
 
     getAllWallsDistances(&wallDistances_[kNumberOfVlx]);
 
@@ -343,8 +338,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     customPrintln("Black tile detected");
                     return;
                 }
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
+                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                // crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
@@ -382,6 +377,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             checkColors();
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
+            stopMotors();
             // TODO: Change the way to check the wall distance  
             /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, vlx[0].getDistance(), moveForward) == false) {
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
@@ -398,8 +394,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
             } 
             */
-
-            //stopMotors(); 
             
             break;
         }
@@ -662,7 +656,7 @@ char Movement::checkColors() {
         allDistanceTraveled_ = 0;
         customPrintln("blackTile__" + String(blackTile_));
         stopMotors();
-        moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
+        // moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
         return color;
     } else if (color == kBlueColor && finishedMovement_ == true) {
         blueTile_ = true;

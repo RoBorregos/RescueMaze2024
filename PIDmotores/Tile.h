@@ -16,6 +16,9 @@ constexpr uint8_t kMinWeight = 1;
 
 constexpr uint8_t kNumberOfDirections = 4;
 
+constexpr uint8_t kBlueTileWeight = 3;
+constexpr uint8_t kRampWeight = 5;
+
 constexpr coord kInvalidPosition = coord{1000,1000,1000};
 
 class Tile{
