@@ -538,14 +538,19 @@ void setup(){
 
     // robot.goForward();
 
+    robot.goForward();
+    robot.goForward();
+    robot.goForward();
+
     // robot.turnLeft();
 
     /* robot.moveMotors(MovementState::kForward, 0, 0.3);
     if (robot.isRamp()){
+    
+    /* if (robot.isRamp()){
         robot.moveMotors(MovementState::kRamp, 0, 0);
     }
     robot.moveMotors(MovementState::kTurnLeft, 270, 0); */
-
     /* robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 270, 1.64);
