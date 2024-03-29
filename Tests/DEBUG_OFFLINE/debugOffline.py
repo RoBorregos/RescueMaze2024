@@ -24,4 +24,4 @@ with open("received_messages.csv", "a", newline="") as csvfile:
         # Escribir la fila en el archivo CSV
         writer.writerow({"Timestamp": timestamp, "Message": message})
 
-        print(f"Mensaje recibido: {message}")
+        print(message)
