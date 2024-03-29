@@ -99,7 +99,7 @@ class Movement {
 
         double targetOrientation_ = 0;
 
-        const double kUnreachableDistance = 1.0;
+        const double kUnreachableDistance = 0.7;
 
         static constexpr double kWeightEncoders = 0.1;
 

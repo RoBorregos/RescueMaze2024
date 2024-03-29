@@ -4,6 +4,16 @@
 #include "CustomSerial.h"
 #include "VLX.h"
 
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+const char* ssid = "RoBorregos2";
+const char* password = "RoBorregos2024";
+const char* udpServerIP = "192.168.0.108"; // Replace with your Python script's IP address
+const int udpServerPort = 1234;
+
+WiFiUDP udp;
+
 #define DEBUG_MOVEMENT 0
 
 Movement::Movement() {
@@ -17,6 +27,15 @@ void Movement::setup() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+    }
+    Serial.println("Connected to WiFi");
+
+    udp.begin(udpServerPort);
+
     setupInternal(MotorID::kFrontLeft);
     setupInternal(MotorID::kFrontRight);
     setupInternal(MotorID::kBackLeft);
@@ -331,8 +350,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 // crashRight = limitSwitch_[rightLimitSwitch].getState();
                 rampDetected = isRamp();
 
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("targetOrientation" + String(targetOrientation));
+                udp.print(" ");
+                udp.print("CurrentOreintation" + String(currentOrientation));
+                udp.print(" ");
+                udp.print("CurrentDistance" + String(targetDistance));
+                udp.print(" ");
+                udp.endPacket();
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
+
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("Distance: ");
+                udp.print(weightMovemnt(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance(), initialBackWallDistance, initialFrontWallDistance));
+                udp.endPacket();
                 
                 if (rampDetected) {
                     #if DEBUG_MOVEMENT
@@ -363,11 +395,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 hasTraveledDistanceWithSpeed(targetDistance);
             }
-            allDistanceTraveled_ = 0;
 
             // TODO: Change the way to check the wall distance  
-
             stopMotors();
+
+            allDistanceTraveled_ = 0;
             
             break;
         }
@@ -481,7 +513,19 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     MotorState directions[kNumberOfWheels]; 
     double speed = 0;
     bool turnLeft = false;
+
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("TargetOrientation:" + String(targetOrientation));
+    udp.endPacket();
+
     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("CurrentOrientation:" + String(currentOrientation));
+        udp.print(" ");
+        udp.print("TargetOrientation:" + String(targetOrientation));
+        udp.endPacket();
+
         #if DEBUG_MOVEMENT
         customPrintln("ErrorOrientation:" + String(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)));
         #endif
@@ -492,6 +536,11 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         }
 
         pidTurn_.computeTurn(targetOrientation, currentOrientation, speed, turnLeft);
+
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Speed:" + String(speed));
+        udp.endPacket();
+
         if (turnLeft) {
             setMotorsDirections(MovementState::kTurnLeft, directions); 
         } else {
@@ -605,6 +654,10 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
 
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("DistanceTraveled:" + String(allDistanceTraveled_));
+    udp.endPacket();
+
     /* if (allDistanceTraveled_ >= distance) {
         return true;
     } */
@@ -643,12 +696,44 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
     double vlxDistanceTraveled = 0;
     
     if (currentDistanceBack > kUnreachableDistance && currentDistanceFront > kUnreachableDistance) {
-       return allDistanceTraveled_;
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Unreachable");
+        udp.print(" ");
+        udp.print("currentDistanceBack:" + String(currentDistanceBack));
+        udp.print(" ");
+        udp.print("currentDistanceFront:" + String(currentDistanceFront));
+        udp.print(" ");
+        udp.print("allDistanceTraveled:" + String(allDistanceTraveled_));
+        udp.endPacket();
+
+        return allDistanceTraveled_;
     }
     if (currentDistanceBack < currentDistanceFront) {
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Back");
+        udp.print(" ");
+        udp.print("currentDistanceBack:" + String(currentDistanceBack));
+        udp.print(" ");
+        udp.print("currentDistanceFront:" + String(currentDistanceFront));
+        udp.print(" ");
+        udp.print("initialVlxDistanceBack:" + String(initialVlxDistanceBack));
+        udp.print(" ");
+        udp.print("vlxDistanceTraveled:" + String(vlxDistanceTraveled));
+        udp.endPacket();
     } else {
         vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Front");
+        udp.print(" ");
+        udp.print("currentDistanceBack:" + String(currentDistanceBack));
+        udp.print(" ");
+        udp.print("currentDistanceFront:" + String(currentDistanceFront));
+        udp.print(" ");
+        udp.print("initialVlxDistanceFront:" + String(initialVlxDistanceFront));
+        udp.print(" ");
+        udp.print("vlxDistanceTraveled:" + String(vlxDistanceTraveled));
+        udp.endPacket();
     }
     return (allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx);
     
@@ -689,26 +774,54 @@ void Movement::resetWithBackWall(const double targetOrientation, double currentO
         // check if the second time the robot makes the update of the orientation
         if (phaseCorrection == 0.0) {
             phaseCorrection = 0.0;
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("0");
+            udp.endPacket();
         }
         if (abs(phaseCorrection) < 180) {
-            customPrintln("1");
             phaseCorrection = phaseCorrection;
+            customPrintln("1");
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("1");
+            udp.endPacket();
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("PhaseCorrection: " + String(phaseCorrection));
+            udp.endPacket();
         } else if (realOrientation < currentOrientation) {
-            customPrintln("2");
             phaseCorrection = 360 - abs(phaseCorrection);
+            customPrintln("2");
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("2");
+            udp.endPacket();
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("PhaseCorrection: " + String(phaseCorrection));
+            udp.endPacket();
         } else {
             customPrintln("3");
             phaseCorrection = abs(phaseCorrection) - 360;
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("3");
+            udp.endPacket();
+
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("PhaseCorrection: " + String(phaseCorrection));
+            udp.endPacket();
         }
         customPrintln("PhaseCorrection:" + String(phaseCorrection));
         bno_.setPhaseCorrection(phaseCorrection);
         encodersReset_ = true;
-        allDistanceTraveled_ = 0;
+        stopMotors();
         
         moveForward = true;
         customPrintln("DistanceToCenter:" + String(distanceToCenter_));
         distanceToCenterInTile();
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("DistanceToCenter:" + String(distanceToCenter_));
+        udp.endPacket();
         moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
+
+        stopMotors();
+        delay(800);
         
         inResetRoutine_ = false;
         counterMovements_ = 0;
