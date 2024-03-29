@@ -226,6 +226,7 @@
                 "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
                 "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_BNO055",
                 "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_VL53L0X\\src",
+                "C:\\Users\\tacol\\Documents\\Arduino\\libraries\\Adafruit_TCS34725",
                 "c:\\users\\tacol\\appdata\\local\\arduino15\\packages\\esp32\\tools\\xtensa-esp32-elf-gcc\\esp-2021r2-patch5-8.4.0\\xtensa-esp32-elf\\include\\c++\\8.4.0",
                 "c:\\users\\tacol\\appdata\\local\\arduino15\\packages\\esp32\\tools\\xtensa-esp32-elf-gcc\\esp-2021r2-patch5-8.4.0\\xtensa-esp32-elf\\include\\c++\\8.4.0\\xtensa-esp32-elf",
                 "c:\\users\\tacol\\appdata\\local\\arduino15\\packages\\esp32\\tools\\xtensa-esp32-elf-gcc\\esp-2021r2-patch5-8.4.0\\xtensa-esp32-elf\\include\\c++\\8.4.0\\backward",

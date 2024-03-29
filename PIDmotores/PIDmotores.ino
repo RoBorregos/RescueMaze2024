@@ -538,9 +538,9 @@ void setup(){
 
     // robot.goForward();
 
-    robot.goForward();
-    robot.goForward();
-    robot.goForward();
+    // robot.goForward();
+    // robot.goForward();
+    // robot.goForward();
 
     // robot.turnLeft();
 

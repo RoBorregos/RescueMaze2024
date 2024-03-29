@@ -214,6 +214,8 @@ class Movement {
 
         uint8_t checkWallsDistances();
 
+        bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
+
         double getDistanceToCenter();
 
         double getWallDistance(const VlxID vlxId);
@@ -237,6 +239,8 @@ class Movement {
         void correctionAfterCrash(const bool crashSide, double currentOrientation, bool useWallDistance);
 
         double getOrientation(const double orientation);
+
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
 
         void printTCS();
 
