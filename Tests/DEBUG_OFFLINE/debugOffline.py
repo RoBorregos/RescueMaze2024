@@ -1,7 +1,7 @@
 import socket
 import csv
 
-UDP_PORT = 1234
+UDP_PORT = 1235
 
 with open("received_messages.csv", "a", newline="") as csvfile:
     fieldnames = ["Timestamp", "Message"]
@@ -24,4 +24,4 @@ with open("received_messages.csv", "a", newline="") as csvfile:
         # Escribir la fila en el archivo CSV
         writer.writerow({"Timestamp": timestamp, "Message": message})
 
-        print(message)
+        print((f"Received message: {message}"))

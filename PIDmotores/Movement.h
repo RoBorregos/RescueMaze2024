@@ -19,7 +19,8 @@ enum class MovementState{
     kBackward,
     kTurnLeft,
     kTurnRight,
-    kRamp
+    kRamp,
+    kReset
 };
 
 class Movement {
@@ -46,6 +47,7 @@ class Movement {
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
+        static constexpr double kBaseSpeedForwardReset_ = 0.03;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -101,9 +103,9 @@ class Movement {
 
         const double kUnreachableDistance = 0.7;
 
-        static constexpr double kWeightEncoders = 0.1;
+        static constexpr double kWeightEncoders = 0.7;
 
-        static constexpr double kWeightVlx = 0.9;
+        static constexpr double kWeightVlx = 0.3;
 
         int counterMovements_ = 0;
 
@@ -115,6 +117,7 @@ class Movement {
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidReset_;
 
         double vlxDistanceTraveled_;
 
@@ -124,7 +127,7 @@ class Movement {
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
-        constexpr static double kDForward = 0.0;
+        constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
         constexpr static double kIBackward = 0.0;
@@ -133,6 +136,10 @@ class Movement {
         constexpr static double kPTurn = 0.00005;
         constexpr static double kITurn = 0.0;
         constexpr static double kDTurn = 0.00019;
+
+        constexpr static double kPReset = 0.0005;
+        constexpr static double kIReset = 0.0;
+        constexpr static double kDReset = 0.0;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
@@ -224,6 +231,8 @@ class Movement {
         void resetOrientation();
 
         void resetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+
+        void moveMotorsInADirectionReset(double targetOrientation, bool moveForward);
     };
 
 #endif
