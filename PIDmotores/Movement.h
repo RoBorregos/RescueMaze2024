@@ -59,7 +59,7 @@ class Movement {
         LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         static constexpr uint8_t kNumberOfVlx = 5;
-        const double kMToCm = 100.0;
+        static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
         static constexpr uint8_t kTileLength = 30; //cm
@@ -68,7 +68,7 @@ class Movement {
 
         static constexpr double kHalfTileInMeters = 0.15; //m
 
-        static constexpr double kLargeOfRobot = 19.9; //cm
+        static constexpr double kLengthOfRobot = 19.9; //cm
 
 
         bool useWallDistance_ = false;
@@ -95,7 +95,7 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        const double kMinWallDistance = 0.0775; // 7.75 cm
+        static constexpr double kMinWallDistance_ = 0.15; // 15 cm
 
         static constexpr double kMaxDistanceError = 0.03;
 
@@ -107,7 +107,7 @@ class Movement {
 
         double targetOrientation_ = 0;
 
-        const double kUnreachableDistance = 0.7;
+        static constexpr double kUnreachableDistance = 0.7;
 
         static constexpr double kWeightEncoders = 0.3;
 
@@ -127,8 +127,6 @@ class Movement {
         double vlxDistanceTraveled_;
 
         double distanceToCenter_;
-
-        const double kMaxWallDistance_ = 0.15;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
