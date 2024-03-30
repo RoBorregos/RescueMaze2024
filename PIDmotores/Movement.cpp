@@ -279,9 +279,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
             double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
-            while (weightMovemnt(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
+            while (weightMovement(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
 
-                if (frontWallDistance <= 0.06) {
+                if (frontWallDistance <= kMinFrontWallDistance) {
                     break;
                 }
 
@@ -300,13 +300,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
                 
                 moveMotorsInADirection(targetOrientation, moveForward);
-
-                #if DEBUG_OFFLINE_MOVEMENT
-                udp.beginPacket(udpServerIP, udpServerPort);
-                udp.print("Distance: ");
-                udp.print(weightMovemnt(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance(), initialBackWallDistance, initialFrontWallDistance));
-                udp.endPacket();
-                #endif
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
                 if (crashLeft == true && crashRight == false) {
@@ -623,7 +616,7 @@ bool Movement::isRamp() {
     return false;
 }
 
-double Movement::weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront) {
+double Movement::weightMovement(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront) {
     double vlxDistanceTraveled = 0;
     bool rampDetected = isRamp();
 
@@ -680,11 +673,18 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
         udp.endPacket();
         #endif
     }
+    #if DEBUG_OFFLINE_MOVEMENT
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Distance: ");
+    udp.print(weightMovemnt(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance(), initialBackWallDistance, initialFrontWallDistance));
+    udp.endPacket();
+    #endif
+
     return (allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx);
     
 }
 
-void Movement::distanceToCenterInTile() {
+void Movement::updateDistanceToCenterInTile() {
     distanceToCenter_ = (kTileLength - kLargeOfRobot) / 2;
     distanceToCenter_ = distanceToCenter_ / kMToCm;
 
@@ -708,8 +708,9 @@ bool Movement::hasWallBehind() {
 }
 
 void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward ,bool useWallDistance){
-    if (!inResetRoutine_ && counterMovements_ >= 4 && hasWallBehind() ) {
+    if (!inResetRoutine_ && counterMovements_ >= kMaxMovements_ && hasWallBehind() ) {
         pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
+        pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
 
         stopMotors();
         inResetRoutine_ = true;
@@ -719,7 +720,6 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
 
         stopMotors();
 
-        // delay(800);
         const double phaseCorrection = getPhaseCorrection(currentOrientation, targetOrientation);
         
         bno_.setPhaseCorrection(phaseCorrection);
@@ -739,13 +739,11 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
         #endif
 
         moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
-        stopMotors();
-
-        // delay(800);
         
         inResetRoutine_ = false;
         counterMovements_ = 0;
         pidForward_.setBaseSpeed(kBaseSpeedForward_);
+        pidBackward_.setBaseSpeed(kBaseSpeedForward_);
     }
 
 }
@@ -758,18 +756,9 @@ double Movement::getPhaseCorrection(const double currentOrientation, const doubl
     customPrintln("realOrientation:" + String(realOrientation));
     customPrintln("targetOrientation:" + String(targetOrientation));
     #endif
-    // check if the second time the robot makes the update of the orientation
-    /* if (phaseCorrection == 0.0) {
-        phaseCorrection = 0.0;
-        #if DEBUG_OFFLINE_MOVEMENT
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("0");
-        udp.endPacket();
-        #endif
-    } */
+
     if (abs(phaseCorrection) < 180) {
         phaseCorrection = phaseCorrection;
-        customPrintln("1");
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("1");
@@ -780,7 +769,6 @@ double Movement::getPhaseCorrection(const double currentOrientation, const doubl
         #endif
     } else if (realOrientation < currentOrientation) {
         phaseCorrection = 360 - abs(phaseCorrection);
-        customPrintln("2");
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("2");
@@ -790,7 +778,6 @@ double Movement::getPhaseCorrection(const double currentOrientation, const doubl
         udp.endPacket();
         #endif
     } else {
-        customPrintln("3");
         phaseCorrection = abs(phaseCorrection) - 360;
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
@@ -802,5 +789,6 @@ double Movement::getPhaseCorrection(const double currentOrientation, const doubl
         udp.endPacket();
         #endif
     }
+
     return phaseCorrection;
 }

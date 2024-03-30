@@ -48,6 +48,10 @@ class Movement {
         static constexpr double kBaseSpeedTurn_ = 0.07;
         static constexpr double kBaseSpeedForwardReset_ = 0.05;
 
+        const uint8_t kMaxMovements_ = 4;
+
+        const double kMinFrontWallDistance = 0.06;
+
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
         static constexpr uint8_t kNumberOfLimitSwitches = 2;
@@ -56,15 +60,15 @@ class Movement {
 
         static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
-        const uint8_t kVlxOffset = 2; //cm
+        static constexpr uint8_t kVlxOffset = 2; //cm
 
-        const uint8_t kTileLength = 30; //cm
+        static constexpr uint8_t kTileLength = 30; //cm
 
-        const double kHalfTile = 15.0; //cm
+        static constexpr double kHalfTile = 15.0; //cm
 
-        const double kHalfTileInMeters = 0.15; //m
+        static constexpr double kHalfTileInMeters = 0.15; //m
 
-        const double kLargeOfRobot = 19.9; //cm
+        static constexpr double kLargeOfRobot = 19.9; //cm
 
 
         bool useWallDistance_ = false;
@@ -217,11 +221,11 @@ class Movement {
 
         void rampMovement();
 
-        double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
+        double weightMovement(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 
         bool centerInTile();
 
-        void distanceToCenterInTile();
+        void updateDistanceToCenterInTile();
 
         bool hasWallBehind();
 

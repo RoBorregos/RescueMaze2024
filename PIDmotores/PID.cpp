@@ -126,51 +126,6 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
     timePrev_ = millis(); 
 }
 
-void PID::computeStraightReset(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
-    const unsigned long timeDiff = millis() - timePrev_;
-    if (timeDiff < kSampleTime_) {
-        #if DEBUG_PID
-        customPrintln("TimeDiff:" + String(timeDiff));
-        #endif
-        return;
-    }
-    const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
-    const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
-    
-    #if DEBUG_PID
-    customPrintln("ERRORORIENTATION:" + String(errorOrientation));
-    customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-    customPrintln("KP" + String(this->kP_));
-    customPrintln("KI" + String(kI_));
-    customPrintln("KD" + String(kD_));
-    customPrintln("kMinOutput_" + String(kMinOutput_));
-    customPrintln("kMaxOutput_" + String(kMaxOutput_));
-    customPrintln("kMaxErrorSum_" + String(kMaxErrorSum_));
-    customPrintln("kSampleTime_" + String(kSampleTime_));
-    customPrintln("kBaseModifier_" + String(kBaseModifier_));
-    customPrintln("kMaxOrientationError_" + String(kMaxOrientationError_));
-    #endif
-
-    outputLeft = kBaseModifier_;
-    outputRight = kBaseModifier_;
-    if (abs(errorOrientation) > kMaxOrientationError_) {
-        outputLeft += outputModifier;
-        outputRight -= outputModifier;
-    }
-    
-    #if DEBUG_PID
-    customPrintln("outputLeft" + String(outputLeft));
-    customPrintln("outputRight" + String(outputRight));
-    customPrintln("baseModifier" + String(kBaseModifier_));
-    #endif
-    
-    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
-    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
-    errorPrev_ = errorOrientation;
-
-    timePrev_ = millis(); 
-}
-
 void PID::computeTurn(const double targetOrientation, const double currentOrientation, double &speed, bool &clockwise) {
     const unsigned long timeDiff = millis() - timePrev_;
     if (timeDiff < kSampleTime_) {
