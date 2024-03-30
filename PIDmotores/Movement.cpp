@@ -324,9 +324,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
+                // TODO: improve this condition
                 if (hasTraveledDistanceWithSpeed(targetDistance) == true) {
                     break;
-                }
+                } 
             }
 
             stopMotors();
@@ -344,12 +345,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
-            //const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
+            const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
 
             // TODO: change the way to check the wall distance
-            /* while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight), moveForward) == false) {
+            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight)) == false) {
                 moveMotorsInADirection(targetOrientation, moveForward);
-            } */
+            }
 
             stopMotors();
             
@@ -389,7 +390,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 
-    maybeResetWithBackWall(targetOrientation, currentOrientation, moveForward, useWallDistance);
+    maybeResetWithBackWall(targetOrientation, currentOrientation, moveForward);
 }
 
 
@@ -588,7 +589,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
         udp.endPacket();
         #endif
         return true;
-    } 
+    }
     
     return false;
 }
@@ -707,18 +708,15 @@ bool Movement::hasWallBehind() {
     return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() <= kMaxWallDistance_;
 }
 
-void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward ,bool useWallDistance){
+void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward){
     if (!inResetRoutine_ && counterMovements_ >= kMaxMovements_ && hasWallBehind() ) {
+        inResetRoutine_ = true;
+        stopMotors();
         pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
         pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
 
-        stopMotors();
-        inResetRoutine_ = true;
-        
         // The encoders reset in moveMotors Backward in the hasTraveledDistanceWithSpeedForBackward function
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), kHalfTileInMeters, useWallDistance);
-
-        stopMotors();
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), kHalfTileInMeters, false);
 
         const double phaseCorrection = getPhaseCorrection(currentOrientation, targetOrientation);
         
@@ -729,7 +727,7 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
         #if DEBUG_MOVEMENT
         customPrintln("DistanceToCenter:" + String(distanceToCenter_));
         #endif
-        distanceToCenterInTile();
+        updateDistanceToCenterInTile();
 
 
         #if DEBUG_OFFLINE_MOVEMENT
@@ -740,10 +738,10 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
 
         moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
         
-        inResetRoutine_ = false;
-        counterMovements_ = 0;
         pidForward_.setBaseSpeed(kBaseSpeedForward_);
         pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+        inResetRoutine_ = false;
+        counterMovements_ = 0;
     }
 
 }

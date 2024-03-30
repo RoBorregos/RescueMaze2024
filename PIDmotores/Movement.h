@@ -223,13 +223,11 @@ class Movement {
 
         double weightMovement(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
 
-        bool centerInTile();
-
         void updateDistanceToCenterInTile();
 
         bool hasWallBehind();
 
-        void maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+        void maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward);
 
         double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
     };
