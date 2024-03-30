@@ -95,7 +95,7 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        static constexpr double kMinWallDistance_ = 0.15; // 15 cm
+        static constexpr double kMinWallDistance = 0.15; // 15 cm
 
         static constexpr double kMaxDistanceError = 0.03;
 
