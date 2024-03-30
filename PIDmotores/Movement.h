@@ -20,7 +20,8 @@ enum class MovementState{
     kBackward,
     kTurnLeft,
     kTurnRight,
-    kRamp
+    kRamp,
+    kReset
 };
 
 class Movement {
@@ -47,6 +48,7 @@ class Movement {
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.14;
         static constexpr double kBaseSpeedTurn_ = 0.07;
+        static constexpr double kBaseSpeedForwardReset_ = 0.03;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -58,6 +60,11 @@ class Movement {
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
         const uint8_t kTileLength = 30; //cm
+
+        const double kHalfTile = 15.0; //cm
+
+        const double kLargeOfRobot = 19.9; //cm
+
 
         bool useWallDistance_ = false;
 
@@ -85,7 +92,7 @@ class Movement {
 
         const double kMinWallDistance = 0.0775; // 7.75 cm
 
-        static constexpr double kMaxDistanceError = 0.01;
+        static constexpr double kMaxDistanceError = 0.03;
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -95,14 +102,33 @@ class Movement {
 
         double targetOrientation_ = 0;
 
+        const double kUnreachableDistance = 0.7;
+
+        static constexpr double kWeightEncoders = 0.7;
+
+        static constexpr double kWeightVlx = 0.3;
+
+        int counterMovements_ = 0;
+
+        bool encodersReset_ = false;
+
+        bool inResetRoutine_ = false;
+
         PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidReset_;
+
+        double vlxDistanceTraveled_;
+
+        double distanceToCenter_;
+
+        double wallBehindDistance_ = 0.15;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
-        constexpr static double kDForward = 0.0;
+        constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
         constexpr static double kIBackward = 0.0;
@@ -111,6 +137,10 @@ class Movement {
         constexpr static double kPTurn = 0.00005;
         constexpr static double kITurn = 0.0;
         constexpr static double kDTurn = 0.00019;
+
+        constexpr static double kPReset = 0.0005;
+        constexpr static double kIReset = 0.0;
+        constexpr static double kDReset = 0.0;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
@@ -177,7 +207,7 @@ class Movement {
         double getBackLeftSpeed();
         double getBackRightSpeed();
         double getFrontLeftSpeed();
-        double getFrontRightSpeed();    
+        double getFrontRightSpeed();
 
         uint8_t getOrientation(const compass currentOrientation);
         
@@ -187,9 +217,11 @@ class Movement {
 
         void setSpeed(const double speed);
 
+        bool hasTraveledDistanceWithSpeedForBackward(const double distance);
+
         bool hasTraveledDistanceWithSpeed(const double distance);
 
-        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance, bool &moveForward);
+        bool hasTraveledWallDistance(const double targetDistance, const double currentDistance);
 
         void moveMotorsInADirection(double targetOrientation, bool moveForward);
 
@@ -241,5 +273,19 @@ class Movement {
 
         bool isCheckpointTile();
 };
+        double weightMovemnt(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
+
+        bool centerInTile();
+
+        void distanceToCenterInTile();
+
+        bool hasWallBehind();
+
+        void resetOrientation();
+
+        void resetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+
+        void moveMotorsInADirectionReset(double targetOrientation, bool moveForward);
+    };
 
 #endif
