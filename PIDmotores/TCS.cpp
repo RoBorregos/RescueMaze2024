@@ -6,19 +6,19 @@ TCS::TCS() {
 }
 
 TCS::TCS(const uint8_t posMux) {
-    mux.setNewChannel(posMux);
+    mux_.setNewChannel(posMux);
     setDefaultValues();
 }
 
 TCS::TCS(const uint8_t posMux, const int precision) {
-    mux.setNewChannel(posMux);
+    mux_.setNewChannel(posMux);
     setDefaultValues();
     this->precision_ = precision;
 }
 
 void TCS::init() {
-    mux.selectChannel();
-    if (!tcs.begin()) {
+    mux_.selectChannel();
+    if (!tcs_.begin()) {
         #if DEBUG_TCS
         customPrintln("No TCS34725 found ... check your connections");
         #endif
@@ -46,11 +46,11 @@ void TCS::setDefaultValues() {
 }
 
 void TCS::updateRGB() {
-    mux.selectChannel();
-    tcs.setInterrupt(false);
+    mux_.selectChannel();
+    tcs_.setInterrupt(false);
     delay(millisToWait_);
-    tcs.getRGB(&red_, &green_, &blue_);
-    tcs.setInterrupt(true);
+    tcs_.getRGB(&red_, &green_, &blue_);
+    tcs_.setInterrupt(true);
 }
 
 void TCS::updateRGBC() {
@@ -58,14 +58,14 @@ void TCS::updateRGBC() {
     uint16_t greenR;
     uint16_t blueR;
     uint16_t clearR;
-    mux.selectChannel();
-    tcs.setInterrupt(false);
+    mux_.selectChannel();
+    tcs_.setInterrupt(false);
     delay(millisToWait_);
-    tcs.getRawData(&redR, &greenR, &blueR, &clearR);
+    tcs_.getRawData(&redR, &greenR, &blueR, &clearR);
     red_ = redR;
     green_ = greenR;
     blue_ = blueR;
-    tcs.setInterrupt(true);
+    tcs_.setInterrupt(true);
 }
 
 void TCS::printRGB() {
@@ -100,7 +100,7 @@ void TCS::printColor() {
 }
 
 void TCS::setMux(const uint8_t posMux) {
-    mux.setNewChannel(posMux);
+    mux_.setNewChannel(posMux);
 }
 
 void TCS::setPrecision(const uint8_t precision) {

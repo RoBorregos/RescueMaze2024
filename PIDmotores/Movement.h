@@ -44,9 +44,9 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        double kBaseSpeedForward_ = 0.15;
+        static constexpr double kBaseSpeedForward_ = 0.15;
         static constexpr double kBaseSpeedTurn_ = 0.07;
-        static constexpr double kBaseSpeedForwardReset_ = 0.03;
+        static constexpr double kBaseSpeedForwardReset_ = 0.05;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -57,9 +57,12 @@ class Movement {
         static constexpr uint8_t kNumberOfVlx = 5;
         const double kMToCm = 100.0;
         const uint8_t kVlxOffset = 2; //cm
+
         const uint8_t kTileLength = 30; //cm
 
         const double kHalfTile = 15.0; //cm
+
+        const double kHalfTileInMeters = 0.15; //m
 
         const double kLargeOfRobot = 19.9; //cm
 
@@ -121,7 +124,7 @@ class Movement {
 
         double distanceToCenter_;
 
-        double wallBehindDistance_ = 0.15;
+        const double kMaxWallDistance_ = 0.15;
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
@@ -222,7 +225,9 @@ class Movement {
 
         bool hasWallBehind();
 
-        void resetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+        void maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward, bool useWallDistance);
+
+        double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
     };
 
 #endif
