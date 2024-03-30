@@ -7,6 +7,7 @@
 #define DEBUG_MOVEMENT 0
 #define DEBUG_OFFLINE_MOVEMENT 0
 
+#if DEBUG_OFFLINE_MOVEMENT
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
@@ -16,7 +17,6 @@ const char* udpServerIP = "192.168.0.107"; // Replace with your Python script's 
 const int udpServerPort = 1235;
 
 WiFiUDP udp;
-#if DEBUG_OFFLINE_MOVEMENT
 #endif
 
 
@@ -34,6 +34,7 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidReset_.setTunnings(kPReset, kIReset, kDReset, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForwardReset_, kMaxOrientationError);
 
+    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
@@ -42,7 +43,6 @@ void Movement::setup() {
     Serial.println("Connected to WiFi");
 
     udp.begin(udpServerPort);
-    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -215,11 +215,13 @@ void Movement::moveMotorsInADirectionReset(double targetOrientation, bool moveFo
         speeds[frontRightIndex] = speedRight;
         speeds[backRightIndex] = speedRight;
 
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("SpeedLeft:" + String(speedLeft));
         udp.print(" ");
         udp.print("SpeedRight:" + String(speedRight));
         udp.endPacket();
+        #endif
 
         #if DEBUG_MOVEMENT
         customPrintln("SpeedLeft:" + String(speedLeft));
@@ -750,9 +752,11 @@ bool Movement::hasTraveledDistanceWithSpeedForBackward(const double distance) {
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
 
+    #if Debug_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("DistanceTraveled:" + String(allDistanceTraveled_));
     udp.endPacket();
+    #endif
     
     if (allDistanceTraveled_ >= distance) {
         allDistanceTraveled_ = 0;
@@ -778,18 +782,19 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     allDistanceTraveled_ += distanceTraveled;
     prevTimeTraveled_ = millis();
 
-
-
+    
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("DistanceTraveled:" + String(allDistanceTraveled_));
     udp.endPacket();
-    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     if (allDistanceTraveled_ >= distance) {
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("totalDistanceTraveled:" + String(allDistanceTraveled_));
         udp.endPacket();
+        #endif
         return true;
     } 
     
@@ -827,6 +832,7 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
     double vlxDistanceTraveled = 0;
     
     if (currentDistanceBack > kUnreachableDistance && currentDistanceFront > kUnreachableDistance) {
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Unreachable");
         udp.print(" ");
@@ -836,12 +842,12 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
         udp.print(" ");
         udp.print("allDistanceTraveled:" + String(allDistanceTraveled_));
         udp.endPacket();
-        #if DEBUG_OFFLINE_MOVEMENT
         #endif
         return allDistanceTraveled_;
     }
     if (currentDistanceBack < currentDistanceFront) {
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Back");
         udp.print(" ");
@@ -853,10 +859,10 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
         udp.print(" ");
         udp.print("vlxDistanceTraveled:" + String(vlxDistanceTraveled));
         udp.endPacket();
-        #if DEBUG_OFFLINE_MOVEMENT
         #endif
     } else {
         vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
+        udp.endPacket();
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Front");
         udp.print(" ");
@@ -867,7 +873,6 @@ double Movement::weightMovemnt(double currentDistanceBack, double currentDistanc
         udp.print("initialVlxDistanceFront:" + String(initialVlxDistanceFront));
         udp.print(" ");
         udp.print("vlxDistanceTraveled:" + String(vlxDistanceTraveled));
-        udp.endPacket();
         #if DEBUG_OFFLINE_MOVEMENT
         #endif
     }
@@ -890,6 +895,7 @@ void Movement::distanceToCenterInTile() {
     distanceToCenter_ = (kTileLength - kLargeOfRobot) / 2;
     distanceToCenter_ = distanceToCenter_ / kMToCm;
 
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("kTileLength:" + String(kTileLength));
     udp.print(" ");
@@ -897,6 +903,7 @@ void Movement::distanceToCenterInTile() {
     udp.print(" ");
     udp.print("distanceToCenter__:" + String(distanceToCenter_));
     udp.endPacket();
+    #endif
 }
 
 bool Movement::hasWallBehind() {
@@ -973,11 +980,11 @@ void Movement::resetWithBackWall(const double targetOrientation, double currentO
         customPrintln("DistanceToCenter:" + String(distanceToCenter_));
         distanceToCenterInTile();
 
+
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("DistanceToCenter:" + String(distanceToCenter_));
         udp.endPacket();
-
-        #if DEBUG_OFFLINE_MOVEMENT
         #endif
 
         moveMotors(MovementState::kReset, targetOrientation, distanceToCenter_, moveForward);
