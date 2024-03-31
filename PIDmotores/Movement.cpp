@@ -14,7 +14,7 @@
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
 const char* udpServerIP = "192.168.0.107"; // Replace with your Python script's IP address
-const int udpServerPort = 1235;
+const int udpServerPort = 1236;
 
 WiFiUDP udp;
 #endif
@@ -42,6 +42,9 @@ void Movement::setup() {
     customPrintln("Connected to WiFi");
 
     udp.begin(udpServerPort);
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Connected to WiFi");
+    udp.endPacket();
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -326,9 +329,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 // TODO: improve this condition
                 if (hasTraveledDistanceWithSpeed(targetDistance) == true) {
+                    #if DEBUG_OFFLINE_MOVEMENT
+                    udp.beginPacket(udpServerIP, udpServerPort);
+                    udp.print("--------------------------------------------------------------");
+                    udp.endPacket();
+                    #endif
                     break;
                 } 
             }
+
+            #if DEBUG_OFFLINE_MOVEMENT
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("allDistanceTraveled:" + String(allDistanceTraveled_));
+            udp.endPacket();
+            #endif
+            allDistanceTraveled_ = 0;
 
             stopMotors();
             
@@ -581,9 +596,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     #endif
 
     if (allDistanceTraveled_ >= distance) {
-
         allDistanceTraveled_ = 0;
-
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("totalDistanceTraveled:" + String(allDistanceTraveled_));
@@ -603,6 +616,13 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
 bool Movement::isRamp() {
     
     const double currentOrientationY = bno_.getOrientationY();
+
+    #if DEBUG_OFFLINE_MOVEMENT
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("OrientationY:" + String(currentOrientationY));
+    udp.endPacket();
+    #endif
+
     #if DEBUG_MOVEMENT
     customPrintln("OrientationY:" + String(currentOrientationY));
     #endif
@@ -675,13 +695,7 @@ double Movement::weightMovement(double currentDistanceBack, double currentDistan
         udp.endPacket();
         #endif
     }
-    #if DEBUG_OFFLINE_MOVEMENT
-    udp.beginPacket(udpServerIP, udpServerPort);
-    udp.print("Distance: ");
-    udp.print(weightMovemnt(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance(), initialBackWallDistance, initialFrontWallDistance));
-    udp.endPacket();
-    #endif
-
+    
     return (allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx);
     
 }

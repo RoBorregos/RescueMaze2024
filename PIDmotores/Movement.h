@@ -101,7 +101,7 @@ class Movement {
 
         static constexpr double kMaxOrientationError = 0.9;
 
-        static constexpr double kMinRampOrientation = 17.0;
+        static constexpr double kMinRampOrientation = 10.0;
 
         static constexpr long long kOneSecInMs = 1000;
 
