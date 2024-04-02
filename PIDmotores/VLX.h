@@ -12,11 +12,11 @@
 
 
 enum class VlxID {
-    kFrontRight = 0,
-    kBack = 1,
-    kLeft = 2,
+    kFrontLeft = 0,
+    kLeft = 1,
+    kBack = 2,
     kRight = 3,
-    kFrontLeft = 4,
+    kFrontRight = 4,
     kNone
 };
 
@@ -39,7 +39,7 @@ class VLX {
         VLX(const uint8_t posMux);
         void setMux(const uint8_t posMux);
         double getDistance();
-        uint16_t getRawDistance();
+        double getRawDistance();
         bool init();
         void updateDistance();
 

@@ -36,6 +36,10 @@ PID::PID(const double kP, const double kI, const double kD) {
     #endif
 }
 
+void PID::setBaseSpeed(const double baseModifier) {
+    kBaseModifier_ = baseModifier;
+}
+
 void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
     kP_ = kP;
     kI_ = kI;

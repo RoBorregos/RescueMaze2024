@@ -4,6 +4,15 @@
 #include "Pins.h"
 #include "BNO.h"
 #include "Encoder.h"
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+/* const char* ssid = "RoBorregos2";
+const char* password = "RoBorregos2024";
+const char* udpServerIP = "192.168.0.108"; // Replace with your Python script's IP address
+const int udpServerPort = 1234;
+
+WiFiUDP udp; */
 
 Movement robot;
 
@@ -13,11 +22,80 @@ bool hasArrived = false;
 
 void setup(){
     Serial.begin(115200);
+
+    /* WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+    }
+    Serial.println("Connected to WiFi");
+
+    udp.begin(udpServerPort); */
+
     while (!Serial) delay(10); // wait for serial port to open!
     customPrintln("Serial ready");
     robot.setup();
+
+    // robot.moveMotors(MovementState::kStop, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.3);
+    // robot.moveMotors(MovementState::kForward, 0, 0.3);
+
+    /* robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0); 
+
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    if (robot.isRamp()){
+        robot.moveMotors(MovementState::kRamp, 0, 0);
+    } */
+    
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3);
+
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 180, 0);
+
+    robot.moveMotors(MovementState::kForward, 180, 0.3);
+    robot.moveMotors(MovementState::kForward, 180, 0.3);
+    robot.moveMotors(MovementState::kForward, 180, 0.3);
+    robot.moveMotors(MovementState::kForward, 180, 0.3);
+
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3);
+    if (robot.isRamp()){
+        robot.moveMotors(MovementState::kRamp, 0, 0);
+    }
+
+
+    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3); */
+    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3); */
+
+    
+    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+
+    robot.moveMotors(MovementState::kForward, 0, 0.3);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.3); 
+    robot.moveMotors(MovementState::kTurnLeft, 180, 0); */
     // robot.goForward();
 
+    // robot.turnLeft();
+    //robot.moveMotors(MovementState::kForward, 0, 0.3);
+    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
+    if (robot.isRamp()){
+        robot.moveMotors(MovementState::kRamp, 0, 0);
     robot.goForward();
     robot.goForward();
     robot.goForward();
@@ -54,6 +132,10 @@ void setup(){
 }
     
 void loop() {
+
+  /*   udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("HOla");
+    udp.endPacket(); */
     
     //robot.printTCS();
     //customPrintln(robot.getTCSInfo());
@@ -66,7 +148,7 @@ void loop() {
     //robot.moveMotors(MovementState::kBackward, 0, 0);
     //robot.moveMotors(MovementState::kTurnRight, 90, 0);
     //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    
+  
 
    /*  robot.moveMotors(MovementState::kForward, 0, 1.5);
     robot.moveMotors(MovementState::kTurnLeft, 270, 0);

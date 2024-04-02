@@ -10,8 +10,8 @@
 
 class TCS {
     private:
-        Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
-        MUX mux;
+        Adafruit_TCS34725 tcs_ = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+        MUX mux_;
 
         static constexpr int kColorAmount_ = 3;
 
