@@ -62,7 +62,11 @@ class Movement {
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
+        const double idealDistanceCenter = 0.05;
+
         static constexpr uint8_t kTileLength = 30; //cm
+
+        static constexpr double kTileLengthInMeters = 0.3; //m
 
         static constexpr double kHalfTile = 15.0; //cm
 
@@ -70,6 +74,7 @@ class Movement {
 
         static constexpr double kLengthOfRobot = 19.9; //cm
 
+        bool resetDistanceTraveled_ = false;
 
         bool useWallDistance_ = false;
 
@@ -95,6 +100,8 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
+        double cmToCenter_ = 0.05;
+
         static constexpr double kMinWallDistance = 0.15; // 15 cm
 
         static constexpr double kMaxDistanceError = 0.03;
@@ -109,9 +116,9 @@ class Movement {
 
         static constexpr double kUnreachableDistance = 0.7;
 
-        static constexpr double kWeightEncoders = 0.3;
+        static constexpr double kWeightEncoders = 0.4;
 
-        static constexpr double kWeightVlx = 0.7;
+        static constexpr double kWeightVlx = 0.6;
 
         int counterMovements_ = 0;
 
@@ -130,7 +137,7 @@ class Movement {
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
-        constexpr static double kDForward = 0.00;
+        constexpr static double kDForward = 0.002;
 
         constexpr static double kPBackward = 0.02;
         constexpr static double kIBackward = 0.0;
@@ -171,7 +178,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, const double targetDistance, bool useWallDistance = true);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -228,6 +235,8 @@ class Movement {
         void maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward);
 
         double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
+
+        double getRealTargetDistance(const double targetDistance);
     };
 
 #endif
