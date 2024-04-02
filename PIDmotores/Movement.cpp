@@ -597,6 +597,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     udp.endPacket();
     #endif
 
+    // Reset the distance traveled only for backwardMovement when it has a wall behind and it has a counterMovements_ >= 4
     if (allDistanceTraveled_ >= distance) {
         if (resetDistanceTraveled_ == true) {
             allDistanceTraveled_ = 0;
