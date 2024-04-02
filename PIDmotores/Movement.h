@@ -44,13 +44,13 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.15;
-        static constexpr double kBaseSpeedTurn_ = 0.07;
-        static constexpr double kBaseSpeedForwardReset_ = 0.05;
+        static constexpr double kBaseSpeedForward_ = 0.15; // m/s
+        static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
+        static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
 
-        const uint8_t kMaxMovements_ = 4;
+        static constexpr uint8_t kMaxMovements_ = 4;
 
-        const double kMinFrontWallDistance = 0.06;
+        static constexpr double kMinFrontWallDistance = 0.06;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -62,7 +62,7 @@ class Movement {
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
-        const double idealDistanceCenter = 0.05;
+        static constexpr double idealDistanceCenter = 0.05;
 
         static constexpr uint8_t kTileLength = 30; //cm
 
@@ -100,11 +100,11 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        double cmToCenter_ = 0.05;
+        static constexpr double cmToCenter_ = 0.05;
 
         static constexpr double kMinWallDistance = 0.15; // 15 cm
 
-        static constexpr double kMaxDistanceError = 0.03;
+        static constexpr double kMaxDistanceError = 0.03; // 3 cm
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -226,13 +226,13 @@ class Movement {
 
         void rampMovement();
 
-        double weightMovement(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront);
+        double weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront);
 
         void updateDistanceToCenterInTile();
 
         bool hasWallBehind();
 
-        void maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward);
+        void maybeResetWithBackWall(const double targetOrientation, const double currentOrientation);
 
         double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
 

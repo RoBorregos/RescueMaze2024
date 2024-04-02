@@ -287,11 +287,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             udp.endPacket();
             #endif
 
-            double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-            double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
+            double frontWallDistance = initialFrontWallDistance;
+            double backWallDistance = initialBackWallDistance;
 
             while (weightMovement(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
-
                 if (frontWallDistance <= kMinFrontWallDistance) {
                     break;
                 }
@@ -336,16 +335,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
                 hasTraveledDistanceWithSpeed(targetDistance);
-
-                /* // TODO: improve this condition
-                if (hasTraveledDistanceWithSpeed(targetDistance) == true) {
-                    #if DEBUG_OFFLINE_MOVEMENT
-                    udp.beginPacket(udpServerIP, udpServerPort);
-                    udp.print("--------------------------------------------------------------");
-                    udp.endPacket();
-                    #endif
-                    break;
-                }  */
             }
 
             #if DEBUG_OFFLINE_MOVEMENT
@@ -361,7 +350,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         case (MovementState::kBackward): {
             moveForward = false;
-            resetDistanceTraveled_ = true;
+            if (inResetRoutine_) {
+                resetDistanceTraveled_ = true;
+            }
 
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 #if DEBUG_OFFLINE_MOVEMENT
@@ -607,7 +598,7 @@ bool Movement::hasTraveledDistanceWithSpeed(const double distance) {
     #endif
 
     if (allDistanceTraveled_ >= distance) {
-        if (resetDistanceTraveled_ == true){
+        if (resetDistanceTraveled_ == true) {
             allDistanceTraveled_ = 0;
             resetDistanceTraveled_ = false;
         }
@@ -652,7 +643,7 @@ bool Movement::isRamp() {
     return false;
 }
 
-double Movement::weightMovement(double currentDistanceBack, double currentDistanceFront, double initialVlxDistanceBack, double initialVlxDistanceFront) {
+double Movement::weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront) {
     double vlxDistanceTraveled = 0;
     bool rampDetected = isRamp();
 
@@ -745,13 +736,13 @@ bool Movement::hasWallBehind() {
     return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() <= kMinWallDistance;
 }
 
-void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation, bool moveForward){
+void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation){
     if (!inResetRoutine_ && counterMovements_ >= kMaxMovements_ && hasWallBehind() ) {
         inResetRoutine_ = true;
         stopMotors();
         pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
         pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
-
+        
         // The encoders reset in moveMotors Backward in the hasTraveledDistanceWithSpeedForBackward function
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), kHalfTileInMeters, false);
 
@@ -760,7 +751,6 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
         bno_.setPhaseCorrection(phaseCorrection);
         encodersReset_ = true;
         
-        moveForward = true;
         #if DEBUG_MOVEMENT
         customPrintln("DistanceToCenter:" + String(distanceToCenter_));
         #endif
@@ -772,7 +762,7 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, double cur
         udp.endPacket();
         #endif
 
-        moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, moveForward);
+        moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, true);
         
         pidForward_.setBaseSpeed(kBaseSpeedForward_);
         pidBackward_.setBaseSpeed(kBaseSpeedForward_);
@@ -793,35 +783,10 @@ double Movement::getPhaseCorrection(const double currentOrientation, const doubl
 
     if (abs(phaseCorrection) < 180) {
         phaseCorrection = phaseCorrection;
-        #if DEBUG_OFFLINE_MOVEMENT
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("1");
-        udp.endPacket();
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("PhaseCorrection: " + String(phaseCorrection));
-        udp.endPacket();
-        #endif
     } else if (realOrientation < currentOrientation) {
         phaseCorrection = 360 - abs(phaseCorrection);
-        #if DEBUG_OFFLINE_MOVEMENT
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("2");
-        udp.endPacket();
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("PhaseCorrection: " + String(phaseCorrection));
-        udp.endPacket();
-        #endif
     } else {
         phaseCorrection = abs(phaseCorrection) - 360;
-        #if DEBUG_OFFLINE_MOVEMENT
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("3");
-        udp.endPacket();
-
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("PhaseCorrection: " + String(phaseCorrection));
-        udp.endPacket();
-        #endif
     }
 
     return phaseCorrection;
@@ -838,36 +803,16 @@ double Movement::getRealTargetDistance(double targetDistance) {
     if (initialBackWallDistance <= initialFrontWallDistance) {
         initialBackWallDistance = initialBackWallDistance * kMToCm;
         
-        double cm2Center = (uint8_t)(initialBackWallDistance) % kTileLength;
+        const double cm2Center = (uint8_t)(initialBackWallDistance) % kTileLength;
 
         double distanceToCenter = cm2Center / kMToCm;
         if (distanceToCenter <= idealDistanceCenter) {
             distanceToCenter = idealDistanceCenter - distanceToCenter;
 
-            #if DEBUG_OFFLINE_MOVEMENT
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("1");
-            udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.print(" ");
-            udp.print("targetDistance:" + String(targetDistance));
-            udp.print(" ");
-            udp.print("all: " + String(targetDistance + distanceToCenter));
-            udp.endPacket();
-            #endif
-
             return targetDistance + distanceToCenter;
         } else {
             distanceToCenter = distanceToCenter - idealDistanceCenter;
-            #if DEBUG_OFFLINE_MOVEMENT
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("2");
-            udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.print(" ");
-            udp.print("targetDistance:" + String(targetDistance));
-            udp.print(" ");
-            udp.print("all: " + String(targetDistance - distanceToCenter));
-            udp.endPacket();
-            #endif
+           
             return targetDistance - distanceToCenter;
         }
     } else {
@@ -878,29 +823,11 @@ double Movement::getRealTargetDistance(double targetDistance) {
         double distanceToCenter = cm2Center / kMToCm;
         if (distanceToCenter <= idealDistanceCenter) {
             distanceToCenter = idealDistanceCenter - distanceToCenter;
-            #if DEBUG_OFFLINE_MOVEMENT
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("3");
-            udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.print(" ");
-            udp.print("targetDistance:" + String(targetDistance));
-            udp.print(" ");
-            udp.print("all: " + String(targetDistance - distanceToCenter));
-            udp.endPacket();
-            #endif
+            
             return targetDistance - distanceToCenter;
         } else {
             distanceToCenter = distanceToCenter - idealDistanceCenter;
-            #if DEBUG_OFFLINE_MOVEMENT
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("4");
-            udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.print(" ");
-            udp.print("targetDistance:" + String(targetDistance));
-            udp.print(" ");
-            udp.print("all: " + String(targetDistance + distanceToCenter));
-            udp.endPacket();
-            #endif
+           
             return targetDistance + distanceToCenter;
         }
     }
