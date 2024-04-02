@@ -408,7 +408,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 
-    maybeResetWithBackWall(targetOrientation, currentOrientation, moveForward);
+    maybeResetWithBackWall(targetOrientation, currentOrientation);
 }
 
 
@@ -737,7 +737,7 @@ bool Movement::hasWallBehind() {
     return vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance() <= kMinWallDistance;
 }
 
-void Movement::maybeResetWithBackWall(const double targetOrientation, double currentOrientation){
+void Movement::maybeResetWithBackWall(const double targetOrientation, const double currentOrientation){
     if (!inResetRoutine_ && counterMovements_ >= kMaxMovements_ && hasWallBehind() ) {
         inResetRoutine_ = true;
         stopMotors();
