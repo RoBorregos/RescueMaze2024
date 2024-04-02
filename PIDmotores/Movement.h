@@ -5,6 +5,7 @@
 #include "BNO.h"
 #include "VLX.h"
 #include "LimitSwitch.h"
+#include "TCS.h"
 
 enum class compass{
     kNorth,
@@ -154,6 +155,42 @@ class Movement {
         constexpr static long kSampleTime{100};
         constexpr static long kSampleTimeTraveled{50};
 
+        // TCS
+        TCS tcs_;
+        static constexpr int kPrecision = 100;
+        static constexpr uint8_t kColorAmount = 3;
+        static constexpr uint8_t kColorThresholdsAmount = 6;
+        const char kColorList[kColorAmount + 1] = {"RNB"};
+        static constexpr char kBlueColor = 'B';
+        static constexpr char kBlackColor = 'N';
+        static constexpr char kRedColor = 'R';
+
+        // ==============================================================================================
+        // In the competition the colors may be different so we need to change the values by testing
+        // ==============================================================================================
+        const int16_t kColors[kColorAmount][kColorAmount] = {
+            // RED
+            {257, 75, 71},
+            // BLACK
+            {80, 44, 34},
+            // BLUE
+            {97,99,141}
+        };
+        
+        const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
+            {220, 270, 60, 80, 50, 75},
+            {65, 86, 33, 56, 25, 45},
+            {85, 150, 80, 140, 120, 175}
+        };
+
+        bool blackTile_ = false;
+        bool blueTile_ = false;
+        bool checkpointTile_ = false;
+
+        bool finishedMovement_ = false;
+
+        static constexpr int kFiveSeconds_ = 5000;
+
     public:
         Movement();
 
@@ -162,6 +199,8 @@ class Movement {
         void setupInternal(const MotorID motorId);
 
         void setupLimitSwitch(const LimitSwitchID limitSwitchId);
+
+        void setupTCS();
 
         void stopMotors();
 
@@ -222,6 +261,14 @@ class Movement {
 
         double getOrientation(const double orientation);
 
+        void printTCS();
+
+        char getTCSInfo();
+
+        void rgbTCSClear();
+
+        char checkColors();
+
         bool isRamp();
 
         void rampMovement();
@@ -238,5 +285,11 @@ class Movement {
 
         double getRealTargetDistance(const double targetDistance);
     };
+        bool wasBlackTile();
+
+        bool isBlueTile();
+
+        bool isCheckpointTile();
+};
 
 #endif

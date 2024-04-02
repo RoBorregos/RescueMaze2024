@@ -62,6 +62,8 @@ void Movement::setup() {
 
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
+
+    setupTCS();
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -83,6 +85,12 @@ void Movement::setupVlx(const VlxID vlxId) {
 void Movement::setupLimitSwitch(const LimitSwitchID limitSwitchId) {
     const uint8_t index = static_cast<uint8_t>(limitSwitchId);
     limitSwitch_[index].initLimitSwitch(Pins::limitSwitchPins[index]);
+}
+
+void Movement::setupTCS() {
+    tcs_.setMux(Pins::tcsPins[0]);
+    tcs_.setPrecision(kPrecision);
+    tcs_.init(kColors, kColorAmount, kColorList, kColorThresholds);
 }
 
 void Movement::stopMotors() {
@@ -278,6 +286,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         case (MovementState::kForward): {
             moveForward = true;
             currentState_ = MovementState::kForward;
+            blackTile_ = false;
+            blueTile_ = false;
+            checkpointTile_ = false;
+            finishedMovement_ = false;
 
             targetDistance = getRealTargetDistance(targetDistance);
 
@@ -293,6 +305,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (weightMovement(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
                 if (frontWallDistance <= kMinFrontWallDistance) {
                     break;
+                }
+                checkColors();
+                
+                #if DEBUG_MOVEMENT
+                customPrintln("Color:" + String(getTCSInfo()));
+                customPrintln("blackTile" + String(blackTile_));
+                #endif
+                if (wasBlackTile()) {
+                    customPrintln("Black tile detected");
+                    return;
                 }
 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
@@ -336,6 +358,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 hasTraveledDistanceWithSpeed(targetDistance);
             }
+
+            finishedMovement_ = true;
+            checkColors();
 
             #if DEBUG_OFFLINE_MOVEMENT
             udp.beginPacket(udpServerIP, udpServerPort);
@@ -619,6 +644,46 @@ bool Movement::hasTraveledWallDistance(double targetDistance, double currentDist
     return abs(distanceDiff) < kMaxDistanceError;
 }
 
+void Movement::printTCS() {
+    tcs_.printRGB();
+    tcs_.getColor();
+}
+
+char Movement::getTCSInfo() {
+    printTCS();
+    return tcs_.getColorWithThresholds();
+} 
+
+void Movement::rgbTCSClear() {
+    tcs_.printRGBC();
+}
+
+char Movement::checkColors() {
+    const char color = getTCSInfo();
+    if (color == kBlackColor) {
+        blackTile_ = true;
+        const double desiredDistance = allDistanceTraveled_;
+        targetDistance_ = desiredDistance;
+        allDistanceTraveled_ = 0;
+        customPrintln("blackTile__" + String(blackTile_));
+        stopMotors();
+        moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
+        return color;
+    } else if (color == kBlueColor && finishedMovement_ == true) {
+        blueTile_ = true;
+        stopMotors();
+        customPrintln("DETECTED BLUE TILE");
+        delay(kFiveSeconds_);
+        
+        return color;
+    } else if (color == kRedColor) {
+        checkpointTile_ = true;
+        stopMotors();
+        return color;
+    }
+    return color;
+}
+
 bool Movement::isRamp() {
     
     const double currentOrientationY = bno_.getOrientationY();
@@ -832,4 +897,14 @@ double Movement::getRealTargetDistance(double targetDistance) {
             return targetDistance + distanceToCenter;
         }
     }
+bool Movement::wasBlackTile() {
+    return blackTile_;
+}
+
+bool Movement::isBlueTile() {
+    return blueTile_;
+}
+
+bool Movement::isCheckpointTile() {
+    return checkpointTile_;
 }
