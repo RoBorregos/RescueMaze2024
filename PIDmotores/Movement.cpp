@@ -807,12 +807,12 @@ double Movement::getRealTargetDistance(double targetDistance) {
         const double cm2Center = (uint8_t)(initialBackWallDistance) % kTileLength;
 
         double distanceToCenter = cm2Center / kMToCm;
-        if (distanceToCenter <= idealDistanceCenter) {
-            distanceToCenter = idealDistanceCenter - distanceToCenter;
+        if (distanceToCenter <= kIdealDistanceCenter) {
+            distanceToCenter = kIdealDistanceCenter - distanceToCenter;
 
             return targetDistance + distanceToCenter;
         } else {
-            distanceToCenter = distanceToCenter - idealDistanceCenter;
+            distanceToCenter = distanceToCenter - kIdealDistanceCenter;
            
             return targetDistance - distanceToCenter;
         }
@@ -822,12 +822,12 @@ double Movement::getRealTargetDistance(double targetDistance) {
         double cm2Center = (uint8_t)(initialFrontWallDistance) % kTileLength;
 
         double distanceToCenter = cm2Center / kMToCm;
-        if (distanceToCenter <= idealDistanceCenter) {
-            distanceToCenter = idealDistanceCenter - distanceToCenter;
+        if (distanceToCenter <= kIdealDistanceCenter) {
+            distanceToCenter = kIdealDistanceCenter - distanceToCenter;
             
             return targetDistance - distanceToCenter;
         } else {
-            distanceToCenter = distanceToCenter - idealDistanceCenter;
+            distanceToCenter = distanceToCenter - kIdealDistanceCenter;
            
             return targetDistance + distanceToCenter;
         }

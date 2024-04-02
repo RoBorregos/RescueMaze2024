@@ -62,7 +62,7 @@ class Movement {
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
-        static constexpr double idealDistanceCenter = 0.05;
+        static constexpr double kIdealDistanceCenter = 0.05;
 
         static constexpr uint8_t kTileLength = 30; //cm
 
@@ -100,7 +100,7 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        static constexpr double cmToCenter_ = 0.05;
+        static constexpr double kMToCenter_ = 0.05; // 5 cm
 
         static constexpr double kMinWallDistance = 0.15; // 15 cm
 
