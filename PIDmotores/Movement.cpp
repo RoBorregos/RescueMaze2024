@@ -308,9 +308,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 checkColors();
                 
-                #if DEBUG_MOVEMENT
                 customPrintln("Color:" + String(getTCSInfo()));
                 customPrintln("blackTile" + String(blackTile_));
+                #if DEBUG_MOVEMENT
                 #endif
                 if (wasBlackTile()) {
                     customPrintln("Black tile detected");
@@ -897,6 +897,8 @@ double Movement::getRealTargetDistance(double targetDistance) {
             return targetDistance + distanceToCenter;
         }
     }
+}
+
 bool Movement::wasBlackTile() {
     return blackTile_;
 }

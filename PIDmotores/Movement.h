@@ -179,7 +179,7 @@ class Movement {
         
         const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
-            {65, 86, 33, 56, 25, 45},
+            {20, 120, 33, 90, 25, 79},
             {85, 150, 80, 140, 120, 175}
         };
 
@@ -284,7 +284,7 @@ class Movement {
         double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
 
         double getRealTargetDistance(const double targetDistance);
-    };
+
         bool wasBlackTile();
 
         bool isBlueTile();
