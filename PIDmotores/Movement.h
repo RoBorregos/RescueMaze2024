@@ -104,7 +104,7 @@ class Movement {
 
         static constexpr long long kOneSecInMs = 1000;
 
-        static constexpr double kOneTileDistance = 0.27; //m
+        static constexpr double kOneTileDistance = 0.228; //m
 
         static constexpr long long kTileDirections = 4;
 
@@ -248,7 +248,7 @@ class Movement {
 
         void rgbTCSClear();
 
-        char checkColors();
+        char checkColors(const double targetOrientation);
 
         bool isRamp();
 

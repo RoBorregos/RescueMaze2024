@@ -81,16 +81,12 @@ void screenPrint(const String& output){
     display.println(output);
     display.display();
     #if USING_SCREEN
-    // delay(1000);
+    // delay(500);
     #endif
 }
 
-void turnRobot(const int targetOrientation) {
+void turnAndMoveRobot(const int targetOrientation) {
     int difference = targetOrientation - robotOrientation;
-    if (difference == 0) {
-        return;
-    }
-
     if (difference == 90 || difference == -270) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 90) % 360;
@@ -98,10 +94,10 @@ void turnRobot(const int targetOrientation) {
         robot.turnLeft(targetOrientation);
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        // robot.turnRight(targetOrientation);
-        // robotOrientation = (robotOrientation + 180) % 360;
-        robot.goBackward(targetOrientation); // TODO: check if fixed.
+        robot.turnRight(targetOrientation);
+        robotOrientation = (robotOrientation + 180) % 360;
     }
+    robot.goForward(robotOrientation);
 }
 
 void followPath() {
@@ -122,6 +118,9 @@ void followPath() {
         customPrint(" ");
         customPrintln(next.y);
         #endif
+        if(robotCoord == next) {
+            continue;
+        }
         if (next.x < robotCoord.x) {
             #if DEBUG_MERGE
             customPrintln("left");
@@ -130,7 +129,7 @@ void followPath() {
             screenPrint("left");
             #endif
             #if MOVEMENT
-            turnRobot(270);
+            turnAndMoveRobot(270);
             #endif
         } else if (next.x > robotCoord.x) {
             #if DEBUG_MERGE
@@ -140,7 +139,7 @@ void followPath() {
             screenPrint("right");
             #endif
             #if MOVEMENT
-            turnRobot(90);
+            turnAndMoveRobot(90);
             #endif
         } else if (next.y > robotCoord.y) {
             #if DEBUG_MERGE
@@ -150,7 +149,7 @@ void followPath() {
             screenPrint("up");
             #endif
             #if MOVEMENT
-            turnRobot(0);
+            turnAndMoveRobot(0);
             #endif
         } else if (next.y < robotCoord.y) {
             #if DEBUG_MERGE
@@ -160,17 +159,9 @@ void followPath() {
             screenPrint("down");
             #endif
             #if MOVEMENT
-            turnRobot(180);
+            turnAndMoveRobot(180);
             #endif
         }
-        if(robotCoord == next) {
-            continue;
-        }
-        #if MOVEMENT
-        robot.goForward(robotOrientation);
-        #elif USING_SCREEN
-        screenPrint("forward");
-        #endif
         #if DEBUG_ALGORITHM
         customPrintln("robotOrientation: " + String(robotOrientation));
         customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
@@ -193,9 +184,10 @@ void dijsktra(const coord& start, const coord& end) {
     customPrintln("End coord: " + String(end.x) + " " + String(end.y));
     #endif
     // empty path.
-    while (!path.empty()) {
-        path.pop();
-    }
+    // while (!path.empty()) {
+    //     path.pop();
+    // }
+    path.clear();
     // initialize vectors.
     #if DEBUG_ALGORITHM 
     customPrintln("before distance");
@@ -322,8 +314,11 @@ void depthFirstSearch() {
         #if DEBUG_ALGORITHM 
         customPrintln("before dijsktra"); 
         #endif
-        screenPrint("robotCoord " + String(robotCoord.x) + " " + String(robotCoord.y));
-        screenPrint("Exploring " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        #if USING_SCREEN
+        screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
+        screenPrint("Orientation: " + String(robotOrientation));
+        screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        #endif
         dijsktra(robotCoord, currentTileCoord);
         #if DEBUG_ALGORITHM || DEBUG_MERGE
         customPrint("currentTileCoord: ");
@@ -334,14 +329,16 @@ void depthFirstSearch() {
         customPrintln(unvisited.size());
         #endif
         #if USING_SCREEN
-        screenPrint("robotCoord " + String(robotCoord.x) + " " + String(robotCoord.y));
-        screenPrint("currentTileCoord:   " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
+        screenPrint("Orientation: " + String(robotOrientation));
+        screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         #endif
-        // robotCoord = currentTileCoord;
         visitedMap.positions.push_back(currentTileCoord);
         if (robot.wasBlackTile()) {
+            screenPrint("Black tile found");
             continue;
         }
+        robotCoord = currentTileCoord; // Maybe not needed.
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {

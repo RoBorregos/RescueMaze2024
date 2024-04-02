@@ -328,7 +328,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 customPrintln("Distance:" + String(allDistanceTraveled_));
             
                 // TODO: Optimize the time when it is blue tile
-                checkColors();
+                checkColors(targetOrientation);
                 
                 #if DEBUG_MOVEMENT
                 customPrintln("Color:" + String(getTCSInfo()));
@@ -374,7 +374,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
 
             finishedMovement_ = true;
-            checkColors();
+            checkColors(targetOrientation);
             
             const double desiredWallDistance = initialFrontWallDistance - targetDistance;
             stopMotors();
@@ -647,7 +647,7 @@ void Movement::rgbTCSClear() {
     tcs_.printRGBC();
 }
 
-char Movement::checkColors() {
+char Movement::checkColors(const double targetOrientation) {
     const char color = getTCSInfo();
     if (color == kBlackColor) {
         blackTile_ = true;
@@ -656,7 +656,7 @@ char Movement::checkColors() {
         allDistanceTraveled_ = 0;
         customPrintln("blackTile__" + String(blackTile_));
         stopMotors();
-        // moveMotors(MovementState::kBackward, targetOrientation_, targetDistance_);
+        moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
     } else if (color == kBlueColor && finishedMovement_ == true) {
         blueTile_ = true;
