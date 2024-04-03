@@ -40,7 +40,7 @@ void PID::setBaseSpeed(const double baseModifier) {
     kBaseModifier_ = baseModifier;
 }
 
-void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
+void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxError = 0) {
     kP_ = kP;
     kI_ = kI;
     kD_ = kD;
@@ -49,7 +49,7 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
     kMaxErrorSum_ = maxErrorSum;
     kSampleTime_ = sampleTime;
     kBaseModifier_ = baseModifier;
-    kMaxOrientationError_ = maxOrientationError;
+    kMaxError_ = maxError;
     #if DEBUG_PID
     customPrintln("kP:" + String(kP));
     customPrintln("kP_" + String(kP_));
@@ -209,7 +209,7 @@ void PID::computeDistance(const double setpoint, const double input, double& out
     
     if (abs(error) > kMaxDistanceError_) {
         outputLeft += outputModifier;
-        outputRight += outputModifier;
+        outputRight -= outputModifier;
     }
 
     outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
