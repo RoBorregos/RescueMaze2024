@@ -48,7 +48,7 @@ uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
 
 coord lastCheckpointCoord = robotCoord;
-
+// TODO: move to Movement.
 Servo myservo;
 constexpr uint8_t initialAngle = 80;
 constexpr uint8_t rightAngle = initialAngle + 44;
@@ -57,7 +57,8 @@ constexpr uint8_t servoPin = 13; //TODO: change pin
 
 enum class servoPosition {
     kLeft,
-    kRight
+    kRight,
+    kCenter
 };
 
 void moveServo(servoPosition position) {
@@ -67,6 +68,9 @@ void moveServo(servoPosition position) {
             break;
         case servoPosition::kRight:
             myservo.write(rightAngle);
+            break;
+        case servoPosition::kCenter:
+            myservo.write(initialAngle);
             break;
     }
     delay(1000);

@@ -174,6 +174,8 @@ class Movement {
         const char kHarmedSerialCode = 'h';
         const char kStableSerialCode = 's';
         const char kUnharmedSerialCode = 'u';
+        const int kOneSecondInMs = 1000;
+        char victim = 'm';
 
     public:
         Movement();
@@ -267,9 +269,11 @@ class Movement {
 
         bool isCheckpointTile();
 
+        void sendSerialRequest();
+
         void checkSerial();
 
-        void sendSerialRequest();
+        char getVictim();
 };
 
 #endif

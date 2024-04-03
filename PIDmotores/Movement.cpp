@@ -324,12 +324,22 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             customPrintln("Moving forward");
             customPrintln("TargetDistance:" + String(targetDistance));
+
+            unsigned long currentMillis = millis();
+            unsigned long previousMillis = 0;
+
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
                 
                 customPrintln("Distance:" + String(allDistanceTraveled_));
             
                 // TODO: Optimize the time when it is blue tile
                 checkColors(targetOrientation);
+
+                if (currentMillis - previousMillis >= kOneSecInMs) {
+                    sendSerialRequest();
+                    previousMillis = currentMillis;
+                }
+                checkSerial();
                 
                 #if DEBUG_MOVEMENT
                 customPrintln("Color:" + String(getTCSInfo()));
@@ -712,22 +722,26 @@ int Movement::directionRamp() {
     return 0;
 }
 
+void Movement::sendSerialRequest() {
+    Serial.println(1);
+}
+
 void Movement::checkSerial() {
     if (Serial.available() > 0) {
-        const char input = Serial.read();
+        victim = Serial.read();
         // if (input == kCheckpointSerialCode) {
         //     restartOnLastCheckpoint(lastCheckpointCoord);
         // } else
-        if (input == kHarmedSerialCode) {
+        if (victim == kHarmedSerialCode) {
             // Drop 2 medkits.
-        } else if (input == kStableSerialCode) {
+        } else if (victim == kStableSerialCode) {
             // Drop 1 medkit.
-        } else if (input == kUnharmedSerialCode){
+        } else if (victim == kUnharmedSerialCode){
             // Do something.
         }
     }
 }
 
-void Movement::sendSerialRequest() {
-    Serial.println(1);
+char Movement::getVictim() {
+    return victim;
 }
