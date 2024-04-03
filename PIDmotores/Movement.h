@@ -123,6 +123,10 @@ class Movement {
 
         static constexpr double kWeightVlx = 0.6;
 
+        static constexpr double kWeightBNO = 0.5;
+
+        static constexpr double kWeightVLX = 0.5;
+
         int counterMovements_ = 0;
 
         bool encodersReset_ = false;
@@ -297,6 +301,8 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight);
 };
 
 #endif

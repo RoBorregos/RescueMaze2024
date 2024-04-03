@@ -157,6 +157,7 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
         break;
     }
 }
+
 void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward){
     const unsigned long timeDiff = millis() - timePrev_;
     double currentOrientation = bno_.getOrientationX();
@@ -910,4 +911,10 @@ bool Movement::isBlueTile() {
 
 bool Movement::isCheckpointTile() {
     return checkpointTile_;
+}
+
+void Movement::weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight) {
+    const double pidBno = pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+    const double pidVlx = pidForward_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
+    const double weightedPid = pidBno * kWeightBNO + pidVlx * kWeightVLX;
 }

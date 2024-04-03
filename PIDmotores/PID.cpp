@@ -13,12 +13,12 @@ PID::PID() {
 
 }
 
-PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxOrientationError) {
+PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxError) {
     timePrev_ = millis();
     errorPrev_ = 0;
     kBaseModifier_ = baseModifier;
-    kMaxOrientationError_ = kMaxOrientationError;
-    setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxOrientationError);
+    kMaxError_ = kMaxError;
+    setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxError);
     #if DEBUG_PID
     customPrintln("kP9:" + String(kP));
     #endif
@@ -108,7 +108,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     outputLeft = kBaseModifier_;
     outputRight = kBaseModifier_;
-    if (abs(errorOrientation) > kMaxOrientationError_) {
+    if (abs(errorOrientation) > kMaxError_) {
         outputLeft += outputModifier;
         outputRight -= outputModifier;
     }
@@ -136,14 +136,14 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
-    if (errorOrientation < kMaxOrientationError_) {
+    if (errorOrientation < kMaxError_) {
         speed = kBaseModifier_ + outputModifier;
         clockwise = true;
         #if DEBUG_PID
         customPrintln("Aumentando derecho");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
         #endif
-    } else if (errorOrientation > -kMaxOrientationError_) {
+    } else if (errorOrientation > -kMaxError_) {
         speed = kBaseModifier_ - outputModifier;
         clockwise = false;
         #if DEBUG_PID
@@ -165,15 +165,6 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
 
     timePrev_ = millis();
 }
-
-/* TODO:
-void PID.computeDistance(....) {
-
-    
-    baseModifier
-
-}
- */
 
 void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
     const unsigned long timeDiff = millis() - timePrev_;
@@ -207,13 +198,47 @@ void PID::computeDistance(const double setpoint, const double input, double& out
     outputLeft = kBaseModifier_;
     outputRight = kBaseModifier_;
     
-    if (abs(error) > kMaxDistanceError_) {
+    if (abs(error) > kMaxError_) {
         outputLeft += outputModifier;
         outputRight -= outputModifier;
     }
 
     outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
     outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
+    errorPrev_ = error;
+
+    timePrev_ = millis();
+}
+
+void PID::computeWeightedPID(const double targetDistance, const double currentDistance, const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight) {
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < kSampleTime_) {
+        return;
+    }
+
+    const double error = targetDistance - currentDistance;
+    const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
+    const double outputModifier = computeOutputModifier(error, timeDiff);
+    const double outputModifierOrientation = computeOutputModifier(errorOrientation, timeDiff);
+
+    const double weightPID = outputModifier * kWeightVlx + outputModifierOrientation * kWeightBNO;
+
+    outputLeft = kBaseModifier_;
+    outputRight = kBaseModifier_;
+
+    if (abs(error) > kMaxError_) {
+        outputLeft += weightPID;
+        outputRight -= weightPID;
+    }
+
+    if (abs(errorOrientation) > kMaxError_) {
+        outputLeft += weightPID;
+        outputRight -= weightPID;
+    }
+
+    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
+    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
+
     errorPrev_ = error;
 
     timePrev_ = millis();
