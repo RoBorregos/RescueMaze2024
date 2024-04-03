@@ -914,10 +914,11 @@ bool Movement::isCheckpointTile() {
 }
 
 void Movement::weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight) {
-    const double pidBno = pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+    pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
     const double speedLeftBno = speedLeft;
     const double speedRightBno = speedRight;
-    const double pidVlx = pidAlignment_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
+    
+    pidAlignment_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
     const double speedLeftVlx = speedLeft;
     const double speedRightVlx = speedRight;
 
