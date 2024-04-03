@@ -4,6 +4,7 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
+#include "TileDirection.h"
 #include "LimitSwitch.h"
 #include "TCS.h"
 
@@ -60,12 +61,22 @@ class Movement {
         LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         static constexpr uint8_t kNumberOfVlx = 5;
+
+        // static constexpr uint8_t kOffArray = -1;
+
+        // static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+        const int kTargetOrientations[4] = {0, 90, 180, 270};
+
+        static constexpr uint8_t kNumberOfTargetOrientations = 4;
+
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
         static constexpr double kIdealDistanceCenter = 0.05;
 
         static constexpr uint8_t kTileLength = 30; //cm
+
+        const bool kOffArray = false;
 
         static constexpr double kTileLengthInMeters = 0.3; //m
 
@@ -99,7 +110,7 @@ class Movement {
 
         VLX vlx[kNumberOfVlx];
 
-        double wallDistances[kNumberOfVlx];
+        double wallDistances_[kNumberOfVlx];
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
@@ -112,6 +123,10 @@ class Movement {
         static constexpr double kMinRampOrientation = 10.0;
 
         static constexpr long long kOneSecInMs = 1000;
+
+        static constexpr double kOneTileDistance = 0.228; //m
+
+        static constexpr long long kTileDirections = 4;
 
         double targetOrientation_ = 0;
 
@@ -191,6 +206,13 @@ class Movement {
 
         static constexpr int kFiveSeconds_ = 5000;
 
+        // const char kCheckpointSerialCode = -1;
+        const char kHarmedSerialCode = 'h';
+        const char kStableSerialCode = 's';
+        const char kUnharmedSerialCode = 'u';
+        const int kOneSecondInMs = 1000;
+        char victim = 'm';
+
     public:
         Movement();
 
@@ -237,17 +259,19 @@ class Movement {
 
         uint8_t checkWallsDistances();
 
+        bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
+
         double getDistanceToCenter();
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward();
+        void goForward(const double targetOrientation);
 
-        void goBackward();
+        void goBackward(const double targetOrientation);
 
-        void turnLeft();
+        void turnLeft(const double targetOrientation);
 
-        void turnRight();
+        void turnRight(const double targetOrientation);
 
         void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
 
@@ -261,17 +285,21 @@ class Movement {
 
         double getOrientation(const double orientation);
 
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
+
         void printTCS();
 
         char getTCSInfo();
 
         void rgbTCSClear();
 
-        char checkColors();
+        char checkColors(const double targetOrientation);
 
         bool isRamp();
 
-        void rampMovement();
+        void rampMovement(const double targetOrientation);
+
+        int directionRamp();
 
         double weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront);
 
@@ -290,6 +318,12 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        void sendSerialRequest();
+
+        void checkSerial();
+
+        char getVictim();
 };
 
 #endif

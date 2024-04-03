@@ -34,6 +34,7 @@ bool VLX::init() {
 
 double VLX::getRawDistance() {
     updateDistance();
+    const double measure = (static_cast<double>(measure_.RangeMilliMeter) / 1000.00);
 
     const double measure = (measure_.RangeMilliMeter / kMmInM_);
 

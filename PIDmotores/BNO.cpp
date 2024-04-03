@@ -15,7 +15,7 @@ void BNO::setupBNO() {
         customPrint("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
         while(1);
     }
-
+    customPrintln("BNO055 detected");
     delay(1000);
     bno_.setExtCrystalUse(true);
 }

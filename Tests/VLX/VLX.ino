@@ -85,22 +85,27 @@ void printDistance() {
 #include "MUX.h"
 
 MUX muxInstance;
-VLX vlxInstance(1);
+VLX vlxInstance(0);
+VLX vlxInstance1(1);
 
 void setup() {
     Serial.begin(115200);
     while (!Serial) delay(10);
-
+    Serial.println("INICIO");
     // Inicializar la instancia del MUX (puedes ajustar el número del canal según tu necesidad)
   
     // Inicializar la instancia del VLX
     vlxInstance.init();
+    vlxInstance1.init();
 }
 
 void loop() {
     // Obtener y imprimir la distancia desde el sensor VLX
     vlxInstance.getDistance();
     Serial.println(vlxInstance.getDistance());
+
+    vlxInstance1.getDistance();
+    Serial.println(vlxInstance1.getDistance());
 
     delay(1000);  // Puedes ajustar el tiempo de espera según tus necesidades
 }
