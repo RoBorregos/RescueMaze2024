@@ -111,6 +111,8 @@ class Movement {
 
         static constexpr double kMinRampOrientation = 10.0;
 
+        static constexpr double kMaxDistanceError = 0.01;
+
         static constexpr long long kOneSecInMs = 1000;
 
         double targetOrientation_ = 0;
@@ -120,6 +122,10 @@ class Movement {
         static constexpr double kWeightEncoders = 0.4;
 
         static constexpr double kWeightVlx = 0.6;
+
+        static constexpr double kWeightBNO = 0.5;
+
+        static constexpr double kWeightVLX = 0.5;
 
         int counterMovements_ = 0;
 
@@ -131,6 +137,7 @@ class Movement {
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidWallAlignment_;
 
         double vlxDistanceTraveled_;
 
@@ -147,6 +154,10 @@ class Movement {
         constexpr static double kPTurn = 0.00005;
         constexpr static double kITurn = 0.0;
         constexpr static double kDTurn = 0.00019;
+
+        constexpr static double kPDistance = 0.01;
+        constexpr static double kIDistance = 0.0;
+        constexpr static double kDDistance = 0.0;
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0};
@@ -290,6 +301,8 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight);
 };
 
 #endif
