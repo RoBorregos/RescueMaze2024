@@ -325,6 +325,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             customPrintln("Moving forward");
             customPrintln("TargetDistance:" + String(targetDistance));
             while (hasTraveledDistanceWithSpeed(targetDistance) == false){
+                
                 customPrintln("Distance:" + String(allDistanceTraveled_));
             
                 // TODO: Optimize the time when it is blue tile
@@ -541,7 +542,6 @@ MovementState Movement::getCurrentState() {
     return currentState_;
 }
 
-
 void Movement::updateTics(MotorID motorId) {
     const uint8_t index = static_cast<uint8_t>(motorId);
     if (index >= 0 && index < kNumberOfWheels) {
@@ -710,4 +710,24 @@ int Movement::directionRamp() {
         return -1;
     }
     return 0;
+}
+
+void Movement::checkSerial() {
+    if (Serial.available() > 0) {
+        const char input = Serial.read();
+        // if (input == kCheckpointSerialCode) {
+        //     restartOnLastCheckpoint(lastCheckpointCoord);
+        // } else
+        if (input == kHarmedSerialCode) {
+            // Drop 2 medkits.
+        } else if (input == kStableSerialCode) {
+            // Drop 1 medkit.
+        } else if (input == kUnharmedSerialCode){
+            // Do something.
+        }
+    }
+}
+
+void Movement::sendSerialRequest() {
+    Serial.println(1);
 }

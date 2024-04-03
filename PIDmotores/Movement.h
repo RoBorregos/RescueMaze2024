@@ -170,6 +170,11 @@ class Movement {
 
         static constexpr int kFiveSeconds_ = 5000;
 
+        // const char kCheckpointSerialCode = -1;
+        const char kHarmedSerialCode = 'h';
+        const char kStableSerialCode = 's';
+        const char kUnharmedSerialCode = 'u';
+
     public:
         Movement();
 
@@ -261,6 +266,10 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        void checkSerial();
+
+        void sendSerialRequest();
 };
 
 #endif

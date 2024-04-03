@@ -7,6 +7,7 @@
 #include"Embedded_Template_Library.h"
 #include<etl/vector.h>
 #include<etl/stack.h>
+#include <Deneyap_Servo.h> 
 #include "Map.h"
 #include "Tile.h"
 #include "TileDirection.h"
@@ -48,6 +49,30 @@ coord robotCoord = coord{0,0,0};
 
 coord lastCheckpointCoord = robotCoord;
 
+Servo myservo;
+constexpr uint8_t initialAngle = 80;
+constexpr uint8_t rightAngle = initialAngle + 44;
+constexpr uint8_t leftAngle = initialAngle - 36;
+constexpr uint8_t servoPin = 13; //TODO: change pin
+
+enum class servoPosition {
+    kLeft,
+    kRight
+};
+
+void moveServo(servoPosition position) {
+    switch (position) {
+        case servoPosition::kLeft:
+            myservo.write(leftAngle);
+            break;
+        case servoPosition::kRight:
+            myservo.write(rightAngle);
+            break;
+    }
+    delay(1000);
+    myservo.write(initialAngle);
+}
+
 void updateLastCheckpoint(const coord& checkpointCoord) {
     lastCheckpointVisitedCoords = tilesMap.positions;
     lastCheckpointCoord = checkpointCoord;
@@ -58,19 +83,6 @@ void restartOnLastCheckpoint(const coord& checkpointCoord) {
     robotOrientation = 0;
     tilesMap.positions = lastCheckpointVisitedCoords;
     depthFirstSearch();
-}
-
-void checkSerial() {
-    if (Serial.available() > 0) {
-        String input = Serial.readString();
-        if (input == "restart") {
-            restartOnLastCheckpoint(lastCheckpointCoord);
-        } else if (input == "H") {
-            // Drop 2 medkits.
-        } else if (input == "S") {
-            // Drop 1 medkit.
-        }
-    }
 }
 
 void screenPrint(const String& output){
@@ -508,8 +520,7 @@ void startAlgorithm() {
 }
 
 void setup(){
-    Serial.begin(9600);
-    // while (!Serial) delay(10); // wait for serial port to open!
+    Serial.begin(115200);
     #if USING_SCREEN
     if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
         customPrintln(F("SSD1306 allocation failed"));
@@ -521,80 +532,37 @@ void setup(){
     #endif
     robot.setup();
     startAlgorithm();
-    
-    // robot.goForward(0);
-    /* if(robot.checkWallsDistances(TileDirection::kUp, 180)) {
-        screenPrint("Wall found up");
-    }
-    else {
-        screenPrint("No wall found up");
-    }
-    if(robot.checkWallsDistances(TileDirection::kDown, 180)) {
-        screenPrint("Wall found down");
-    }
-    else {
-        screenPrint("No wall found down");
-    }
-    if(robot.checkWallsDistances(TileDirection::kLeft, 180)) {
-        screenPrint("Wall found left");
-    }
-    else {
-        screenPrint("No wall found left");
-    }
-    if(robot.checkWallsDistances(TileDirection::kRight, 180)) {
-        screenPrint("Wall found right");
-    }
-    else {
-        screenPrint("No wall found right");
-    } */
 
-
-    // robot.goForward();
-
-    // robot.goForward();
-    // robot.goForward();
-    // robot.goForward();
-
-    // robot.turnLeft();
-
-    /* robot.moveMotors(MovementState::kForward, 0, 0.3);
-    if (robot.isRamp()){
-    
-    /* if (robot.isRamp()){
-        robot.moveMotors(MovementState::kRamp, 0, 0);
-    }
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0); */
-    /* robot.moveMotors(MovementState::kForward, 0, 1.5);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 1.64);
-    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
-    robot.moveMotors(MovementState::kForward, 90, 1.70);
-    robot.moveMotors(MovementState::kTurnRight, 180, 0);
-    robot.moveMotors(MovementState::kForward, 180, 1.5); */
-    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
-    /* for (int i = 0; i < 1000; ++i) {
-        robot.moveMotors(MovementState::kForward, 0);
-    } */
-
-    /* while (true) {
-        vlx1.printDistance();
-        delay(1000);
-    } */
-
-    /* while (robot.moveMotors(MovementState::kTurnRight, 0) == false) {
-        customPrintln("Turning right");
-    }
-    customPrintln("Arrived to 0"); */
-    //robot.moveMotors(MovementState::kForward, 0, 0.3);
-    //robot.moveMotors(MovementState::kBackward, 0, 0.3);
+    // Serial.println(1);
+    // bool flag = false;
+    // screenPrint("nadota");
+    // while(flag == false){
+    //   if (Serial.available() > 0) {
+    //       char input = Serial.read();
+    //       screenPrint("input: " + String(input));
+    //       flag = true;
+    //   }
+    // }
 }
     
 void loop() {
-    screenPrint("Loop");
     #if DEBUG_ALGORITHM
     customPrintln("Loop");
     delay(1000);
     #endif
+    
+    // Serial.println(1);
+    // bool flag = false;
+    // screenPrint("nadota");
+    // while(flag == false){
+    //   if (Serial.available() > 0) {
+    //       char input = Serial.read();
+    //       screenPrint("input: " + String(input));
+    //       flag = true;
+    //   }
+    // }
+    // delay(1000);
+
     // for (int robotOrientation = 0; robotOrientation < 360; robotOrientation += 90){
     //     customPrintln("Orientation: " + String(robotOrientation));
     //     for (TileDirection direction : directions) {
