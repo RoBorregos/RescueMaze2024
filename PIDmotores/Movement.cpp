@@ -352,7 +352,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             double frontWallDistance = initialFrontWallDistance;
             double backWallDistance = initialBackWallDistance;
-
+            // customPrintln("FrontWallDistance:" + String(frontWallDistance));
             while (weightMovement(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
                 if (frontWallDistance <= kMinFrontWallDistance) {
                     break;
@@ -365,12 +365,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 checkSerial();
                 
-                customPrintln("Color:" + String(getTCSInfo()));
-                customPrintln("blackTile" + String(blackTile_));
+                // customPrintln("Color:" + String(getTCSInfo()));
+                // customPrintln("blackTile" + String(blackTile_));
                 #if DEBUG_MOVEMENT
                 #endif
                 if (wasBlackTile()) {
-                    customPrintln("Black tile detected");
+                    // customPrintln("Black tile detected");
                     return;
                 }
 
@@ -412,7 +412,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
-
+                // customPrintln("FrontWallDistance:" + String(frontWallDistance));
                 hasTraveledDistanceWithSpeed(targetDistance);
             }
 
@@ -722,14 +722,14 @@ char Movement::checkColors(const double targetOrientation) {
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
         allDistanceTraveled_ = 0;
-        customPrintln("blackTile__" + String(blackTile_));
+        // customPrintln("blackTile__" + String(blackTile_));
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
     } else if (color == kBlueColor && finishedMovement_ == true) {
         blueTile_ = true;
         stopMotors();
-        customPrintln("DETECTED BLUE TILE");
+        // customPrintln("DETECTED BLUE TILE");
         delay(kFiveSeconds_);
         
         return color;
