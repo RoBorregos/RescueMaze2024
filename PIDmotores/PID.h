@@ -45,13 +45,9 @@ class PID {
 
         void computeDistance(const double targetDistance, const double currentDistance, double &outputLeft, double &outputRight);
 
-        void computeWeightedPID(const double targetDistance, const double currentDistance, const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
-
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
-        double computeOutputModifierVlx(const double error, const unsigned long timeDiff);
         void compute(const double setpoint, double& input, double& output, long long& resetVariable, double (*func)(const long long, const unsigned long));
-        void setTunningsMotors(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
         void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier, const double kMaxError);
         void setBaseSpeed(const double baseModifier);
 };

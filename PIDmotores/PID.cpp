@@ -81,21 +81,6 @@ double PID::computeOutputModifier(const double error, const unsigned long timeDi
     return outputModifier;
 }
 
-double PID::computeOutputModifierVlx(const double error, const unsigned long timeDiff) {
-    errorSumVlx_ += error;
-    errorSumVlx_ = constrain(errorSumVlx_, kMaxErrorSum_ * -1, kMaxErrorSum_);
-    const double errorDeriv = (error - errorPrevVlx_) / (timeDiff);
-    const double outputModifier = kP_ * error + kI_ * errorSumVlx_ + kD_ * errorDeriv;
-    errorPrevVlx_ = error;
-    if (timeDiff < kSampleTime_) {
-        #if DEBUG_PID
-        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
-        #endif
-    }
-    return outputModifier;
-
-}
-
 void PID::computeStraight(const double targetOrientation, const double currentOrientation ,double &outputLeft, double &outputRight) {
     const unsigned long timeDiff = millis() - timePrev_;
     if (timeDiff < kSampleTime_) {
@@ -220,40 +205,6 @@ void PID::computeDistance(const double setpoint, const double input, double& out
 
     outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
     outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
-    errorPrev_ = error;
-
-    timePrev_ = millis();
-}
-
-void PID::computeWeightedPID(const double targetDistance, const double currentDistance, const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight) {
-    const unsigned long timeDiff = millis() - timePrev_;
-    if (timeDiff < kSampleTime_) {
-        return;
-    }
-
-    const double error = targetDistance - currentDistance;
-    const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
-    const double outputModifier = computeOutputModifierVlx(error, timeDiff);
-    const double outputModifierOrientation = computeOutputModifier(errorOrientation, timeDiff);
-
-    const double weightPID = outputModifier * kWeightVlx + outputModifierOrientation * kWeightBNO;
-
-    outputLeft = kBaseModifier_;
-    outputRight = kBaseModifier_;
-
-    if (abs(error) > kMaxError_) {
-        outputLeft += weightPID;
-        outputRight -= weightPID;
-    }
-
-    if (abs(errorOrientation) > kMaxError_) {
-        outputLeft += weightPID;
-        outputRight -= weightPID;
-    }
-
-    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
-    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
-
     errorPrev_ = error;
 
     timePrev_ = millis();
