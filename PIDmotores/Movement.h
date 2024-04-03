@@ -131,6 +131,7 @@ class Movement {
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidDistance_;
 
         double vlxDistanceTraveled_;
 

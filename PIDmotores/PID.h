@@ -25,6 +25,8 @@ class PID {
         
         double kMaxOrientationError_{0.8};
 
+        double kMaxDistanceError_{0.01};
+
     public:
 
         PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier_, const double kMaxOrientationError_);
@@ -36,6 +38,8 @@ class PID {
         void computeStraight(const double targetOrientation, const double currentOrientation, double &outputLeft, double &outputRight);
 
         void computeTurn(const double targetOrientation, const double currentOrientation, double &speed, bool &clockwise);
+
+        void computeDistance(const double targetDistance, const double currentDistance, double &outputLeft, double &outputRight);
 
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);

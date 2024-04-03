@@ -194,3 +194,27 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
     resetVariable = 0;
     timePrev_ = millis();
 }
+
+void PID::computeDistance(const double setpoint, const double input, double& outputLeft, double& outputRight) {
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < kSampleTime_) {
+        return;
+    }
+
+    const double error = setpoint - input;
+    const double outputModifier = computeOutputModifier(error, timeDiff);
+
+    outputLeft = kBaseModifier_;
+    outputRight = kBaseModifier_;
+    
+    if (abs(error) > kMaxDistanceError_) {
+        outputLeft += outputModifier;
+        outputRight += outputModifier;
+    }
+
+    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
+    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
+    errorPrev_ = error;
+
+    timePrev_ = millis();
+}
