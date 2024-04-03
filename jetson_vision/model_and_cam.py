@@ -6,6 +6,7 @@ from PIL import Image
 import torch
 import torch.nn as nn
 from torchvision import models, transforms
+import serial
 
 class_names = ['h', 's', 'u']
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -111,6 +112,10 @@ def post_processing(img,dilate):
 model_ft = start_model()
 count_for_process = 10
 count_for_model = 4
+count_process = 0
+process_mid = 4
+last_state = ""
+arduino = serial.Serial('/dev/ttyUSB0', 115200)
 if video_capture.isOpened():
     try:
         count = 0
@@ -129,18 +134,48 @@ if video_capture.isOpened():
                 new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
                 
                 if count_one >=count_for_model:
-                    print(predict_image(model_ft,new_img,device,class_names))
-                cv2.imshow("Final", new_img)
+                    
+                    # print(predict_image(model_ft,new_img,device,class_names))
+                    
+                
+                    actual_state = predict_image(model_ft,new_img,device,class_names)
+                    #actual_state = "u"
+                    if actual_state != last_state:
+
+                        count_process  = 0
+                        last_state = actual_state
+
+                    elif actual_state == last_state and count_process < process_mid:
+                        count_process +=1
+                    else:
+                        print("letter is: "+actual_state)
+                        count_process = 0
+                        last_state = ""
+
+               # cv2.imshow("Final", new_img)
                 count_one +=1
             else:
                 count_one = 0
+                actual_state = "m"
             count +=1
+            
 
-            cv2.imshow("Original",img)
+            if arduino.in_waiting > 0:
+                line = arduino.readline().decode('utf-8').strip()  # Read a line from the serial port
+                print("Triggered")  # Print the received line
+        
+        # Example of sending data from Python to Arduino
+                if line == "1":
+                    print(f"SENDING STATE = {actual_state}")
+                    arduino.write(actual_state.encode('utf-8'))  # Send a string to Arduino
+            
+           # cv2.imshow("Original",img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     finally:
             video_capture.release()
             cv2.destroyAllWindows()
+            arduino.close()
 else:
     print("Error: Unable to open camera")
+    arduino.close()
