@@ -12,7 +12,9 @@ class PID {
         double kD_{0.0};
 
         double errorSum_{0};
+        double errorSumVlx_{0};
         double errorPrev_{0};
+        double errorPrevVlx_{0};
 
         double kMaxErrorSum_{4000};
         double kMinOutput_{0};
@@ -47,6 +49,7 @@ class PID {
 
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);
+        double computeOutputModifierVlx(const double error, const unsigned long timeDiff);
         void compute(const double setpoint, double& input, double& output, long long& resetVariable, double (*func)(const long long, const unsigned long));
         void setTunningsMotors(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
         void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier, const double kMaxError);
