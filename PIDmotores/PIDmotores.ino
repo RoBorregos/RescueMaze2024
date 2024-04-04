@@ -481,12 +481,6 @@ void startAlgorithm() {
 
 void setup(){
     Serial.begin(115200);
-    #if USING_SCREEN
-    // if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-    //     customPrintln(F("SSD1306 allocation failed"));
-    //     for(;;);
-    // }
-    #endif
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
     #endif

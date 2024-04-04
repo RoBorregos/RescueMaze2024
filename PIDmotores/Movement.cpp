@@ -1036,10 +1036,22 @@ char Movement::getVictim() {
 void Movement::moveServo(servoPosition position) {
     switch (position) {
         case servoPosition::kLeft:
-            myservo.write(leftAngle);
+            if (leftStock > 1 && rightStock > 0 || leftStock == 1 && rightStock <= 1) {
+                myservo.write(leftAngle);
+                --leftStock;
+            } else if (leftStock == 1 && rightStock > 1 || leftStock == 0 && rightStock > 0) {
+                myservo.write(rightAngle);
+                --rightStock;
+            }
             break;
         case servoPosition::kRight:
-            myservo.write(rightAngle);
+            if (rightStock > 1 && leftStock > 0 || rightStock == 1 && leftStock <= 1) {
+                myservo.write(rightAngle);
+                --rightStock;
+            } else if (rightStock == 1 && leftStock > 1 || rightStock == 0 && leftStock > 0) {
+                myservo.write(leftAngle);
+                --leftStock;
+            }
             break;
         case servoPosition::kCenter:
             myservo.write(initialAngle);

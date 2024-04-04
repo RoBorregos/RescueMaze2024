@@ -232,6 +232,8 @@ class Movement {
         static constexpr uint8_t rightAngle = initialAngle + 44;
         static constexpr uint8_t leftAngle = initialAngle - 36;
         bool victimFound = false;
+        u_int8_t rightStock = 6;
+        u_int8_t leftStock = 6;
 
         Adafruit_SSD1306 display;
 
