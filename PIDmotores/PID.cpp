@@ -194,3 +194,8 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
     resetVariable = 0;
     timePrev_ = millis();
 }
+
+void PID::resetPID() {
+    errorPrev_ = 0;
+    errorSum_ = 0;
+}

@@ -43,5 +43,6 @@ class PID {
         void setTunningsMotors(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime);
         void setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier, const double kMaxOrientationError);
         void setBaseSpeed(const double baseModifier);
+        void resetPID();
 };
 #endif
