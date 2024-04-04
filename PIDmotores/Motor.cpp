@@ -132,7 +132,7 @@ void Motor::motorStop() {
     previousTics_ = totalTics_;
     currentSpeed_ = 0;
     currentState_ = MotorState::kStop;
-    pid_.reset();
+    pid_.resetPID();
 }
 
 
@@ -184,8 +184,4 @@ void Motor::constantSpeed(const double speed, const MotorState direction) {
     double tmpPwm = 0;
     pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
     setPwmAndDirection(tmpPwm, direction);
-}
-
-void Motor::resetMotorsPid() {
-    errorAcumulado_ = 0;
 }

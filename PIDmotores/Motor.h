@@ -115,7 +115,5 @@ class Motor {
         double getSpeed();
 
         void constantSpeed(const double speed, const MotorState direction);
-
-        void resetMotorsPid();
 };
 #endif
