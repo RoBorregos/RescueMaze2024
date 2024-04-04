@@ -7,6 +7,11 @@
 #include "TileDirection.h"
 #include "LimitSwitch.h"
 #include "TCS.h"
+#include <Deneyap_Servo.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 enum class compass{
     kNorth,
@@ -22,6 +27,12 @@ enum class MovementState{
     kTurnLeft,
     kTurnRight,
     kRamp
+};
+
+enum class servoPosition {
+    kLeft,
+    kRight,
+    kCenter
 };
 
 class Movement {
@@ -205,13 +216,24 @@ class Movement {
         bool finishedMovement_ = false;
 
         static constexpr int kFiveSeconds_ = 5000;
+        static constexpr int kTwoSeconds_ = 2000;
 
+        // Dispenser stuff.
         // const char kCheckpointSerialCode = -1;
         const char kHarmedSerialCode = 'h';
         const char kStableSerialCode = 's';
         const char kUnharmedSerialCode = 'u';
-        const int kOneSecondInMs = 1000;
+        const char kNoVictimSerialCode = 'm';
+        const int kHalfSecond = 500;
         char victim = 'm';
+        bool hasReceivedSerial = false;
+        Servo myservo;
+        static constexpr uint8_t initialAngle = 80;
+        static constexpr uint8_t rightAngle = initialAngle + 44;
+        static constexpr uint8_t leftAngle = initialAngle - 36;
+        bool victimFound = false;
+
+        Adafruit_SSD1306 display;
 
     public:
         Movement();
@@ -265,7 +287,7 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward(const double targetOrientation);
+        void goForward(const double targetOrientation, const bool& hasVictim);
 
         void goBackward(const double targetOrientation);
 
@@ -321,9 +343,15 @@ class Movement {
 
         void sendSerialRequest();
 
-        void checkSerial();
+        void checkSerial(double currentOrientation);
 
         char getVictim();
+
+        void moveServo(servoPosition position);
+
+        bool getVictimFound();
+
+        void screenPrint(const String output);
 };
 
 #endif

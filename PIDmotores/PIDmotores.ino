@@ -2,12 +2,10 @@
 // #define ETL_NO_STL
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 #include<Arduino.h>
 #include"Embedded_Template_Library.h"
 #include<etl/vector.h>
 #include<etl/stack.h>
-#include <Deneyap_Servo.h> 
 #include "Map.h"
 #include "Tile.h"
 #include "TileDirection.h"
@@ -16,12 +14,6 @@
 #include "Movement.h"
 #include "Pins.h"
 #include "Encoder.h"
-
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define DEBUG_ALGORITHM 0
 #define USING_SCREEN 1
@@ -48,34 +40,6 @@ uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
 
 coord lastCheckpointCoord = robotCoord;
-// TODO: move to Movement.
-Servo myservo;
-constexpr uint8_t initialAngle = 80;
-constexpr uint8_t rightAngle = initialAngle + 44;
-constexpr uint8_t leftAngle = initialAngle - 36;
-constexpr uint8_t servoPin = 13; //TODO: change pin
-
-enum class servoPosition {
-    kLeft,
-    kRight,
-    kCenter
-};
-
-void moveServo(servoPosition position) {
-    switch (position) {
-        case servoPosition::kLeft:
-            myservo.write(leftAngle);
-            break;
-        case servoPosition::kRight:
-            myservo.write(rightAngle);
-            break;
-        case servoPosition::kCenter:
-            myservo.write(initialAngle);
-            break;
-    }
-    delay(1000);
-    myservo.write(initialAngle);
-}
 
 void updateLastCheckpoint(const coord& checkpointCoord) {
     lastCheckpointVisitedCoords = tilesMap.positions;
@@ -87,18 +51,6 @@ void restartOnLastCheckpoint(const coord& checkpointCoord) {
     robotOrientation = 0;
     tilesMap.positions = lastCheckpointVisitedCoords;
     depthFirstSearch();
-}
-
-void screenPrint(const String& output){
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    display.println(output);
-    display.display();
-    #if USING_SCREEN
-    // delay(500);
-    #endif
 }
 
 void turnAndMoveRobot(const int targetOrientation) {
@@ -113,7 +65,11 @@ void turnAndMoveRobot(const int targetOrientation) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
-    robot.goForward(robotOrientation);
+    robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+    // If a victim was found, update the tile.
+    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
+        tiles[tilesMap.getIndex(robotCoord)].setVictim();
+    }
 }
 
 void followPath() {
@@ -142,7 +98,7 @@ void followPath() {
             customPrintln("left");
             #endif
             #if USING_SCREEN
-            screenPrint("left");
+            // robot.screenPrint("left");
             #endif
             #if MOVEMENT
             turnAndMoveRobot(270);
@@ -152,7 +108,7 @@ void followPath() {
             customPrintln("right");
             #endif
             #if USING_SCREEN
-            screenPrint("right");
+            // robot.screenPrint("right");
             #endif
             #if MOVEMENT
             turnAndMoveRobot(90);
@@ -162,7 +118,7 @@ void followPath() {
             customPrintln("up");
             #endif
             #if USING_SCREEN
-            screenPrint("up");
+            // robot.screenPrint("up");
             #endif
             #if MOVEMENT
             turnAndMoveRobot(0);
@@ -172,7 +128,7 @@ void followPath() {
             customPrintln("down");
             #endif
             #if USING_SCREEN
-            screenPrint("down");
+            // robot.screenPrint("down");
             #endif
             #if MOVEMENT
             turnAndMoveRobot(180);
@@ -184,11 +140,11 @@ void followPath() {
         #endif
         if (robot.wasBlackTile()) {
             tiles[tilesMap.getIndex(next)].setBlackTile();
-            screenPrint("Black tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
+            // robot.screenPrint("Black tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
         } else if (robot.isBlueTile()) {
             robotCoord = next;
             tiles[tilesMap.getIndex(robotCoord)].weight_ = kBlueTileWeight;
-            screenPrint("Blue tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
+            // robot.screenPrint("Blue tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
         } else {
             robotCoord = next;
         }
@@ -331,9 +287,9 @@ void depthFirstSearch() {
         customPrintln("before dijsktra"); 
         #endif
         #if USING_SCREEN
-        screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
-        screenPrint("Orientation: " + String(robotOrientation));
-        screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        // robot.screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
+        // robot.screenPrint("Orientation: " + String(robotOrientation));
+        // robot.screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         #endif
         dijsktra(robotCoord, currentTileCoord);
         #if DEBUG_ALGORITHM || DEBUG_MERGE
@@ -345,20 +301,20 @@ void depthFirstSearch() {
         customPrintln(unvisited.size());
         #endif
         #if USING_SCREEN
-        screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
-        screenPrint("Orientation: " + String(robotOrientation));
-        screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
+        // robot.screenPrint("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
+        // robot.screenPrint("Orientation: " + String(robotOrientation));
+        // robot.screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         #endif
         visitedMap.positions.push_back(currentTileCoord);
         if (robot.wasBlackTile()) {
-            screenPrint("Black tile found");
+            // robot.screenPrint("Black tile found");
             continue;
         }
         robotCoord = currentTileCoord; // Maybe not needed.
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {
-            screenPrint("Ramp found");
+            // robot.screenPrint("Ramp found");
             currentTile->weight_ = kRampWeight;
             TileDirection direction;
             // check robots orientation to know the next Tile.
@@ -438,16 +394,16 @@ void depthFirstSearch() {
                         switch (direction)
                         {
                         case TileDirection::kUp:
-                            screenPrint("Wall found up");
+                            // robot.screenPrint("Wall found up");
                             break;
                         case TileDirection::kDown:
-                            screenPrint("Wall found down");
+                            // robot.screenPrint("Wall found down");
                             break;
                         case TileDirection::kLeft:
-                            screenPrint("Wall found left");
+                            // robot.screenPrint("Wall found left");
                             break;
                         case TileDirection::kRight:
-                            screenPrint("Wall found right");
+                            // robot.screenPrint("Wall found right");
                             break;
                         default:
                             break;
@@ -459,16 +415,16 @@ void depthFirstSearch() {
                         switch (direction)
                         {
                         case TileDirection::kUp:
-                            screenPrint("No wall found up");
+                            // robot.screenPrint("No wall found up");
                             break;
                         case TileDirection::kDown:
-                            screenPrint("No wall found down");
+                            // robot.screenPrint("No wall found down");
                             break;
                         case TileDirection::kLeft:
-                            screenPrint("No wall found left");
+                            // robot.screenPrint("No wall found left");
                             break;
                         case TileDirection::kRight:
-                            screenPrint("No wall found right");
+                            // robot.screenPrint("No wall found right");
                             break;
                         default:
                             break;
@@ -506,7 +462,7 @@ void depthFirstSearch() {
             }
         }
     }
-    screenPrint("End of DFS");
+    // robot.screenPrint("End of DFS");
     dijsktra(robotCoord, coord{0,0,0});
     #if DEBUG_ALGORITHM
     customPrintln("termino DFS");
@@ -526,10 +482,10 @@ void startAlgorithm() {
 void setup(){
     Serial.begin(115200);
     #if USING_SCREEN
-    if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-        customPrintln(F("SSD1306 allocation failed"));
-        for(;;);
-    }
+    // if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+    //     customPrintln(F("SSD1306 allocation failed"));
+    //     for(;;);
+    // }
     #endif
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
@@ -539,11 +495,11 @@ void setup(){
 
     // Serial.println(1);
     // bool flag = false;
-    // screenPrint("nadota");
+    // robot.screenPrint("nadota");
     // while(flag == false){
     //   if (Serial.available() > 0) {
     //       char input = Serial.read();
-    //       screenPrint("input: " + String(input));
+    //       robot.screenPrint("input: " + String(input));
     //       flag = true;
     //   }
     // }
@@ -557,11 +513,11 @@ void loop() {
     
     // Serial.println(1);
     // bool flag = false;
-    // screenPrint("nadota");
+    // robot.screenPrint("nadota");
     // while(flag == false){
     //   if (Serial.available() > 0) {
     //       char input = Serial.read();
-    //       screenPrint("input: " + String(input));
+    //       robot.screenPrint("input: " + String(input));
     //       flag = true;
     //   }
     // }
@@ -574,16 +530,16 @@ void loop() {
     //             switch (direction)
     //             {
     //             case TileDirection::kUp:
-    //                 screenPrint("Wall found up");
+    //                 robot.screenPrint("Wall found up");
     //                 break;
     //             case TileDirection::kDown:
-    //                 screenPrint("Wall found down");
+    //                 robot.screenPrint("Wall found down");
     //                 break;
     //             case TileDirection::kLeft:
-    //                 screenPrint("Wall found left");
+    //                 robot.screenPrint("Wall found left");
     //                 break;
     //             case TileDirection::kRight:
-    //                 screenPrint("Wall found right");
+    //                 robot.screenPrint("Wall found right");
     //                 break;
     //             default:
     //                 break;
@@ -593,16 +549,16 @@ void loop() {
     //             switch (direction)
     //             {
     //             case TileDirection::kUp:
-    //                 screenPrint("No wall found up");
+    //                 robot.screenPrint("No wall found up");
     //                 break;
     //             case TileDirection::kDown:
-    //                 screenPrint("No wall found down");
+    //                 robot.screenPrint("No wall found down");
     //                 break;
     //             case TileDirection::kLeft:
-    //                 screenPrint("No wall found left");
+    //                 robot.screenPrint("No wall found left");
     //                 break;
     //             case TileDirection::kRight:
-    //                 screenPrint("No wall found right");
+    //                 robot.screenPrint("No wall found right");
     //                 break;
     //             default:
     //                 break;

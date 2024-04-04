@@ -68,6 +68,16 @@ void Movement::setup() {
     setupLimitSwitch(LimitSwitchID::kRight);
 
     setupTCS();
+
+    // myservo.attach(Pins::servoPin);
+
+    // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+    this->display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);    
+
+    if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+        // customPrintln(F("SSD1306 allocation failed"));
+        for(;;);
+    }
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -239,14 +249,14 @@ bool Movement::checkWallsDistances(const TileDirection targetTileDirection, cons
         #if DEBUG_MOVEMENT
         customPrintln("Orientation not found in the array.");
         #endif
-        customPrintln("Orientation not found in the array.");
+        // customPrintln("Orientation not found in the array.");
         return false;
     }
 
     const uint8_t vlxIndex = (static_cast<uint8_t>(targetTileDirection) + orientationIndex) % kTileDirections;
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
 
-    customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + "0.15" + " = " + String(getWallDistance(vlxID) < 0.15));
+    // customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + "0.15" + " = " + String(getWallDistance(vlxID) < 0.15));
     
     return getWallDistance(vlxID) < 0.15;
 }
@@ -268,8 +278,9 @@ double Movement::getWallDistance(const VlxID vlxId) {
     // return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
-void Movement::goForward(const double targetOrientation) {
-    customPrintln("Moving forward in goForward()");
+void Movement::goForward(const double targetOrientation, const bool& hasVictim) {
+    victimFound = hasVictim;
+    // customPrintln("Moving forward in goForward()");
     /* customPrintln((double)vlx[0].getRawDistance());
     customPrintln((double)vlx[1].getRawDistance());
     customPrintln((double)vlx[2].getRawDistance());
@@ -318,7 +329,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     bool moveForward = false;
     ++counterMovements_;
     
-    customPrintln("CounterMovements:" + String(counterMovements_));
+    // customPrintln("CounterMovements:" + String(counterMovements_));
     
     prevTimeTraveled_ = millis();
 
@@ -336,11 +347,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             checkpointTile_ = false;
             finishedMovement_ = false;
 
-            customPrintln("Moving forward");
-            customPrintln("TargetDistance:" + String(targetDistance));
+            // customPrintln("Moving forward");
+            // customPrintln("TargetDistance:" + String(targetDistance));
 
             unsigned long currentMillis = millis();
-            unsigned long previousMillis = 0;
+            // unsigned long previousMillis = 0;
+            hasReceivedSerial = true;
+            victimFound = false;
 
             targetDistance = getRealTargetDistance(targetDistance);
 
@@ -359,12 +372,17 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 checkColors(targetOrientation);
 
-                if (currentMillis - previousMillis >= kOneSecInMs) {
-                    sendSerialRequest();
-                    previousMillis = currentMillis;
+                currentMillis = millis();
+                if (victimFound == false) {
+                    if (hasReceivedSerial == true) { // currentMillis - previousMillis >= 500 && 
+                        screenPrint("request sent"+String(currentMillis) );
+                        sendSerialRequest();
+                        hasReceivedSerial = false;
+                        // previousMillis = currentMillis;
+                    }
+                    checkSerial(currentOrientation);
                 }
-                checkSerial();
-                
+
                 // customPrintln("Color:" + String(getTCSInfo()));
                 // customPrintln("blackTile" + String(blackTile_));
                 #if DEBUG_MOVEMENT
@@ -981,22 +999,65 @@ void Movement::sendSerialRequest() {
     Serial.println(1);
 }
 
-void Movement::checkSerial() {
+void Movement::checkSerial(double currentOrientation) {
     if (Serial.available() > 0) {
+        hasReceivedSerial = true;
         victim = Serial.read();
-        // if (input == kCheckpointSerialCode) {
-        //     restartOnLastCheckpoint(lastCheckpointCoord);
-        // } else
-        if (victim == kHarmedSerialCode) {
-            // Drop 2 medkits.
-        } else if (victim == kStableSerialCode) {
-            // Drop 1 medkit.
-        } else if (victim == kUnharmedSerialCode){
-            // Do something.
+        screenPrint("Serial Received");
+        if (victim != kNoVictimSerialCode) {
+            screenPrint("Victim Found");
+            saveLastState(getCurrentState(), currentOrientation);
+            moveMotors(MovementState::kStop, 0, 0);
+            victimFound = true;
+            delay(kOneSecInMs);
+            if (victim == kHarmedSerialCode) {
+                // Drop 2 medkits.
+                moveServo(servoPosition::kLeft);
+                delay(kOneSecInMs);
+                moveServo(servoPosition::kRight);
+                delay(kOneSecInMs);
+            } else if (victim == kStableSerialCode) {
+                // Drop 1 medkit.
+                moveServo(servoPosition::kLeft);
+                delay(3000);
+            } else if (victim == kUnharmedSerialCode){
+                // Only indicate victim found.
+                delay(4000);
+            }
+            retrieveLastState();
         }
     }
 }
 
 char Movement::getVictim() {
     return victim;
+}
+
+void Movement::moveServo(servoPosition position) {
+    switch (position) {
+        case servoPosition::kLeft:
+            myservo.write(leftAngle);
+            break;
+        case servoPosition::kRight:
+            myservo.write(rightAngle);
+            break;
+        case servoPosition::kCenter:
+            myservo.write(initialAngle);
+            break;
+    }
+    delay(kOneSecInMs);
+    myservo.write(initialAngle);
+}
+
+bool Movement::getVictimFound() {
+    return victimFound;
+}
+
+void Movement::screenPrint(const String output){
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    display.println(output);
+    display.display();
 }
