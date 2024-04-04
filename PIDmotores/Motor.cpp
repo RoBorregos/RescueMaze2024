@@ -186,3 +186,7 @@ void Motor::constantSpeed(const double speed, const MotorState direction) {
     pid_.compute(speed, currentSpeed_, tmpPwm, timeEpochTics_, &ticsToSpeed);
     setPwmAndDirection(tmpPwm, direction);
 }
+
+void Motor::resetMotorsPid() {
+    errorAcumulado_ = 0;
+}

@@ -45,13 +45,13 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.15; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.09; // m/s
         static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
         static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
-        static constexpr double kMinFrontWallDistance = 0.06;
+        static constexpr double kMinWallDistance = 0.10;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -103,7 +103,7 @@ class Movement {
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
-        static constexpr double kMinWallDistance = 0.15; // 15 cm
+        static constexpr double kWallDistance = 0.15; // 15 cm
 
         static constexpr double kMaxDistanceError = 0.03; // 3 cm
 
@@ -115,17 +115,23 @@ class Movement {
 
         double targetOrientation_ = 0;
 
-        static constexpr double kUnreachableDistance = 0.7;
+        static constexpr double kUnreachableDistance = 0.6;
 
-        static constexpr double kWeightEncoders = 0.4;
+        static constexpr double kWeightEncoders = 0;
 
-        static constexpr double kWeightVlx = 0.6;
+        static constexpr double kWeightVlx = 1;
 
         int counterMovements_ = 0;
 
         bool encodersReset_ = false;
 
         bool inResetRoutine_ = false;
+
+        int  backWallSeenXTile_;
+
+        int  frontWallSeenXTile_;
+
+        double weightMovement_ = 0;
 
         PID pidDummy_;
         PID pidForward_;
@@ -138,7 +144,7 @@ class Movement {
 
         constexpr static double kPForward = 0.015; 
         constexpr static double kIForward = 0.00;
-        constexpr static double kDForward = 0.002;
+        constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
         constexpr static double kIBackward = 0.0;
@@ -274,6 +280,8 @@ class Movement {
         void rampMovement();
 
         double weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront);
+
+        double weightMovementVLX(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront, bool& moveForward, double targetDistance);
 
         void updateDistanceToCenterInTile();
 

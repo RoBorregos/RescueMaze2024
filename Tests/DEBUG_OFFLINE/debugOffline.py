@@ -1,7 +1,7 @@
 import socket
 import csv
 
-UDP_PORT = 1237
+UDP_PORT = 1238
 
 with open("received_messages.csv", "a", newline="") as csvfile:
     fieldnames = ["Timestamp", "Message"]
