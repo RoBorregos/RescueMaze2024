@@ -374,8 +374,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     return;
                 }
 
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
+                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                // crashRight = limitSwitch_[rightLimitSwitch].getState();
 
                 #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);

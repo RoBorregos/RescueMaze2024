@@ -124,7 +124,7 @@ class Movement {
 
         static constexpr long long kOneSecInMs = 1000;
 
-        static constexpr double kOneTileDistance = 0.228; //m
+        static constexpr double kOneTileDistance = 0.3; // 0.228 m
 
         static constexpr long long kTileDirections = 4;
 
