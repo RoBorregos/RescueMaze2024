@@ -45,7 +45,7 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.09; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.14; // m/s
         static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
         static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
 
@@ -105,7 +105,7 @@ class Movement {
 
         static constexpr double kWallDistance = 0.15; // 15 cm
 
-        static constexpr double kMaxDistanceError = 0.03; // 3 cm
+        static constexpr double kMaxDistanceError = 0.01; // 3 cm
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -137,7 +137,7 @@ class Movement {
 
         double distanceToCenter_;
 
-        constexpr static double kPForward = 0.015; 
+        constexpr static double kPForward = 0.09; 
         constexpr static double kIForward = 0.00;
         constexpr static double kDForward = 0.00;
 
