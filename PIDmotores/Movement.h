@@ -115,7 +115,7 @@ class Movement {
 
         double targetOrientation_ = 0;
 
-        static constexpr double kUnreachableDistance = 0.6;
+        static constexpr double kUnreachableDistance = 0.7;
 
         static constexpr double kWeightEncoders = 0;
 
@@ -127,11 +127,6 @@ class Movement {
 
         bool inResetRoutine_ = false;
 
-        int  backWallSeenXTile_;
-
-        int  frontWallSeenXTile_;
-
-        double weightMovement_ = 0;
 
         PID pidDummy_;
         PID pidForward_;

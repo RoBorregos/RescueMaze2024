@@ -299,18 +299,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
 
 
-            /* double frontWallDistance = initialFrontWallDistance;
-            double backWallDistance = initialBackWallDistance; */
-
             double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
             double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
-            /* if (backWallDistance <= kMinWallDistance) {
-                backWallSeenXTile_ = 0;
-            }
-            if (frontWallDistance <= kMinWallDistance) {
-                frontWallSeenXTile_ = 0;
-            } */
             // targetDistance = getRealTargetDistance(targetDistance);
 
             udp.beginPacket(udpServerIP, udpServerPort);
@@ -319,7 +310,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #if DEBUG_OFFLINE_MOVEMENT
             #endif
 
-            while (!hasTraveledDistanceWithSpeed(targetDistance)) {
+            while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("vlxFrontLeft:" + String(frontWallDistance));
@@ -328,6 +319,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     stopMotors();
                     break;
                 }
+
                 checkColors();
 
                 customPrintln("Color:" + String(getTCSInfo()));
@@ -373,12 +365,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
             
 
-            while (abs(weightMovementVLX(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance, moveForward, targetDistance) - targetDistance) >= kMaxDistanceError ) {
+            while (abs(weightMovementVLX(backWallDistance, frontWallDistance, 
+                                         initialBackWallDistance, initialFrontWallDistance, 
+                                         moveForward, targetDistance) - targetDistance) >= kMaxDistanceError ) {
 
-                if (moveForward){
-                    if (frontWallDistance <= kMinWallDistance) {
-                        break;
-                    }
+                if (moveForward && frontWallDistance <= kMinWallDistance) {
+                    stopMotors();
+                    break;
                 }
                 
                 checkColors();
@@ -394,6 +387,21 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
+
+                if (crashLeft == true && crashRight == false) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Crash left-");
+                    #endif
+                    correctionAfterCrash(true, currentOrientation, useWallDistance);
+                }
+                
+                if (crashRight == true && crashLeft == false) {
+                    #if DEBUG_MOVEMENT
+                    customPrintln("Crash right-");
+                    customPrintln("Encodersssss");
+                    #endif
+                    correctionAfterCrash(false, currentOrientation, useWallDistance);
+                }
 
                 #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
@@ -411,72 +419,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             }
 
-            /* while (weightMovement(backWallDistance, frontWallDistance, initialBackWallDistance, initialFrontWallDistance) <= targetDistance) {
-                if (frontWallDistance <= kMinWallDistance) {
-                    break;
-                }
-                checkColors();
-                
-                customPrintln("Color:" + String(getTCSInfo()));
-                customPrintln("blackTile" + String(blackTile_));
-                #if DEBUG_MOVEMENT
-                #endif
-                if (wasBlackTile()) {
-                    customPrintln("Black tile detected");
-                    return;
-                }
-
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
-
-                #if DEBUG_OFFLINE_MOVEMENT
-                udp.beginPacket(udpServerIP, udpServerPort);
-                udp.print("targetOrientation" + String(targetOrientation));
-                udp.print(" ");
-                udp.print("CurrentOreintation" + String(currentOrientation));
-                udp.print(" ");
-                udp.print("CurrentDistance" + String(targetDistance));
-                udp.print(" ");
-                udp.endPacket();
-                #endif
-                
-                moveMotorsInADirection(targetOrientation, moveForward);
-
-                // TODO: Make its own function named checkForCrashAndCorrect()
-                if (crashLeft == true && crashRight == false) {
-                    #if DEBUG_MOVEMENT
-                    customPrintln("Crash left-");
-                    #endif
-                    correctionAfterCrash(true, currentOrientation, useWallDistance);
-                }
-                
-                if (crashRight == true && crashLeft == false) {
-                    #if DEBUG_MOVEMENT
-                    customPrintln("Crash right-");
-                    customPrintln("Encodersssss");
-                    #endif
-                    correctionAfterCrash(false, currentOrientation, useWallDistance);
-                }
-
-                #if DEBUG_MOVEMENT
-                customPrintln("targetDistance:" + String(targetDistance));
-                #endif
-
-                frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-                backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
-
-                hasTraveledDistanceWithSpeed(targetDistance);
-
-                if (hasTraveledDistanceWithSpeed(targetDistance) == true && weightMovement_ >= idealBackDistanceCm) {
-                    udp.beginPacket(udpServerIP, udpServerPort);
-                    udp.print("IdealBackDistanceCm:" + String(idealBackDistanceCm));
-                    udp.endPacket();
-                    break;
-                }
-                
-            } */
-            backWallSeenXTile_++;
-            frontWallSeenXTile_++;
             finishedMovement_ = true;
             checkColors();
 
@@ -552,9 +494,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     }
 
     maybeResetWithBackWall(targetOrientation, currentOrientation);
-    /* for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-        motor[i].resetMotorsPid();
-    } */
 }
 
 
@@ -906,8 +845,8 @@ double Movement::weightMovement(const double currentDistanceBack, const double c
     udp.endPacket();
     #if DEBUG_OFFLINE_MOVEMENT
     #endif
-    weightMovement_ = allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx;
-    return (weightMovement_);
+    const double weightMovement = allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx;
+    return (weightMovement);
     
 }
 
@@ -982,10 +921,10 @@ double Movement::weightMovementVLX(const double currentDistanceBack, const doubl
     udp.endPacket();
     #if DEBUG_OFFLINE_MOVEMENT
     #endif
-    weightMovement_ = allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx;
+    const double weightMovement = vlxDistanceTraveled * kWeightVlx;
     moveForward = (vlxDistanceTraveled - targetDistance) > 0;
-    return (weightMovement_);
-    
+    return weightMovement;
+
 }
 
 void Movement::updateDistanceToCenterInTile() {

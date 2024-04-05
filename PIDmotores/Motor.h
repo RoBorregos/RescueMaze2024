@@ -53,8 +53,6 @@ class Motor {
         // PID
         unsigned long nextTime_;
         double pwmInicial_;
-        double errorPrev_;
-        double errorAcumulado_;
 
         MotorState currentState_;
 
