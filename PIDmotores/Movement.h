@@ -122,7 +122,7 @@ class Movement {
 
         VLX vlx[kNumberOfVlx];
 
-        double wallDistances_[kNumberOfVlx];
+        double wallDistances[kNumberOfVlx];
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
