@@ -56,11 +56,11 @@ void setup(){
     // robot.moveMotors(MovementState::kForward, 0, 0.28);
     // robot.moveMotors(MovementState::kForward, 0, 0.28);
 
-    // robot.moveMotors(MovementState::kForward, 0, 0.29);
-    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
     robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
+    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    robot.moveMotors(MovementState::kForward, 270, 0.29);
+    robot.moveMotors(MovementState::kForward, 270, 0.29);
+    robot.moveMotors(MovementState::kForward, 270, 0.29);
     robot.moveMotors(MovementState::kTurnLeft, 90, 0);
     robot.moveMotors(MovementState::kForward, 90, 0.29);
     robot.moveMotors(MovementState::kTurnLeft, 180, 0);

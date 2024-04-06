@@ -343,7 +343,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 udp.print(" ");
                 udp.endPacket();
                 #endif
-                customPrintln("Rampa: " + String(isRamp()));
+                // customPrintln("Rampa: " + String(isRamp()));
                 moveMotorsInADirection(targetOrientation, true);
 
                 // TODO: Make its own function named checkForCrashAndCorrect()
@@ -960,9 +960,9 @@ double Movement::weightMovementVLX(const double currentDistanceBack, const doubl
     #endif
     const double weightMovement = vlxDistanceTraveled * kWeightVlx;
     customPrintln("vlxDistanceTraveled:" + String(vlxDistanceTraveled) + " " + "targetDistance:" + String(targetDistance));
-    moveForward = (int8_t)((vlxDistanceTraveled - targetDistance) * kMToCm) < 0;
+    moveForward = static_cast<int8_t>((vlxDistanceTraveled - targetDistance) * kMToCm) < 0;
     customPrintln("moveForward:" + String(moveForward));
-    customPrintln("calculation:" + String((int8_t)((vlxDistanceTraveled - targetDistance) * kMToCm)));
+    customPrintln("calculation:" + String(static_cast<int8_t>((vlxDistanceTraveled - targetDistance) * kMToCm)));
     /* udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("moveForward:" + String(moveForward));
     udp.endPacket(); */
