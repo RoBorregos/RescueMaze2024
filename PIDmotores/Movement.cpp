@@ -257,6 +257,7 @@ void Movement::rampMovement() {
     moveMotors(MovementState::kRamp, 0, 0);
 }
 
+// TODO: Clean this function
 void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
@@ -393,7 +394,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         break;
                     }
 
-                    
+                    // TODO: Only check colors when it is moving forward
                     checkColors();
                     
                     #if DEBUG_MOVEMENT
@@ -517,9 +518,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             customPrintln("hasWallInFront:" + String(hasWallInFront()));
             customPrintln("vlxFrontLeft: " + String(vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance()));
             #endif
-            if (hasWallInFront()) {
-                moveMotors(MovementState::kForward, targetOrientation, 0.30);
-            }
+            
+            moveMotors(MovementState::kForward, targetOrientation, kTileLengthInMeters);
+            
 
             break;
         }
@@ -896,19 +897,19 @@ double Movement::weightMovementVLX(const double currentDistanceBack, const doubl
 
     if (currentDistanceBack < currentDistanceFront) {
         if (initialVlxDistanceBack >= kUnreachableDistance || currentDistanceBack >= kUnreachableDistance) {
-            
-            #if DEBUG_OFFLINE_MOVEMENT
-            #endif
             return targetDistance;
         }
+
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
        
     } else {
         if (initialVlxDistanceFront >= kUnreachableDistance || currentDistanceFront >= kUnreachableDistance) {
             return targetDistance;
         }
+
         vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
     }
+
     const double weightMovement = vlxDistanceTraveled * kWeightVlx;
     moveForward = static_cast<int8_t>((vlxDistanceTraveled - targetDistance) * kMToCm) < 0;
     return weightMovement;
@@ -944,7 +945,7 @@ bool Movement::hasWallInFront() {
     customPrintln("FrontDistance:" + String(vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance()));
     #endif
 
-    return vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance() <= 0.22;
+    return vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance() <= kHalfTileInMeters;
 }
 
 void Movement::maybeResetWithBackWall(const double targetOrientation, const double currentOrientation){
@@ -973,6 +974,7 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, const doub
         udp.endPacket();
         #endif
 
+        // TODO: Clean the parameters of moveMotors
         moveMotors(MovementState::kForward, targetOrientation, distanceToCenter_, useWallDistance_);
         
         pidForward_.setBaseSpeed(kBaseSpeedForward_);

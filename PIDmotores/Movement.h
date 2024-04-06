@@ -51,7 +51,8 @@ class Movement {
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
-        static constexpr double kMinWallDistance = 0.06;
+        // TODO: Improve the name of this variable
+        static constexpr double kMinWallDistance = 0.06; // 6 cm
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -63,7 +64,7 @@ class Movement {
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
-        static constexpr double kIdealDistanceCenter = 0.05;
+        static constexpr double kIdealDistanceCenter = 0.05; // 5 cm
 
         static constexpr uint8_t kTileLength = 30; //cm
 
@@ -103,6 +104,7 @@ class Movement {
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
+        // TODO: Improve the name of this variable
         static constexpr double kWallDistance = 0.15; // 15 cm
 
         static constexpr double kMaxDistanceErrorInCm = 1; // 3 cm
@@ -297,8 +299,6 @@ class Movement {
         bool isCheckpointTile();
 
         double getDistanceToCenter(double targetDistance);
-
-        
 };
 
 #endif
