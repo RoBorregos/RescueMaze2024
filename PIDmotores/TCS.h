@@ -34,14 +34,14 @@ class TCS {
 
         static constexpr int8_t millisToWait_ = 50;
 
-        static constexpr int16_t kMaxRedValueInBlue_ = 110;
+        static constexpr int16_t kMaxRedValueInBlue_ = 85;
         static constexpr int16_t kMinRedValueInBlue_ = 85;
 
         static constexpr int16_t kMaxGreenValueInBlue_ = 140;
         static constexpr int16_t kMinGreenValueInBlue_ = 80;
 
         static constexpr int16_t kMaxBlueValueInBlue_ = 170;
-        static constexpr int16_t kMinBlueValueInBlue_ = 75;
+        static constexpr int16_t kMinBlueValueInBlue_ = 100;
 
         static constexpr int16_t kMaxRedValueInRed_ = 270;
         static constexpr int16_t kMinRedValueInRed_ = 150;
@@ -52,14 +52,14 @@ class TCS {
         static constexpr int16_t kMaxBlueValueInRed_ = 75;
         static constexpr int16_t kMinBlueValueInRed_ = 50;
 
-        static constexpr int16_t kMinRedValueInBlack_ = 76;
-        static constexpr int16_t kMaxRedValueInBlack_ = 86;
+        static constexpr int16_t kMinRedValueInBlack_ = 105;
+        static constexpr int16_t kMaxRedValueInBlack_ = 130;
 
-        static constexpr int16_t kMinGreenValueInBlack_ = 33;
-        static constexpr int16_t kMaxGreenValueInBlack_ = 56;
+        static constexpr int16_t kMinGreenValueInBlack_ = 70;
+        static constexpr int16_t kMaxGreenValueInBlack_ = 100;
 
-        static constexpr int16_t kMinBlueValueInBlack_ = 30;
-        static constexpr int16_t kMaxBlueValueInBlack_ = 45;
+        static constexpr int16_t kMinBlueValueInBlack_ = 50;
+        static constexpr int16_t kMaxBlueValueInBlack_ = 85;
 
 
         static constexpr char kRedColor_ = 'r';
@@ -72,6 +72,8 @@ class TCS {
         bool inRangeThreshold(const double lowerBound, const double colorDetection, const double upperBound);
 
         void setDefaultValues();
+
+        static constexpr uint8_t kRangeTolerance_ = 10;
 
     public:
         TCS();
@@ -111,6 +113,8 @@ class TCS {
         void printColorMatrix();
 
         void printColorList();
+
+        void getRanges();
 };
 
 #endif

@@ -111,19 +111,23 @@ char TCS::getColor() {
     updateRGB();
     char colorLetter;
     // TODO: check each color
+    Serial.println("red: " + String(red_) + " green: " + String(green_) + " blue: " + String(blue_));
+    Serial.println("for BLUE: max red: " + String(kMaxRedValueInBlue_) + " min green: " + String(kMinGreenValueInBlue_) + " min blue: " + String(kMinBlueValueInBlue_));
+    Serial.println("for RED: min red: " + String(kMinRedValueInRed_) + " max green: " + String(kMaxGreenValueInRed_) + " max blue: " + String(kMaxBlueValueInRed_));
+    Serial.println("for BLACK: max red: " + String(kMaxRedValueInBlack_) + " max green: " + String(kMaxGreenValueInBlack_) + " max blue: " + String(kMaxBlueValueInBlack_));
     if (red_ < kMaxRedValueInBlue_  && green_ > kMinGreenValueInBlue_ && blue_ > kMinBlueValueInBlue_) {
         // blue
         colorLetter = kBlueColor_;
         #if DEBUG_TCS
         customPrintln("blue");
         #endif
-    } else if (red_ > kMinRedValueInRed_ && green_ < kMaxGreenValueInRed_ && blue_ < kMaxBlueValueInRed_) {
-        // red
-        colorLetter = kRedColor_;
-        #if DEBUG_TCS
-        customPrintln("red");
-        #endif
-    } else if (red_ < kMaxRedValueInBlack_ && green_ < kMaxGreenValueInBlack_ && blue_ < kMaxBlueValueInBlack_) {
+    // } else if (red_ > kMinRedValueInRed_ && green_ < kMaxGreenValueInRed_ && blue_ < kMaxBlueValueInRed_) {
+    //     // red
+    //     colorLetter = kRedColor_;
+    //     #if DEBUG_TCS
+    //     customPrintln("red");
+    //     #endif
+    } else if (red_ > kMinRedValueInBlack_ && green_ > kMinGreenValueInBlack_ && blue_ > kMinBlueValueInBlack_ && red_ < kMaxRedValueInBlack_ && green_ < kMaxGreenValueInBlack_ && blue_ < kMaxBlueValueInBlack_) {
         // black
         colorLetter = kBlackColor_;
         #if DEBUG_TCS
@@ -287,3 +291,13 @@ void TCS::printColorList() {
 #endif
 }
 
+void TCS::getRanges() {
+    customPrintln("checking blue");
+    delay(5000);
+    updateRGB();
+    customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
+    customPrintln("checking black");
+    delay(5000);
+    updateRGB();
+    customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
+}

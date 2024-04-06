@@ -35,7 +35,7 @@ void setup(){
     while (!Serial) delay(10); // wait for serial port to open!
     customPrintln("Serial ready");
     robot.setup();
-
+    robot.printTCS();
     // robot.moveMotors(MovementState::kStop, 0, 0);
     // robot.moveMotors(MovementState::kForward, 0, 0.3);
     // robot.moveMotors(MovementState::kForward, 0, 0.3);
@@ -56,43 +56,43 @@ void setup(){
     // robot.moveMotors(MovementState::kForward, 0, 0.28);
     // robot.moveMotors(MovementState::kForward, 0, 0.28);
 
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
-    robot.moveMotors(MovementState::kForward, 90, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 180, 0);
-    robot.moveMotors(MovementState::kForward, 180, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
-    robot.moveMotors(MovementState::kForward, 90, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 180, 0);
-    robot.moveMotors(MovementState::kForward, 180, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 90, 0);
-    robot.moveMotors(MovementState::kForward, 90, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 180, 0);
-    robot.moveMotors(MovementState::kForward, 180, 0.29);
-    robot.moveMotors(MovementState::kForward, 180, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 0.29);
-    robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    robot.moveMotors(MovementState::kForward, 0, 0.29);
-    if(robot.isRamp()){
-        robot.moveMotors(MovementState::kRamp, 0, 0);
-    }
+    // robot.moveMotors(MovementState::kForward, 0, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 90, 0);
+    // robot.moveMotors(MovementState::kForward, 90, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 180, 0);
+    // robot.moveMotors(MovementState::kForward, 180, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 90, 0);
+    // robot.moveMotors(MovementState::kForward, 90, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 180, 0);
+    // robot.moveMotors(MovementState::kForward, 180, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 90, 0);
+    // robot.moveMotors(MovementState::kForward, 90, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 180, 0);
+    // robot.moveMotors(MovementState::kForward, 180, 0.29);
+    // robot.moveMotors(MovementState::kForward, 180, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    // robot.moveMotors(MovementState::kForward, 270, 0.29);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    // robot.moveMotors(MovementState::kForward, 0, 0.29);
+    // if(robot.isRamp()){
+    //     robot.moveMotors(MovementState::kRamp, 0, 0);
+    // }
 
 
 
