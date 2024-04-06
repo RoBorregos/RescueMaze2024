@@ -320,16 +320,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     break;
                 }
 
-                checkColors();
+                // checkColors();
 
                 // customPrintln("Color:" + String(getTCSInfo()));
                 // customPrintln("blackTile" + String(blackTile_));
                 #if DEBUG_MOVEMENT
                 #endif
-                if (wasBlackTile()) {
-                    customPrintln("Black tile detected");
-                    return;
-                }
+                // if (wasBlackTile()) {
+                //     customPrintln("Black tile detected");
+                //     return;
+                // }
 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
@@ -395,16 +395,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     }
 
                     // TODO: Only check colors when it is moving forward
-                    checkColors();
+                    // checkColors();
                     
                     #if DEBUG_MOVEMENT
                     customPrintln("Color:" + String(getTCSInfo()));
                     customPrintln("blackTile" + String(blackTile_));
                     #endif
-                    if (wasBlackTile()) {
-                        customPrintln("Black tile detected");
-                        return;
-                    }
+                    // if (wasBlackTile()) {
+                    //     customPrintln("Black tile detected");
+                    //     return;
+                    // }
                     
                     if (moveForward){
                         crashLeft = limitSwitch_[leftLimitSwitch].getState();
@@ -441,7 +441,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
 
             finishedMovement_ = true;
-            checkColors();
+            // checkColors();
 
             #if DEBUG_OFFLINE_MOVEMENT
             udp.beginPacket(udpServerIP, udpServerPort);
