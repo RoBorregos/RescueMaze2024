@@ -1,16 +1,24 @@
 #include "Adafruit_VL53L0X.h"
+#include "Wire.h"
 
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
+#define TCAADDR 0x70
+void tcaselect(uint8_t i) {
+  if (i > 7) return;
+ 
+  Wire.beginTransmission(TCAADDR);
+  Wire.write(1 << i);
+  Wire.endTransmission();  
+}
+
 void setup() {
   Serial.begin(115200);
-
+  Wire.begin();
   // wait until serial port opens for native USB devices
-  while (! Serial) {
-    delay(1);
-  }
   
   Serial.println("Adafruit VL53L0X test");
+  tcaselect(5);
   if (!lox.begin()) {
     Serial.println(F("Failed to boot VL53L0X"));
     while(1);
@@ -34,3 +42,10 @@ void loop() {
     
   delay(100);
 }
+
+// viendo el robot desde atras
+// 0 derecha
+// 1 derecha enfrente
+// 2 izquierda
+// 3 izquierda enfrente
+// 4 atras

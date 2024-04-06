@@ -1,10 +1,14 @@
 #include "Motorclass.h"
 
-motor BRmotor(33,25,26);
+motor FRmotor(16,17,5);
+motor BRmotor(27,14,26);
+motor FLmotor(33,25,32);
+motor BLmotor(2,4,15);
+
 
 void setup (){
     Serial.begin(115200);
-    delay(3000);
+    delay(2000);
 
 }
 
@@ -12,14 +16,33 @@ void setup (){
 void loop (){
   BRmotor.set_pwm(90);
   BRmotor.forward();
+  FRmotor.set_pwm(90);
+  FRmotor.forward();
+  BLmotor.set_pwm(90);
+  BLmotor.forward();
+  FLmotor.set_pwm(90);
+  FLmotor.forward();
   delay(2000);
   BRmotor.stop();
+  FRmotor.stop();
+  BLmotor.stop();
+  FLmotor.stop();
   delay(2000);
   BRmotor.set_pwm(90);
   BRmotor.backward();
+  FRmotor.set_pwm(90);
+  FRmotor.backward();
+  BLmotor.set_pwm(90);
+  BLmotor.backward();
+  FLmotor.set_pwm(90);
+  FLmotor.backward();
   delay(2000);
   BRmotor.stop();
+  FRmotor.stop();
+  BLmotor.stop();
+  FLmotor.stop();
   delay(2000);
 
 
 }
+
