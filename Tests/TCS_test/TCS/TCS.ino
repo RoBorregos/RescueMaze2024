@@ -55,7 +55,7 @@ void loop() {
 
   tcs.getRGB(&red, &green, &blue);
   
-  tcs.setInterrupt(true);  // turn off LED
+  tcs.setInterrupt(false);  // turn off LED
 
   Serial.print("R:\t"); Serial.print(int(red)); 
   Serial.print("\tG:\t"); Serial.print(int(green)); 

@@ -3,40 +3,40 @@
 
 namespace Pins {
     constexpr uint8_t pwmPin[4] = {
-        16, // BACK_LEFT
-        32, // FRONT_LEFT
-        15, // BACK_RIGHT
-        26  // FRONT_RIGHT
+        26, // BACK_LEFT 16
+        15, // FRONT_LEFT 32
+        32, // BACK_RIGHT 15
+        5  // FRONT_RIGHT 26
     };
 
     constexpr uint8_t digitalOne[4] = {
-        17, // BACK_LEFT
-        33, // FRONT_LEFT
-        4, // BACK_RIGHT
-        14  // FRONT_RIGHT
+        27, // BACK_LEFT 17
+        2, // FRONT_LEFT 33
+        33, // BACK_RIGHT 4
+        16  // FRONT_RIGHT 14
     };  
 
     constexpr uint8_t digitalTwo[4] = {
-        5, // BACK_LEFT
-        25, // FRONT_LEFT
-        2, // BACK_RIGHT
-        27  // FRONT_RIGHT
+        14, // BACK_LEFT 5
+        4, // FRONT_LEFT 25
+        25, // BACK_RIGHT 2
+        17  // FRONT_RIGHT 27
     };
 
     constexpr uint8_t encoderA[4] = {
-        35, // BACK_LEFT
-        39, // FRONT_LEFT
-        34, // BACK_RIGHT
-        36  // FRONT_RIGHT
+        36, // BACK_LEFT 35
+        34, // FRONT_LEFT 39
+        39, // BACK_RIGHT 34
+        35  // FRONT_RIGHT 36
     };
 
     constexpr uint8_t vlxPins[5] = {
         // Defined Pins on 20th of March
-        0,  // FRONT_LEFT  fine
-        1, // LEFT         fine         
-        2, // BACK         fine
-        4,  // RIGHT       fine
-        3 // FRONT_RIGHT   fine
+        2,  // FRONT_LEFT  fine 0
+        3, // LEFT         fine 1        
+        0, // BACK         fine 2
+        5,  // RIGHT       fine 4
+        4 // FRONT_RIGHT   fine 3
     };
 
     constexpr uint8_t limitSwitchPins[2] = {
@@ -45,7 +45,7 @@ namespace Pins {
     };
 
     constexpr uint8_t tcsPins[1] = {
-        5
+        1 // 5
     };
 
 }

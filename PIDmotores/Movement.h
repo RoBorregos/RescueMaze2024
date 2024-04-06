@@ -45,13 +45,14 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.15; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.09; // m/s
         static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
         static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
-        static constexpr double kMinFrontWallDistance = 0.06;
+        // TODO: Improve the name of this variable
+        static constexpr double kMinWallDistance = 0.06; // 6 cm
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -63,7 +64,7 @@ class Movement {
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
-        static constexpr double kIdealDistanceCenter = 0.05;
+        static constexpr double kIdealDistanceCenter = 0.05; // 5 cm
 
         static constexpr uint8_t kTileLength = 30; //cm
 
@@ -79,7 +80,7 @@ class Movement {
 
         bool useWallDistance_ = false;
 
-        const unsigned long kTimeAfterRamp = 750;
+        unsigned long kTimeAfterRamp = 1400;
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -103,9 +104,10 @@ class Movement {
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
-        static constexpr double kMinWallDistance = 0.15; // 15 cm
+        // TODO: Improve the name of this variable
+        static constexpr double kWallDistance = 0.15; // 15 cm
 
-        static constexpr double kMaxDistanceError = 0.03; // 3 cm
+        static constexpr double kMaxDistanceErrorInCm = 1; // 3 cm
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -117,15 +119,16 @@ class Movement {
 
         static constexpr double kUnreachableDistance = 0.7;
 
-        static constexpr double kWeightEncoders = 0.4;
+        static constexpr double kWeightEncoders = 0;
 
-        static constexpr double kWeightVlx = 0.6;
+        static constexpr double kWeightVlx = 1;
 
         int counterMovements_ = 0;
 
         bool encodersReset_ = false;
 
         bool inResetRoutine_ = false;
+
 
         PID pidDummy_;
         PID pidForward_;
@@ -136,9 +139,9 @@ class Movement {
 
         double distanceToCenter_;
 
-        constexpr static double kPForward = 0.015; 
+        constexpr static double kPForward = 0.09; 
         constexpr static double kIForward = 0.00;
-        constexpr static double kDForward = 0.002;
+        constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
         constexpr static double kIBackward = 0.0;
@@ -275,9 +278,13 @@ class Movement {
 
         double weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront);
 
+        double weightMovementVLX(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront, bool& moveForward, double targetDistance);
+
         void updateDistanceToCenterInTile();
 
         bool hasWallBehind();
+
+        bool hasWallInFront();
 
         void maybeResetWithBackWall(const double targetOrientation, const double currentOrientation);
 
@@ -290,6 +297,8 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        double getDistanceToCenter(double targetDistance);
 };
 
 #endif

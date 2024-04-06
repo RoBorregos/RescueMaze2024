@@ -10,8 +10,6 @@ Motor::Motor() {
     this->rpm_ = 0;
     this->nextTime_ = millis();
     this->pwmInicial_ = 50;
-    this->errorPrev_ = 0;
-    this->errorAcumulado_ = 0;
     this->motorId_ = MotorID::kNone;
     this->pid_.setTunnings(kP_, kI_, kD_, minOutput_, maxOutput_, maxErrorSum_, sampleTime_, 0, 0);
 }
@@ -134,6 +132,7 @@ void Motor::motorStop() {
     previousTics_ = totalTics_;
     currentSpeed_ = 0;
     currentState_ = MotorState::kStop;
+    pid_.resetPID();
 }
 
 

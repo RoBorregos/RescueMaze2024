@@ -1,17 +1,17 @@
 //pines de motores
-const int pwmRear_a = 2;
-const int derRear_a = 22;
-const int derRear_b = 23;
-const int pwmRear_b = 3;
-const int izqRear_a = 25;
-const int izqRear_b = 24;
-const int pwmFront_a = 4;
-const int derFront_a = 28;
-const int derFront_b = 29;
-const int pwmFront_b = 5;
-const int izqFront_a = 27;
-const int izqFront_b = 26;
-const int pwm = 90;
+const int pwmRear_a = 32;
+const int derRear_a = 33;
+const int derRear_b = 25;
+const int pwmRear_b = 26;
+const int izqRear_a = 27;
+const int izqRear_b = 14;
+const int pwmFront_a = 5;
+const int derFront_a = 16;
+const int derFront_b = 17;
+const int pwmFront_b = 15;
+const int izqFront_a = 2;
+const int izqFront_b = 4;
+int pwm = 90;
 
 void avanzar(){
     analogWrite(pwmRear_a,pwm);
@@ -99,20 +99,8 @@ void setup (){
     pinMode(izqFront_b, OUTPUT);
 }
 void loop(){
+    ++pwm;
     avanzar();
-    delay(1000);
-    parar();
-    delay(1000);
-    girarDer();
-    delay(1000);
-    parar();
-    delay(1000);
-    girarIzq();
-    delay(1000);
-    parar();
-    delay(1000);
-    atras();
-    delay(1000);
-    parar();
-    delay(1000);
+    delay(200);
+    
 }
