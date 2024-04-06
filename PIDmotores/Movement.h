@@ -105,7 +105,7 @@ class Movement {
 
         static constexpr double kWallDistance = 0.15; // 15 cm
 
-        static constexpr double kMaxDistanceError = 0.01; // 3 cm
+        static constexpr double kMaxDistanceErrorInCm = 1; // 3 cm
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -218,7 +218,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool needReset = false);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
