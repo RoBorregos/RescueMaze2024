@@ -5,7 +5,6 @@ Tile::Tile(){
 
     for(uint8_t i = 0; i < kNumberOfDirections; ++i){
         adjacentTiles_[i] = NULL;
-        weights_[i] = 0;
     }
 
     this->data_ = '\0';
@@ -17,7 +16,6 @@ Tile::Tile(const coord& position) {
 
     for(uint8_t i = 0; i < kNumberOfDirections; ++i){
         adjacentTiles_[i] = NULL;
-        weights_[i] = 0;
     }
 
     this->data_ = '\0';
@@ -68,8 +66,7 @@ bool Tile::hasCheckpoint() const {
 
 void Tile::addAdjacentTile(const TileDirection direction, Tile *tile, const bool wall) {
     adjacentTiles_[static_cast<int>(direction)] = tile;
-    weights_[static_cast<int>(direction)] = kMinWeight;
-    weight_ = kMinWeight;
+    weight_ = kWhiteTileWeight;
     this->setWall(direction, wall);
 }
 

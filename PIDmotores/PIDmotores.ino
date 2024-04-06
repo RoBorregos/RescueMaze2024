@@ -65,7 +65,11 @@ void turnAndMoveRobot(const int targetOrientation) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
-    robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+    if (tiles[tilesMap.getIndex(robotCoord)].weight_ == kRampWeight) {
+        robot.rampMovement(robotOrientation);
+    } else {
+        robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+    }
     // If a victim was found, update the tile.
     if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
         tiles[tilesMap.getIndex(robotCoord)].setVictim();
