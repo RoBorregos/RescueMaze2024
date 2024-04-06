@@ -4,8 +4,14 @@
 #include "Motor.h"
 #include "BNO.h"
 #include "VLX.h"
+#include "TileDirection.h"
 #include "LimitSwitch.h"
 #include "TCS.h"
+#include <Deneyap_Servo.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 enum class compass{
     kNorth,
@@ -21,6 +27,12 @@ enum class MovementState{
     kTurnLeft,
     kTurnRight,
     kRamp
+};
+
+enum class servoPosition {
+    kLeft,
+    kRight,
+    kCenter
 };
 
 class Movement {
@@ -61,12 +73,22 @@ class Movement {
         LimitSwitch limitSwitch_[kNumberOfLimitSwitches];
 
         static constexpr uint8_t kNumberOfVlx = 5;
+
+        // static constexpr uint8_t kOffArray = -1;
+
+        // static constexpr int kTargetOrientations[] = {0, 90, 180, 270};
+        const int kTargetOrientations[4] = {0, 90, 180, 270};
+
+        static constexpr uint8_t kNumberOfTargetOrientations = 4;
+
         static constexpr double kMToCm = 100.0;
         static constexpr uint8_t kVlxOffset = 2; //cm
 
         static constexpr double kIdealDistanceCenter = 0.05; // 5 cm
 
         static constexpr uint8_t kTileLength = 30; //cm
+
+        const bool kOffArray = false;
 
         static constexpr double kTileLengthInMeters = 0.3; //m
 
@@ -100,7 +122,7 @@ class Movement {
 
         VLX vlx[kNumberOfVlx];
 
-        double wallDistances[kNumberOfVlx];
+        double wallDistances_[kNumberOfVlx];
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
@@ -114,6 +136,10 @@ class Movement {
         static constexpr double kMinRampOrientation = 10.0;
 
         static constexpr long long kOneSecInMs = 1000;
+
+        static constexpr double kOneTileDistance = 0.3; // 0.228 m
+
+        static constexpr long long kTileDirections = 4;
 
         double targetOrientation_ = 0;
 
@@ -193,6 +219,26 @@ class Movement {
         bool finishedMovement_ = false;
 
         static constexpr int kFiveSeconds_ = 5000;
+        static constexpr int kTwoSeconds_ = 2000;
+
+        // Dispenser stuff.
+        // const char kCheckpointSerialCode = -1;
+        const char kHarmedSerialCode = 'h';
+        const char kStableSerialCode = 's';
+        const char kUnharmedSerialCode = 'u';
+        const char kNoVictimSerialCode = 'm';
+        const int kHalfSecond = 500;
+        char victim = 'm';
+        bool hasReceivedSerial = false;
+        Servo myservo;
+        static constexpr uint8_t initialAngle = 80;
+        static constexpr uint8_t rightAngle = initialAngle + 44;
+        static constexpr uint8_t leftAngle = initialAngle - 36;
+        bool victimFound = false;
+        u_int8_t rightStock = 6;
+        u_int8_t leftStock = 6;
+
+        Adafruit_SSD1306 display;
 
     public:
         Movement();
@@ -240,17 +286,19 @@ class Movement {
 
         uint8_t checkWallsDistances();
 
+        bool checkWallsDistances(const TileDirection targetTileDirection, const double currentOrientation);
+
         double getDistanceToCenter();
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward();
+        void goForward(const double targetOrientation, const bool& hasVictim);
 
-        void goBackward();
+        void goBackward(const double targetOrientation);
 
-        void turnLeft();
+        void turnLeft(const double targetOrientation);
 
-        void turnRight();
+        void turnRight(const double targetOrientation);
 
         void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
 
@@ -264,17 +312,21 @@ class Movement {
 
         double getOrientation(const double orientation);
 
+        int8_t getIndexFromArray(const int value, const int array[], const uint8_t arraySize);
+
         void printTCS();
 
         char getTCSInfo();
 
         void rgbTCSClear();
 
-        char checkColors();
+        char checkColors(const double targetOrientation);
 
         bool isRamp();
 
-        void rampMovement();
+        void rampMovement(const double targetOrientation);
+
+        int directionRamp();
 
         double weightMovement(const double currentDistanceBack, const double currentDistanceFront, const double initialVlxDistanceBack, const double initialVlxDistanceFront);
 
@@ -299,6 +351,18 @@ class Movement {
         bool isCheckpointTile();
 
         double getDistanceToCenter(double targetDistance);
+
+        void sendSerialRequest();
+
+        void checkSerial(double currentOrientation);
+
+        char getVictim();
+
+        void moveServo(servoPosition position);
+
+        bool getVictimFound();
+
+        void screenPrint(const String output);
 };
 
 #endif

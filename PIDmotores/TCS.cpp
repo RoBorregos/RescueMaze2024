@@ -1,6 +1,6 @@
 #include "TCS.h"
 
-#define DEBUG_TCS 1
+#define DEBUG_TCS 0
 TCS::TCS() {
     setDefaultValues();
 }

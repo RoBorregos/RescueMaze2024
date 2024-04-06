@@ -23,7 +23,7 @@ constexpr double kPulsesPerRev = 496.0;
 constexpr double kPidCountTimeSampleInSec = 1000/100;
 // 0.069 is the diameter of the blue wheels in meters
 // 0.084 is the diameter of the black wheels in meters
-constexpr double kWheelsDiameter = 0.084;
+constexpr double kWheelsDiameter = 0.088;
 constexpr double kDistancePerRev = M_PI * kWheelsDiameter;
 
 class Motor {
