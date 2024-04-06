@@ -45,13 +45,13 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.14; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.09; // m/s
         static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
         static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
-        static constexpr double kMinWallDistance = 0.10;
+        static constexpr double kMinWallDistance = 0.06;
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -79,7 +79,7 @@ class Movement {
 
         bool useWallDistance_ = false;
 
-        const unsigned long kTimeAfterRamp = 750;
+        unsigned long kTimeAfterRamp = 1400;
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -218,7 +218,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool needReset = false);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -282,6 +282,8 @@ class Movement {
 
         bool hasWallBehind();
 
+        bool hasWallInFront();
+
         void maybeResetWithBackWall(const double targetOrientation, const double currentOrientation);
 
         double getPhaseCorrection(const double currentOrientation, const double targetOrientation);
@@ -293,6 +295,10 @@ class Movement {
         bool isBlueTile();
 
         bool isCheckpointTile();
+
+        double getDistanceToCenter(double targetDistance);
+
+        
 };
 
 #endif
