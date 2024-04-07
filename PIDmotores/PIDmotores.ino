@@ -65,7 +65,9 @@ void turnAndMoveRobot(const int targetOrientation) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
-    if (tiles[tilesMap.getIndex(robotCoord)].weight_ == kRampWeight) {
+    // robot.screenPrint(String(robotCoord.x) + " " + String(robotCoord.y));
+    // robot.screenPrint(String(tiles[tilesMap.getIndex(robotCoord)].weight_));
+    if (robot.isRamp()) {
         robot.rampMovement(robotOrientation);
     } else {
         robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
@@ -318,7 +320,6 @@ void depthFirstSearch() {
         currentTile = &tiles[tilesMap.getIndex(currentTileCoord)];
         //check for ramp
         if (robot.isRamp()) {
-            // robot.screenPrint("Ramp found");
             currentTile->weight_ = kRampWeight;
             TileDirection direction;
             // check robots orientation to know the next Tile.

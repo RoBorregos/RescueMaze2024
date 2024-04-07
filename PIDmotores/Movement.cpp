@@ -1307,4 +1307,5 @@ void Movement::screenPrint(const String output){
     display.setCursor(0, 10);
     display.println(output);
     display.display();
+    delay(500);
 }
