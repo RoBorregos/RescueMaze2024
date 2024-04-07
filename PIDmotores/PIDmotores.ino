@@ -509,7 +509,7 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
-    
+    // robot.printTCS();
     // Serial.println(1);
     // bool flag = false;
     // robot.screenPrint("nadota");

@@ -832,6 +832,7 @@ char Movement::checkColors(const double targetOrientation) {
     const char color = getTCSInfo();
     // customPrintln("Color:" + String(color));
     if (color == kBlackColor) {
+        screenPrint("Black tile detected");
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
@@ -841,6 +842,7 @@ char Movement::checkColors(const double targetOrientation) {
         moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
     } else if (color == kBlueColor && finishedMovement_ == true) {
+        screenPrint("Blue tile detected");
         blueTile_ = true;
         stopMotors();
         // customPrintln("DETECTED BLUE TILE");
