@@ -106,10 +106,10 @@ print(device)
 camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
 video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
 #video_capture = cv2.VideoCapture(camera_source)
-#arduino = serial.Serial('/dev/ttyUSB0', 115200)
+arduino = serial.Serial('/dev/ttyUSB0', 115200)
 
 model_ft = start_model()
-minimum_predict_value = 1
+minimum_predict_value = 1.0
 count_for_process = 10  #Minimum value of consequtive frames with bbox
 count_for_model = 4     #Minimum value of M
 process_mid = 4
@@ -170,17 +170,17 @@ def main():
 
 
 
-                cv2.imshow("Original",img)
+                #cv2.imshow("Original",img)
                 print(f"Actual value: {actual_state}  req: {req_count}")
                 req_count += 1
-                # if arduino.in_waiting > 0:
-                #     line = arduino.readline().decode('utf-8').strip()
+                if arduino.in_waiting > 0:
+                    line = arduino.readline().decode('utf-8').strip()
 
-                #     if line == "1":
-                #         print(f"Sending state to esp = {actual_state}")
-                #         arduino.write(actual_state.encode('utf-8'))
+                    if line == "1":
+                        print(f"Sending state to esp = {actual_state}")
+                        arduino.write(actual_state.encode('utf-8'))
                 
-                #cv2.imshow("Original",img)
+                cv2.imshow("Original",img)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 

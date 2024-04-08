@@ -177,6 +177,8 @@ model_ft = start_model()
 print(f"Model loaded in {t.time()-loading_time}")
 minimum_predict_value = 1.0
 warmup()
+fourcc = cv2.VideoWriter_fourcc(*'XVID') 
+out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
 
 def main(): 
     print("STARTING VIDEO ....")
@@ -201,7 +203,7 @@ def main():
                     # actual_state == "u" if generate_bbox(img_blue,frame) else None
 
                     binary_img = process_image(img)
-                    cv2.imshow("binary", binary_img)      
+                    #cv2.imshow("binary", binary_img)      
                     new_img = rotate_image(binary_img)
                     #cv2.imshow("Rotated", new_img)
                     new_img = generate_frame_cut(new_img)
@@ -211,7 +213,8 @@ def main():
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
                         actual_state = predict_image(model_ft,new_img,device,class_names)
 
-                    cv2.imshow("Original",img)
+                    #cv2.imshow("Original",img)
+                    out.write(img)
                     print(f"Actual value: {actual_state}  req: {req_count}")
                     req_count += 1
                     # if arduino.in_waiting > 0:
@@ -228,11 +231,13 @@ def main():
         finally:
                 print("Finishing the program")
                 video_capture.release()
+                out.release()  
                 cv2.destroyAllWindows()
                 # arduino.close()
 
     else:
         print("Error: Unable to open camera")
+        out.release()  
         # arduino.close()
 
 if __name__ == '__main__':
