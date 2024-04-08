@@ -192,15 +192,22 @@ def main():
                     actual_state = "m"
 
                     # PROCESS COLORS
-                    # img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
-                    # img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
-                    # img_blue = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
+                    img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
+                    img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
+                    img_green = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
 
                     # #PROCESS LETTERS
-                    # frame = img.copy()
-                    # actual_state == "h" if generate_bbox(img_red,frame) else None
-                    # actual_state == "s" if generate_bbox(img_yellow,frame) else None
-                    # actual_state == "u" if generate_bbox(img_blue,frame) else None
+                    frame = img.copy()
+                    processed_red = generate_bbox(img_red,frame,"red")
+                    processed_yellow = generate_bbox(img_yellow,frame,"yellow")
+                    processed_green = generate_bbox(img_green,frame,"yellow")
+                    if processed_red:
+                        actual_state = "h"
+                    if processed_yellow:
+                        actual_state = "s"
+                    if processed_green:
+                        actual_state = "u"
+                    
 
                     binary_img = process_image(img)
                     #cv2.imshow("binary", binary_img)      
@@ -214,7 +221,7 @@ def main():
                         actual_state = predict_image(model_ft,new_img,device,class_names)
 
                     #cv2.imshow("Original",img)
-                    out.write(img)
+                    out.write(frame)
                     print(f"Actual value: {actual_state}  req: {req_count}")
                     req_count += 1
                     # if arduino.in_waiting > 0:
