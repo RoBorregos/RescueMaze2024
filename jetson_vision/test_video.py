@@ -159,6 +159,7 @@ def post_processing(img,dilate):
     return size_img
 
 
+
 ################################################################
 ###############VARIABLES AND MORE###############################
 
@@ -219,6 +220,8 @@ def main():
                         new_img = post_processing(new_img,4)
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
                         actual_state = predict_image(model_ft,new_img,device,class_names)
+                        if actual_state != "m":
+                           generate_bbox(binary_img,frame,actual_state)
 
                     #cv2.imshow("Original",img)
                     out.write(frame)
