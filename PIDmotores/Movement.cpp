@@ -84,6 +84,7 @@ void Movement::setup() {
     screenPrint("checking black");
     delay(5000);
     tcs_.getBlackRanges();
+    screenPrint("finished checking");
     delay(5000);
 }
 
@@ -365,9 +366,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // customPrintln("TargetDistance:" + String(targetDistance));
 
             unsigned long currentMillis = millis();
-            // unsigned long previousMillis = 0;
-            hasReceivedSerial = true;
-            victimFound = false;
+            victimFound = false; // Erase when testing if the robot detected the victim before
 
             double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
             double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
@@ -394,11 +393,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 currentMillis = millis();
                 if (victimFound == false) {
-                    if (hasReceivedSerial == true) { // currentMillis - previousMillis >= 500 && 
+                    if (hasReceivedSerial == true) {
                         screenPrint("request sent"+String(currentMillis) );
                         sendSerialRequest();
                         hasReceivedSerial = false;
-                        // previousMillis = currentMillis;
                     }
                     checkSerial(currentOrientation);
                 }
