@@ -23,7 +23,6 @@ void TCS::init() {
         customPrintln("No TCS34725 found ... check your connections");
         #endif
     }
-    getRanges();
 }
 
 void TCS::init(const int16_t colors[][3], const int8_t colorAmount, const char colorList[], const int16_t colorThresholds[][6]) {
@@ -124,12 +123,6 @@ char TCS::getColor() {
         #if DEBUG_TCS
         customPrintln("blue");
         #endif
-    // } else if (red_ > kMinRedValueInRed_ && green_ < kMaxGreenValueInRed_ && blue_ < kMaxBlueValueInRed_) {
-    //     // red
-    //     colorLetter = kRedColor_;
-    //     #if DEBUG_TCS
-    //     customPrintln("red");
-    //     #endif
     } else if (red_ > kMinRedValueInBlack_ && green_ > kMinGreenValueInBlack_ && blue_ > kMinBlueValueInBlack_ && red_ < kMaxRedValueInBlack_ && green_ < kMaxGreenValueInBlack_ && blue_ < kMaxBlueValueInBlack_) {
         // black
         colorLetter = kBlackColor_;
@@ -294,9 +287,7 @@ void TCS::printColorList() {
 #endif
 }
 
-void TCS::getRanges() {
-    customPrintln("checking blue");
-    delay(5000);
+void TCS::getBlueRanges() {
     updateRGBC();
     // customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
     kMinRedValueInBlue_ = red_ - kRangeTolerance_;
@@ -305,9 +296,10 @@ void TCS::getRanges() {
     kMaxGreenValueInBlue_ = green_ + kRangeTolerance_;
     kMinBlueValueInBlue_ = blue_ - kRangeTolerance_;
     kMaxBlueValueInBlue_ = blue_ + kRangeTolerance_;
+}
+
+void TCS::getBlackRanges() {
     // customPrint(String(kMinRedValueInBlue_) + " " + String(kMaxRedValueInBlue_) + " " + String(kMinGreenValueInBlue_) + " " + String(kMaxGreenValueInBlue_) + " " + String(kMinBlueValueInBlue_) + " " + String(kMaxBlueValueInBlue_));
-    customPrintln("checking black");
-    delay(5000);
     updateRGBC();
     // customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
     kMinRedValueInBlack_ = red_ - kRangeTolerance_;

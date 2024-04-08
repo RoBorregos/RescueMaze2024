@@ -481,6 +481,7 @@ void startAlgorithm() {
     #if DEBUG_ALGORITHM
     customPrintln("Start algorithm");
     #endif
+    robot.screenPrint("Start algorithm");
     depthFirstSearch();
 }
 

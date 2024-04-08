@@ -114,7 +114,9 @@ class TCS {
 
         void printColorList();
 
-        void getRanges();
+        void getBlueRanges();
+
+        void getBlackRanges();
 };
 
 #endif

@@ -67,8 +67,6 @@ void Movement::setup() {
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
 
-    setupTCS();
-
     // myservo.attach(Pins::servoPin);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -78,6 +76,15 @@ void Movement::setup() {
         // customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
+
+    setupTCS();
+    screenPrint("checking blue");
+    delay(1000);
+    tcs_.getBlueRanges();
+    screenPrint("checking black");
+    delay(5000);
+    tcs_.getBlackRanges();
+    delay(5000);
 }
 
 void Movement::setupInternal(const MotorID motorId) {
