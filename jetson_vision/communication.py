@@ -12,7 +12,7 @@ try:
         # Example of sending data from Python to Arduino
             if line == "1":
                 print("ENTRO NEGROS")
-                ser.write(b'a')  # Send a string to Arduino
+                ser.write(b'm')  # Send a string to Arduino
 
 
 except KeyboardInterrupt:
