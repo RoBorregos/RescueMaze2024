@@ -223,16 +223,17 @@ def main():
                         new_img = post_processing(new_img,4)
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
                         actual_letter = predict_image(model_ft,new_img,device,class_names)
-                        if actual_letter != "m":
-                            if last_letter == actual_letter:
-                                letter_count += 1
-                            else:
-                                last_letter == actual_letter
-                                letter_count = 0
-                        else:
-                            letter_count = 0
-                            last_letter = "m"
-                            actual_state = "m"
+                        actual_state = actual_letter
+                        # if actual_letter != "m":
+                        #     if last_letter == actual_letter:
+                        #         letter_count += 1
+                        #     else:
+                        #         last_letter == actual_letter
+                        #         letter_count = 0
+                        # else:
+                        #     letter_count = 0
+                        #     last_letter = "m"
+                        #     actual_state = "m"
                             
                         if actual_state != "m":
                            generate_bbox(binary_img,frame,actual_state)
