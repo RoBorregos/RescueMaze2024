@@ -47,7 +47,6 @@ def generate_bbox(img,frame,text=""):
 ###############MODEL FUNCTIONS###############################
 
 def start_model(): 
-def start_model(): 
     model_ft = models.resnet18(weights='IMAGENET1K_V1')
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
@@ -165,7 +164,8 @@ def post_processing(img,dilate):
 
 ################################################################
 ###############VARIABLES AND MORE###############################
-
+print("............STARTING SETUP ................")
+setup_time = t.time()
 class_names = ['h', 's', 'u']
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -181,6 +181,7 @@ model_ft = start_model()
 print(f"Model loaded in {t.time()-loading_time}")
 minimum_predict_value = 1.0
 warmup()
+print(f"Setup finished in {t.time()-setup_time}")
 
 def main(): 
     print("STARTING VIDEO ....")
@@ -205,7 +206,7 @@ def main():
                     # actual_state == "u" if generate_bbox(img_blue,frame) else None
 
                     binary_img = process_image(img)
-                    cv2.imshow("binary", binary_img)      
+                    #cv2.imshow("binary", binary_img)      
                     new_img = rotate_image(binary_img)
                     #cv2.imshow("Rotated", new_img)
                     new_img = generate_frame_cut(new_img)
@@ -215,7 +216,7 @@ def main():
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
                         actual_state = predict_image(model_ft,new_img,device,class_names)
 
-                    cv2.imshow("Original",img)
+                    #cv2.imshow("Original",img)
                     print(f"Actual value: {actual_state}  req: {req_count}")
                     req_count += 1
                     # if arduino.in_waiting > 0:
