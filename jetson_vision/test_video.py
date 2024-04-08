@@ -170,7 +170,7 @@ camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
 video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
 #video_capture = cv2.VideoCapture(camera_source)
 print("Opening Serial ..")
-#arduino = serial.Serial('/dev/ttyUSB0', 115200)
+arduino = serial.Serial('/dev/ttyUSB0', 115200)
 print("Serial Opened ..")
 print("Loading model ...")
 loading_time = t.time()
@@ -186,10 +186,13 @@ def main():
     if video_capture.isOpened():
         try:
             req_count = 0
+            active_camera = 0
+            letter_count = 0
+            last_letter = ""
             print("VIDEO STARTED")
             while True:
                 ret_val, img = video_capture.read()
-                if img  is not None:
+                if img  is not None and active_camera > 11:
                     actual_state = "m"
 
                     # PROCESS COLORS
@@ -219,7 +222,18 @@ def main():
                     if new_img is not None:
                         new_img = post_processing(new_img,4)
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
-                        actual_state = predict_image(model_ft,new_img,device,class_names)
+                        actual_letter = predict_image(model_ft,new_img,device,class_names)
+                        if actual_letter != "m":
+                            if last_letter == actual_letter:
+                                letter_count += 1
+                            else:
+                                last_letter == actual_letter
+                                letter_count = 0
+                        else:
+                            letter_count = 0
+                            last_letter = "m"
+                            actual_state = "m"
+                            
                         if actual_state != "m":
                            generate_bbox(binary_img,frame,actual_state)
 
@@ -227,28 +241,29 @@ def main():
                     out.write(frame)
                     print(f"Actual value: {actual_state}  req: {req_count}")
                     req_count += 1
-                    # if arduino.in_waiting > 0:
-                    #     line = arduino.readline().decode('utf-8').strip()
+                    if arduino.in_waiting > 0:
+                        line = arduino.readline().decode('utf-8').strip()
 
-                    #     if line == "1":
-                    #         print(f"Sending state to esp = {actual_state}")
-                    #         arduino.write(actual_state.encode('utf-8'))
+                        if line == "1":
+                            print(f"Sending state to esp = {actual_state}")
+                            arduino.write(actual_state.encode('utf-8'))
                     
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
+                active_camera += 1
 
         finally:
                 print("Finishing the program")
                 video_capture.release()
                 out.release()  
                 cv2.destroyAllWindows()
-                # arduino.close()
+                arduino.close()
 
     else:
         print("Error: Unable to open camera")
         out.release()  
-        # arduino.close()
+        arduino.close()
 
 if __name__ == '__main__':
     main()
