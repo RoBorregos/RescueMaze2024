@@ -47,10 +47,12 @@ def generate_bbox(img,frame,text=""):
 ###############MODEL FUNCTIONS###############################
 
 def start_model(): 
+def start_model(): 
     model_ft = models.resnet18(weights='IMAGENET1K_V1')
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
+    model_ft.load_state_dict(torch.load('/home/jetson/RescueMaze2024/jetson_vision/model.pth'))
     model_ft.load_state_dict(torch.load('/home/jetson/RescueMaze2024/jetson_vision/model.pth'))
     model_ft.eval()
     return model_ft
@@ -148,6 +150,8 @@ def generate_frame_cut(img):
     else:
         frame = None
 
+        frame = None
+
     return frame
 
 
@@ -235,5 +239,7 @@ def main():
         print("Error: Unable to open camera")
         # arduino.close()
 
+if __name__ == '__main__':
+    main()
 if __name__ == '__main__':
     main()
