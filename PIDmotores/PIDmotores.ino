@@ -451,7 +451,7 @@ void depthFirstSearch() {
                     nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
                     // Check if there's a wall between the two adjacent Tiles.
                     if (!wall) {
-                        // if the tile has not been visited, add it to the queue.
+                        // if the tile has not been visited, add it to the stack.
                         if (visitedMap.getIndex(nextTileCoord) != kInvalidIndex) {
                             continue;
                         }
