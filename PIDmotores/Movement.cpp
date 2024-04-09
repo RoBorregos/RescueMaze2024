@@ -69,7 +69,7 @@ void Movement::setup() {
 
     setupTCS();
 
-    // myservo.attach(Pins::servoPin);
+    myservo.attach(13);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
     this->display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);    
@@ -451,8 +451,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                                              moveForward, 
                                              targetDistance) - targetDistance) >= kMaxDistanceErrorInCm) {
                     
-                    customPrintln("vlxFrontLeft:" + String(frontWallDistance));
-                    customPrintln("vlxBack:" + String(backWallDistance));
+                    // customPrintln("vlxFrontLeft:" + String(frontWallDistance));
+                    // customPrintln("vlxBack:" + String(backWallDistance));
                 
                     if (!moveForward || backWallDistance < kUnreachableDistance) {
                         backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
@@ -569,10 +569,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             const unsigned long timePrevRamp = millis();
             unsigned long timeDiff = millis() - timePrevRamp;
-            customPrintln("timePrevRamp:" + String(timePrevRamp));
+            // customPrintln("timePrevRamp:" + String(timePrevRamp));
             // TODO: Maybe delete this while loop
             while (timeDiff < kTimeAfterRamp) {
-                customPrintln("TimeDiff:" + String(timeDiff));
+                // customPrintln("TimeDiff:" + String(timeDiff));
                 timeDiff = millis() - timePrevRamp;
                 moveMotorsInADirection(getOrientation(currentOrientation), true);
             }
@@ -1245,16 +1245,19 @@ void Movement::checkSerial(double currentOrientation) {
             delay(kOneSecInMs);
             if (victim == kHarmedSerialCode) {
                 // Drop 2 medkits.
+                screenPrint("Throw 2 medkits");
                 moveServo(servoPosition::kLeft);
                 delay(kOneSecInMs);
                 moveServo(servoPosition::kRight);
                 delay(kOneSecInMs);
             } else if (victim == kStableSerialCode) {
                 // Drop 1 medkit.
+                screenPrint("Throw 1 medkit");
                 moveServo(servoPosition::kLeft);
                 delay(3000);
             } else if (victim == kUnharmedSerialCode){
                 // Only indicate victim found.
+                screenPrint("Unharmed");
                 delay(4000);
             }
             retrieveLastState();
