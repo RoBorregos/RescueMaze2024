@@ -193,6 +193,7 @@ class Movement {
         static constexpr char kBlueColor = 'B';
         static constexpr char kBlackColor = 'N';
         static constexpr char kRedColor = 'R';
+        static constexpr char kCheckpointColor = 'C';
 
         // ==============================================================================================
         // In the competition the colors may be different so we need to change the values by testing

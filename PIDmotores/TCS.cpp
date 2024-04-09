@@ -1,6 +1,6 @@
 #include "TCS.h"
 
-#define DEBUG_TCS 0
+#define DEBUG_TCS 1
 TCS::TCS() {
     setDefaultValues();
 }
@@ -129,6 +129,8 @@ char TCS::getColor() {
         #if DEBUG_TCS
         customPrintln("black");
         #endif
+    } else if (red_ > kMinRedValueInCheckpoint_ && green_ > kMinGreenValueInCheckpoint_ && blue_ > kMinBlueValueInCheckpoint_ && red_ < kMaxRedValueInCheckpoint_ && green_ < kMaxGreenValueInCheckpoint_ && blue_ < kMaxBlueValueInCheckpoint_) {
+        colorLetter = kCheckpointColor_;
     } else {
         colorLetter = kUndefinedColor_;
         #if DEBUG_TCS
@@ -296,17 +298,44 @@ void TCS::getBlueRanges() {
     kMaxGreenValueInBlue_ = green_ + kRangeTolerance_;
     kMinBlueValueInBlue_ = blue_ - kRangeTolerance_;
     kMaxBlueValueInBlue_ = blue_ + kRangeTolerance_;
+    customPrintln("red: " + String(kMinRedValueInBlue_) + " " + String(kMaxRedValueInBlue_) + " green: " + String(kMinGreenValueInBlue_) +  " " + String(kMaxGreenValueInBlue_) + " blue: " + String(kMinBlueValueInBlue_) +  " " + String(kMaxBlueValueInBlue_));
 }
 
 void TCS::getBlackRanges() {
-    // customPrint(String(kMinRedValueInBlue_) + " " + String(kMaxRedValueInBlue_) + " " + String(kMinGreenValueInBlue_) + " " + String(kMaxGreenValueInBlue_) + " " + String(kMinBlueValueInBlue_) + " " + String(kMaxBlueValueInBlue_));
     updateRGBC();
-    // customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
     kMinRedValueInBlack_ = red_ - kRangeTolerance_;
     kMaxRedValueInBlack_ = red_ + kRangeTolerance_;
     kMinGreenValueInBlack_ = green_ - kRangeTolerance_;
     kMaxGreenValueInBlack_ = green_ + kRangeTolerance_;
     kMinBlueValueInBlack_ = blue_ - kRangeTolerance_;
     kMaxBlueValueInBlack_ = blue_ + kRangeTolerance_;
-    // customPrint(String(kMinRedValueInBlack_) + " " + String(kMaxRedValueInBlack_) + " " + String(kMinGreenValueInBlack_) + " " + String(kMaxGreenValueInBlack_) + " " + String(kMinBlueValueInBlack_) + " " + String(kMaxBlueValueInBlack_));
+    #if DEBUG_TCS
+    customPrintln("red: " + String(kMinRedValueInBlack_) + " " + String(kMaxRedValueInBlack_) + " green: " + String(kMinGreenValueInBlack_) +  " " + String(kMaxGreenValueInBlack_) + " blue: " + String(kMinBlueValueInBlack_) +  " " + String(kMaxBlueValueInBlack_));
+    #endif
+}
+
+void TCS::getCheckpointRanges() {
+    updateRGBC();
+    kMinRedValueInCheckpoint_ = red_ - kRangeTolerance_;
+    kMaxRedValueInCheckpoint_ = red_ + kRangeTolerance_;
+    kMinGreenValueInCheckpoint_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInCheckpoint_ = green_ + kRangeTolerance_;
+    kMinBlueValueInCheckpoint_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInCheckpoint_ = blue_ + kRangeTolerance_;
+    #if DEBUG_TCS
+    customPrintln("red: " + String(kMinRedValueInCheckpoint_) + " " + String(kMaxRedValueInCheckpoint_) + " green: " + String(kMinGreenValueInCheckpoint_) +  " " + String(kMaxGreenValueInCheckpoint_) + " blue: " + String(kMinBlueValueInCheckpoint_) +  " " + String(kMaxBlueValueInCheckpoint_));
+    #endif
+}
+
+void TCS::getWhiteRanges() {
+    updateRGBC();
+    kMinRedValueInWhite_ = red_ - kRangeTolerance_;
+    kMaxRedValueInWhite_ = red_ + kRangeTolerance_;
+    kMinGreenValueInWhite_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInWhite_ = green_ + kRangeTolerance_;
+    kMinBlueValueInWhite_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInWhite_ = blue_ + kRangeTolerance_;
+    #if DEBUG_TCS
+    customPrintln("red: " + String(kMinRedValueInWhite_) + " " + String(kMaxRedValueInWhite_) + " green: " + String(kMinGreenValueInWhite_) +  " " + String(kMaxGreenValueInWhite_) + " blue: " + String(kMinBlueValueInWhite_) +  " " + String(kMaxBlueValueInWhite_));
+    #endif
 }

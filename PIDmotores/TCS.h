@@ -61,11 +61,29 @@ class TCS {
         float kMinBlueValueInBlack_ = 50;
         float kMaxBlueValueInBlack_ = 85;
 
+        float kMinRedValueInCheckpoint_ = 100;
+        float kMaxRedValueInCheckpoint_ = 130;
+
+        float kMinGreenValueInCheckpoint_ = 100;
+        float kMaxGreenValueInCheckpoint_ = 130;
+
+        float kMinBlueValueInCheckpoint_ = 100;
+        float kMaxBlueValueInCheckpoint_ = 130;
+
+        float kMinRedValueInWhite_ = 200;
+        float kMaxRedValueInWhite_ = 255;
+
+        float kMinGreenValueInWhite_ = 200;
+        float kMaxGreenValueInWhite_ = 255;
+
+        float kMinBlueValueInWhite_ = 200;
+        float kMaxBlueValueInWhite_ = 255;
 
         static constexpr char kRedColor_ = 'r';
-        static constexpr char kBlueColor_ = 'b';
-        static constexpr char kBlackColor_ = 'n';
-        static constexpr char kUndefinedColor_ = 'u';
+        static constexpr char kBlueColor_ = 'B';
+        static constexpr char kBlackColor_ = 'N';
+        static constexpr char kCheckpointColor_ = 'C';
+        static constexpr char kUndefinedColor_ = 'U';
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
 
@@ -117,6 +135,10 @@ class TCS {
         void getBlueRanges();
 
         void getBlackRanges();
+
+        void getCheckpointRanges();
+
+        void getWhiteRanges();
 };
 
 #endif

@@ -84,6 +84,12 @@ void Movement::setup() {
     screenPrint("checking black");
     delay(5000);
     tcs_.getBlackRanges();
+    screenPrint("checking checkpoint");
+    delay(5000);
+    tcs_.getCheckpointRanges();
+    screenPrint("checking white");
+    delay(5000);
+    tcs_.getWhiteRanges();
     screenPrint("finished checking");
     delay(5000);
 }
@@ -834,7 +840,7 @@ void Movement::rgbTCSClear() {
 }
 
 char Movement::checkColors(const double targetOrientation) {
-    const char color = getTCSInfo();
+    const char color = tcs_.getColor(); // Check this then.
     // customPrintln("Color:" + String(color));
     if (color == kBlackColor) {
         screenPrint("Black tile detected");
@@ -854,7 +860,8 @@ char Movement::checkColors(const double targetOrientation) {
         delay(kFiveSeconds_);
         
         return color;
-    } else if (color == kRedColor) {
+    } else if (color == kCheckpointColor && finishedMovement_ == true) {
+        screenPrint("Checkpoint tile detected");
         checkpointTile_ = true;
         stopMotors();
         return color;
