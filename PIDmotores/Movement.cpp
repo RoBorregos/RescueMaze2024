@@ -358,8 +358,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // customPrintln("TargetDistance:" + String(targetDistance));
 
             unsigned long currentMillis = millis();
-            // unsigned long previousMillis = 0;
-            hasReceivedSerial = true;
             victimFound = false;
 
             double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
