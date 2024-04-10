@@ -78,6 +78,10 @@ void Movement::setup() {
         // customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
+
+    while(true) {
+        customPrintln(bno_.getPitchAcceleration());
+    }
 }
 
 void Movement::setupInternal(const MotorID motorId) {

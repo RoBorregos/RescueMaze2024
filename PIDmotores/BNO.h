@@ -21,6 +21,7 @@ class BNO {
         double getOrientationX();
         double getOrientationY();
         void setPhaseCorrection(const double phaseCorrection);
+        double getPitchAcceleration();
 };
 
 #endif

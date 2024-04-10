@@ -37,3 +37,8 @@ double BNO::getOrientationY() {
 void BNO::setPhaseCorrection(const double phaseCorrection) {
     phaseCorrection_ = phaseCorrection;
 }
+
+double BNO::getPitchAcceleration() {
+    updateBNO(event_);
+    return event_.acceleration.y;
+}
