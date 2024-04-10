@@ -40,6 +40,14 @@ double VLX::getRawDistance() {
     return measure;
 }
 
+double VLX::getRawDistanceInCm() {
+    updateDistance();
+
+    const double measure = (measure_.RangeMilliMeter / 10.0);
+
+    return measure;
+}
+
 void VLX::updateDistance() {
     mux_.selectChannel();
     vLX_.rangingTest(&measure_, false);

@@ -6,15 +6,15 @@
 #define DEBUG_MOVEMENT 0
 #define DEBUG_OFFLINE_MOVEMENT 0
 
-/* #include <WiFi.h>
+#include <WiFi.h>
 #include <WiFiUdp.h>
 
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.109"; // Replace with your Python script's IP address
-const int udpServerPort = 1238;
+const char* udpServerIP = "192.168.0.119"; // Replace with your Python script's IP address
+const int udpServerPort = 1239;
 
-WiFiUDP udp;  */
+WiFiUDP udp; 
 #if DEBUG_OFFLINE_MOVEMENT
 #endif
 
@@ -37,7 +37,7 @@ void Movement::setup() {
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
 
-    /* WiFi.begin(ssid, password);
+    WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
         customPrintln("Connecting to WiFi...");
@@ -47,7 +47,7 @@ void Movement::setup() {
     udp.begin(udpServerPort);
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
-    udp.endPacket(); */
+    udp.endPacket();
     #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
@@ -286,17 +286,11 @@ double Movement::getWallDistance(const VlxID vlxId) {
 
 void Movement::goForward(const double targetOrientation, const bool& hasVictim) {
     victimFound = hasVictim;
-    // customPrintln("Moving forward in goForward()");
-    /* customPrintln((double)vlx[0].getRawDistance());
-    customPrintln((double)vlx[1].getRawDistance());
-    customPrintln((double)vlx[2].getRawDistance());
-    customPrintln((double)vlx[3].getRawDistance()); */
-    //getAllWallsDistances(&wallDistances[kNumberOfVlx]);
-    moveMotors(MovementState::kForward, targetOrientation, kOneTileDistance);
+    moveMotors(MovementState::kForward, targetOrientation, kMoveOneTileDistance);
 }
 
 void Movement::goBackward(const double targetOrientation) {
-    moveMotors(MovementState::kBackward, targetOrientation, kOneTileDistance);
+    moveMotors(MovementState::kBackward, targetOrientation, kMoveOneTileDistance);
 }
 
 void Movement::turnLeft(const double targetOrientation) {
@@ -312,7 +306,7 @@ void Movement::rampMovement(const double targetOrientation) {
 }
 
 // TODO: Clean this function
-void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double currentOrientation = bno_.getOrientationX();
@@ -334,6 +328,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
     const double initialFrontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
     const double initialBackWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
     bool moveForward = false;
+
     ++counterMovements_;
     
     // customPrintln("CounterMovements:" + String(counterMovements_));
@@ -374,6 +369,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #if DEBUG_OFFLINE_MOVEMENT
             #endif
 
+            if (frontWallDistance <= 0.45) {
+                while (frontWallDistance > 0.06) {
+                    frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+                    moveMotorsInADirection(targetOrientation, moveForward);
+                }
+            }
+
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 /* udp.beginPacket(udpServerIP, udpServerPort);
@@ -405,8 +407,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     return;
                 }
 
-                // crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                // crashRight = limitSwitch_[rightLimitSwitch].getState();
+                crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                crashRight = limitSwitch_[rightLimitSwitch].getState();
 
                 #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
@@ -423,21 +425,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
                 moveMotorsInADirection(targetOrientation, true);
 
-                // TODO: Make its own function named checkForCrashAndCorrect()
-                if (crashLeft == true && crashRight == false) {
-                    #if DEBUG_MOVEMENT
-                    customPrintln("Crash left-");
-                    #endif
-                    correctionAfterCrash(true, currentOrientation, useWallDistance);
-                }
-                
-                if (crashRight == true && crashLeft == false) {
-                    #if DEBUG_MOVEMENT
-                    customPrintln("Crash right-");
-                    customPrintln("Encodersssss");
-                    #endif
-                    correctionAfterCrash(false, currentOrientation, useWallDistance);
-                }
+                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
             }
 
             stopMotors();
@@ -445,13 +433,24 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
             backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
-            if (inResetRoutine_ == false) {
-                while (abs(weightMovementVLX(backWallDistance, 
+            // udp.beginPacket(udpServerIP, udpServerPort);
+            // udp.print("Antes de entrar a vlx");
+            // udp.endPacket();
+
+            if (inResetRoutine_ == false || useWallDistance == false) {
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("ENTRA EN IF");
+                udp.endPacket();
+
+                while (static_cast<uint8_t>(abs(weightMovementVLX(backWallDistance, 
                                              frontWallDistance, 
                                              initialBackWallDistance, 
                                              initialFrontWallDistance, 
                                              moveForward, 
-                                             targetDistance) - targetDistance) >= kMaxDistanceErrorInCm) {
+                                             targetDistance) - (targetDistance * kMToCm))) >= kMaxDistanceErrorInCm) {
+
+                    pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
+                    pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
                     
                     customPrintln("vlxFrontLeft:" + String(frontWallDistance));
                     customPrintln("vlxBack:" + String(backWallDistance));
@@ -485,20 +484,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
                     }
 
-                    if (crashLeft == true && crashRight == false) {
-                        #if DEBUG_MOVEMENT
-                        customPrintln("Crash left-");
-                        #endif
-                        correctionAfterCrash(true, currentOrientation, useWallDistance);
-                    }
-                    
-                    if (crashRight == true && crashLeft == false) {
-                        #if DEBUG_MOVEMENT
-                        customPrintln("Crash right-");
-                        customPrintln("Encodersssss");
-                        #endif
-                        correctionAfterCrash(false, currentOrientation, useWallDistance);
-                    }
+                    checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
 
                     #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
@@ -511,6 +497,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     #endif
 
                     moveMotorsInADirection(targetOrientation, moveForward);
+
+                    pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+                    pidForward_.setBaseSpeed(kBaseSpeedForward_);
                 }
             }
 
@@ -519,6 +508,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             
             allDistanceTraveled_ = 0;
             stopMotors();
+
+            /* if (!center) {
+                if (targetDistance > 0) {
+                    moveMotors(MovementState::kForward, targetOrientation, getDistanceToCenter(targetDistance), useWallDistance, true);
+                } else {
+                    moveMotors(MovementState::kBackward, targetOrientation, getDistanceToCenter(targetDistance), useWallDistance, true);
+                }
+            } */
             
             break;
         }
@@ -606,18 +603,24 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         #if DEBUG_MOVEMENT
         customPrintln("Crash right--------");
         #endif
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
     } else {
         #if DEBUG_MOVEMENT
         customPrintln("Crash left--------");
         #endif
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ / 2, useWallDistance);
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+        if (currentOrientation == 0) {
+            currentOrientation = 360;
+        }
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        if (currentOrientation == 360) {
+            currentOrientation = 0;
+        }
     }
     retrieveLastState();
 }
@@ -951,7 +954,8 @@ double Movement::weightMovement(const double currentDistanceBack, const double c
     udp.endPacket();
     #endif
     const double weightMovement = allDistanceTraveled_ * kWeightEncoders + vlxDistanceTraveled * kWeightVlx;
-    return (weightMovement);
+
+    return (weightMovement * kMToCm);
     
 }
 
@@ -963,26 +967,63 @@ double Movement::weightMovementVLX(const double currentDistanceBack, const doubl
         #if DEBUG_MOVEMENT
         customPrintln("Ramp detected");
         #endif
-        return targetDistance;
+        return targetDistance * kMToCm;
     }
 
     if (currentDistanceBack < currentDistanceFront) {
         if (initialVlxDistanceBack >= kUnreachableDistance || currentDistanceBack >= kUnreachableDistance) {
-            return targetDistance;
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("currentDistanceBack:" + String(currentDistanceBack));
+            udp.print(" ");
+            udp.print("initialVlxDistanceBack:" + String(initialVlxDistanceBack));
+            udp.print("Unreachable BACK");
+            udp.endPacket();
+            return targetDistance * kMToCm;
         }
+
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("currentDistanceBack:" + String(currentDistanceBack));
+        udp.print(" ");
+        udp.print("initialVlxDistanceBack:" + String(initialVlxDistanceBack));
+        udp.print(" ");
+        udp.print("vlxDistanceTraveled BACK:" + String(currentDistanceBack - initialVlxDistanceBack)	);
+        udp.endPacket();
 
         vlxDistanceTraveled = currentDistanceBack - initialVlxDistanceBack;
        
     } else {
         if (initialVlxDistanceFront >= kUnreachableDistance || currentDistanceFront >= kUnreachableDistance) {
-            return targetDistance;
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("currentDistanceFront:" + String(currentDistanceFront));
+            udp.print(" ");
+            udp.print("initialVlxDistanceFront:" + String(initialVlxDistanceFront));
+            udp.print(" ");
+            udp.print("Unreachable FRONT");
+            udp.endPacket();
+            return targetDistance * kMToCm;
         }
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("currentDistanceFront:" + String(currentDistanceFront));
+        udp.print(" ");
+        udp.print("initialVlxDistanceFront:" + String(initialVlxDistanceFront));
+        udp.endPacket();
 
         vlxDistanceTraveled = initialVlxDistanceFront - currentDistanceFront;
     }
 
-    const double weightMovement = vlxDistanceTraveled * kWeightVlx;
+    const uint8_t weightMovement = (vlxDistanceTraveled * kWeightVlx) * kMToCm;
     moveForward = static_cast<int8_t>((vlxDistanceTraveled - targetDistance) * kMToCm) < 0;
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("currentDistanceBack:" + String(currentDistanceBack));
+    udp.print(" ");
+    udp.print("currentDistanceFront:" + String(currentDistanceFront));
+    udp.print(" ");
+    udp.print("weightMovement: " + String(weightMovement));
+    udp.print(" ");
+    udp.print("targetDistance: " + String(targetDistance));
+    udp.print(" ");
+    udp.print("moveForward: " + String(moveForward));
+    udp.endPacket();
     return weightMovement;
 
 }
@@ -1027,7 +1068,7 @@ void Movement::maybeResetWithBackWall(const double targetOrientation, const doub
         pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
         
         // The encoders reset in moveMotors Backward in the hasTraveledDistanceWithSpeedForBackward function
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), kHalfTileInMeters, useWallDistance_);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), kTileLengthInMeters, useWallDistance_);
 
         const double phaseCorrection = getPhaseCorrection(currentOrientation, targetOrientation);
         
@@ -1166,15 +1207,17 @@ double Movement::getDistanceToCenter(double targetDistance) {
             udp.print("1");
             udp.print("DistanceToCenter:" + String(distanceToCenter));
             udp.endPacket(); */
+    
 
             return  distanceToCenter;
         } else {
             distanceToCenter = distanceToCenter - kIdealDistanceCenter;
-            /* udp.beginPacket(udpServerIP, udpServerPort);
+            udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("2");
             udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.endPacket(); */
-            return  distanceToCenter;
+            udp.endPacket();
+        
+            return  distanceToCenter * -1;
         }
     } else {
         initialFrontWallDistance = initialFrontWallDistance * kMToCm;
@@ -1185,17 +1228,19 @@ double Movement::getDistanceToCenter(double targetDistance) {
 
         if (distanceToCenter <= kIdealDistanceCenter) {
             distanceToCenter = kIdealDistanceCenter - distanceToCenter;
-            /* udp.beginPacket(udpServerIP, udpServerPort);
+            udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("3");
             udp.print("DistanceToCenter:" + String(distanceToCenter));
-            udp.endPacket(); */
-            return  - distanceToCenter;
+            udp.endPacket();
+        
+            return  distanceToCenter * -1;
         } else if (distanceToCenter <= 0.10) {
             distanceToCenter = distanceToCenter - kIdealDistanceCenter;
             /* udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("4");
             udp.print("DistanceToCenter:" + String(distanceToCenter));
             udp.endPacket(); */
+    
             return  distanceToCenter;
         } else {
             distanceToCenter = distanceToCenter - kIdealDistanceCenter;
@@ -1203,6 +1248,7 @@ double Movement::getDistanceToCenter(double targetDistance) {
             udp.print("5");
             udp.print("DistanceToCenter:" + String(distanceToCenter));
             udp.endPacket(); */
+    
             return  distanceToCenter;
         }
     }
@@ -1307,5 +1353,21 @@ void Movement::screenPrint(const String output){
     display.setCursor(0, 10);
     display.println(output);
     display.display();
-    delay(500);
+    // delay(500);
+}
+
+void Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance) {
+    if (crashLeft == true && crashRight == false) {
+        #if DEBUG_MOVEMENT
+        customPrintln("Crash left-");
+        #endif
+        correctionAfterCrash(true, currentOrientation, useWallDistance);
+    }
+    
+    if (crashRight == true && crashLeft == false) {
+        #if DEBUG_MOVEMENT
+        customPrintln("Crash right-");
+        #endif
+        correctionAfterCrash(false, currentOrientation, useWallDistance);
+    }
 }

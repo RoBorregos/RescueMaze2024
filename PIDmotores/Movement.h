@@ -57,9 +57,10 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.09; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.09; // m/s 0.09
         static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
         static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
+
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
@@ -127,9 +128,11 @@ class Movement {
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
         // TODO: Improve the name of this variable
-        static constexpr double kWallDistance = 0.15; // 15 cm
+        static constexpr double kWallDistance = 0.18; // 18 cm
 
-        static constexpr double kMaxDistanceErrorInCm = 1; // 3 cm
+        static constexpr uint8_t kMaxDistanceErrorInCm = 1; // 1 cm
+
+        static constexpr double kMaxDistanceErrorInMeters = 0.01; // 1 cm
 
         static constexpr double kMaxOrientationError = 0.9;
 
@@ -139,15 +142,19 @@ class Movement {
 
         static constexpr double kOneTileDistance = 0.3; // 0.228 m
 
+        static constexpr double kMoveOneTileDistance = 0.30; // 0.228 m
+
         static constexpr long long kTileDirections = 4;
 
         double targetOrientation_ = 0;
 
-        static constexpr double kUnreachableDistance = 0.7;
+        static constexpr double kUnreachableDistance = 0.85;
 
-        static constexpr double kWeightEncoders = 0;
+        static constexpr double kUnreachableDistanceInCm = 85;
 
-        static constexpr double kWeightVlx = 1;
+        static constexpr double kWeightEncoders = 0.0;
+
+        static constexpr double kWeightVlx = 1.0;
 
         int counterMovements_ = 0;
 
@@ -165,7 +172,7 @@ class Movement {
 
         double distanceToCenter_;
 
-        constexpr static double kPForward = 0.09; 
+        constexpr static double kPForward = 0.07; // 0.09
         constexpr static double kIForward = 0.00;
         constexpr static double kDForward = 0.00;
 
@@ -266,7 +273,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool center = false);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -363,6 +370,8 @@ class Movement {
         bool getVictimFound();
 
         void screenPrint(const String output);
+
+        void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
 };
 
 #endif
