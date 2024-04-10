@@ -121,6 +121,10 @@ def rotate_image(binary_img):
     return rotated
 
 def process_image(img):
+    alpha = 2.18
+    beta=1.72
+    img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    # cv2.imshow("brighter", img)
     imgFloat = img.astype(float) / 255.0
     kChannel = 1 - np.max(imgFloat, axis=2)
     kChannel = (255*kChannel).astype(np.uint8)
@@ -197,21 +201,21 @@ def main():
                     actual_state = "m"
 
                     # PROCESS COLORS
-                    img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
-                    img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
-                    img_green = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
+                    # img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
+                    # img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
+                    # img_green = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
 
                     # #PROCESS LETTERS
                     frame = img.copy()
-                    processed_red = generate_bbox(img_red,frame,"red")
-                    processed_yellow = generate_bbox(img_yellow,frame,"yellow")
-                    processed_green = generate_bbox(img_green,frame,"yellow")
-                    if processed_red:
-                        actual_state = "h"
-                    if processed_yellow:
-                        actual_state = "s"
-                    if processed_green:
-                        actual_state = "u"
+                    # processed_red = generate_bbox(img_red,frame,"red")
+                    # processed_yellow = generate_bbox(img_yellow,frame,"yellow")
+                    # processed_green = generate_bbox(img_green,frame,"yellow")
+                    # if processed_red:
+                    #     actual_state = "h"
+                    # if processed_yellow:
+                    #     actual_state = "s"
+                    # if processed_green:
+                    #     actual_state = "u"
                     
 
                     binary_img = process_image(img)
