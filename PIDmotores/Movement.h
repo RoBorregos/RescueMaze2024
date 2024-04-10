@@ -238,6 +238,9 @@ class Movement {
         u_int8_t rightStock = 6;
         u_int8_t leftStock = 6;
 
+        static constexpr double kMaxPitchAcceleration = 0.1; // TODO: change this value.
+        bool obstacleFound_ = false;
+
         Adafruit_SSD1306 display;
 
     public:
@@ -363,6 +366,8 @@ class Movement {
         bool getVictimFound();
 
         void screenPrint(const String output);
+
+        bool getObstacleFound();
 };
 
 #endif

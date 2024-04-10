@@ -70,14 +70,20 @@ void turnAndMoveRobot(const int targetOrientation) {
     }
     // robot.screenPrint(String(robotCoord.x) + " " + String(robotCoord.y));
     // robot.screenPrint(String(tiles[tilesMap.getIndex(robotCoord)].weight_));
+    Tile* robotTile = &tiles[tilesMap.getIndex(robotCoord)];
     if (robot.isRamp()) {
         robot.rampMovement(robotOrientation);
     } else {
-        robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.goForward(robotOrientation, robotTile->hasVictim());
     }
     // If a victim was found, update the tile.
-    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
-        tiles[tilesMap.getIndex(robotCoord)].setVictim();
+    if (robot.getVictimFound()) {
+        robotTile->setVictim();
+    }
+    // If an obstacle was found, update the tile.
+    if (robot.getObstacleFound()) {
+        robotTile->setObstacle();
+        robotTile->weight_ = kObstacleWeight;
     }
 }
 

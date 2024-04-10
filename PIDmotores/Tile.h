@@ -17,6 +17,7 @@ constexpr uint8_t kNumberOfDirections = 4;
 constexpr uint8_t kWhiteTileWeight = 1;
 constexpr uint8_t kBlueTileWeight = 3; // 5 seconds
 constexpr uint8_t kRampWeight = 5;
+constexpr uint8_t kObstacleWeight = 4;
 
 constexpr coord kInvalidPosition = coord{1000,1000,1000};
 

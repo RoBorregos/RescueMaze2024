@@ -78,10 +78,6 @@ void Movement::setup() {
         // customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
-
-    while(true) {
-        customPrintln(bno_.getPitchAcceleration());
-    }
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -362,7 +358,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // customPrintln("TargetDistance:" + String(targetDistance));
 
             unsigned long currentMillis = millis();
-            victimFound = false;
+            victimFound = false; // Erase when testing for real.
+            obstacleFound_ = false;
 
             double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
             double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
@@ -375,8 +372,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             udp.endPacket(); */
             #if DEBUG_OFFLINE_MOVEMENT
             #endif
-
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+                if (bno_.getPitchAcceleration() > kMaxPitchAcceleration) {
+                    obstacleFound_ = true;
+                }
+
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 /* udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("vlxFrontLeft:" + String(frontWallDistance));
@@ -1313,4 +1313,8 @@ void Movement::screenPrint(const String output){
     display.println(output);
     display.display();
     // delay(500);
+}
+
+bool Movement::getObstacleFound() {
+    return obstacleFound_;
 }
