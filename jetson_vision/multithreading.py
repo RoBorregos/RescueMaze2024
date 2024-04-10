@@ -185,10 +185,11 @@ def main():
     print("STARTING VIDEO ....")
     if video_capture.isOpened():
         try:
-            req_count = 0
+            time = t.time()
+            letters = ['s','h','u','m']
+            repetitions = [0,0,0,0]
+            index = 0
             active_camera = 0
-            letter_count = 0
-            last_letter = ""
             print("VIDEO STARTED")
             while True:
                 ret_val, img = video_capture.read()
@@ -238,14 +239,38 @@ def main():
                         if actual_state != "m":
                            generate_bbox(binary_img,frame,actual_state)
 
-                    #cv2.imshow("Original",img)
+                    #cv2.imshow("Original",frame)
                     out.write(frame)
-                    print(f"Actual value: {actual_state}  req: {req_count}")
-                    req_count += 1
+                    # Update counts
+                    for letter in letters:
+                        if letter == actual_state:
+                            index = letters.index(letter)
+                            repetitions[index] += 1
+                    print(f"Actual value: {actual_state}  reps: {repetitions[index]}")
+                    #for testing
+                    if t.time() > time + 5:
+                        time = t.time()
+                        lastMax = 0
+                        for i in range(4):
+                            if repetitions[i] > lastMax:
+                                index = i
+                                lastMax = repetitions[i]
+                        actual_state = letters[index]
+                        print(f"Sending state to esp = {actual_state}")
+                        for i in range(4):
+                            print(f"Letter {letters[i]} = {repetitions[i]}")
+                        repetitions = [0,0,0,0]
+                    # If recieving data from arduino
                     if arduino.in_waiting > 0:
                         line = arduino.readline().decode('utf-8').strip()
-
                         if line == "1":
+                            lastMax = 0
+                            for i in range(4):
+                                if repetitions[i] > lastMax:
+                                    index = i
+                                    lastMax = repetitions[i]
+                            actual_state = letters[index]
+                            repetitions = [0,0,0,0]
                             print(f"Sending state to esp = {actual_state}")
                             arduino.write(actual_state.encode('utf-8'))
                     
@@ -262,7 +287,7 @@ def main():
                 arduino.close()
 
     else:
-        print("Error: Unable to open camera")
+        print("Error: Unajeble to open camera")
         out.release()  
         arduino.close()
 
