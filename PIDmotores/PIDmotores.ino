@@ -497,8 +497,14 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    robot.moveMotors(MovementState::kForward, 0, 1);
-    // startAlgorithm();
+    startAlgorithm();
+
+    // robot.moveMotors(MovementState::kForward, 0, 1.5);
+
+    // robot.moveMotors(MovementState::kTurnRight, 90, 0);
+    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
+    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
+    // robot.moveMotors(MovementState::kTurnRight, 0, 0);
 
     // Serial.println(1);
     // bool flag = false;

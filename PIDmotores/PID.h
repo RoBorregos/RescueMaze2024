@@ -19,7 +19,7 @@ class PID {
         double kMaxOutput_{255};
 
         unsigned long timePrev_{0};
-        unsigned long kSampleTime_{100};
+        unsigned long kSampleTime_{150};
 
         double kBaseModifier_{0};
         
