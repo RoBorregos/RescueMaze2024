@@ -1,9 +1,14 @@
 #include "Motorclass.h"
 
-motor FLmotor(26,27,8);
-motor FRmotor(29,28,5);
-motor BRmotor(23,22,7);
-motor BLmotor(24,25,4);
+// motor FLmotor(4,2,15);
+// motor FRmotor(17,16,5);
+// motor BRmotor(25,33,32);
+// motor BLmotor(14,27,26);
+
+motor FRmotor(17,16,5);//FR
+motor FLmotor(14,27,26); //FL
+motor BLmotor(33,25,32); //BL
+motor BRmotor(2,4,15);//BR
 
 int tick1 =0;
 int tick2 =0;
@@ -24,26 +29,28 @@ void captureCallback_tres(){
 }
 void setup (){
     Serial.begin(115200);
-    pinMode(2,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(2),captureCallback,RISING);
-    pinMode(3,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(3),captureCallback_uno,RISING);
-    pinMode(18,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(18),captureCallback_dos,RISING);
-    pinMode(19,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(19),captureCallback_tres,RISING);
+    pinMode(39,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(39),captureCallback,RISING);
+    pinMode(36,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(36),captureCallback_uno,RISING);
+    pinMode(35,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(35),captureCallback_dos,RISING);
+    pinMode(34,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(34),captureCallback_tres,RISING);
 }
 void loop (){
-    BLmotor.set_pwm(150);
-    BLmotor.forward();
-    BRmotor.set_pwm(150);
-    BRmotor.forward();
-    FRmotor.set_pwm(150);
-    FRmotor.forward();
-    FLmotor.set_pwm(150);
-    FLmotor.forward();
-    delay(2000);
-    Serial.print("tick1: ");
+    for(int i = 0; i < 200; i++){
+        Serial.println("forward");
+        BLmotor.set_pwm(i);
+        BLmotor.forward();
+        BRmotor.set_pwm(i);
+        BRmotor.forward();
+        FRmotor.set_pwm(i);
+        FRmotor.forward();
+        FLmotor.set_pwm(i);
+        FLmotor.forward();
+        delay(100);
+        Serial.print("tick1: ");
     Serial.print(tick1);
     Serial.print(" tick2: ");
     Serial.print(tick2);
@@ -51,6 +58,40 @@ void loop (){
     Serial.print(tick3);
     Serial.print(" tick4: ");
     Serial.println(tick4);
+    }
+    // Serial.print("tick1: ");
+    // Serial.print(tick1);
+    // Serial.print(" tick2: ");
+    // Serial.print(tick2);
+    // Serial.print(" tick3: ");
+    // Serial.print(tick3);
+    // Serial.print(" tick4: ");
+    // Serial.println(tick4);
+    BLmotor.stop();
+    BRmotor.stop();
+    FRmotor.stop();
+    FLmotor.stop();
+    delay(2000);
+     for(int i = 0; i < 200; i++){
+        Serial.println("backward");
+        // BLmotor.set_pwm(i);
+        // BLmotor.backward();
+        BRmotor.set_pwm(i);
+        BRmotor.backward();
+        FRmotor.set_pwm(i);
+        FRmotor.backward();
+        FLmotor.set_pwm(i);
+        FLmotor.backward();
+        delay(100);
+        Serial.print("tick1: ");
+    Serial.print(tick1);
+    Serial.print(" tick2: ");
+    Serial.print(tick2);
+    Serial.print(" tick3: ");
+    Serial.print(tick3);
+    Serial.print(" tick4: ");
+    Serial.println(tick4);
+    }
     BLmotor.stop();
     BRmotor.stop();
     FRmotor.stop();

@@ -1,9 +1,9 @@
 #include "Motorclass.h"
 
-motor FRmotor(16,17,5);
-motor BRmotor(27,14,26);
-motor FLmotor(33,25,32);
-motor BLmotor(2,4,15);
+motor FRmotor(17,16,5);//FR
+motor FLmotor(14,27,26); //FL
+motor BLmotor(33,25,32); //BL
+motor BRmotor(2,4,15);//BR
 
 int velocity = 40;
 
@@ -21,8 +21,8 @@ void loop (){
   FRmotor.forward();
   BLmotor.set_pwm(velocity);
   BLmotor.forward();
-  FLmotor.set_pwm(velocity);
-  FLmotor.forward();
+  // FLmotor.set_pwm(velocity);
+  // FLmotor.forward();
   delay(2000);
   BRmotor.stop();
   FRmotor.stop();
