@@ -1199,7 +1199,7 @@ double Movement::getDistanceToCenter(double targetDistance) {
             udp.print("DistanceToCenter:" + String(distanceToCenter));
             udp.endPacket();
         
-            return  distanceToCenter * -1;
+            return  distanceToCenter;
         }
     } else {
         initialFrontWallDistance = initialFrontWallDistance * kMToCm;
@@ -1215,7 +1215,7 @@ double Movement::getDistanceToCenter(double targetDistance) {
             udp.print("DistanceToCenter:" + String(distanceToCenter));
             udp.endPacket();
         
-            return  distanceToCenter * -1;
+            return  distanceToCenter;
         } else if (distanceToCenter <= 0.10) {
             distanceToCenter = distanceToCenter - kIdealDistanceCenter;
             /* udp.beginPacket(udpServerIP, udpServerPort);
