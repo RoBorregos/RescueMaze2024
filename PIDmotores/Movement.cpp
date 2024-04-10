@@ -343,6 +343,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kForward): {
+            resetSerial();
             moveForward = true;
             currentState_ = MovementState::kForward;
             blackTile_ = false;
@@ -388,13 +389,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                 currentMillis = millis();
                 if (victimFound == false) {
-                    if (hasReceivedSerial == true) { // currentMillis - previousMillis >= 500 && 
+                    if (hasReceivedSerial == true) {
                         screenPrint("request sent"+String(currentMillis) );
                         sendSerialRequest();
-                        hasReceivedSerial = false;
-                        // previousMillis = currentMillis;
                     }
-                    checkSerial(currentOrientation_);
+                    if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
+                        checkSerial(currentOrientation_);
+                    }
                 }
 
                 // customPrintln("Color:" + String(getTCSInfo()));
@@ -533,11 +534,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
+            resetSerial();
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
         }
         case (MovementState::kTurnRight): {
+            resetSerial();
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
@@ -1259,7 +1262,8 @@ int Movement::directionRamp() {
 }
 
 void Movement::sendSerialRequest() {
-    Serial.println(1);
+    Serial.println(kSendRequestCode);
+    hasReceivedSerial = false;
 }
 
 void Movement::checkSerial(double currentOrientation) {
@@ -1361,4 +1365,14 @@ void Movement::printEncoderTics() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         customPrintln("Motor" + String(i) + "Tics:" + String(motor[i].getTics()));
     }
+}
+
+void Movement::resetSerial() {
+    while (Serial.available() <= 0) { // Wait for the serial that was left unread.
+        screenPrint("Waiting for Serial");
+    }
+    screenPrint("Serial Reseted");
+    Serial.read(); // Read the serial that was left unread.
+    Serial.println(kResetSerialCode); // Send 2 to reset the count of detections in Jetson.
+    sendSerialRequest();
 }

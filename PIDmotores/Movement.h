@@ -240,6 +240,8 @@ class Movement {
         const int kHalfSecond = 500;
         char victim = 'm';
         bool hasReceivedSerial = true;
+        static constexpr int kSendRequestCode = 1;
+        static constexpr int kResetSerialCode = 2;
         Servo myservo;
         static constexpr uint8_t initialAngle = 80;
         static constexpr uint8_t rightAngle = initialAngle + 44;
@@ -377,6 +379,8 @@ class Movement {
         void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
         
         void printEncoderTics();
+
+        void resetSerial();
 };
 
 #endif
