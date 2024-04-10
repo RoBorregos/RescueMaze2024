@@ -14,6 +14,7 @@ constexpr uint8_t kCheckpointBit = 7;
 
 constexpr uint8_t kNumberOfDirections = 4;
 
+// TODO: adjust the weights.
 constexpr uint8_t kWhiteTileWeight = 1;
 constexpr uint8_t kBlueTileWeight = 3; // 5 seconds
 constexpr uint8_t kRampWeight = 5;

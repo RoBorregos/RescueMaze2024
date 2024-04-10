@@ -373,6 +373,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #if DEBUG_OFFLINE_MOVEMENT
             #endif
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+                // Check if the robot fell rapidly to the ground meaning there is an obstacle.
                 if (bno_.getPitchAcceleration() > kMaxPitchAcceleration) {
                     obstacleFound_ = true;
                 }
@@ -387,13 +388,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 checkColors(targetOrientation);
 
+                // Handle serial communication.
                 currentMillis = millis();
                 if (victimFound == false) {
-                    if (hasReceivedSerial == true) { // currentMillis - previousMillis >= 500 && 
-                        screenPrint("request sent"+String(currentMillis) );
+                    if (hasReceivedSerial == true) {
+                        screenPrint("request sent"+String(currentMillis));
                         sendSerialRequest();
                         hasReceivedSerial = false;
-                        // previousMillis = currentMillis;
                     }
                     checkSerial(currentOrientation);
                 }
@@ -654,7 +655,10 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     double speed = 0;
+    double kStuckSpeed = 5; // TODO: Change this value.
     bool turnLeft = false;
+    double lastOrientation = currentOrientation;
+    const double kMinTurnAngle = 5; // TODO: Change this value.
 
     #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
@@ -680,7 +684,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
             currentOrientation = bno_.getOrientationX();
             continue;
         }
-
+        customPrintln("CurrentOrientation:" + String(currentOrientation)); // Erase.
         pidTurn_.computeTurn(targetOrientation, currentOrientation, speed, turnLeft);
 
         #if DEBUG_OFFLINE_MOVEMENT
@@ -699,10 +703,17 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
             speeds[i] = speed;
         }
 
+        // Check if the angle isn't changing to increase the speed.
+        // if (abs(lastOrientation) - abs(currentOrientation) < kMinTurnAngle) {
+        //     speed = kStuckSpeed;
+        // } else {
+        //     speed = 0;
+        // }
+        // lastOrientation = currentOrientation;
+
         setSpeedsAndDirections(speeds, directions);
 
         timePrev_ = millis();
-        
     }
     
     stopMotors();
