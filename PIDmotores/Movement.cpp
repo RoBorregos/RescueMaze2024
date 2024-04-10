@@ -208,6 +208,7 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
 
         setMotorsDirections(MovementState::kBackward, directions);
     }
+    currentOrientation_ = currentOrientation;
 
     setSpeedsAndDirections(speeds, directions);
 
@@ -309,7 +310,7 @@ void Movement::rampMovement(const double targetOrientation) {
 void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
-    double currentOrientation = bno_.getOrientationX();
+    currentOrientation_ = bno_.getOrientationX(); 
     double speedLeft = 0;
     double speedRight = 0;
     bool turnLeft = false;
@@ -357,8 +358,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             hasReceivedSerial = true;
             victimFound = false;
 
-            double frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-            double backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
+            double frontWallDistance = initialFrontWallDistance;
+            double backWallDistance = initialBackWallDistance;
             
             // TODO: improve the way to give a targetDistance with vlx
             // targetDistance = getRealTargetDistance(targetDistance);
@@ -395,7 +396,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         hasReceivedSerial = false;
                         // previousMillis = currentMillis;
                     }
-                    checkSerial(currentOrientation);
+                    checkSerial(currentOrientation_);
                 }
 
                 // customPrintln("Color:" + String(getTCSInfo()));
@@ -425,19 +426,19 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
                 moveMotorsInADirection(targetOrientation, true);
 
-                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
+                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation_, useWallDistance);
             }
 
             stopMotors();
 
-            frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-            backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
 
             // udp.beginPacket(udpServerIP, udpServerPort);
             // udp.print("Antes de entrar a vlx");
             // udp.endPacket();
 
             if (inResetRoutine_ == false || useWallDistance == false) {
+                frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+                backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("ENTRA EN IF");
                 udp.endPacket();
@@ -484,7 +485,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
                     }
 
-                    checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
+                    checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation_, useWallDistance);
 
                     #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
@@ -509,13 +510,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             allDistanceTraveled_ = 0;
             stopMotors();
 
-            /* if (!center) {
-                if (targetDistance > 0) {
-                    moveMotors(MovementState::kForward, targetOrientation, getDistanceToCenter(targetDistance), useWallDistance, true);
-                } else {
-                    moveMotors(MovementState::kBackward, targetOrientation, getDistanceToCenter(targetDistance), useWallDistance, true);
-                }
-            } */
             
             break;
         }
@@ -534,12 +528,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
-            const double desiredWallDistance = initialFrontWallDistance  + targetDistance;
-
-            // TODO: change the way to check the wall distance
-            while (useWallDistance == true && hasTraveledWallDistance(desiredWallDistance, getWallDistance(VlxID::kFrontRight)) == false) {
-                moveMotorsInADirection(targetOrientation, moveForward);
-            }
 
             stopMotors();
             
@@ -547,12 +535,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
-            turnMotors(targetOrientation, targetDistance, currentOrientation);
+            turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
         }
         case (MovementState::kTurnRight): {
-            turnMotors(targetOrientation, targetDistance, currentOrientation);
+            turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
         }
@@ -562,7 +550,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #endif
             rampDetected = isRamp();
             while (rampDetected) {
-                moveMotorsInADirection(getOrientation(currentOrientation), true);
+                moveMotorsInADirection(targetOrientation, true);
                 rampDetected = isRamp();
             }
             
@@ -573,7 +561,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (timeDiff < kTimeAfterRamp) {
                 customPrintln("TimeDiff:" + String(timeDiff));
                 timeDiff = millis() - timePrevRamp;
-                moveMotorsInADirection(getOrientation(currentOrientation), true);
+                moveMotorsInADirection(targetOrientation, true);
             }
             
             stopMotors();
@@ -591,7 +579,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 
-    maybeResetWithBackWall(targetOrientation, currentOrientation);
+    maybeResetWithBackWall(targetOrientation, currentOrientation_);
 }
 
 
@@ -611,16 +599,11 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         #if DEBUG_MOVEMENT
         customPrintln("Crash left--------");
         #endif
-        if (currentOrientation == 0) {
-            currentOrientation = 360;
-        }
+        
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ / 2, false);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
-        if (currentOrientation == 360) {
-            currentOrientation = 0;
-        }
     }
     retrieveLastState();
 }
@@ -649,6 +632,7 @@ void Movement::saveLastState(const MovementState state, double &targetOrientatio
 
 void Movement::retrieveLastState() {
     allDistanceTraveled_ = crashDistance_ - crashDeltaDistance_;
+    currentState_ = lastState_;
 }
 
 void Movement::turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation){
@@ -1369,5 +1353,11 @@ void Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
         customPrintln("Crash right-");
         #endif
         correctionAfterCrash(false, currentOrientation, useWallDistance);
+    }
+}
+
+void Movement::printEncoderTics() {
+    for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
+        customPrintln("Motor" + String(i) + "Tics:" + String(motor[i].getTics()));
     }
 }

@@ -113,5 +113,7 @@ class Motor {
         double getSpeed();
 
         void constantSpeed(const double speed, const MotorState direction);
+
+        int getTics();
 };
 #endif

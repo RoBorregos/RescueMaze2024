@@ -43,6 +43,8 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
+        double currentOrientation_ = 0;
+
         double crashDeltaOrientation_ = 20.0;
         double crashDeltaDistance_ = 0.02;
 
@@ -66,6 +68,7 @@ class Movement {
 
         // TODO: Improve the name of this variable
         static constexpr double kMinWallDistance = 0.06; // 6 cm
+
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -372,6 +375,8 @@ class Movement {
         void screenPrint(const String output);
 
         void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
+        
+        void printEncoderTics();
 };
 
 #endif
