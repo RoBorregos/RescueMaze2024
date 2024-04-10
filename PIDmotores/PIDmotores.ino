@@ -41,6 +41,9 @@ coord robotCoord = coord{0,0,0};
 
 coord lastCheckpointCoord = robotCoord;
 
+long long int timeAtStart;
+int kSevenMinutes = 420000;
+
 void updateLastCheckpoint(const coord& checkpointCoord) {
     lastCheckpointVisitedCoords = tilesMap.positions;
     lastCheckpointCoord = checkpointCoord;
@@ -277,7 +280,10 @@ void depthFirstSearch() {
     customPrintln("inicio DFS");
     #endif
     // explore the map.
-    while (!unvisited.empty()){ // unvisited.size() != 256
+    while (!unvisited.empty()){
+        if (millis() - timeAtStart > kSevenMinutes) {
+            break;
+        }
         // get the next tile to explore.
         coord currentTileCoord = unvisited.top();
         unvisited.pop();
@@ -481,6 +487,7 @@ void startAlgorithm() {
     #if DEBUG_ALGORITHM
     customPrintln("Start algorithm");
     #endif
+    timeAtStart = millis();
     depthFirstSearch();
 }
 

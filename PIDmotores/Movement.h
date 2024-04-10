@@ -239,7 +239,7 @@ class Movement {
         const char kNoVictimSerialCode = 'm';
         const int kHalfSecond = 500;
         char victim = 'm';
-        bool hasReceivedSerial = false;
+        bool hasReceivedSerial = true;
         Servo myservo;
         static constexpr uint8_t initialAngle = 80;
         static constexpr uint8_t rightAngle = initialAngle + 44;
