@@ -69,7 +69,7 @@ void Movement::setup() {
 
     setupTCS();
 
-    myservo.attach(13);
+    myservo.attach(Pins::servoPin);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
     this->display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);    

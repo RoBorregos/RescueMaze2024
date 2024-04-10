@@ -48,6 +48,6 @@ namespace Pins {
         1 // 5
     };
 
-    constexpr uint8_t servoPin = 13; // TODO: change servo pin
+    constexpr uint8_t servoPin = 18;
 }
 #endif
