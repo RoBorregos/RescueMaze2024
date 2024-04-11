@@ -46,7 +46,7 @@ class Movement {
         double currentOrientation_ = 0;
 
         double crashDeltaOrientation_ = 20.0;
-        double crashDeltaDistance_ = 0.02;
+        double crashDeltaDistance_ = 0.08;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -59,9 +59,9 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.09; // m/s 0.09
-        static constexpr double kBaseSpeedTurn_ = 0.07; // m/s
-        static constexpr double kBaseSpeedForwardReset_ = 0.05; // m/s
+        static constexpr double kBaseSpeedForward_ = 0.2; // m/s 0.09
+        static constexpr double kBaseSpeedTurn_ = 0.1; // m/s 0.07
+        static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
 
 
         static constexpr uint8_t kMaxMovements_ = 4;
@@ -164,6 +164,8 @@ class Movement {
         bool encodersReset_ = false;
 
         bool inResetRoutine_ = false;
+
+        constexpr static double speedOffset = 0.02;
 
 
         PID pidDummy_;
