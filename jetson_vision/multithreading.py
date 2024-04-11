@@ -189,7 +189,7 @@ def main():
     print("STARTING VIDEO ....")
     if video_capture.isOpened():
         try:
-            time = t.time()
+            # time = t.time()
             letters = ['s','h','u','m']
             repetitions = [0,0,0,0]
             index = 0
@@ -252,18 +252,18 @@ def main():
                             repetitions[index] += 1
                     print(f"Actual value: {actual_state}  reps: {repetitions[index]}")
                     #for testing
-                    if t.time() > time + 5:
-                        time = t.time()
-                        lastMax = 0
-                        for i in range(4):
-                            if repetitions[i] > lastMax:
-                                index = i
-                                lastMax = repetitions[i]
-                        actual_state = letters[index]
-                        print(f"Sending state to esp = {actual_state}")
-                        for i in range(4):
-                            print(f"Letter {letters[i]} = {repetitions[i]}")
-                        repetitions = [0,0,0,0]
+                    # if t.time() > time + 5:
+                    #     time = t.time()
+                    #     lastMax = 0
+                    #     for i in range(4):
+                    #         if repetitions[i] > lastMax:
+                    #             index = i
+                    #             lastMax = repetitions[i]
+                    #     actual_state = letters[index]
+                    #     print(f"Sending state to esp = {actual_state}")
+                    #     for i in range(4):
+                    #         print(f"Letter {letters[i]} = {repetitions[i]}")
+                    #     repetitions = [0,0,0,0]
                     # If recieving data from arduino
                     if arduino.in_waiting > 0:
                         line = arduino.readline().decode('utf-8').strip()
@@ -277,6 +277,9 @@ def main():
                             repetitions = [0,0,0,0]
                             print(f"Sending state to esp = {actual_state}")
                             arduino.write(actual_state.encode('utf-8'))
+                        if line == "2":
+                            print("Serial reseted")
+                            repetitions = [0,0,0,0]
                     
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
