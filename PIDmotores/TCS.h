@@ -4,6 +4,8 @@
 #include "Adafruit_TCS34725.h"
 #include "MUX.h"
 #include "CustomSerial.h"
+#include <Adafruit_ADS1X15.h>
+#include <Wire.h>
 
 // TODO: check which address is the correct one
 #define TCS_ADDR 0x30 
@@ -12,6 +14,7 @@ class TCS {
     private:
         Adafruit_TCS34725 tcs_ = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
         MUX mux_;
+        Adafruit_ADS1115 photoresistor;
 
         static constexpr int kColorAmount_ = 3;
 
@@ -84,6 +87,10 @@ class TCS {
         static constexpr char kBlackColor_ = 'N';
         static constexpr char kCheckpointColor_ = 'C';
         static constexpr char kUndefinedColor_ = 'U';
+
+        short kMinPhotoresistorValue_ = 0;
+        short kMaxPhotoresistorValue_ = 1000;
+        static constexpr short kPhotoresistorThreshold_ = 500;
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
 
