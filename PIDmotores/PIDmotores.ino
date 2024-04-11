@@ -16,7 +16,7 @@
 #include "Encoder.h"
 
 #define DEBUG_ALGORITHM 0
-#define USING_SCREEN 1
+#define USING_SCREEN 0
 #define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
@@ -405,16 +405,16 @@ void depthFirstSearch() {
                         switch (direction)
                         {
                         case TileDirection::kUp:
-                            // robot.screenPrint("Wall found up");
+                            robot.screenPrint("Wall found up");
                             break;
                         case TileDirection::kDown:
-                            // robot.screenPrint("Wall found down");
+                            robot.screenPrint("Wall found down");
                             break;
                         case TileDirection::kLeft:
-                            // robot.screenPrint("Wall found left");
+                            robot.screenPrint("Wall found left");
                             break;
                         case TileDirection::kRight:
-                            // robot.screenPrint("Wall found right");
+                            robot.screenPrint("Wall found right");
                             break;
                         default:
                             break;
@@ -426,16 +426,16 @@ void depthFirstSearch() {
                         switch (direction)
                         {
                         case TileDirection::kUp:
-                            // robot.screenPrint("No wall found up");
+                            robot.screenPrint("No wall found up");
                             break;
                         case TileDirection::kDown:
-                            // robot.screenPrint("No wall found down");
+                            robot.screenPrint("No wall found down");
                             break;
                         case TileDirection::kLeft:
-                            // robot.screenPrint("No wall found left");
+                            robot.screenPrint("No wall found left");
                             break;
                         case TileDirection::kRight:
-                            // robot.screenPrint("No wall found right");
+                            robot.screenPrint("No wall found right");
                             break;
                         default:
                             break;
@@ -497,8 +497,7 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    robot.moveMotors(MovementState::kForward, 0, 1);
-    // startAlgorithm();
+    startAlgorithm();
 
     // Serial.println(1);
     // bool flag = false;

@@ -78,6 +78,8 @@ void Movement::setup() {
         // customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
+
+    sendSerialRequest();
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -307,7 +309,8 @@ void Movement::rampMovement(const double targetOrientation) {
 }
 
 // TODO: Clean this function
-void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) {
+void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) { 
+    // 321
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     currentOrientation_ = bno_.getOrientationX(); 
@@ -393,9 +396,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         screenPrint("request sent"+String(currentMillis) );
                         sendSerialRequest();
                     }
-                    if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
-                        checkSerial(currentOrientation_);
-                    }
+                    // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
+                    checkSerial(currentOrientation_);
+                    // }
                 }
 
                 // customPrintln("Color:" + String(getTCSInfo()));
@@ -509,7 +512,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             allDistanceTraveled_ = 0;
             stopMotors();
 
-            
+            screenPrint("Finished movement");
+            delay(kOneSecInMs);
             break;
         }
         case (MovementState::kBackward): {
@@ -534,13 +538,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
-            resetSerial();
+            // resetSerial();
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
         }
         case (MovementState::kTurnRight): {
-            resetSerial();
+            // resetSerial();
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
@@ -1313,6 +1317,8 @@ void Movement::moveServo(servoPosition position) {
                 myservo.write(rightAngle);
                 --rightStock;
             }
+            delay(kOneSecInMs);
+            myservo.write(initialAngle);
             break;
         case servoPosition::kRight:
             if (rightStock > 1 && leftStock > 0 || rightStock == 1 && leftStock <= 1) {
@@ -1322,13 +1328,13 @@ void Movement::moveServo(servoPosition position) {
                 myservo.write(leftAngle);
                 --leftStock;
             }
+            delay(kOneSecInMs);
+            myservo.write(initialAngle-6);
             break;
         case servoPosition::kCenter:
             myservo.write(initialAngle);
             break;
     }
-    delay(kOneSecInMs);
-    myservo.write(initialAngle);
 }
 
 bool Movement::getVictimFound() {
@@ -1372,7 +1378,10 @@ void Movement::resetSerial() {
         screenPrint("Waiting for Serial");
     }
     screenPrint("Serial Reseted");
-    Serial.read(); // Read the serial that was left unread.
-    Serial.println(kResetSerialCode); // Send 2 to reset the count of detections in Jetson.
+    if (Serial.available() > 0) {
+        Serial.read(); // Read the serial that was left unread.
+    }
+    Serial.println(kResetSerialCode); // Send serial to reset the count of detections in Jetson.
+    delay(500);
     sendSerialRequest();
 }

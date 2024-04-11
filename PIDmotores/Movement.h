@@ -239,13 +239,13 @@ class Movement {
         const char kNoVictimSerialCode = 'm';
         const int kHalfSecond = 500;
         char victim = 'm';
-        bool hasReceivedSerial = true;
+        bool hasReceivedSerial = false;
         static constexpr int kSendRequestCode = 1;
         static constexpr int kResetSerialCode = 2;
         Servo myservo;
-        static constexpr uint8_t initialAngle = 80;
-        static constexpr uint8_t rightAngle = initialAngle + 44;
-        static constexpr uint8_t leftAngle = initialAngle - 36;
+        static constexpr uint8_t initialAngle = 78;
+        static constexpr uint8_t rightAngle = initialAngle + 35;
+        static constexpr uint8_t leftAngle = initialAngle - 45;
         bool victimFound = false;
         u_int8_t rightStock = 6;
         u_int8_t leftStock = 6;
