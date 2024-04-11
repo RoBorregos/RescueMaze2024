@@ -383,6 +383,10 @@ class Movement {
         void printEncoderTics();
 
         void resetSerial();
+
+        void checkButton();
+
+        void calibrateColors();
 };
 
 #endif

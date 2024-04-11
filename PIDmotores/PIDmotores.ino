@@ -44,13 +44,39 @@ coord lastCheckpointCoord = robotCoord;
 long long int timeAtStart;
 int kSevenMinutes = 420000;
 
+bool firstRun = true;
+
+void onIdle() {
+    robot.screenPrint("Idle");
+    if (digitalRead(Pins::buttonPin) == HIGH) {
+        robot.screenPrint("Loading ...");
+        long long int time = millis();
+        while (millis() - time < 2000) {
+            if (digitalRead(Pins::buttonPin) == HIGH) {
+                robot.calibrateColors();
+                break;
+            }
+        }
+        while (digitalRead(Pins::buttonPin) == LOW) {
+            robot.screenPrint("Press the button to start");
+        }
+        if (firstRun == true) {
+            firstRun = false;
+            startAlgorithm();
+        } else {
+            restartOnLastCheckpoint();
+        }
+    }
+    onIdle();
+}
+
 void updateLastCheckpoint(const coord& checkpointCoord) {
     lastCheckpointVisitedCoords = tilesMap.positions;
     lastCheckpointCoord = checkpointCoord;
 }
 
-void restartOnLastCheckpoint(const coord& checkpointCoord) {
-    robotCoord = checkpointCoord;
+void restartOnLastCheckpoint() {
+    robotCoord = lastCheckpointCoord;
     robotOrientation = 0;
     tilesMap.positions = lastCheckpointVisitedCoords;
     depthFirstSearch();
@@ -497,7 +523,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    startAlgorithm();
+    // startAlgorithm();
+    onIdle();
 
     // robot.moveMotors(MovementState::kForward, 0, 1.5);
 

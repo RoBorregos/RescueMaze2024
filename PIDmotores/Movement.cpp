@@ -79,6 +79,8 @@ void Movement::setup() {
         for(;;);
     }
 
+    pinMode(Pins::buttonPin, INPUT_PULLUP);
+
     sendSerialRequest();
 }
 
@@ -1426,4 +1428,17 @@ void Movement::resetSerial() {
     Serial.println(kResetSerialCode); // Send serial to reset the count of detections in Jetson.
     delay(500);
     sendSerialRequest();
+}
+
+void Movement::checkButton() {
+    if (digitalRead(Pins::buttonPin) == HIGH) {
+        screenPrint("Button Pressed");
+        
+    }
+}
+
+void Movement::calibrateColors() {
+    // When pulled from nacionalDemoCalibrateTCS
+    screenPrint("Calibrating");
+    delay(3000);
 }

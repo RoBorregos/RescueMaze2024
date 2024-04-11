@@ -49,5 +49,7 @@ namespace Pins {
     };
 
     constexpr uint8_t servoPin = 18;
+
+    constexpr uint8_t buttonPin = 19;
 }
 #endif
