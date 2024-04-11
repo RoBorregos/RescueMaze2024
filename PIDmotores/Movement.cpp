@@ -377,6 +377,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                     pidForward_.setBaseSpeed(kBaseSpeedForward_);
                     moveMotorsInADirection(targetOrientation, moveForward);
+                    // Checking serial.
+                    if (victimFound == false) {
+                        if (hasReceivedSerial == true) {
+                            screenPrint("request sent on vlx");
+                            sendSerialRequest();
+                        }
+                        // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
+                        checkSerial(currentOrientation_);
+                        // }
+                    }
                 }
                 stopMotors();
                 break;
@@ -395,6 +405,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 checkColors(targetOrientation);
 
+                // Checking serial.
                 currentMillis = millis();
                 if (victimFound == false) {
                     if (hasReceivedSerial == true) {
@@ -1310,14 +1321,12 @@ void Movement::checkSerial(double currentOrientation) {
                 // Drop 2 medkits.
                 screenPrint("Throw 2 medkits");
                 moveServo(servoPosition::kLeft);
-                delay(kOneSecInMs);
                 moveServo(servoPosition::kRight);
-                delay(kOneSecInMs);
             } else if (victim == kStableSerialCode) {
                 // Drop 1 medkit.
                 screenPrint("Throw 1 medkit");
                 moveServo(servoPosition::kLeft);
-                delay(3000);
+                delay(2000);
             } else if (victim == kUnharmedSerialCode){
                 // Only indicate victim found.
                 screenPrint("Unharmed");
@@ -1332,7 +1341,7 @@ char Movement::getVictim() {
     return victim;
 }
 
-void Movement::moveServo(servoPosition position) {
+void Movement::moveServo(servoPosition position) { // Takes two seconds.
     switch (position) {
         case servoPosition::kLeft:
             if (leftStock > 1 && rightStock > 0 || leftStock == 1 && rightStock <= 1) {
@@ -1360,6 +1369,14 @@ void Movement::moveServo(servoPosition position) {
             myservo.write(initialAngle);
             break;
     }
+    myservo.write(initialAngle);
+    delay(250);
+    myservo.write(initialAngle+5);
+    delay(250);
+    myservo.write(initialAngle-5);
+    delay(250);
+    myservo.write(initialAngle);
+    delay(250);
 }
 
 bool Movement::getVictimFound() {
@@ -1399,9 +1416,9 @@ void Movement::printEncoderTics() {
 }
 
 void Movement::resetSerial() {
-    while (Serial.available() <= 0) { // Wait for the serial that was left unread.
-        screenPrint("Waiting for Serial");
-    }
+    // while (Serial.available() <= 0) { // Wait for the serial that was left unread.
+    //     screenPrint("Waiting for Serial");
+    // }
     screenPrint("Serial Reseted");
     if (Serial.available() > 0) {
         Serial.read(); // Read the serial that was left unread.
