@@ -25,6 +25,8 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     #testing filtering noise
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
+    minArea = 1000
+    imgResult = areaFilter(minArea, imgResult)
 
     return imgResult
      
