@@ -3,7 +3,7 @@
 
 # Using a CSI camera (such as the Raspberry Pi Version 2) connected to a
 # NVIDIA Jetson Nano Developer Kit using OpenCV
-# Drivers for the camera and OpenCV are included in the base image
+# Drivers for the camera ajetsond OpenCV are included in the base image
 
 import cv2
 
@@ -15,7 +15,7 @@ Default 1920x1080 displayd in a 1/4 size window
 """
 
 def gstreamer_pipeline(
-    sensor_id=1,
+    sensor_id=0,
     capture_width=640,
     capture_height=480,
     display_width=640,

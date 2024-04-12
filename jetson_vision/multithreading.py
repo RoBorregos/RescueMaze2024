@@ -174,7 +174,7 @@ camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
 video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
 #video_capture = cv2.VideoCapture(camera_source)
 print("Opening Serial ..")
-arduino = serial.Serial('/dev/ttyUSB0', 115200)
+# arduino = serial.Serial('/dev/ttyUSB0', 115200)
 print("Serial Opened ..")
 print("Loading model ...")
 loading_time = t.time()
@@ -265,21 +265,21 @@ def main():
                     #         print(f"Letter {letters[i]} = {repetitions[i]}")
                     #     repetitions = [0,0,0,0]
                     # If recieving data from arduino
-                    if arduino.in_waiting > 0:
-                        line = arduino.readline().decode('utf-8').strip()
-                        if line == "1":
-                            lastMax = 0
-                            for i in range(4):
-                                if repetitions[i] > lastMax:
-                                    index = i
-                                    lastMax = repetitions[i]
-                            actual_state = letters[index]
-                            repetitions = [0,0,0,0]
-                            print(f"Sending state to esp = {actual_state}")
-                            arduino.write(actual_state.encode('utf-8'))
-                        if line == "2":
-                            print("Serial reseted")
-                            repetitions = [0,0,0,0]
+                    # if arduino.in_waiting > 0:
+                    #     line = arduino.readline().decode('utf-8').strip()
+                    #     if line == "1":
+                    #         lastMax = 0
+                    #         for i in range(4):
+                    #             if repetitions[i] > lastMax:
+                    #                 index = i
+                    #                 lastMax = repetitions[i]
+                    #         actual_state = letters[index]
+                    #         repetitions = [0,0,0,0]
+                    #         print(f"Sending state to esp = {actual_state}")
+                    #         arduino.write(actual_state.encode('utf-8'))
+                    #     if line == "2":
+                    #         print("Serial reseted")
+                    #         repetitions = [0,0,0,0]
                     
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -291,12 +291,12 @@ def main():
                 video_capture.release()
                 out.release()  
                 cv2.destroyAllWindows()
-                arduino.close()
+                # arduino.close()
 
     else:
         print("Error: Unajeble to open camera")
         out.release()  
-        arduino.close()
+        # arduino.close()
 
 if __name__ == '__main__':
     main()
