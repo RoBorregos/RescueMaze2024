@@ -48,16 +48,16 @@ bool firstRun = true;
 
 void onIdle() {
     robot.screenPrint("Idle");
-    if (digitalRead(Pins::buttonPin) == HIGH) {
+    if (digitalRead(Pins::buttonPin) == LOW) {
         robot.screenPrint("Loading ...");
         long long int time = millis();
         while (millis() - time < 2000) {
-            if (digitalRead(Pins::buttonPin) == HIGH) {
+            if (digitalRead(Pins::buttonPin) == LOW) {
                 robot.calibrateColors();
-                break;
+                break;      
             }
         }
-        while (digitalRead(Pins::buttonPin) == LOW) {
+        while (digitalRead(Pins::buttonPin) == HIGH) {
             robot.screenPrint("Press the button to start");
         }
         if (firstRun == true) {
@@ -523,8 +523,8 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    // startAlgorithm();
-    onIdle();
+    startAlgorithm();
+    // onIdle();
 
     // robot.moveMotors(MovementState::kForward, 0, 1.5);
 

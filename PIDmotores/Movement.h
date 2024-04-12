@@ -220,7 +220,7 @@ class Movement {
         
         const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
-            {20, 120, 33, 90, 25, 79},
+            {20, 120, 30, 90, 20, 79},
             {85, 150, 80, 140, 120, 175}
         };
 

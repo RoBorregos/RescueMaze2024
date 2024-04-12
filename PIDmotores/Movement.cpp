@@ -69,6 +69,8 @@ void Movement::setup() {
 
     setupTCS();
 
+    // getTCSInfo(); // Comment.
+
     myservo.attach(Pins::servoPin);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
