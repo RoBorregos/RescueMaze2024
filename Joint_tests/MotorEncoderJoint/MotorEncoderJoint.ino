@@ -47,8 +47,8 @@ void loop (){
         BRmotor.forward();
         FRmotor.set_pwm(i);
         FRmotor.forward();
-        FLmotor.set_pwm(i);
-        FLmotor.forward();
+        // FLmotor.set_pwm(i);
+        // FLmotor.forward();
         delay(100);
         Serial.print("tick1: ");
     Serial.print(tick1);
@@ -74,8 +74,8 @@ void loop (){
     delay(2000);
      for(int i = 0; i < 200; i++){
         Serial.println("backward");
-        // BLmotor.set_pwm(i);
-        // BLmotor.backward();
+        BLmotor.set_pwm(i);
+        BLmotor.backward();
         BRmotor.set_pwm(i);
         BRmotor.backward();
         FRmotor.set_pwm(i);

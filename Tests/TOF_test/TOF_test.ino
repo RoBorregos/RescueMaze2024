@@ -18,7 +18,7 @@ void setup() {
   // wait until serial port opens for native USB devices
   
   Serial.println("Adafruit VL53L0X test");
-  tcaselect(5);
+  tcaselect(0);
   if (!lox.begin()) {
     Serial.println(F("Failed to boot VL53L0X"));
     while(1);
