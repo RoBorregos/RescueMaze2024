@@ -121,8 +121,8 @@ def rotate_image(binary_img):
     return rotated
 
 def process_image(img):
-    alpha = 1.10
-    beta=1.3
+    alpha = 1.15
+    beta=1.4
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     # cv2.imshow("brighter", img)
     imgFloat = img.astype(float) / 255.0
