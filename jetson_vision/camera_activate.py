@@ -1,5 +1,5 @@
 def gstreamer_pipeline(
-    sensor_id=0,
+    sensor_id=1,
     capture_width=640,
     capture_height=480,
     display_width=640,

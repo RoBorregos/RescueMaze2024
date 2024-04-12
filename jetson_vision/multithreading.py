@@ -122,7 +122,7 @@ def rotate_image(binary_img):
 
 def process_image(img):
     alpha = 1.10
-    beta=1.4
+    beta=1.3
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     # cv2.imshow("brighter", img)
     imgFloat = img.astype(float) / 255.0
@@ -180,7 +180,7 @@ print("Loading model ...")
 loading_time = t.time()
 model_ft = start_model()
 print(f"Model loaded in {t.time()-loading_time}")
-minimum_predict_value = 1.0
+minimum_predict_value = 1.2
 warmup()
 fourcc = cv2.VideoWriter_fourcc(*'XVID') 
 out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
