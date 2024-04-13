@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/jetson/RescueMaze2024/ros_communication/install/setup.sh
+    local-name: /workspace/RescueMaze2024/ros_communication/install/setup.sh

@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "image_publisher"
-PROJECT_SPACE_DIR = "/home/jetson/RescueMaze2024/ros_communication/devel"
+PROJECT_SPACE_DIR = "/workspace/RescueMaze2024/ros_communication/devel"
 PROJECT_VERSION = "0.0.0"

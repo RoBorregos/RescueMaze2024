@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jetson/RescueMaze2024/ros_communication/src
+CMAKE_SOURCE_DIR = /workspace/RescueMaze2024/ros_communication/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jetson/RescueMaze2024/ros_communication/build
+CMAKE_BINARY_DIR = /workspace/RescueMaze2024/ros_communication/build
 
 # Utility rule file for std_msgs_generate_messages_eus.
 
@@ -63,10 +63,10 @@ image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/build: std_msgs_ge
 .PHONY : image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/build
 
 image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/clean:
-	cd /home/jetson/RescueMaze2024/ros_communication/build/image_publisher && $(CMAKE_COMMAND) -P CMakeFiles/std_msgs_generate_messages_eus.dir/cmake_clean.cmake
+	cd /workspace/RescueMaze2024/ros_communication/build/image_publisher && $(CMAKE_COMMAND) -P CMakeFiles/std_msgs_generate_messages_eus.dir/cmake_clean.cmake
 .PHONY : image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/clean
 
 image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/depend:
-	cd /home/jetson/RescueMaze2024/ros_communication/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jetson/RescueMaze2024/ros_communication/src /home/jetson/RescueMaze2024/ros_communication/src/image_publisher /home/jetson/RescueMaze2024/ros_communication/build /home/jetson/RescueMaze2024/ros_communication/build/image_publisher /home/jetson/RescueMaze2024/ros_communication/build/image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/DependInfo.cmake --color=$(COLOR)
+	cd /workspace/RescueMaze2024/ros_communication/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /workspace/RescueMaze2024/ros_communication/src /workspace/RescueMaze2024/ros_communication/src/image_publisher /workspace/RescueMaze2024/ros_communication/build /workspace/RescueMaze2024/ros_communication/build/image_publisher /workspace/RescueMaze2024/ros_communication/build/image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : image_publisher/CMakeFiles/std_msgs_generate_messages_eus.dir/depend
 
