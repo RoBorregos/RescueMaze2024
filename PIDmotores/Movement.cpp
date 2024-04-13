@@ -36,6 +36,7 @@ void Movement::setup() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    this->pidAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
     #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
@@ -170,6 +171,7 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
         break;
     }
 }
+
 void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward){
     const unsigned long timeDiff = millis() - timePrev_;
     double currentOrientation = bno_.getOrientationX();
@@ -1395,4 +1397,17 @@ void Movement::maybeGoBackwards(const double currentOrientation) {
     stopMotors();
     moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
     timePrevTurn_ = millis();
+}
+
+void Movement::weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight) {
+    pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+    const double speedLeftBno = speedLeft;
+    const double speedRightBno = speedRight;
+    
+    pidAlignment_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
+    const double speedLeftVlx = speedLeft;
+    const double speedRightVlx = speedRight;
+
+    const double weightedSpeedLeft = speedLeftBno * kWeightBNO + speedLeftVlx * kWeightVLX;
+    const double weightedSpeedRight = speedRightBno * kWeightBNO + speedRightVlx * kWeightVLX;
 }
