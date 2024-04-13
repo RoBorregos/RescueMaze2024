@@ -67,8 +67,6 @@ void Movement::setup() {
     setupLimitSwitch(LimitSwitchID::kLeft);
     setupLimitSwitch(LimitSwitchID::kRight);
 
-    setupTCS();
-
     myservo.attach(Pins::servoPin);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -80,17 +78,6 @@ void Movement::setup() {
     }
 
     setupTCS();
-    screenPrint("checking blue");
-    delay(1000);
-    tcs_.getBlueRanges();
-    screenPrint("checking black");
-    delay(5000);
-    tcs_.getBlackRanges();
-    screenPrint("checking checkpoint");
-    delay(5000);
-    tcs_.getCheckpointRanges();
-    screenPrint("finished checking");
-    delay(5000);
 
     pinMode(Pins::buttonPin, INPUT_PULLUP);
 
@@ -326,6 +313,7 @@ void Movement::rampMovement(const double targetOrientation) {
 // TODO: Clean this function
 void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) { 
     // 321
+    lackOfProgress_ = false;
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
     currentOrientation_ = bno_.getOrientationX(); 
@@ -372,9 +360,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // customPrintln("Moving forward");
             // customPrintln("TargetDistance:" + String(targetDistance));
 
-            unsigned long currentMillis = millis();
-            victimFound = false;
-
             double frontWallDistance = initialFrontWallDistance;
             double backWallDistance = initialBackWallDistance;
             
@@ -388,7 +373,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #endif
 
             if (frontWallDistance <= 0.45) {
-                while (frontWallDistance > 0.06) {
+                while (frontWallDistance > 0.06 && lackOfProgress_ == false) {
+                    checkForLackOfProgress();
                     frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                     pidForward_.setBaseSpeed(kBaseSpeedForward_);
                     moveMotorsInADirection(targetOrientation, moveForward);
@@ -402,12 +388,15 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         checkSerial(currentOrientation_);
                         // }
                     }
+                    checkColors(targetOrientation);
                 }
                 stopMotors();
                 break;
             }
 
-            while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+            while (hasTraveledDistanceWithSpeed(targetDistance) == false  && lackOfProgress_ == false) {
+                checkForLackOfProgress();
+
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 /* udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("vlxFrontLeft:" + String(frontWallDistance));
@@ -421,13 +410,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 checkColors(targetOrientation);
 
                 // Checking serial.
-                currentMillis = millis();
                 if (victimFound == false) {
                     if (hasReceivedSerial == true) {
-                        screenPrint("request sent"+String(currentMillis) );
+                        screenPrint("request sent");
                         sendSerialRequest();
                         hasReceivedSerial = false;
-                        // previousMillis = currentMillis;
                     }
                     // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
                     checkSerial(currentOrientation_);
@@ -484,7 +471,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                                              initialBackWallDistance, 
                                              initialFrontWallDistance, 
                                              moveForward, 
-                                             targetDistance) - (targetDistance * kMToCm))) >= kMaxDistanceErrorInCm) {
+                                             targetDistance) - (targetDistance * kMToCm))) >= kMaxDistanceErrorInCm  && lackOfProgress_ == false) {
+                    
+                    checkForLackOfProgress();
 
                     pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
                     pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
@@ -505,7 +494,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     }
 
                     // TODO: Only check colors when it is moving forward
-                    // checkColors();
+                    // checkColors(targetOrientation);
                     
                     #if DEBUG_MOVEMENT
                     customPrintln("Color:" + String(getTCSInfo()));
@@ -547,7 +536,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             stopMotors();
 
             screenPrint("Finished movement");
-            delay(kOneSecInMs);
+            // delay(kOneSecInMs);
             break;
         }
         case (MovementState::kBackward): {
@@ -556,7 +545,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 resetDistanceTraveled_ = true;
             }
 
-            while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
+            while (hasTraveledDistanceWithSpeed(targetDistance) == false  && lackOfProgress_ == false) {
+                checkForLackOfProgress();
                 #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("--------------------------------------------------------------");
@@ -684,7 +674,19 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     udp.endPacket();
     #endif
 
-    while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+    while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError  && lackOfProgress_ == false) {
+        checkForLackOfProgress();
+        // Checking serial.
+        if (victimFound == false) {
+            if (hasReceivedSerial == true) {
+                screenPrint("request sent");
+                sendSerialRequest();
+                hasReceivedSerial = false;
+            }
+            // if (vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance() < kWallDistance) {
+            checkSerial(currentOrientation_);
+            // }
+        }
 
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
@@ -747,7 +749,6 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         timePrev_ = millis();
         
     }
-    
     stopMotors();
     
 }
@@ -875,14 +876,12 @@ void Movement::rgbTCSClear() {
 
 char Movement::checkColors(const double targetOrientation) {
     const char color = tcs_.getColor();
-    // customPrintln("Color:" + String(color));
     if (color == kBlackColor) {
         screenPrint("Black tile detected");
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
         allDistanceTraveled_ = 0;
-        // customPrintln("blackTile__" + String(blackTile_));
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
@@ -890,14 +889,13 @@ char Movement::checkColors(const double targetOrientation) {
         screenPrint("Blue tile detected");
         blueTile_ = true;
         stopMotors();
-        // customPrintln("DETECTED BLUE TILE");
-        delay(kFiveSeconds_);
-        
+        delay(kFiveSeconds_);        
         return color;
-    } else if (color == kCheckpointColor && finishedMovement_ == true) {
+    } else if (color == 'C' && finishedMovement_ == true) { // TODO:  && bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError
         screenPrint("Checkpoint tile detected");
         checkpointTile_ = true;
         stopMotors();
+        delay(kOneSecInMs);
         return color;
     }
     return color;
@@ -1448,15 +1446,29 @@ void Movement::resetSerial() {
     sendSerialRequest();
 }
 
-void Movement::checkButton() {
-    if (digitalRead(Pins::buttonPin) == HIGH) {
-        screenPrint("Button Pressed");
-        
+void Movement::calibrateColors() {
+    screenPrint("checking blue");
+    delay(kOneSecInMs);
+    while (digitalRead(Pins::buttonPin) == HIGH) {}
+    tcs_.getBlueRanges();
+    screenPrint("checking black");
+    delay(kOneSecInMs);
+    while (digitalRead(Pins::buttonPin) == HIGH) {}
+    tcs_.getBlackRanges();
+    screenPrint("checking checkpoint");
+    delay(kOneSecInMs);
+    while (digitalRead(Pins::buttonPin) == HIGH) {}
+    tcs_.getCheckpointRanges();
+    screenPrint("finished checking");
+    delay(kOneSecInMs);
+}
+
+void Movement::checkForLackOfProgress() {
+    if (digitalRead(Pins::buttonPin) == LOW) {
+        lackOfProgress_ = true;
     }
 }
 
-void Movement::calibrateColors() {
-    // When pulled from nacionalDemoCalibrateTCS
-    screenPrint("Calibrating");
-    delay(3000);
+bool Movement::getLackOfProgress() {
+    return lackOfProgress_;
 }

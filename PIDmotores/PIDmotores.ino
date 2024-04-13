@@ -15,9 +15,9 @@
 #include "Pins.h"
 #include "Encoder.h"
 
-#define DEBUG_ALGORITHM 0
+#define DEBUG_ALGORITHM 1
 #define USING_SCREEN 0
-#define DEBUG_MERGE 0
+#define DEBUG_MERGE 1
 #define MOVEMENT 1
 #define NO_ROBOT 0
 
@@ -27,12 +27,17 @@ unsigned long iterations = 0;
 bool hasArrived = false;
 
 Map tilesMap = Map();
+Map visitedMap = Map();
+
 etl::vector<Tile, kMaxMapSize> tiles;
-etl::vector<coord, kMaxMapSize> lastCheckpointVisitedCoords;
 etl::vector<bool, kMaxMapSize> explored;
 etl::vector<int, kMaxMapSize> distance;
 etl::vector<coord, kMaxMapSize> previousPositions;
 etl::stack<coord, kMaxMapSize> path;
+
+etl::vector<coord, kMaxMapSize> lastCheckpointCoords;
+etl::vector<Tile, kMaxMapSize> lastCheckpointTiles;
+etl::vector<coord, kMaxMapSize> lastCheckpointVisited;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
@@ -47,38 +52,62 @@ int kSevenMinutes = 420000;
 bool firstRun = true;
 
 void onIdle() {
-    robot.screenPrint("Idle");
-    if (digitalRead(Pins::buttonPin) == LOW) {
-        robot.screenPrint("Loading ...");
-        long long int time = millis();
-        while (millis() - time < 2000) {
-            if (digitalRead(Pins::buttonPin) == LOW) {
-                robot.calibrateColors();
-                break;      
+    while (true) {
+        robot.screenPrint("Idle");
+        if (digitalRead(Pins::buttonPin) == LOW) {
+            robot.screenPrint("Loading ...");
+            delay(kOneSecInMs);
+            long long int time = millis();
+            while (millis() - time < 2000) {
+                if (digitalRead(Pins::buttonPin) == LOW) {
+                    robot.calibrateColors();
+                    break;      
+                }
+            }
+            while (digitalRead(Pins::buttonPin) == HIGH) {
+                robot.screenPrint("Press the button to start");
+            }
+            if (firstRun == true) {
+                firstRun = false;
+                startAlgorithm();
+            } else {
+                delay(kOneSecInMs);
+                robot.screenPrint("Restarting algorithm");
+                restartOnLastCheckpoint();
+                // startAlgorithm();
             }
         }
-        while (digitalRead(Pins::buttonPin) == HIGH) {
-            robot.screenPrint("Press the button to start");
-        }
-        if (firstRun == true) {
-            firstRun = false;
-            startAlgorithm();
-        } else {
-            restartOnLastCheckpoint();
-        }
     }
-    onIdle();
 }
 
 void updateLastCheckpoint(const coord& checkpointCoord) {
-    lastCheckpointVisitedCoords = tilesMap.positions;
+    lastCheckpointCoords = tilesMap.positions;
     lastCheckpointCoord = checkpointCoord;
+    lastCheckpointTiles = tiles;
+    lastCheckpointVisited = visitedMap.positions;
 }
 
 void restartOnLastCheckpoint() {
     robotCoord = lastCheckpointCoord;
     robotOrientation = 0;
-    tilesMap.positions = lastCheckpointVisitedCoords;
+    tilesMap.positions = lastCheckpointCoords;
+    for (int i = 0; i < tilesMap.positions.size(); ++i) {
+        customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y));
+    }
+    tiles = lastCheckpointTiles;
+    for (int i = 0; i < tiles.size(); ++i) {
+        customPrintln("Tile: " + String(tiles[i].position_.x) + " " + String(tiles[i].position_.y));
+    }
+    if (tilesMap.positions.size() == 0 && tiles.size() == 0) {
+        tilesMap.positions.push_back(robotCoord);
+        tiles.push_back(Tile(robotCoord));
+    } else {
+        tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
+    }
+    visitedMap.positions = lastCheckpointVisited;
+    for (int i = 0; i < visitedMap.positions.size(); ++i) {
+        customPrintln("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+    }
     depthFirstSearch();
 }
 
@@ -94,16 +123,19 @@ void turnAndMoveRobot(const int targetOrientation) {
         robot.turnRight(targetOrientation);
         robotOrientation = (robotOrientation + 180) % 360;
     }
-    // robot.screenPrint(String(robotCoord.x) + " " + String(robotCoord.y));
-    // robot.screenPrint(String(tiles[tilesMap.getIndex(robotCoord)].weight_));
+    // If button was pressed while turning, set idle state.
+    if (robot.getLackOfProgress()) {
+        onIdle();
+    }
+    // Check how to move (ramp/ground).
     if (robot.isRamp()) {
         robot.rampMovement(robotOrientation);
     } else {
         robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
     }
-    // If a victim was found, update the tile.
-    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
-        tiles[tilesMap.getIndex(robotCoord)].setVictim();
+    // If button was pressed while going forward, set idle state.
+    if (robot.getLackOfProgress()) {
+        onIdle();
     }
 }
 
@@ -175,13 +207,19 @@ void followPath() {
         #endif
         if (robot.wasBlackTile()) {
             tiles[tilesMap.getIndex(next)].setBlackTile();
-            // robot.screenPrint("Black tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
         } else if (robot.isBlueTile()) {
             robotCoord = next;
             tiles[tilesMap.getIndex(robotCoord)].weight_ = kBlueTileWeight;
-            // robot.screenPrint("Blue tile found " + String(robotCoord.x) + " " + String(robotCoord.y));
+        } else if (robot.isCheckpointTile()) {
+            robotCoord = next;
+            tiles[tilesMap.getIndex(robotCoord)].setCheckpoint();
+            updateLastCheckpoint(robotCoord);
         } else {
             robotCoord = next;
+        }
+        // If a victim was found, update the tile.
+        if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
+            tiles[tilesMap.getIndex(robotCoord)].setVictim();
         }
     }
 }
@@ -191,9 +229,6 @@ void dijsktra(const coord& start, const coord& end) {
     customPrintln("End coord: " + String(end.x) + " " + String(end.y));
     #endif
     // empty path.
-    // while (!path.empty()) {
-    //     path.pop();
-    // }
     path.clear();
     // initialize vectors.
     #if DEBUG_ALGORITHM 
@@ -288,25 +323,18 @@ void dijsktra(const coord& start, const coord& end) {
 // }
 
 void depthFirstSearch() {
-    for (int i = 0; i < kMaxMapSize; ++i) {
-        distance.push_back(INT_MAX);
-        explored.push_back(false);
-        previousPositions.push_back(kInvalidPosition);
-    }
-    Map visitedMap = Map();
     etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
     bool wall;
     bool alreadyConnected;
     coord nextTileCoord;
     TileDirection oppositeDirection;
-    visitedMap.positions = lastCheckpointVisitedCoords;
     unvisited.push(robotCoord);
     #if DEBUG_ALGORITHM
     customPrintln("inicio DFS");
     #endif
     // explore the map.
-    while (!unvisited.empty()){
+    while (!unvisited.empty()) {
         if (millis() - timeAtStart > kSevenMinutes) {
             break;
         }
@@ -499,7 +527,7 @@ void depthFirstSearch() {
             }
         }
     }
-    // robot.screenPrint("End of DFS");
+    robot.screenPrint("End of DFS");
     dijsktra(robotCoord, coord{0,0,0});
     #if DEBUG_ALGORITHM
     customPrintln("termino DFS");
@@ -508,8 +536,15 @@ void depthFirstSearch() {
 }
 
 void startAlgorithm() {
+    // Initialize dijkstra's vectors
+    for (int i = 0; i < kMaxMapSize; ++i) {
+        distance.push_back(INT_MAX);
+        explored.push_back(false);
+        previousPositions.push_back(kInvalidPosition);
+    }
     tilesMap.positions.push_back(robotCoord);
-    tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
+    // tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
+    tiles.push_back(Tile(robotCoord));
     #if DEBUG_ALGORITHM
     customPrintln("Start algorithm");
     #endif
@@ -524,26 +559,7 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    startAlgorithm();
-    // onIdle();
-
-    // robot.moveMotors(MovementState::kForward, 0, 1.5);
-
-    // robot.moveMotors(MovementState::kTurnRight, 90, 0);
-    // robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    // robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    // robot.moveMotors(MovementState::kTurnRight, 0, 0);
-
-    // Serial.println(1);
-    // bool flag = false;
-    // robot.screenPrint("nadota");
-    // while(flag == false){
-    //   if (Serial.available() > 0) {
-    //       char input = Serial.read();
-    //       robot.screenPrint("input: " + String(input));
-    //       flag = true;
-    //   }
-    // }
+    onIdle();
 }
     
 void loop() {
@@ -551,164 +567,4 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
-    // robot.printTCS();
-    // Serial.println(1);
-    // bool flag = false;
-    // robot.screenPrint("nadota");
-    // while(flag == false){
-    //   if (Serial.available() > 0) {
-    //       char input = Serial.read();
-    //       robot.screenPrint("input: " + String(input));
-    //       flag = true;
-    //   }
-    // }
-    // delay(1000);
-
-    // for (int robotOrientation = 0; robotOrientation < 360; robotOrientation += 90){
-    //     customPrintln("Orientation: " + String(robotOrientation));
-    //     for (TileDirection direction : directions) {
-    //         if (robot.checkWallsDistances(direction, robotOrientation)) {
-    //             switch (direction)
-    //             {
-    //             case TileDirection::kUp:
-    //                 robot.screenPrint("Wall found up");
-    //                 break;
-    //             case TileDirection::kDown:
-    //                 robot.screenPrint("Wall found down");
-    //                 break;
-    //             case TileDirection::kLeft:
-    //                 robot.screenPrint("Wall found left");
-    //                 break;
-    //             case TileDirection::kRight:
-    //                 robot.screenPrint("Wall found right");
-    //                 break;
-    //             default:
-    //                 break;
-    //             }
-    //         }
-    //         else {
-    //             switch (direction)
-    //             {
-    //             case TileDirection::kUp:
-    //                 robot.screenPrint("No wall found up");
-    //                 break;
-    //             case TileDirection::kDown:
-    //                 robot.screenPrint("No wall found down");
-    //                 break;
-    //             case TileDirection::kLeft:
-    //                 robot.screenPrint("No wall found left");
-    //                 break;
-    //             case TileDirection::kRight:
-    //                 robot.screenPrint("No wall found right");
-    //                 break;
-    //             default:
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
-    /* robot.goForward(0);
-    delay(100); */
-    // WARNING: by using a while or for loop here, the robot will not follow the instruction
-    // robot.moveMotors(MovementState::kForward, 0, 1);
-    //robot.setSpeed(0);
-    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
-    //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-    //robot.moveMotors(MovementState::kForward, 0, 0.5);
-    //robot.moveMotors(MovementState::kBackward, 0, 0);
-    //robot.moveMotors(MovementState::kTurnRight, 90, 0);
-    //robot.moveMotors(MovementState::kTurnLeft, 0, 0);
-  
-
-   /*  robot.moveMotors(MovementState::kForward, 0, 1.5);
-    robot.moveMotors(MovementState::kTurnLeft, 270, 0);
-    robot.moveMotors(MovementState::kForward, 270, 1.64);
-    robot.moveMotors(MovementState::kTurnLeft, 89, 0);
-    robot.moveMotors(MovementState::kForward, 91, 1.75);
-    robot.moveMotors(MovementState::kTurnRight, 180, 0);
-    robot.moveMotors(MovementState::kForward, 180, 1.5); */
-
-    
-    // robot.moveMotors(MovementState::kBackward, 0, 0.5);
-    
-    /* digitalWrite(18, HIGH);
-    digitalWrite(19, LOW);
-    analogWrite(23, 200); */
-
-    /* if (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false) {
-        customPrintln("Moving forward...");
-    }
-    else {
-        customPrintln("Arrived");
-        hasArrived = true;
-    } */
-
-   /*  while (hasArrived == false && robot.moveMotors(MovementState::kForward, 0, 0.5) == false){
-        delay(100);
-    }
-    delay(1000);
-    while (hasArrived == false && robot.moveMotors(MovementState::kBackward, 0, 0.5) == false){
-        delay(100);
-    }
-    hasArrived = true; */
-
-    /* for (int i = 0; i < 1000; ++i) {
-        robot.moveMotors(MovementState::kForward, 0);
-    } */
-
-    /* if (robot.moveMotors(MovementState::kTurnLeft, 270) == false) {
-        customPrintln("Turining left...");
-    }
-    else { 
-        customPrintln("Arrived");
-    } */
-    
-    /* if (iterations < 25) { // TODO: juega con este numero
-        robot.moveMotors(MovementState::kForward, 0);
-    } else if (iterations < 50) { // TODO: juega con este numero
-        robot.moveMotors(MovementState::kStop, 0);
-    } else if (iterations < 75) {
-        robot.moveMotors(MovementState::kBackward, 0);
-    } else if (iterations < 100) {
-        robot.moveMotors(MovementState::kStop, 0);
-    } else if (iterations < 125) {
-        robot.moveMotors(MovementState::kTurnLeft, 90);
-    } else if (iterations < 150) {
-        robot.moveMotors(MovementState::kStop, 0);
-    } else if (iterations < 175) {
-        robot.moveMotors(MovementState::kTurnRight, 270);
-    }
-    else {
-        robot.moveMotors(MovementState::kStop, 0);
-        delay(10000);
-    } */
-    
-    // ++iterations;
-
-    //LEER VELOCIDAD 
-    // customPrint("BACK_LEFT: ");
-    // customPrintln(robot.getBackLeftSpeed());
-    // customPrint("FRONT_LEFT: ");
-    // customPrintln(robot.getFrontLeftSpeed());
-    // customPrint("BACK_RIGHT: ");
-    // customPrintln(robot.getBackRightSpeed());
-    // customPrint("FRONT_RIGHT: ");
-    // customPrintln(robot.getFrontRightSpeed()); 
-
-    // delay(70);
-
-    
-    
-    
-    // Asi se mueven los motores sin PID
-    //robot.moveMotors(MotorState::kForward);
-
-    /* delay(2000);
-
-    robot.moveMotors(MotorState::kStop);
-
-    delay(2000);
-
-    robot.moveMotors(MotorState::kBackward); 
- */
 }

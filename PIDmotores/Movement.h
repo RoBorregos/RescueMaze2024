@@ -206,6 +206,7 @@ class Movement {
         static constexpr char kBlackColor = 'N';
         static constexpr char kRedColor = 'R';
         static constexpr char kCheckpointColor = 'C';
+        static constexpr double kHorizontalAngleError = 10;
 
         // ==============================================================================================
         // In the competition the colors may be different so we need to change the values by testing
@@ -254,6 +255,8 @@ class Movement {
         u_int8_t leftStock = 6;
 
         Adafruit_SSD1306 display;
+
+        bool lackOfProgress_ = false;
 
     public:
         Movement();
@@ -385,9 +388,11 @@ class Movement {
 
         void resetSerial();
 
-        void checkButton();
-
         void calibrateColors();
+
+        void checkForLackOfProgress();
+
+        bool getLackOfProgress();
 };
 
 #endif
