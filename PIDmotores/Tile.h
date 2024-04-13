@@ -25,7 +25,7 @@ class Tile{
         // TODO: SAVE RAMP INFORMATION.
         coord position_;
         Tile *adjacentTiles_[kNumberOfDirections];
-        int weight_;
+        uint8_t weight_;
         char data_;
         Tile();
         Tile(const coord& position);

@@ -205,6 +205,7 @@ class Movement {
         static constexpr char kBlueColor = 'B';
         static constexpr char kBlackColor = 'N';
         static constexpr char kRedColor = 'R';
+        static constexpr char kCheckpointColor = 'C';
 
         // ==============================================================================================
         // In the competition the colors may be different so we need to change the values by testing
@@ -241,7 +242,7 @@ class Movement {
         const char kNoVictimSerialCode = 'm';
         const int kHalfSecond = 500;
         char victim = 'm';
-        bool hasReceivedSerial = false;
+        bool hasReceivedSerial = true;
         static constexpr int kSendRequestCode = 1;
         static constexpr int kResetSerialCode = 2;
         Servo myservo;

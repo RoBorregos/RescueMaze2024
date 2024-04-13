@@ -1,6 +1,6 @@
 #include "TCS.h"
 
-#define DEBUG_TCS 0
+#define DEBUG_TCS 1
 TCS::TCS() {
     setDefaultValues();
 }
@@ -108,30 +108,31 @@ void TCS::setPrecision(const uint8_t precision) {
 }
 
 char TCS::getColor() {
-    updateRGB();
+    updateRGBC();
     char colorLetter;
     // TODO: check each color
     // Serial.println("red: " + String(red_) + " green: " + String(green_) + " blue: " + String(blue_));
     // Serial.println("for BLUE: max red: " + String(kMaxRedValueInBlue_) + " min green: " + String(kMinGreenValueInBlue_) + " min blue: " + String(kMinBlueValueInBlue_));
     // Serial.println("for RED: min red: " + String(kMinRedValueInRed_) + " max green: " + String(kMaxGreenValueInRed_) + " max blue: " + String(kMaxBlueValueInRed_));
     // Serial.println("for BLACK: max red: " + String(kMaxRedValueInBlack_) + " max green: " + String(kMaxGreenValueInBlack_) + " max blue: " + String(kMaxBlueValueInBlack_));
-    if (red_ < kMaxRedValueInBlue_  && green_ > kMinGreenValueInBlue_ && blue_ > kMinBlueValueInBlue_) {
+    // customPrint(String(kMinRedValueInBlue_) + " " + String(kMaxRedValueInBlue_) + " " + String(kMinGreenValueInBlue_) + " " + String(kMaxGreenValueInBlue_) + " " + String(kMinBlueValueInBlue_) + " " + String(kMaxBlueValueInBlue_) + "\n");
+    // customPrint(String(kMinRedValueInBlack_) + " " + String(kMaxRedValueInBlack_) + " " + String(kMinGreenValueInBlack_) + " " + String(kMaxGreenValueInBlack_) + " " + String(kMinBlueValueInBlack_) + " " + String(kMaxBlueValueInBlack_) + "\n");
+    if (red_ > kMinRedValueInBlue_ && green_ > kMinGreenValueInBlue_ && blue_ > kMinBlueValueInBlue_ && red_ < kMaxRedValueInBlue_  && green_ < kMaxGreenValueInBlue_ && blue_ < kMaxBlueValueInBlue_) {
         // blue
         colorLetter = kBlueColor_;
         #if DEBUG_TCS
         customPrintln("blue");
         #endif
-    // } else if (red_ > kMinRedValueInRed_ && green_ < kMaxGreenValueInRed_ && blue_ < kMaxBlueValueInRed_) {
-    //     // red
-    //     colorLetter = kRedColor_;
-    //     #if DEBUG_TCS
-    //     customPrintln("red");
-    //     #endif
     } else if (red_ > kMinRedValueInBlack_ && green_ > kMinGreenValueInBlack_ && blue_ > kMinBlueValueInBlack_ && red_ < kMaxRedValueInBlack_ && green_ < kMaxGreenValueInBlack_ && blue_ < kMaxBlueValueInBlack_) {
         // black
         colorLetter = kBlackColor_;
         #if DEBUG_TCS
         customPrintln("black");
+        #endif
+    } else if (photoresistor.readADC_SingleEnded(0) < kMinPhotoresistorValue_ || photoresistor.readADC_SingleEnded(0) > kMaxPhotoresistorValue_) {
+        colorLetter = kCheckpointColor_;
+        #if DEBUG_TCS
+        customPrintln("checkpoint");
         #endif
     } else {
         colorLetter = kUndefinedColor_;
@@ -291,13 +292,49 @@ void TCS::printColorList() {
 #endif
 }
 
-void TCS::getRanges() {
-    // customPrintln("checking blue");
-    delay(5000);
-    updateRGB();
+void TCS::getBlueRanges() {
+    updateRGBC();
     // customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
-    // customPrintln("checking black");
-    delay(5000);
-    updateRGB();
-    // customPrintln("red: " + String(red_ - kRangeTolerance_) + " " + String(red_ + kRangeTolerance_) + " green: " + String(green_ - kRangeTolerance_) +  " " + String(green_ + kRangeTolerance_) + " blue: " + String(blue_ - kRangeTolerance_) +  " " + String(blue_ + kRangeTolerance_));
+    kMinRedValueInBlue_ = red_ - kRangeTolerance_;
+    kMaxRedValueInBlue_ = red_ + kRangeTolerance_;
+    kMinGreenValueInBlue_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInBlue_ = green_ + kRangeTolerance_;
+    kMinBlueValueInBlue_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInBlue_ = blue_ + kRangeTolerance_;
+    customPrintln("red: " + String(kMinRedValueInBlue_) + " " + String(kMaxRedValueInBlue_) + " green: " + String(kMinGreenValueInBlue_) +  " " + String(kMaxGreenValueInBlue_) + " blue: " + String(kMinBlueValueInBlue_) +  " " + String(kMaxBlueValueInBlue_));
+}
+
+void TCS::getBlackRanges() {
+    updateRGBC();
+    kMinRedValueInBlack_ = red_ - kRangeTolerance_;
+    kMaxRedValueInBlack_ = red_ + kRangeTolerance_;
+    kMinGreenValueInBlack_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInBlack_ = green_ + kRangeTolerance_;
+    kMinBlueValueInBlack_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInBlack_ = blue_ + kRangeTolerance_;
+    #if DEBUG_TCS
+    customPrintln("red: " + String(kMinRedValueInBlack_) + " " + String(kMaxRedValueInBlack_) + " green: " + String(kMinGreenValueInBlack_) +  " " + String(kMaxGreenValueInBlack_) + " blue: " + String(kMinBlueValueInBlack_) +  " " + String(kMaxBlueValueInBlack_));
+    #endif
+}
+
+void TCS::getCheckpointRanges() {
+    short adc = photoresistor.readADC_SingleEnded(0);
+    kMinPhotoresistorValue_ = adc - kRangeTolerance_;
+    kMaxPhotoresistorValue_ = adc + kRangeTolerance_;
+    #if DEBUG_TCS
+    customPrintln("photoresistor: " + String(kMinPhotoresistorValue_) + " " + String(kMaxPhotoresistorValue_));
+    #endif
+}
+
+void TCS::getWhiteRanges() {
+    updateRGBC();
+    kMinRedValueInWhite_ = red_ - kRangeTolerance_;
+    kMaxRedValueInWhite_ = red_ + kRangeTolerance_;
+    kMinGreenValueInWhite_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInWhite_ = green_ + kRangeTolerance_;
+    kMinBlueValueInWhite_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInWhite_ = blue_ + kRangeTolerance_;
+    #if DEBUG_TCS
+    customPrintln("red: " + String(kMinRedValueInWhite_) + " " + String(kMaxRedValueInWhite_) + " green: " + String(kMinGreenValueInWhite_) +  " " + String(kMaxGreenValueInWhite_) + " blue: " + String(kMinBlueValueInWhite_) +  " " + String(kMaxBlueValueInWhite_));
+    #endif
 }

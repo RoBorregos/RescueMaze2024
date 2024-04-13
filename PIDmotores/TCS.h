@@ -4,6 +4,8 @@
 #include "Adafruit_TCS34725.h"
 #include "MUX.h"
 #include "CustomSerial.h"
+#include <Adafruit_ADS1X15.h>
+#include <Wire.h>
 
 // TODO: check which address is the correct one
 #define TCS_ADDR 0x30 
@@ -12,6 +14,7 @@ class TCS {
     private:
         Adafruit_TCS34725 tcs_ = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
         MUX mux_;
+        Adafruit_ADS1115 photoresistor;
 
         static constexpr int kColorAmount_ = 3;
 
@@ -34,38 +37,60 @@ class TCS {
 
         static constexpr int8_t millisToWait_ = 50;
 
-        static constexpr int16_t kMaxRedValueInBlue_ = 85;
-        static constexpr int16_t kMinRedValueInBlue_ = 85;
+        float kMaxRedValueInBlue_ = 85;
+        float kMinRedValueInBlue_ = 85;
 
-        static constexpr int16_t kMaxGreenValueInBlue_ = 140;
-        static constexpr int16_t kMinGreenValueInBlue_ = 80;
+        float kMaxGreenValueInBlue_ = 140;
+        float kMinGreenValueInBlue_ = 80;
 
-        static constexpr int16_t kMaxBlueValueInBlue_ = 170;
-        static constexpr int16_t kMinBlueValueInBlue_ = 100;
+        float kMaxBlueValueInBlue_ = 170;
+        float kMinBlueValueInBlue_ = 100;
 
-        static constexpr int16_t kMaxRedValueInRed_ = 270;
-        static constexpr int16_t kMinRedValueInRed_ = 150;
+        float kMaxRedValueInRed_ = 270;
+        float kMinRedValueInRed_ = 150;
 
-        static constexpr int16_t kMaxGreenValueInRed_ = 80;
-        static constexpr int16_t kMinGreenValueInRed_ = 60;
+        float kMaxGreenValueInRed_ = 80;
+        float kMinGreenValueInRed_ = 60;
 
-        static constexpr int16_t kMaxBlueValueInRed_ = 75;
-        static constexpr int16_t kMinBlueValueInRed_ = 50;
+        float kMaxBlueValueInRed_ = 75;
+        float kMinBlueValueInRed_ = 50;
 
-        static constexpr int16_t kMinRedValueInBlack_ = 105;
-        static constexpr int16_t kMaxRedValueInBlack_ = 130;
+        float kMinRedValueInBlack_ = 105;
+        float kMaxRedValueInBlack_ = 130;
 
-        static constexpr int16_t kMinGreenValueInBlack_ = 70;
-        static constexpr int16_t kMaxGreenValueInBlack_ = 100;
+        float kMinGreenValueInBlack_ = 70;
+        float kMaxGreenValueInBlack_ = 100;
 
-        static constexpr int16_t kMinBlueValueInBlack_ = 50;
-        static constexpr int16_t kMaxBlueValueInBlack_ = 85;
+        float kMinBlueValueInBlack_ = 50;
+        float kMaxBlueValueInBlack_ = 85;
 
+        float kMinRedValueInCheckpoint_ = 100;
+        float kMaxRedValueInCheckpoint_ = 130;
+
+        float kMinGreenValueInCheckpoint_ = 100;
+        float kMaxGreenValueInCheckpoint_ = 130;
+
+        float kMinBlueValueInCheckpoint_ = 100;
+        float kMaxBlueValueInCheckpoint_ = 130;
+
+        float kMinRedValueInWhite_ = 200;
+        float kMaxRedValueInWhite_ = 255;
+
+        float kMinGreenValueInWhite_ = 200;
+        float kMaxGreenValueInWhite_ = 255;
+
+        float kMinBlueValueInWhite_ = 200;
+        float kMaxBlueValueInWhite_ = 255;
 
         static constexpr char kRedColor_ = 'r';
-        static constexpr char kBlueColor_ = 'b';
-        static constexpr char kBlackColor_ = 'n';
-        static constexpr char kUndefinedColor_ = 'u';
+        static constexpr char kBlueColor_ = 'B';
+        static constexpr char kBlackColor_ = 'N';
+        static constexpr char kCheckpointColor_ = 'C';
+        static constexpr char kUndefinedColor_ = 'U';
+
+        short kMinPhotoresistorValue_ = 0;
+        short kMaxPhotoresistorValue_ = 1000;
+        static constexpr short kPhotoresistorThreshold_ = 500;
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
 
@@ -73,7 +98,7 @@ class TCS {
 
         void setDefaultValues();
 
-        static constexpr uint8_t kRangeTolerance_ = 10;
+        float kRangeTolerance_ = 20;
 
     public:
         TCS();
@@ -114,7 +139,13 @@ class TCS {
 
         void printColorList();
 
-        void getRanges();
+        void getBlueRanges();
+
+        void getBlackRanges();
+
+        void getCheckpointRanges();
+
+        void getWhiteRanges();
 };
 
 #endif

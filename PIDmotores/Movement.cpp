@@ -69,8 +69,6 @@ void Movement::setup() {
 
     setupTCS();
 
-    // getTCSInfo(); // Comment.
-
     myservo.attach(Pins::servoPin);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -80,6 +78,19 @@ void Movement::setup() {
         // customPrintln(F("SSD1306 allocation failed"));
         for(;;);
     }
+
+    setupTCS();
+    screenPrint("checking blue");
+    delay(1000);
+    tcs_.getBlueRanges();
+    screenPrint("checking black");
+    delay(5000);
+    tcs_.getBlackRanges();
+    screenPrint("checking checkpoint");
+    delay(5000);
+    tcs_.getCheckpointRanges();
+    screenPrint("finished checking");
+    delay(5000);
 
     pinMode(Pins::buttonPin, INPUT_PULLUP);
 
@@ -415,6 +426,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     if (hasReceivedSerial == true) {
                         screenPrint("request sent"+String(currentMillis) );
                         sendSerialRequest();
+                        hasReceivedSerial = false;
+                        // previousMillis = currentMillis;
                     }
                     // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
                     checkSerial(currentOrientation_);
@@ -861,9 +874,10 @@ void Movement::rgbTCSClear() {
 }
 
 char Movement::checkColors(const double targetOrientation) {
-    const char color = getTCSInfo();
+    const char color = tcs_.getColor();
     // customPrintln("Color:" + String(color));
     if (color == kBlackColor) {
+        screenPrint("Black tile detected");
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
         targetDistance_ = desiredDistance;
@@ -873,13 +887,15 @@ char Movement::checkColors(const double targetOrientation) {
         moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
     } else if (color == kBlueColor && finishedMovement_ == true) {
+        screenPrint("Blue tile detected");
         blueTile_ = true;
         stopMotors();
         // customPrintln("DETECTED BLUE TILE");
         delay(kFiveSeconds_);
         
         return color;
-    } else if (color == kRedColor) {
+    } else if (color == kCheckpointColor && finishedMovement_ == true) {
+        screenPrint("Checkpoint tile detected");
         checkpointTile_ = true;
         stopMotors();
         return color;

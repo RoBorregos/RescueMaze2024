@@ -483,7 +483,7 @@ void depthFirstSearch() {
                     nextTile->addAdjacentTile(oppositeDirection, currentTile, wall);
                     // Check if there's a wall between the two adjacent Tiles.
                     if (!wall) {
-                        // if the tile has not been visited, add it to the queue.
+                        // if the tile has not been visited, add it to the stack.
                         if (visitedMap.getIndex(nextTileCoord) != kInvalidIndex) {
                             continue;
                         }
@@ -514,6 +514,7 @@ void startAlgorithm() {
     customPrintln("Start algorithm");
     #endif
     timeAtStart = millis();
+    robot.screenPrint("Start algorithm");
     depthFirstSearch();
 }
 
@@ -550,7 +551,7 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
-    
+    // robot.printTCS();
     // Serial.println(1);
     // bool flag = false;
     // robot.screenPrint("nadota");
