@@ -12,7 +12,7 @@
 
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.124"; // Replace with your Python script's IP address
+const char* udpServerIP = "192.168.0.105"; // Replace with your Python script's IP address
 const int udpServerPort = 1239;
 
 WiFiUDP udp; 
@@ -27,6 +27,7 @@ Movement::Movement() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 }
 
 void Movement::setup() {
@@ -36,7 +37,7 @@ void Movement::setup() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
-    this->pidAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
+    this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
     #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
@@ -128,6 +129,7 @@ void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const M
 
 void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
+        customPrint(speeds[i]);
         motor[i].setSpeedAndDirection(speeds[i], directions[i]);
     }
 }
@@ -172,7 +174,7 @@ void Movement::setMotorsDirections(const MovementState state, MotorState directi
     }
 }
 
-void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward){
+void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward, bool inRamp){
     const unsigned long timeDiff = millis() - timePrev_;
     double currentOrientation = bno_.getOrientationX();
     if (timeDiff < sampleTime_) {
@@ -191,7 +193,16 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
     const uint8_t backRightIndex = static_cast<uint8_t>(MotorID::kBackRight);
 
     if (moveForward) {
-        pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        if (inRamp) {
+            pidWallAlignment_.computeDistance(0.11, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), speedLeft, speedRight);
+            /* udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("SpeedLeft:" + String(speedLeft));
+            udp.print(" ");
+            udp.print("SpeedRight:" + String(speedRight));
+            udp.endPacket(); */
+        } else {
+            pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
+        }
         speeds[frontLeftIndex] = speedLeft;
         speeds[backLeftIndex] = speedLeft;
         speeds[frontRightIndex] = speedRight;
@@ -382,7 +393,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         return;
                     }
                     pidForward_.setBaseSpeed(kBaseSpeedForward_);
+                    // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                    // crashRight = limitSwitch_[rightLimitSwitch].getState();
+
                     moveMotorsInADirection(targetOrientation, moveForward);
+                    // checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
+
                 }
                 stopMotors();
                 finishedMovement_ = true;
@@ -569,7 +585,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #endif
             rampDetected = isRamp();
             while (rampDetected) {
-                moveMotorsInADirection(targetOrientation, true);
+                moveMotorsInADirection(targetOrientation, true, true);
                 rampDetected = isRamp();
             }
             
@@ -1399,12 +1415,12 @@ void Movement::maybeGoBackwards(const double currentOrientation) {
     timePrevTurn_ = millis();
 }
 
-void Movement::weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight) {
+void Movement::weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, double currentDistance, double& speedLeft, double& speedRight) {
     pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
     const double speedLeftBno = speedLeft;
     const double speedRightBno = speedRight;
     
-    pidAlignment_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
+    pidWallAlignment_.computeDistance(targetDistance, currentDistance, speedLeft, speedRight);
     const double speedLeftVlx = speedLeft;
     const double speedRightVlx = speedRight;
 

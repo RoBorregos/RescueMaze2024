@@ -185,6 +185,7 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
     output = constrain(output, kMinOutput_, kMaxOutput_);
     resetVariable = 0;
     timePrev_ = millis();
+    // customPrintln("OUTPUT motor:" + String(output));
 }
 
 void PID::resetPID() {

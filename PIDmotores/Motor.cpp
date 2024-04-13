@@ -152,6 +152,7 @@ void Motor::setSpeedAndDirection(const double speed, const MotorState direction)
         return;
     } 
     const uint8_t pwm = speedToPwm(speed);
+    pwm_ = pwm;
     if (direction == MotorState::kForward) {
         motorForward(pwm);
     } else if (direction == MotorState::kBackward) {
@@ -188,4 +189,8 @@ void Motor::constantSpeed(const double speed, const MotorState direction) {
 
 int Motor::getTics() {
     return timeEpochTics_;
+}
+
+int Motor::getPwm() {
+    return pwm_;
 }

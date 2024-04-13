@@ -46,6 +46,7 @@ class Motor {
 
         double rpm_;
 
+        int pwm_ = 0;
         // ENCODERS
         uint8_t encoderA_ = 0;
         static volatile int encoders_[4];
@@ -115,5 +116,7 @@ class Motor {
         void constantSpeed(const double speed, const MotorState direction);
 
         int getTics();
+
+        int getPwm();
 };
 #endif

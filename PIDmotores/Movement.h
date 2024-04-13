@@ -197,12 +197,12 @@ class Movement {
         constexpr static double kDBackward = 0.0;
 
         constexpr static double kPTurn = 0.00005;
-        constexpr static double kITurn = 0.00050;
+        constexpr static double kITurn = 0.00000; // 0.00050
         constexpr static double kDTurn = 0.00019;
 
-        constexpr static double kPDistance = 0.01;
-        constexpr static double kIDistance = 0.0;
-        constexpr static double kDDistance = 0.0;
+        constexpr static double kPDistance = 0.63; // 0.63
+        constexpr static double kIDistance = 0.00; // 0.00
+        constexpr static double kDDistance = 0.082; // 0.07
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0.003};
@@ -305,7 +305,7 @@ class Movement {
 
         bool hasTraveledWallDistance(const double targetDistance, const double currentDistance);
 
-        void moveMotorsInADirection(double targetOrientation, bool moveForward);
+        void moveMotorsInADirection(double targetOrientation, bool moveForward, bool inRamp = false);
 
         void setupVlx(const VlxID vlxId);
 
@@ -398,8 +398,8 @@ class Movement {
         void printColorRanges();
 
         void maybeGoBackwards(const double currentOrientation);
-        
-        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, const double& speedLeft, const double& speedRight);
+
+        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, double& speedLeft, double& speedRight);
 };
 
 #endif
