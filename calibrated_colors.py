@@ -1,0 +1,45 @@
+red = {
+    'hmin':50,
+    'hmax':66,
+    'smin':139,
+    'smax':255,
+    'vmin':0,
+    'vmax':255,
+    'hue':0.31,
+    'sat':2.14,
+    'val':1.29,
+    'alpha':2.18,
+    'beta':1.72,
+    'erode':2,
+    'dilate':10
+}
+yellow = {
+    'hmin':50,
+    'hmax':66,
+    'smin':139,
+    'smax':255,
+    'vmin':0,
+    'vmax':255,
+    'hue':0.31,
+    'sat':2.14,
+    'val':1.29,
+    'alpha':2.18,
+    'beta':1.72,
+    'erode':2,
+    'dilate':10
+}
+green = {
+    'hmin':50,
+    'hmax':66,
+    'smin':139,
+    'smax':255,
+    'vmin':0,
+    'vmax':255,
+    'hue':0.31,
+    'sat':2.14,
+    'val':1.29,
+    'alpha':2.18,
+    'beta':1.72,
+    'erode':2,
+    'dilate':10
+}

@@ -37,7 +37,8 @@ def generate_bbox(img,frame,text=""):
         frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
         if text:
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, text, (x1, y2+5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            
         return True
     else:
         frame = frame
@@ -58,6 +59,7 @@ def start_model():
 
 
 def predict_image(model, image_path,device,class_names):
+    global value_predict
     transform = transforms.Compose([
         transforms.ToTensor(),
     ])
@@ -72,6 +74,7 @@ def predict_image(model, image_path,device,class_names):
         _, predicted = torch.max(output, 1)
         value = torch.max(output).item()
         if value >= minimum_predict_value:
+            value_predict = value
             return class_names[predicted]
         else:
             return "m"
@@ -122,16 +125,18 @@ def rotate_image(binary_img):
     return rotated
 
 def process_image(img):
-    alpha = 1.15
-    beta=1.4
+    global binary_process
+    alpha = 1
+    beta=1
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-    # cv2.imshow("brighter", img)
+    #cv2.imshow("brighter", img)
     imgFloat = img.astype(float) / 255.0
     kChannel = 1 - np.max(imgFloat, axis=2)
     kChannel = (255*kChannel).astype(np.uint8)
     #cv2.imshow('kChannel', kChannel)
     binaryThresh = 170
     _, binaryImage = cv2.threshold(kChannel, binaryThresh, 255, cv2.THRESH_BINARY)
+    binary_process = binaryImage
     #cv2.imshow("binary", binaryImage)
     kernelSize = 3
     opIterations = 2
@@ -183,10 +188,15 @@ print("Loading model ...")
 loading_time = t.time()
 model_ft = start_model()
 print(f"Model loaded in {t.time()-loading_time}")
-minimum_predict_value = 1.2
+minimum_predict_value = 0
 warmup()
-fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
+actual_state = "m"
+
+#global variables for debug
+value_predict = 0
+binary_process = None
+# fourcc = cv2.VideoWriter_fourcc(*'XVID') 
+# out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
 
 def main(): 
     print("STARTING VIDEO ....")
@@ -201,10 +211,15 @@ def main():
             while True:
                 ret_val, img = video_capture.read()
                 ret_val_one, img_one = video_capture_one.read()
+                
                 if img  is not None and active_camera > 11 and img_one is not None:
+                    img[444:480, 0:640] = [255, 255, 255]
+                    img_one[393:480, 0:640] = [255, 255, 255]
+                    img_one[0:92, 0:640] = [255, 255, 255]
                     combined_img = cv2.hconcat([img, img_one])
-                    cv2.imshow("Prueba",combined_img)
-                    actual_state = "m"
+                    #cv2.imshow("Prueba",combined_img)
+                    # actual_state = "m"
+                    
 
                     # PROCESS COLORS
                     img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
@@ -225,7 +240,7 @@ def main():
                     
 
                     binary_img = process_image(img)
-                    #cv2.imshow("binary", binary_img)      
+                    cv2.imshow("binary", binary_img)      
                     new_img = rotate_image(binary_img)
                     #cv2.imshow("Rotated", new_img)
                     new_img = generate_frame_cut(new_img)
@@ -247,10 +262,15 @@ def main():
                         #     actual_state = "m"
                             
                         if actual_state != "m":
-                           generate_bbox(binary_img,frame,actual_state)
+                           generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
 
                     #cv2.imshow("Original",frame)
-                    out.write(frame)
+                    # out.write(frame)
+                    # try:
+                    #     frame = cv2.hconcat([frame, binary_process])
+                    # except:
+                    #     frame = frame
+                    # cv2.imshow("papeado",frame)
                     # Update counts
                     for letter in letters:
                         if letter == actual_state:
@@ -295,13 +315,13 @@ def main():
         finally:
                 print("Finishing the program")
                 video_capture.release()
-                out.release()  
+                # out.release()  
                 cv2.destroyAllWindows()
                 # arduino.close()
 
     else:
         print("Error: Unajeble to open camera")
-        out.release()  
+        # out.release()  
         # arduino.close()
 
 if __name__ == '__main__':
