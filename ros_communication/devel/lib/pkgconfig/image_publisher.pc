@@ -1,4 +1,4 @@
-prefix=/workspace/RescueMaze2024/ros_communication/devel
+prefix=/home/jetson/RescueMaze2024/ros_communication/devel
 
 Name: image_publisher
 Description: Description of image_publisher

@@ -1,7 +1,7 @@
 <launch>
   <node
     pkg="image_publisher"
-    type="talker.py"
+    type="img_talker.py"
     name="talker" 
     output="screen"
   />

@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /workspace/RescueMaze2024/ros_communication/src
+CMAKE_SOURCE_DIR = /home/jetson/RescueMaze2024/ros_communication/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /workspace/RescueMaze2024/ros_communication/build
+CMAKE_BINARY_DIR = /home/jetson/RescueMaze2024/ros_communication/build
 
 # Utility rule file for clean_test_results.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /workspace/RescueMaze2024/ros_communication/build
 include CMakeFiles/clean_test_results.dir/progress.make
 
 CMakeFiles/clean_test_results:
-	/usr/bin/python3 /opt/ros/noetic/share/catkin/cmake/test/remove_test_results.py /workspace/RescueMaze2024/ros_communication/build/test_results
+	/usr/bin/python3 /opt/ros/noetic/share/catkin/cmake/test/remove_test_results.py /home/jetson/RescueMaze2024/ros_communication/build/test_results
 
 clean_test_results: CMakeFiles/clean_test_results
 clean_test_results: CMakeFiles/clean_test_results.dir/build.make
@@ -71,6 +71,6 @@ CMakeFiles/clean_test_results.dir/clean:
 .PHONY : CMakeFiles/clean_test_results.dir/clean
 
 CMakeFiles/clean_test_results.dir/depend:
-	cd /workspace/RescueMaze2024/ros_communication/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /workspace/RescueMaze2024/ros_communication/src /workspace/RescueMaze2024/ros_communication/src /workspace/RescueMaze2024/ros_communication/build /workspace/RescueMaze2024/ros_communication/build /workspace/RescueMaze2024/ros_communication/build/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/jetson/RescueMaze2024/ros_communication/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jetson/RescueMaze2024/ros_communication/src /home/jetson/RescueMaze2024/ros_communication/src /home/jetson/RescueMaze2024/ros_communication/build /home/jetson/RescueMaze2024/ros_communication/build /home/jetson/RescueMaze2024/ros_communication/build/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/clean_test_results.dir/depend
 

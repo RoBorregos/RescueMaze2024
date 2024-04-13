@@ -1,2 +1,2 @@
 image_publisher
--DCATKIN_DEVEL_PREFIX=/workspace/RescueMaze2024/ros_communication/devel -DCMAKE_INSTALL_PREFIX=/workspace/RescueMaze2024/ros_communication/install -G Unix Makefiles
+-DCATKIN_DEVEL_PREFIX=/home/jetson/RescueMaze2024/ros_communication/devel -DCMAKE_INSTALL_PREFIX=/home/jetson/RescueMaze2024/ros_communication/install -G Unix Makefiles

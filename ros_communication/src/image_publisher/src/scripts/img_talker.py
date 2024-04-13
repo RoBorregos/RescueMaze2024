@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
 #create a publisher node that publishes images from the camera
 import rospy
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
 import cv2
 import numpy as np
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+
 
 def gstreamer_pipeline(
     sensor_id=1,
@@ -44,6 +46,7 @@ def img_talker():
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             msg = bridge.cv2_to_imgmsg(frame, encoding="rgb8")
             pub.publish(msg)
+            rospy.loginfo("Sended image")
             rate.sleep()
     cap.release()
 

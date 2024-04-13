@@ -36,11 +36,30 @@ def generate_bbox(img,frame,text=""):
         frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
         if text:
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, text, (x1, y2+5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
         return True
     else:
         frame = frame
         return False
+
+def process_colors(img,frame,actual_state):
+    img_red = get_color(img,red['hmin'],red['hmax'],red['smin'],red['smax'],red['vmin'],red['vmax'],red['hue'],red['sat'],red['val'],red['alpha'],red['beta'],red['erode'],red['dilate'])
+    img_yellow = get_color(img,yellow['hmin'],yellow['hmax'],yellow['smin'],yellow['smax'],yellow['vmin'],yellow['vmax'],yellow['hue'],yellow['sat'],yellow['val'],yellow['alpha'],yellow['beta'],yellow['erode'],yellow['dilate'])
+    #img_green = get_color(img_r,green['hmin'],green['hmax'],green['smin'],green['smax'],green['vmin'],green['vmax'],green['hue'],green['sat'],green['val'],green['alpha'],green['beta'],green['erode'],green['dilate'])
+
+    if debug['generate_BBOX']:
+        processed_red = generate_bbox(img_red,frame,"red")
+        processed_yellow = generate_bbox(img_yellow,frame,"green")
+    # processed_green = generate_bbox(img_green,frame,"yellow")
+
+    if processed_red:
+        actual_state = "H"
+    if processed_yellow:
+        actual_state = "S"
+
+    return actual_state
+    # if processed_green:
+    #     actual_state = "u"
 
 
 ################################################################
@@ -92,6 +111,25 @@ def warmup():
 
 #########################################################################
 ###############PROCESSING IMAGES FUNCTIONS###############################
+def search_letter(img,frame,actual_state):
+     # #PROCESS LETTERS
+    binary_img = process_image(img)
+    #cv2.imshow("binary", binary_img)      
+    rotated_img = rotate_image(binary_img)
+    #cv2.imshow("Rotated", new_img)
+    cutted_img = generate_frame_cut(rotated_img)
+    if cutted_img is not None:
+        post_img = post_processing(cutted_img,4)
+        new_img = cv2.cvtColor(post_img,cv2.COLOR_GRAY2RGB)
+        if debug['model']:
+            actual_letter = predict_image(model_ft,new_img,device,class_names)
+            actual_state = actual_letter
+        #DEBUG IN IMAGE
+        if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
+            generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
+    return actual_state
+
+
 
 def areaFilter(minArea, inputImage):
     componentsNumber, labeledImage, componentStats, componentCentroids = \
@@ -183,6 +221,9 @@ def setup():
     global arduino
     global model_ft
     global minimum_predict_value
+    global red
+    global yellow
+    global green
     #Debug variables
     global out
     global value_predict
@@ -191,13 +232,17 @@ def setup():
 
     ##################VARIABLES ZONE#################
     class_names = ['h', 's', 'u']
+    red = calibrated_colors.red
+    yellow = calibrated_colors.yellow
+    green = calibrated_colors.green
     minimum_predict_value = 0
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':False,
-        'model':False,
+        'model':True,
         'record':False,
-        'generate_BBOX':False,
+        'generate_BBOX':True,
+        'show_images':False,
     }
     value_predict = 0
     binary_process = None
@@ -244,48 +289,21 @@ def main():
                 ret_val_l, img_l = left_video.read()
 
                 if img_r  is not None and active_camera > 11 and img_l is not None:
-                    # img_r[444:480, 0:640] = [255, 255, 255]
-                    # img_l[393:480, 0:640] = [255, 255, 255]
-                    # img_l[0:92, 0:640] = [255, 255, 255]
-                    combined_img = cv2.hconcat([img_r, img_l])
-                    cv2.imshow("Prueba",combined_img)
-                    # actual_state = "m"
-                
+                    #Resize img left
+                    img_l = img_l[140:480, 0:640]
+                    if debug['show_images']:
+                        cv2.imshow("Left",img_l)
+                        cv2.imshow("Right",img_r)
+                    frame_r = img_r.copy()
+                    frame_l = img_l.copy()
+
                     # PROCESS COLORS
-                    img_red = get_color(img_r,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
-                    img_yellow = get_color(img_r,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
-                    #img_green = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
+                    actual_state = process_colors(img_r,frame_r,actual_state)
+                    #PROCESS LETTER
+                    actual_state = search_letter(img_r,frame_r,actual_state)
 
-                    
-                    frame = img_r.copy()
-                    processed_red = generate_bbox(img_red,frame,"red")
-                    processed_yellow = generate_bbox(img_yellow,frame,"yellow")
-                    # processed_green = generate_bbox(img_green,frame,"yellow")
-
-                    if processed_red:
-                        actual_state = "h"
-                    if processed_yellow:
-                        actual_state = "s"
-                    # if processed_green:
-                    #     actual_state = "u"
-
-                    # #PROCESS LETTERS
-                    binary_img = process_image(img_l)
-                    #cv2.imshow("binary", binary_img)      
-                    new_img = rotate_image(binary_img)
-                    #cv2.imshow("Rotated", new_img)
-                    new_img = generate_frame_cut(new_img)
-
-                    if new_img is not None:
-                        new_img = post_processing(new_img,4)
-                        new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
-                        if debug['model']:
-                            actual_letter = predict_image(model_ft,new_img,device,class_names)
-                            actual_state = actual_letter
-                        #DEBUG IN IMAGE
-                        if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
-                           generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
-
+                    if debug['generate_BBOX']: 
+                        cv2.imshow("bbox frame",frame_r)
                     print(f"Actual value: {actual_state}  frames: {frames}")
                     frames += 1
                     #cv2.imshow("Original",img)

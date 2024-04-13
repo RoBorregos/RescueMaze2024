@@ -31,17 +31,17 @@ def show_camera():
                 # print(frame_1)
                 # print(frame_2)
                 # print(frame.shape)
-                frame = frame[frame1:480, 0:640]
-                frame_2 = frame_2[frame2:480, 0:640]
-                frame = frame[0:frame1top, 0:640]
-                frame_2 = frame_2[0:frame2top, 0:640]
-                # frame[frame1:480, 0:640] = [255, 255, 255]
-                # frame_2[frame2:480, 0:640] = [255, 255, 255]
-                # frame[0:frame1top, 0:640] = [255, 255, 255]
-                # frame_2[0:frame2top, 0:640] = [255, 255, 255]
+                # frame = frame[frame1:480, 0:640]
+                # frame_2 = frame_2[frame2:480, 0:640]
+                # frame = frame[0:frame1top, 0:640]
+                # frame_2 = frame_2[0:frame2top, 0:640]
+                frame[frame1:480, 0:640] = [255, 255, 255]
+                frame_2[frame2:480, 0:640] = [255, 255, 255]
+                frame[0:frame1top, 0:640] = [255, 255, 255]
+                frame_2[0:frame2top, 0:640] = [255, 255, 255]
                 #resize frame
-                frame = cv2.resize(frame, (640, 480))
-                frame_2 = cv2.resize(frame_2, (640, 480))
+                # frame = cv2.resize(frame, (640, 480))
+                # frame_2 = cv2.resize(frame_2, (640, 480))
                 combined_img = cv2.hconcat([frame, frame_2])
                 cv2.imshow("Prueba",combined_img)
                 #show frame and frame_2 in one window
