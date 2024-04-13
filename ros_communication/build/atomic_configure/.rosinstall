@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/jetson/RescueMaze2024/ros_communication/devel/setup.sh

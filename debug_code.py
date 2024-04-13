@@ -26,7 +26,6 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     #testing filtering noise
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
-
     return imgResult
      
 def generate_bbox(img,frame,text=""):
@@ -38,7 +37,6 @@ def generate_bbox(img,frame,text=""):
         if text:
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.putText(frame, text, (x1, y2+5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            
         return True
     else:
         frame = frame
@@ -53,10 +51,9 @@ def start_model():
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
-    model_ft.load_state_dict(torch.load('/home/jetson/RescueMaze2024/jetson_vision/model.pth'))
+    model_ft.load_state_dict(torch.load('model.pth'))
     model_ft.eval()
     return model_ft
-
 
 def predict_image(model, image_path,device,class_names):
     global value_predict
@@ -78,8 +75,6 @@ def predict_image(model, image_path,device,class_names):
             return class_names[predicted]
         else:
             return "m"
-        #print(output)
-    #print(t.time()-time1)
 
 def warmup():
     print("STARTING WARMUP .....")
@@ -88,7 +83,7 @@ def warmup():
     passed_times = 0
     while abs(t.time()-actual_time) > 3:
         actual_time = t.time()
-        img = cv2.imread("/home/jetson/RescueMaze2024/jetson_vision/warmup.jpg")
+        img = cv2.imread("warmup.jpg")
         img = cv2.resize(img,(32,32))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         predict_image(model_ft,img,device,class_names)
@@ -99,16 +94,10 @@ def warmup():
 ###############PROCESSING IMAGES FUNCTIONS###############################
 
 def areaFilter(minArea, inputImage):
-    # Perform an area filter on the binary blobs:
     componentsNumber, labeledImage, componentStats, componentCentroids = \
         cv2.connectedComponentsWithStats(inputImage, connectivity=4)
-    # Get the indices/labels of the remaining components based on the area stat
-    # (skip the background component at index 0)
     remainingComponentLabels = [i for i in range(1, componentsNumber) if componentStats[i][4] >= minArea]
-    # Filter the labeled pixels based on the remaining labels,
-    # assign pixel intensity to 255 (uint8) for the remaining pixels
     filteredImage = np.where(np.isin(labeledImage, remainingComponentLabels) == True, 255, 0).astype('uint8')
-
     return filteredImage
 
 def rotate_image(binary_img):
@@ -160,8 +149,6 @@ def generate_frame_cut(img):
 
     return frame
 
-
-
 def post_processing(img,dilate):
     size_img = cv2.resize(img,(100,100))
     size_img = cv2.dilate(size_img, None, iterations=dilate)
@@ -169,78 +156,122 @@ def post_processing(img,dilate):
     return size_img
 
 
+################################################################
+###############EXTERNAL FUNCTIONS###############################
+
+def start_serial():
+    print("Opening Serial ..")
+    while True:
+        try:
+            arduino = serial.Serial('/dev/ttyUSB0', 115200)
+            break
+        except:
+            print("Serial not found .. waiting 2 seconds")
+            t.sleep(2)
+    print("Serial Opened ..")
+    return arduino
+
 
 ################################################################
-###############VARIABLES AND MORE###############################
+###############MAIN STARTED FUNCTON###############################
+def setup():
+    #Main variables
+    global right_video
+    global left_video
+    global class_names
+    global device
+    global arduino
+    global model_ft
+    global minimum_predict_value
+    #Debug variables
+    global out
+    global value_predict
+    global binary_process
+    global debug
 
-class_names = ['h', 's', 'u']
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
-camera_source = camera_activate.gstreamer_pipeline(flip_method=0)
-video_capture = cv2.VideoCapture(camera_source, cv2.CAP_GSTREAMER)
-camera_source_one = camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
-video_capture_one = cv2.VideoCapture(camera_source_one, cv2.CAP_GSTREAMER)
-#video_capture = cv2.VideoCapture(camera_source)
-print("Opening Serial ..")
-# arduino = serial.Serial('/dev/ttyUSB0', 115200)
-print("Serial Opened ..")
-print("Loading model ...")
-loading_time = t.time()
-model_ft = start_model()
-print(f"Model loaded in {t.time()-loading_time}")
-minimum_predict_value = 0
-warmup()
-actual_state = "m"
+    ##################VARIABLES ZONE#################
+    class_names = ['h', 's', 'u']
+    minimum_predict_value = 0
+    #GLOBAL DEBUG VARIABLES
+    debug = {
+        'arduino':False,
+        'model':False,
+        'record':False,
+        'generate_BBOX':False,
+    }
+    value_predict = 0
+    binary_process = None
+    #Start record
+    if debug['record']:
+        fourcc = cv2.VideoWriter_fourcc(*'XVID') 
+        out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
+    ##################DEVICES SETUP##################
+    #DEVICE TORCH USAGE
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(device)
+    #CAMERA ASSIGNMENT
+    right_cam = camera_activate.gstreamer_pipeline(flip_method=0)
+    right_video = cv2.VideoCapture(right_cam, cv2.CAP_GSTREAMER)
+    left_cam= camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
+    left_video = cv2.VideoCapture(left_cam, cv2.CAP_GSTREAMER)
+    #MODEL SETUP AND WARMUP
+    if debug['model']:
+        print("Loading model ...")
+        loading_time = t.time()
+        model_ft = start_model()
+        print(f"Model loaded in {t.time()-loading_time}")
+        warmup()
+    #SERIAL SETUP
+    if debug["arduino"] : arduino = start_serial()
 
-#global variables for debug
-value_predict = 0
-binary_process = None
-# fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-# out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
 
 def main(): 
+    ############SETUP#############
+    print("STARTING SETUP....")
+    setup_time = t.time()
+    setup()
+    print(f"Setup finished in {t.time()-setup_time}")
     print("STARTING VIDEO ....")
-    if video_capture.isOpened() and video_capture_one.isOpened():
+    ############LOOP###############
+    if right_video.isOpened() and left_video.isOpened():
         try:
-            # time = t.time()
-            letters = ['s','h','u','m']
-            repetitions = [0,0,0,0]
-            index = 0
-            active_camera = 0
+            actual_state = "m"
+            active_camera  = 0
+            frames = 0
             print("VIDEO STARTED")
             while True:
-                ret_val, img = video_capture.read()
-                ret_val_one, img_one = video_capture_one.read()
-                
-                if img  is not None and active_camera > 11 and img_one is not None:
-                    img[444:480, 0:640] = [255, 255, 255]
-                    img_one[393:480, 0:640] = [255, 255, 255]
-                    img_one[0:92, 0:640] = [255, 255, 255]
-                    combined_img = cv2.hconcat([img, img_one])
-                    #cv2.imshow("Prueba",combined_img)
-                    # actual_state = "m"
-                    
+                ret_val_r, img_r = right_video.read()
+                ret_val_l, img_l = left_video.read()
 
+                if img_r  is not None and active_camera > 11 and img_l is not None:
+                    # img_r[444:480, 0:640] = [255, 255, 255]
+                    # img_l[393:480, 0:640] = [255, 255, 255]
+                    # img_l[0:92, 0:640] = [255, 255, 255]
+                    combined_img = cv2.hconcat([img_r, img_l])
+                    cv2.imshow("Prueba",combined_img)
+                    # actual_state = "m"
+                
                     # PROCESS COLORS
-                    img_red = get_color(img,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
-                    img_yellow = get_color(img,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
+                    img_red = get_color(img_r,50,66,139,255,0,255,0.31,2.14,1.29,2.18,1.72,2,10)
+                    img_yellow = get_color(img_r,13,26,49,157,82,104,0.5,0.91,1.37,1.78,2,1,5)
                     #img_green = get_color(img,47,68,46,150,140,255,0.5,0.91,1.03,1.78,2,3,3)
 
-                    # #PROCESS LETTERS
-                    frame = img.copy()
+                    
+                    frame = img_r.copy()
                     processed_red = generate_bbox(img_red,frame,"red")
                     processed_yellow = generate_bbox(img_yellow,frame,"yellow")
                     # processed_green = generate_bbox(img_green,frame,"yellow")
+
                     if processed_red:
                         actual_state = "h"
                     if processed_yellow:
                         actual_state = "s"
                     # if processed_green:
                     #     actual_state = "u"
-                    
 
-                    binary_img = process_image(img)
-                    cv2.imshow("binary", binary_img)      
+                    # #PROCESS LETTERS
+                    binary_img = process_image(img_l)
+                    #cv2.imshow("binary", binary_img)      
                     new_img = rotate_image(binary_img)
                     #cv2.imshow("Rotated", new_img)
                     new_img = generate_frame_cut(new_img)
@@ -248,81 +279,33 @@ def main():
                     if new_img is not None:
                         new_img = post_processing(new_img,4)
                         new_img = cv2.cvtColor(new_img, cv2.COLOR_GRAY2RGB)
-                        actual_letter = predict_image(model_ft,new_img,device,class_names)
-                        actual_state = actual_letter
-                        # if actual_letter != "m":
-                        #     if last_letter == actual_letter:
-                        #         letter_count += 1
-                        #     else:
-                        #         last_letter == actual_letter
-                        #         letter_count = 0
-                        # else:
-                        #     letter_count = 0
-                        #     last_letter = "m"
-                        #     actual_state = "m"
-                            
-                        if actual_state != "m":
+                        if debug['model']:
+                            actual_letter = predict_image(model_ft,new_img,device,class_names)
+                            actual_state = actual_letter
+                        #DEBUG IN IMAGE
+                        if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
                            generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
 
-                    #cv2.imshow("Original",frame)
-                    # out.write(frame)
-                    # try:
-                    #     frame = cv2.hconcat([frame, binary_process])
-                    # except:
-                    #     frame = frame
-                    # cv2.imshow("papeado",frame)
-                    # Update counts
-                    for letter in letters:
-                        if letter == actual_state:
-                            index = letters.index(letter)
-                            repetitions[index] += 1
-                    print(f"Actual value: {actual_state}  reps: {repetitions[index]}")
-                    #for testing
-                    # if t.time() > time + 5:
-                    #     time = t.time()
-                    #     lastMax = 0
-                    #     for i in range(4):
-                    #         if repetitions[i] > lastMax:
-                    #             index = i
-                    #             lastMax = repetitions[i]
-                    #     actual_state = letters[index]
-                    #     print(f"Sending state to esp = {actual_state}")
-                    #     for i in range(4):
-                    #         print(f"Letter {letters[i]} = {repetitions[i]}")
-                    #     repetitions = [0,0,0,0]
-                    # If recieving data from arduino
-                    # if arduino.in_waiting > 0:
-                    #     line = arduino.readline().decode('utf-8').strip()
-                    #     if line == "1":
-                    #         lastMax = 0
-                    #         for i in range(4):
-                    #             if repetitions[i] > lastMax:
-                    #                 index = i
-                    #                 lastMax = repetitions[i]
-                    #         actual_state = letters[index]
-                    #         repetitions = [0,0,0,0]
-                    #         print(f"Sending state to esp = {actual_state}")
-                    #         arduino.write(actual_state.encode('utf-8'))
-                    #     if line == "2":
-                    #         print("Serial reseted")
-                    #         repetitions = [0,0,0,0]
-                    
+                    print(f"Actual value: {actual_state}  frames: {frames}")
+                    frames += 1
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
-                active_camera += 1
+                else:
+                    active_camera += 1
 
         finally:
                 print("Finishing the program")
-                video_capture.release()
-                # out.release()  
+                right_video.release()
+                left_video.release()
+                if debug['record']: out.release()  
                 cv2.destroyAllWindows()
-                # arduino.close()
+                if debug["arduino"] : arduino.close()
 
     else:
-        print("Error: Unajeble to open camera")
-        # out.release()  
-        # arduino.close()
+        print("Error: Unable to open camera")
+        if debug['record']: out.release()  
+        if debug["arduino"] : arduino.close()
 
 if __name__ == '__main__':
     main()
