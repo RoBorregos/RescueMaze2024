@@ -498,7 +498,8 @@ void setup(){
     #endif
     robot.setup();
     startAlgorithm();
-
+    // robot.moveMotors(MovementState::kForward, 0, 1);
+    // robot.printColorRanges();
     // robot.moveMotors(MovementState::kForward, 0, 1.5);
 
     // robot.moveMotors(MovementState::kTurnRight, 90, 0);
@@ -523,6 +524,7 @@ void loop() {
     customPrintln("Loop");
     delay(1000);
     #endif
+
     
     // Serial.println(1);
     // bool flag = false;

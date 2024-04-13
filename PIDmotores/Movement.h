@@ -43,8 +43,6 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
-        double currentOrientation_ = 0;
-
         double crashDeltaOrientation_ = 20.0;
         double crashDeltaDistance_ = 0.08;
 
@@ -68,7 +66,10 @@ class Movement {
 
         // TODO: Improve the name of this variable
         static constexpr double kMinWallDistance = 0.06; // 6 cm
+        
+        const double timeToTurn_ = 5000;
 
+        static constexpr double kMaxErrorOrientation = 1.0; 
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -115,6 +116,8 @@ class Movement {
         double crashDistance_ = 0;
 
         double timePrev_ = 0;
+
+        double timePrevTurn_ = 0;
 
         VlxID vlxDirections[kNumberOfVlx] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
@@ -167,6 +170,7 @@ class Movement {
 
         constexpr static double speedOffset = 0.02;
 
+        const double kOneCmInM = 0.01;
 
         PID pidDummy_;
         PID pidForward_;
@@ -178,7 +182,7 @@ class Movement {
         double distanceToCenter_;
 
         constexpr static double kPForward = 0.07; // 0.09
-        constexpr static double kIForward = 0.00;
+        constexpr static double kIForward = 0.01;
         constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
@@ -186,17 +190,17 @@ class Movement {
         constexpr static double kDBackward = 0.0;
 
         constexpr static double kPTurn = 0.00005;
-        constexpr static double kITurn = 0.0;
+        constexpr static double kITurn = 0.00050;
         constexpr static double kDTurn = 0.00019;
 
         constexpr static double kMaxErrorSum{4000};
-        constexpr static double kMinOutput{0};
+        constexpr static double kMinOutput{0.003};
         constexpr static double kTurnMinOutput{0.050};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{100};
         constexpr static long kSampleTimeTraveled{50};
 
-        // TCS
+        // TCS 
         TCS tcs_;
         static constexpr int kPrecision = 100;
         static constexpr uint8_t kColorAmount = 3;
@@ -221,7 +225,7 @@ class Movement {
         const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
             {20, 120, 33, 90, 25, 79},
-            {85, 150, 80, 140, 120, 175}
+            {85, 150, 80, 200, 120, 220}
         };
 
         bool blackTile_ = false;
@@ -379,6 +383,10 @@ class Movement {
         void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
         
         void printEncoderTics();
+
+        void printColorRanges();
+
+        void maybeGoBackwards(const double currentOrientation);
 };
 
 #endif

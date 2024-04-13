@@ -12,7 +12,7 @@
 
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.119"; // Replace with your Python script's IP address
+const char* udpServerIP = "192.168.0.124"; // Replace with your Python script's IP address
 const int udpServerPort = 1239;
 
 WiFiUDP udp; 
@@ -208,7 +208,6 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
 
         setMotorsDirections(MovementState::kBackward, directions);
     }
-    currentOrientation_ = currentOrientation;
 
     setSpeedsAndDirections(speeds, directions);
 
@@ -310,7 +309,7 @@ void Movement::rampMovement(const double targetOrientation) {
 void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) {
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
-    currentOrientation_ = bno_.getOrientationX(); 
+    double currentOrientation = bno_.getOrientationX(); 
     double speedLeft = 0;
     double speedRight = 0;
     bool turnLeft = false;
@@ -369,12 +368,23 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #endif
 
             if (frontWallDistance <= 0.45) {
-                while (frontWallDistance > 0.06) {
+                while (frontWallDistance > 0.06 && !isRamp()) {
+                    #if DEBUG_OFFLINE_MOVEMENT
+                    udp.beginPacket(udpServerIP, udpServerPort);
+                    udp.print("isRamp:" + String(isRamp()));
+                    udp.endPacket();
+                    #endif
                     frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+                    checkColors(targetOrientation);
+                    if (wasBlackTile()) {
+                        return;
+                    }
                     pidForward_.setBaseSpeed(kBaseSpeedForward_);
                     moveMotorsInADirection(targetOrientation, moveForward);
                 }
                 stopMotors();
+                finishedMovement_ = true;
+                checkColors(targetOrientation);
                 break;
             }
 
@@ -399,7 +409,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         hasReceivedSerial = false;
                         // previousMillis = currentMillis;
                     }
-                    checkSerial(currentOrientation_);
+                    checkSerial(currentOrientation);
                 }
 
                 // customPrintln("Color:" + String(getTCSInfo()));
@@ -429,7 +439,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
                 moveMotorsInADirection(targetOrientation, true);
 
-                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation_, useWallDistance);
+                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
             }
 
             stopMotors();
@@ -489,7 +499,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
                     }
 
-                    checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation_, useWallDistance);
+                    checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
 
                     #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
@@ -532,21 +542,22 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 moveMotorsInADirection(targetOrientation, moveForward);
             }
 
+            allDistanceTraveled_ = 0;
 
             stopMotors();
             
-            break;
+            return;
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
             currentState_ = MovementState::kTurnLeft;
-            turnMotors(targetOrientation, targetDistance, currentOrientation_);
+            turnMotors(targetOrientation, targetDistance, currentOrientation);
 
             break;
         }
         case (MovementState::kTurnRight): {
             currentState_ = MovementState::kTurnRight;
-            turnMotors(targetOrientation, targetDistance, currentOrientation_);
+            turnMotors(targetOrientation, targetDistance, currentOrientation);
 
             break;
         }
@@ -585,7 +596,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
     }
 
-    maybeResetWithBackWall(targetOrientation, currentOrientation_);
+    maybeResetWithBackWall(targetOrientation, currentOrientation);
 }
 
 
@@ -650,8 +661,10 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     udp.print("TargetOrientation:" + String(targetOrientation));
     udp.endPacket();
     #endif
-
+    timePrevTurn_ = millis();
     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError) {
+        
+        maybeGoBackwards(currentOrientation);
 
         #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
@@ -678,6 +691,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         udp.endPacket();
         #endif
 
+
         if (turnLeft) {
             setMotorsDirections(MovementState::kTurnLeft, directions); 
         } else {
@@ -685,28 +699,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         }
         
         for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-            // // Turn left
-            // if (currentState_ == MovementState::kTurnLeft && i < 2) {
-            //     // Left
-            //     customPrintln("Turn left");
-            //     speeds[i] = speed - speedOffset;
-            // } else if (currentState_ == MovementState::kTurnLeft && i >= 2){
-            //     // Right
-            //     speeds[i] = speed + speedOffset;
-            // }
-            // // Turn right
-            // if (currentState_ == MovementState::kTurnRight && i < 2) {
-            //     // Left
-            //     customPrintln("Turn right");
-            //     speeds[i] = speed + speedOffset;
-            // } else if (currentState_ == MovementState::kTurnRight && i >= 2){
-            //     // Right
-            //     speeds[i] = speed - speedOffset;
-            // } else {
-            //     speeds[i] = speed;
-            // }
             speeds[i] = speed;
-            
         }
 
         setSpeedsAndDirections(speeds, directions);
@@ -832,7 +825,6 @@ void Movement::printTCS() {
 }
 
 char Movement::getTCSInfo() {
-    printTCS();
     return tcs_.getColorWithThresholds();
 } 
 
@@ -842,7 +834,7 @@ void Movement::rgbTCSClear() {
 
 char Movement::checkColors(const double targetOrientation) {
     const char color = getTCSInfo();
-    // customPrintln("Color:" + String(color));
+    customPrintln("Color:" + String(color));
     if (color == kBlackColor) {
         blackTile_ = true;
         const double desiredDistance = allDistanceTraveled_;
@@ -1388,4 +1380,19 @@ void Movement::printEncoderTics() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
         customPrintln("Motor" + String(i) + "Tics:" + String(motor[i].getTics()));
     }
+}
+
+void Movement::printColorRanges() {
+    tcs_.getRanges();
+}
+
+void Movement::maybeGoBackwards(const double currentOrientation) {
+    const unsigned long timeDiff = millis() - timePrevTurn_;
+
+    if (timeDiff < timeToTurn_) {
+        return;
+    }
+    stopMotors();
+    moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
+    timePrevTurn_ = millis();
 }
