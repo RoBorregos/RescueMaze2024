@@ -280,7 +280,6 @@ def main():
     ############LOOP###############
     if right_video.isOpened() and left_video.isOpened():
         try:
-            actual_state = "m"
             active_camera  = 0
             frames = 0
             print("VIDEO STARTED")
@@ -289,6 +288,8 @@ def main():
                 ret_val_l, img_l = left_video.read()
 
                 if img_r  is not None and active_camera > 11 and img_l is not None:
+                    actual_state_r = "m"
+                    actual_state_l = "m"
                     #Resize img left
                     img_l = img_l[140:480, 0:640]
                     if debug['show_images']:
@@ -298,13 +299,15 @@ def main():
                     frame_l = img_l.copy()
 
                     # PROCESS COLORS
-                    actual_state = process_colors(img_r,frame_r,actual_state)
+                    actual_state_r = process_colors(img_r,frame_r,actual_state_r)
+                    actual_state_l = process_colors(img_l,frame_l,actual_state_l)
                     #PROCESS LETTER
-                    actual_state = search_letter(img_r,frame_r,actual_state)
-
+                    actual_state_r = search_letter(img_r,frame_r,actual_state_r)
+                    actual_state_l = search_letter(img_l,frame_l,actual_state_l)
                     if debug['generate_BBOX']: 
                         cv2.imshow("bbox frame",frame_r)
-                    print(f"Actual value: {actual_state}  frames: {frames}")
+                        cv2.imshow("bbox frame2",frame_l)
+                    print(f"Actual value: {actual_state_l}, {actual_state_r}  frames: {frames}")
                     frames += 1
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
