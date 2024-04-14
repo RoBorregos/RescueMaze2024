@@ -115,9 +115,18 @@ def warmup():
 #########################################################################
 ###############PROCESSING IMAGES FUNCTIONS###############################
 def search_letter(img,frame,actual_state):
+    global preprocessing_frame
      # #PROCESS LETTERS
     binary_img = process_image(img)
-    #cv2.imshow("binary", binary_img)      
+    #cv2.imshow("binary", binary_img)
+
+
+
+    
+
+
+
+
     rotated_img = rotate_image(binary_img)
     #cv2.imshow("Rotated", new_img)
     cutted_img = generate_frame_cut(rotated_img)
@@ -128,6 +137,9 @@ def search_letter(img,frame,actual_state):
             actual_letter = predict_image(model_ft,new_img,device,class_names)
             actual_state = actual_letter
         #DEBUG IN IMAGE
+        if debug['preprocessing_show']:
+            preprocessing_frame = stackImages(0.6,([img,rotated_img],[binary_img,cutted_img]))
+            cv2.imshow("preprocesing frame",preprocessing_frame)
         if actual_state != "m" and debug['generate_BBOX'] and debug['model'] and debug['show_images']:
             #cv2.imshow("cutted",cutted_img)
             generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
@@ -156,8 +168,7 @@ def rotate_image(binary_img):
     return rotated
 
 def process_image(img):
-    global binary_process
-    alpha = 1
+    alpha = 1.01
     beta=1
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     #cv2.imshow("brighter", img)
@@ -206,6 +217,37 @@ def download_json():
         file.close()
     return data
 
+def stackImages(scale,imgArray):
+    rows = len(imgArray)
+    cols = len(imgArray[0])
+    rowsAvailable = isinstance(imgArray[0], list)
+    width = imgArray[0][0].shape[1]
+    height = imgArray[0][0].shape[0]
+    if rowsAvailable:
+        for x in range ( 0, rows):
+            for y in range(0, cols):
+                if imgArray[x][y].shape[:2] == imgArray[0][0].shape [:2]:
+                    imgArray[x][y] = cv2.resize(imgArray[x][y], (0, 0), None, scale, scale)
+                else:
+                    imgArray[x][y] = cv2.resize(imgArray[x][y], (imgArray[0][0].shape[1], imgArray[0][0].shape[0]), None, scale, scale)
+                if len(imgArray[x][y].shape) == 2: imgArray[x][y]= cv2.cvtColor( imgArray[x][y], cv2.COLOR_GRAY2BGR)
+        imageBlank = np.zeros((height, width, 3), np.uint8)
+        hor = [imageBlank]*rows
+        hor_con = [imageBlank]*rows
+        for x in range(0, rows):
+            hor[x] = np.hstack(imgArray[x])
+        ver = np.vstack(hor)
+    else:
+        for x in range(0, rows):
+            if imgArray[x].shape[:2] == imgArray[0].shape[:2]:
+                imgArray[x] = cv2.resize(imgArray[x], (0, 0), None, scale, scale)
+            else:
+                imgArray[x] = cv2.resize(imgArray[x], (imgArray[0].shape[1], imgArray[0].shape[0]), None,scale, scale)
+            if len(imgArray[x].shape) == 2: imgArray[x] = cv2.cvtColor(imgArray[x], cv2.COLOR_GRAY2BGR)
+        hor= np.hstack(imgArray)
+        ver = hor
+    return ver
+
 def start_serial():
     print("Opening Serial ..")
     while True:
@@ -236,7 +278,6 @@ def setup():
     #Debug variables
     global out
     global value_predict
-    global binary_process
     global debug
 
     ##################VARIABLES ZONE#################
@@ -245,21 +286,22 @@ def setup():
     red = data["red"]
     yellow = data["yellow"]
     green = data["green"]
-    minimum_predict_value = 3.4
+    minimum_predict_value = -1
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':False,
-        'model':False,
-        'record':True,
+        'model':True,
+        'record':False,
         'generate_BBOX':True,
-        'show_images':False,
+        'show_images':True,
+        'preprocessing_show':False,
+        'process_colors':True
     }
     value_predict = 0
-    binary_process = None
     #Start record
     if debug['record']:
         fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-        out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
+        out = cv2.VideoWriter('output.avi', fourcc, 10.0, (768, 288)) 
     ##################DEVICES SETUP##################
     #DEVICE TORCH USAGE
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -294,6 +336,7 @@ def main():
             frames = 0
             print("VIDEO STARTED")
             while True:
+                
                 ret_val_r, img_r = right_video.read()
                 ret_val_l, img_l = left_video.read()
 
@@ -303,17 +346,20 @@ def main():
                     actual_state = "m"
                     #Resize img left
                     img_l = img_l[92:420, 0:640]
-                    if debug['show_images']:
-                        cv2.imshow("Left",img_l)
-                        cv2.imshow("Right",img_r)
+                    #if debug['show_images']:
+                     #   cv2.imshow("Left",img_l)
+                      #  cv2.imshow("Right",img_r)
                     frame_r = img_r.copy()
                     frame_l = img_l.copy()
 
                     # PROCESS COLORS
-                    actual_state_r = process_colors(img_r,frame_r,actual_state_r)
-                    actual_state_l = process_colors(img_l,frame_l,actual_state_l)
+                    if debug['process_colors']:
+                        actual_state_r = process_colors(img_r,frame_r,actual_state_r)
+                        actual_state_l = process_colors(img_l,frame_l,actual_state_l)
+                    
                     #PROCESS LETTER
                     actual_state_r = search_letter(img_r,frame_r,actual_state_r)
+        
                     actual_state_l = search_letter(img_l,frame_l,actual_state_l)
 
                     #GIVE PRIORITY OF LETTERS
@@ -330,8 +376,16 @@ def main():
     
 
                     if debug['generate_BBOX'] and debug['show_images']: 
-                        cv2.imshow("bbox frame",frame_r)
-                        cv2.imshow("bbox frame2",frame_l)
+                        frame_double = stackImages(0.6,([frame_r,frame_l]))
+                        cv2.imshow("bbox double",frame_double)
+                        print(frame_double.shape)
+
+                    if debug['record']:
+                        print("RECORD ACTIVE")
+                        if debug['generate_BBOX'] and debug['show_images']: pass
+                        else: frame_double = stackImages(0.6,([frame_r,frame_l]))
+                        out.write(frame_double)
+
                     print(f"Actual value: {actual_state_l}, {actual_state_r}, {actual_state}  frames: {frames}")
                     frames += 1
                     #cv2.imshow("Original",img)
