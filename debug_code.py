@@ -8,6 +8,7 @@ import torch.nn as nn
 from torchvision import models, transforms
 import serial
 import calibrated_colors
+import json
 
 
 ################################################################
@@ -27,39 +28,41 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
     return imgResult
-     
+
 def generate_bbox(img,frame,text=""):
     mask_ = Image.fromarray(img)
     bbox = mask_.getbbox()
     if bbox is not None:
         x1,y1,x2,y2 = bbox
-        frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
-        if text:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        if debug['generate_BBOX']:
+            frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
+            if text:
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
         return True
     else:
         frame = frame
         return False
 
 def process_colors(img,frame,actual_state):
+    
     img_red = get_color(img,red['hmin'],red['hmax'],red['smin'],red['smax'],red['vmin'],red['vmax'],red['hue'],red['sat'],red['val'],red['alpha'],red['beta'],red['erode'],red['dilate'])
     img_yellow = get_color(img,yellow['hmin'],yellow['hmax'],yellow['smin'],yellow['smax'],yellow['vmin'],yellow['vmax'],yellow['hue'],yellow['sat'],yellow['val'],yellow['alpha'],yellow['beta'],yellow['erode'],yellow['dilate'])
-    #img_green = get_color(img_r,green['hmin'],green['hmax'],green['smin'],green['smax'],green['vmin'],green['vmax'],green['hue'],green['sat'],green['val'],green['alpha'],green['beta'],green['erode'],green['dilate'])
+    img_green = get_color(img,green['hmin'],green['hmax'],green['smin'],green['smax'],green['vmin'],green['vmax'],green['hue'],green['sat'],green['val'],green['alpha'],green['beta'],green['erode'],green['dilate'])
 
-    if debug['generate_BBOX']:
-        processed_red = generate_bbox(img_red,frame,"red")
-        processed_yellow = generate_bbox(img_yellow,frame,"green")
-    # processed_green = generate_bbox(img_green,frame,"yellow")
+    processed_red = generate_bbox(img_red,frame,"red")
+    processed_yellow = generate_bbox(img_yellow,frame,"yellow")
+    processed_green = generate_bbox(img_green,frame,"green")
 
     if processed_red:
-        actual_state = "H"
+        actual_state = "h"
     if processed_yellow:
-        actual_state = "S"
+        actual_state = "s"
+    if processed_green:
+        actual_state = "u"
 
     return actual_state
-    # if processed_green:
-    #     actual_state = "u"
+  
 
 
 ################################################################
@@ -125,7 +128,8 @@ def search_letter(img,frame,actual_state):
             actual_letter = predict_image(model_ft,new_img,device,class_names)
             actual_state = actual_letter
         #DEBUG IN IMAGE
-        if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
+        if actual_state != "m" and debug['generate_BBOX'] and debug['model'] and debug['show_images']:
+            #cv2.imshow("cutted",cutted_img)
             generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
     return actual_state
 
@@ -196,6 +200,11 @@ def post_processing(img,dilate):
 
 ################################################################
 ###############EXTERNAL FUNCTIONS###############################
+def download_json():
+    with open('calibrated_colors.json','r') as file:
+        data = json.load(file)
+        file.close()
+    return data
 
 def start_serial():
     print("Opening Serial ..")
@@ -232,15 +241,16 @@ def setup():
 
     ##################VARIABLES ZONE#################
     class_names = ['h', 's', 'u']
-    red = calibrated_colors.red
-    yellow = calibrated_colors.yellow
-    green = calibrated_colors.green
-    minimum_predict_value = 0
+    data = download_json()
+    red = data["red"]
+    yellow = data["yellow"]
+    green = data["green"]
+    minimum_predict_value = 3.4
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':False,
-        'model':True,
-        'record':False,
+        'model':False,
+        'record':True,
         'generate_BBOX':True,
         'show_images':False,
     }
@@ -254,11 +264,6 @@ def setup():
     #DEVICE TORCH USAGE
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
-    #CAMERA ASSIGNMENT
-    right_cam = camera_activate.gstreamer_pipeline(flip_method=0)
-    right_video = cv2.VideoCapture(right_cam, cv2.CAP_GSTREAMER)
-    left_cam= camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
-    left_video = cv2.VideoCapture(left_cam, cv2.CAP_GSTREAMER)
     #MODEL SETUP AND WARMUP
     if debug['model']:
         print("Loading model ...")
@@ -266,6 +271,11 @@ def setup():
         model_ft = start_model()
         print(f"Model loaded in {t.time()-loading_time}")
         warmup()
+    #CAMERA ASSIGNMENT
+    right_cam = camera_activate.gstreamer_pipeline(flip_method=0)
+    right_video = cv2.VideoCapture(right_cam, cv2.CAP_GSTREAMER)
+    left_cam= camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
+    left_video = cv2.VideoCapture(left_cam, cv2.CAP_GSTREAMER)
     #SERIAL SETUP
     if debug["arduino"] : arduino = start_serial()
 
@@ -290,8 +300,9 @@ def main():
                 if img_r  is not None and active_camera > 11 and img_l is not None:
                     actual_state_r = "m"
                     actual_state_l = "m"
+                    actual_state = "m"
                     #Resize img left
-                    img_l = img_l[140:480, 0:640]
+                    img_l = img_l[92:420, 0:640]
                     if debug['show_images']:
                         cv2.imshow("Left",img_l)
                         cv2.imshow("Right",img_r)
@@ -304,10 +315,24 @@ def main():
                     #PROCESS LETTER
                     actual_state_r = search_letter(img_r,frame_r,actual_state_r)
                     actual_state_l = search_letter(img_l,frame_l,actual_state_l)
-                    if debug['generate_BBOX']: 
+
+                    #GIVE PRIORITY OF LETTERS
+                    if actual_state_r == "m" and actual_state_l != "m":
+                        actual_state = actual_state_l
+                    elif actual_state_r !="m" and actual_state_l == "m":
+                        actual_state = actual_state_r.upper()
+                    elif actual_state_l == "m" and actual_state_r == "m":
+                        actual_state = "m"
+                    elif class_names.index(actual_state_r) < class_names.index(actual_state_l):
+                        actual_state = actual_state_r.upper()
+                    else:
+                        actual_state=actual_state_l
+    
+
+                    if debug['generate_BBOX'] and debug['show_images']: 
                         cv2.imshow("bbox frame",frame_r)
                         cv2.imshow("bbox frame2",frame_l)
-                    print(f"Actual value: {actual_state_l}, {actual_state_r}  frames: {frames}")
+                    print(f"Actual value: {actual_state_l}, {actual_state_r}, {actual_state}  frames: {frames}")
                     frames += 1
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
