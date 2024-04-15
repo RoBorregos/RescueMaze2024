@@ -71,11 +71,11 @@ void TCS::updateRGBC() {
 
 void TCS::printRGB() {
     updateRGBC();
-    #if DEBUG_TCS
     customPrint("R:\t"); customPrint(red_);
     customPrint("\tG:\t"); customPrint(green_);
     customPrint("\tB:\t"); customPrint(blue_);
     customPrint("\n");
+    #if DEBUG_TCS
     #endif
 }
 
@@ -195,6 +195,9 @@ char TCS::getColorWithThresholds() {
         return getColorWithPrecision();
     }
     updateRGBC();
+    // customPrint("R:\t"); customPrintln(red_);
+    // customPrint("G:\t"); customPrintln(green_);
+    // customPrint("B:\t"); customPrintln(blue_);
 
     for (uint8_t i = 0; i < colorAmount_; ++i) {
         if (inRangeThreshold(colorThresholds_[i][0], red_, colorThresholds_[i][1]) &&
@@ -204,6 +207,7 @@ char TCS::getColorWithThresholds() {
             return colorList_[i];
         }
     }
+
 
     return kUndefinedColor_;
 }
