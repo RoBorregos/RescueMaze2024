@@ -27,6 +27,10 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     #testing filtering noise
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
+
+    contours= cv2.findContours(imgResult, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    c = max(contours, key =cv2.contourArea)
+
     return imgResult
 
 def generate_bbox(img,frame,text=""):
@@ -121,29 +125,72 @@ def search_letter(img,frame,actual_state):
     #cv2.imshow("binary", binary_img)
 
 
-
+    # # find contours
+    result = img.copy()
+    contours= cv2.findContours(binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #print(contours)
+    contours = contours[0] if len(contours) == 2 else contours[1]
+    print(len(contours))
+    last_value_process = minimum_predict_value
+    x1b,y1b,x2b,y2b = -12,-12,-12,-12
+    for cntr in contours:
+        x,y,w,h = cv2.boundingRect(cntr)
+        cutted_side = binary_img[y:y+h,x:x+w]
+        x1 = 0
+        x2 = w
+        y1 = 0
+        y2 = h
+        y1,y2,x1,x2 = [40]*4
+        border = cv2.copyMakeBorder(cutted_side, y1, y2, x1, x2, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+        rotated_img = rotate_image(border)
+        cutted_img = generate_frame_cut(rotated_img)
+       
+        if cutted_img is not None:
+            post_img = post_processing(cutted_img,4)
+            new_img = cv2.cvtColor(post_img,cv2.COLOR_GRAY2RGB)
+            if debug['model']:
+                actual_letter = predict_image(model_ft,new_img,device,class_names)
+                if value_predict > last_value_process:
+                    x1b = x
+                    x2b = x+w
+                    y1b = y
+                    y2b = y+h
+                    last_value_process = value_predict
+                    actual_state = actual_letter
+                    
+            #DEBUG IN IMAGE
+            if debug['preprocessing_show']:
+                preprocessing_frame = stackImages(0.6,([img,rotated_img],[binary_img,cutted_img]))
+                cv2.imshow("preprocesing frame",preprocessing_frame)
+            if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
+                #cv2.imshow("cutted",cutted_img)
+                if x1b & x2b & y1b & y2b != -12:
+                    frame = cv2.rectangle(frame, (x1b,y1b), (x2b,y2b), (0,255,0), 5)
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    cv2.putText(frame,f"{actual_state} {value_predict}" , (x1b, y1b-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
     
-
-
-
-
-    rotated_img = rotate_image(binary_img)
-    #cv2.imshow("Rotated", new_img)
-    cutted_img = generate_frame_cut(rotated_img)
-    if cutted_img is not None:
-        post_img = post_processing(cutted_img,4)
-        new_img = cv2.cvtColor(post_img,cv2.COLOR_GRAY2RGB)
-        if debug['model']:
-            actual_letter = predict_image(model_ft,new_img,device,class_names)
-            actual_state = actual_letter
-        #DEBUG IN IMAGE
-        if debug['preprocessing_show']:
-            preprocessing_frame = stackImages(0.6,([img,rotated_img],[binary_img,cutted_img]))
-            cv2.imshow("preprocesing frame",preprocessing_frame)
-        if actual_state != "m" and debug['generate_BBOX'] and debug['model'] and debug['show_images']:
-            #cv2.imshow("cutted",cutted_img)
-            generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
     return actual_state
+
+
+
+
+    # rotated_img = rotate_image(binary_img)
+    # #cv2.imshow("Rotated", new_img)
+    # cutted_img = generate_frame_cut(rotated_img)
+    # if cutted_img is not None:
+    #     post_img = post_processing(cutted_img,4)
+    #     new_img = cv2.cvtColor(post_img,cv2.COLOR_GRAY2RGB)
+    #     if debug['model']:
+    #         actual_letter = predict_image(model_ft,new_img,device,class_names)
+    #         actual_state = actual_letter
+    #     #DEBUG IN IMAGE
+    #     if debug['preprocessing_show']:
+    #         preprocessing_frame = stackImages(0.6,([img,rotated_img],[binary_img,cutted_img]))
+    #         cv2.imshow("preprocesing frame",preprocessing_frame)
+    #     if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
+    #         #cv2.imshow("cutted",cutted_img)
+    #         generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
+    
 
 
 
@@ -286,14 +333,14 @@ def setup():
     red = data["red"]
     yellow = data["yellow"]
     green = data["green"]
-    minimum_predict_value = -1
+    minimum_predict_value = 1.7
     #GLOBAL DEBUG VARIABLES
     debug = {
-        'arduino':False,
+        'arduino':True,
         'model':True,
-        'record':False,
+        'record':True,
         'generate_BBOX':True,
-        'show_images':True,
+        'show_images':False,
         'preprocessing_show':False,
         'process_colors':True
     }
@@ -334,6 +381,9 @@ def main():
         try:
             active_camera  = 0
             frames = 0
+            letters= ['s','h','u','S','H','U']
+            repetitions = [0,0,0,0,0,0]
+            index = 0
             print("VIDEO STARTED")
             while True:
                 
@@ -381,12 +431,36 @@ def main():
                         print(frame_double.shape)
 
                     if debug['record']:
-                        print("RECORD ACTIVE")
                         if debug['generate_BBOX'] and debug['show_images']: pass
                         else: frame_double = stackImages(0.6,([frame_r,frame_l]))
                         out.write(frame_double)
+                    # Update counts
+                    for letter in letters:
+                        if letter == actual_state and actual_state != "m":
+                            index = letters.index(letter)
+                            repetitions[index] += 1
+                    #If recieving data from arduino
+                    if debug['arduino']:
+                        if arduino.in_waiting > 0:
+                            line = arduino.readline().decode('utf-8').strip()
+                            if line == "1":
+                                lastMax = 0
+                                for i in range(6):
+                                    if repetitions[i] > lastMax and repetitions[i] >= 2:
+                                        index = i
+                                        lastMax = repetitions[i]
+                                if lastMax != 0: actual_state = letters[index] 
+                                else: actual_state = "m"
+                                
+                                print(f"Sending state to esp = {actual_state}")
+                                print(f"Repetitions = {repetitions}")
+                                repetitions = [0,0,0,0,0,0]
+                                arduino.write(actual_state.encode('utf-8'))
+                            if line == "2":
+                                print("Serial reseted")
+                                repetitions = [0,0,0,0,0,0]
 
-                    print(f"Actual value: {actual_state_l}, {actual_state_r}, {actual_state}  frames: {frames}")
+                    #print(f"Actual value: {actual_state_l}, {actual_state_r}, {actual_state}  frames: {frames}")
                     frames += 1
                     #cv2.imshow("Original",img)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
