@@ -57,11 +57,17 @@ class Movement {
         long long ticsCounter_ = 0;
         long long pidTics_ = 0;
 
+        int counterCollisionsLeft_ = 0;
+        int counterCollisionsRight_ = 0;
+
+        static constexpr double kOrientationError = 10.0;
+
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.2; // m/s 0.09
         static constexpr double kBaseSpeedTurn_ = 0.1; // m/s 0.07
         static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
+        static constexpr double kBaseSpeedWithVlx_ = 0.05; // m/s
 
 
         static constexpr uint8_t kMaxMovements_ = 4;
@@ -385,7 +391,7 @@ class Movement {
 
         void screenPrint(const String output);
 
-        void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
+        bool checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
         
         void printEncoderTics();
 

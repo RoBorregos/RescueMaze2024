@@ -485,6 +485,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     checkForLackOfProgress();
 
                     if (wasBlackTile()) {
+                        pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+                        pidForward_.setBaseSpeed(kBaseSpeedForward_);
                         return;
                     }
                     checkColors(targetOrientation);
@@ -500,8 +502,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         // }
                     }
 
-                    pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
-                    pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
+                    pidBackward_.setBaseSpeed(kBaseSpeedWithVlx_);
+                    pidForward_.setBaseSpeed(kBaseSpeedWithVlx_);
                     
                     // customPrintln("vlxFrontLeft:" + String(frontWallDistance));
                     // customPrintln("vlxBack:" + String(backWallDistance));
@@ -515,6 +517,8 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                     if (moveForward && frontWallDistance <= kMinWallDistance) {
                         stopMotors();
+                        pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+                        pidForward_.setBaseSpeed(kBaseSpeedForward_);
                         break;
                     }
 
@@ -545,14 +549,16 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
                     moveMotorsInADirection(targetOrientation, moveForward);
 
-                    pidBackward_.setBaseSpeed(kBaseSpeedForward_);
-                    pidForward_.setBaseSpeed(kBaseSpeedForward_);
                 }
+                pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+                pidForward_.setBaseSpeed(kBaseSpeedForward_);
             }
 
             finishedMovement_ = true;
             checkColors(targetOrientation);
-            
+
+            counterCollisionsLeft_ = 0;
+            counterCollisionsRight_ = 0;
             allDistanceTraveled_ = 0;
             stopMotors();
 
@@ -644,16 +650,19 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         customPrintln("Crash right--------");
         #endif
         
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ , false);
-        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
+        double orientation = counterCollisionsRight_ * kOrientationError;
+
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false);
+        moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_ + orientation), 0);
     } else {
         #if DEBUG_MOVEMENT
         customPrintln("Crash left--------");
         #endif
+
+        double orientation = counterCollisionsLeft_ * kOrientationError;
         
-        
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ , false);
-        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false);
+        moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_ - orientation), 0);
     }
     retrieveLastState();
 }
@@ -1439,20 +1448,33 @@ void Movement::screenPrint(const String output){
     // delay(500);
 }
 
-void Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance) {
+bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance) {
+    if (crashLeft || crashRight) {
+        double frontLeftDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+        double frontRightDistance = vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance();
+        if (frontLeftDistance <= kMinWallDistance && frontRightDistance <= kMinWallDistance) {
+            return false;
+        }
+    }
     if (crashLeft == true && crashRight == false) {
+        currentOrientation = bno_.getOrientationX();
         #if DEBUG_MOVEMENT
         customPrintln("Crash left-");
         #endif
+        counterCollisionsLeft_++;
         correctionAfterCrash(true, currentOrientation, useWallDistance);
     }
     
     if (crashRight == true && crashLeft == false) {
+        currentOrientation = bno_.getOrientationX();
         #if DEBUG_MOVEMENT
         customPrintln("Crash right-");
         #endif
+        counterCollisionsRight_++;
         correctionAfterCrash(false, currentOrientation, useWallDistance);
     }
+
+    return true;
 }
 
 void Movement::printEncoderTics() {
