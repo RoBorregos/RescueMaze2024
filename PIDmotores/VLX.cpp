@@ -17,12 +17,12 @@ bool VLX::init() {
     mux_.selectChannel();
     while (!vLX_.begin()) {
         // customPrintln("ERROR VLX");
-        customPrint(mux_.hasAddress(VLX_ADDR));
-        customPrintln(mux_.hasAddress(0x70));
+        // customPrint(mux_.hasAddress(VLX_ADDR));
+        // customPrintln(mux_.hasAddress(0x70));
         count++;
         if (count > kMaxInitAttempts_) {
             // customPrint("Test the VLX: ");
-            customPrintln(static_cast<uint8_t>(vlxId_));
+            // customPrintln(static_cast<uint8_t>(vlxId_));
             return false;
         }
     }
@@ -62,6 +62,6 @@ double VLX::getDistance() {
 }
 
 void VLX::printDistance() {
-    customPrint("Distance (M): ");
-    customPrintln(VLX::getDistance());
+    // customPrint("Distance (M): ");
+    // customPrintln(VLX::getDistance());
 } 

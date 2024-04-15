@@ -140,15 +140,15 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
         speed = kBaseModifier_ + outputModifier;
         clockwise = true;
 
-        customPrintln("Aumentando derecho");
-        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        // customPrintln("Aumentando derecho");
+        // customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
         #if DEBUG_PID
         #endif
     } else if (errorOrientation > -kMaxError_) {
         speed = kBaseModifier_ - outputModifier;
         clockwise = false;
-        customPrintln("Aumentando izquierdo");
-        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        // customPrintln("Aumentando izquierdo");
+        // customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
         #if DEBUG_PID
         #endif
     } else { 

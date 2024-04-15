@@ -26,15 +26,15 @@ void MUX::findI2C(const bool scan, const uint8_t address) {
         for (uint8_t i = 0; i < 128; i++) {
             Wire.beginTransmission(i);
             if (Wire.endTransmission() == 0) {
-                customPrint("Found address: ");
-                customPrintln(i);
+                // customPrint("Found address: ");
+                // customPrintln(i);
             }
         }
     } else {
         Wire.beginTransmission(address);
         if (Wire.endTransmission() == 0) {
-            customPrint("Found address: ");
-            customPrintln(address);
+            // customPrint("Found address: ");
+            // customPrintln(address);
         }
     }
 }

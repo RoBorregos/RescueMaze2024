@@ -6,7 +6,6 @@
 #define DEBUG_MOVEMENT 0
 #define DEBUG_OFFLINE_MOVEMENT 0
 
-#if DEBUG_OFFLINE_MOVEMENT
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
@@ -16,6 +15,7 @@ const char* udpServerIP = "192.168.0.123"; // Replace with your Python script's 
 const int udpServerPort = 1;
 
 WiFiUDP udp; 
+#if DEBUG_OFFLINE_MOVEMENT
 #endif
 
 
@@ -39,18 +39,18 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
-    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
-        customPrintln("Connecting to WiFi...");
+        // customPrintln("Connecting to WiFi...");
     }
-    customPrintln("Connected to WiFi");
+    // customPrintln("Connected to WiFi");
 
     udp.begin(udpServerPort);
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
     udp.endPacket();
+    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -133,7 +133,7 @@ void Movement::setPwmsAndDirections(const uint8_t pwms[kNumberOfWheels], const M
 
 void Movement::setSpeedsAndDirections(const double speeds[kNumberOfWheels], const MotorState directions[kNumberOfWheels]) {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-        customPrint(speeds[i]);
+        // customPrint(speeds[i]);
         motor[i].setSpeedAndDirection(speeds[i], directions[i]);
     }
 }
@@ -413,7 +413,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         sendSerialRequest();
                     }
                     // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
-                    checkSerial(targetOrientation);
+                    checkSerial(currentOrientation);
                     // }
                 }
 
@@ -477,7 +477,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                             sendSerialRequest();
                         }
                         // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
-                        checkSerial(targetOrientation);
+                        checkSerial(currentOrientation);
                         // }
                     }
 
@@ -518,7 +518,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     // }
 
                     // TODO: Only check colors when it is moving forward
-                    // checkColors(targetOrientation);
+                    // checkColors(currentOrientation);
                     
                     #if DEBUG_MOVEMENT
                     customPrintln("Color:" + String(getTCSInfo()));
@@ -700,7 +700,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
                 sendSerialRequest();
             }
             // if (vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance() < kWallDistance) {
-            checkSerial(targetOrientation);
+            checkSerial(currentOrientation);
             // }
         }
         
@@ -1317,6 +1317,9 @@ int Movement::directionRamp() {
 }
 
 void Movement::sendSerialRequest() {
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Request");
+    udp.endPacket();
     Serial.println(kSendRequestCode);
     hasReceivedSerial = false;
 }
@@ -1329,22 +1332,24 @@ void Movement::checkSerial(double currentOrientation) {
         if (victim != kNoVictimSerialCode) {
             screenPrint("Victim Found");
             saveLastState(getCurrentState(), currentOrientation);
-            moveMotors(MovementState::kStop, 0, 0);
+            stopMotors();
             victimFound = true;
+            const double rightDistance = vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance();
+            const double leftDistance = vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance();
             delay(kOneSecInMs);
-            if (victim == kHarmedSerialCodeLeft) {
+            if (victim == kHarmedSerialCodeLeft && leftDistance < kWallDistance) {
                 screenPrint("Throw 2 medkits left");
                 moveServo(servoPosition::kLeft);
                 moveServo(servoPosition::kLeft);
-            } else if (victim == kHarmedSerialCodeRight) {
+            } else if (victim == kHarmedSerialCodeRight && rightDistance < kWallDistance) {
                 screenPrint("Throw 2 medkits right");
                 moveServo(servoPosition::kRight);
                 moveServo(servoPosition::kRight);
-            } else if (victim == kStableSerialCodeLeft) {
+            } else if (victim == kStableSerialCodeLeft && leftDistance < kWallDistance) {
                 screenPrint("Throw 1 medkit left");
                 moveServo(servoPosition::kLeft);
                 delay(2000);
-            } else if (victim == kStableSerialCodeRight) {
+            } else if (victim == kStableSerialCodeRight && rightDistance < kWallDistance) {
                 screenPrint("Throw 1 medkit right");
                 moveServo(servoPosition::kRight);
                 delay(2000);
@@ -1443,7 +1448,7 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
 
 void Movement::printEncoderTics() {
     for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-        customPrintln("Motor" + String(i) + "Tics:" + String(motor[i].getTics()));
+        // customPrintln("Motor" + String(i) + "Tics:" + String(motor[i].getTics()));
     }
 }
 
@@ -1455,6 +1460,9 @@ void Movement::resetSerial() {
     if (Serial.available() > 0) {
         Serial.read(); // Read the serial that was left unread.
     }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Reset");
+    udp.endPacket();
     Serial.println(kResetSerialCode); // Send serial to reset the count of detections in Jetson.
     delay(500);
     sendSerialRequest();
@@ -1493,7 +1501,7 @@ void Movement::resetLackOfProgress() {
 }
 
 bool Movement::onFlatGround() {
-    customPrintln(String("OrientationY:") + String(bno_.getOrientationY()));
+    // customPrintln(String("OrientationY:") + String(bno_.getOrientationY()));
     return bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError;
 }
 
