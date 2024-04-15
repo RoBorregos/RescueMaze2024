@@ -28,8 +28,11 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
 
-    contours= cv2.findContours(imgResult, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    c = max(contours, key =cv2.contourArea)
+    # contours= cv2.findContours(imgResult, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # areas = [cv2.contourArea(c) for c in contours[0]]
+    # c = max(contours, key =cv2.contourArea)
+    # x,y,w,h = cv2.boundingRect(c)
+    
 
     return imgResult
 
@@ -130,7 +133,7 @@ def search_letter(img,frame,actual_state):
     contours= cv2.findContours(binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     #print(contours)
     contours = contours[0] if len(contours) == 2 else contours[1]
-    print(len(contours))
+    # print(len(contours))
     last_value_process = minimum_predict_value
     x1b,y1b,x2b,y2b = -12,-12,-12,-12
     for cntr in contours:
@@ -333,7 +336,7 @@ def setup():
     red = data["red"]
     yellow = data["yellow"]
     green = data["green"]
-    minimum_predict_value = 1.7
+    minimum_predict_value = 2.5
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':True,
