@@ -1415,7 +1415,7 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
     if (crashLeft || crashRight) {
         double frontLeftDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
         double frontRightDistance = vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance();
-        if (frontLeftDistance <= kMinWallDistance || frontRightDistance <= kMinWallDistance) {
+        if (frontLeftDistance <= kMinWallDistance && frontRightDistance <= kMinWallDistance) {
             return false;
         }
     }
@@ -1424,7 +1424,6 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
         customPrintln("Crash left-");
         #endif
         correctionAfterCrash(true, currentOrientation, useWallDistance);
-        return true;
     }
     
     if (crashRight == true && crashLeft == false) {
@@ -1432,8 +1431,9 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
         customPrintln("Crash right-");
         #endif
         correctionAfterCrash(false, currentOrientation, useWallDistance);
-        return true;
     }
+    
+    return true;
 }
 
 void Movement::printEncoderTics() {
