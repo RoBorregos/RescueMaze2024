@@ -1420,6 +1420,7 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
         }
     }
     if (crashLeft == true && crashRight == false) {
+        currentOrientation = bno_.getOrientationX();
         #if DEBUG_MOVEMENT
         customPrintln("Crash left-");
         #endif
@@ -1427,12 +1428,13 @@ bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
     }
     
     if (crashRight == true && crashLeft == false) {
+        currentOrientation = bno_.getOrientationX();
         #if DEBUG_MOVEMENT
         customPrintln("Crash right-");
         #endif
         correctionAfterCrash(false, currentOrientation, useWallDistance);
     }
-    
+
     return true;
 }
 
