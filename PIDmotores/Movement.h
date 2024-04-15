@@ -44,7 +44,7 @@ class Movement {
         MovementState lastState_;
 
         double crashDeltaOrientation_ = 20.0;
-        double crashDeltaDistance_ = 0.08;
+        double crashDeltaDistance_ = 0.04;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -197,7 +197,7 @@ class Movement {
         constexpr static double kDBackward = 0.0;
 
         constexpr static double kPTurn = 0.00005;
-        constexpr static double kITurn = 0.00000; // 0.00050
+        double kITurn = 0.00000; // 0.00050
         constexpr static double kDTurn = 0.00019;
 
         constexpr static double kPDistance = 0.63; // 0.63
@@ -242,6 +242,12 @@ class Movement {
         bool blackTile_ = false;
         bool blueTile_ = false;
         bool checkpointTile_ = false;
+
+        bool swithcVlx_ = false;
+
+        bool leftVlx_ = true;
+
+        bool turning_ = false;
 
         bool finishedMovement_ = false;
 
@@ -293,7 +299,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool center = false);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool center = false, bool afterRamp = false);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
