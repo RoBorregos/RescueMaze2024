@@ -43,8 +43,8 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
-        double crashDeltaOrientation_ = 20.0;
-        double crashDeltaDistance_ = 0.04;
+        double crashDeltaOrientation_ = 10.0;
+        double crashDeltaDistance_ = 0.10;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -397,7 +397,7 @@ class Movement {
 
         void screenPrint(const String output);
 
-        void checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
+        bool checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance);
         
         void printEncoderTics();
 

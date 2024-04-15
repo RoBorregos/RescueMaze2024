@@ -417,20 +417,27 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false) {
                 frontWallDistance = vlx[vlxId].getRawDistance();
 
-                if (frontWallDistance <= kMinWallDistance) {
+                /* if (initialFrontWallDistance <= 0.20 && turning_) {
+                    swithcVlx_ = true;
+                    if (leftVlx_) {
+                        vlxId = static_cast<uint8_t>(VlxID::kFrontRight);
+                    } else {
+                        vlxId = static_cast<uint8_t>(VlxID::kFrontLeft);
+                    }
+                    frontWallDistance = vlx[vlxId].getRawDistance();
+                } */
+
+                /* if (frontWallDistance <= kMinWallDistance) {
+                    stopMotors();
+                    break;
+                } */
+
+                bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
+                if (!result) {
                     stopMotors();
                     break;
                 }
                 
-                if (initialFrontWallDistance <= 0.20 && turning_) {
-                    swithcVlx_ = true;
-                    if (leftVlx_) {
-                        vlxId = static_cast<uint8_t>(VlxID::kFrontLeft);
-                    } else {
-                        vlxId = static_cast<uint8_t>(VlxID::kFrontRight);
-                    }
-                    frontWallDistance = vlx[vlxId].getRawDistance();
-                }
 
                 /* if (initialFrontWallDistance >= 0.1 && frontWallDistance <= kMinWallDistance && afterRamp == false) {
                     stopMotors();
@@ -652,15 +659,15 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         #if DEBUG_MOVEMENT
         customPrintln("Crash right--------");
         #endif
-        
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation - crashDeltaOrientation_), crashDeltaDistance_ , false, false);
+                                                         // currentOrientation - crashDeltaOrientation_
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false, false);
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_), 0);
     } else {
         #if DEBUG_MOVEMENT
         customPrintln("Crash left--------");
         #endif
-        
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation + crashDeltaOrientation_), crashDeltaDistance_ , false, false);
+                                                         // currentOrientation + crashDeltaOrientation_
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false, false);
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_), 0);
     }
     retrieveLastState();
@@ -1403,12 +1410,21 @@ void Movement::screenPrint(const String output){
     // delay(500);
 }
 
-void Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance) {
+bool Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double currentOrientation, bool useWallDistance) {
+
+    if (crashLeft || crashRight) {
+        double frontLeftDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+        double frontRightDistance = vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance();
+        if (frontLeftDistance <= kMinWallDistance || frontRightDistance <= kMinWallDistance) {
+            return false;
+        }
+    }
     if (crashLeft == true && crashRight == false) {
         #if DEBUG_MOVEMENT
         customPrintln("Crash left-");
         #endif
         correctionAfterCrash(true, currentOrientation, useWallDistance);
+        return true;
     }
     
     if (crashRight == true && crashLeft == false) {
@@ -1416,6 +1432,7 @@ void Movement::checkForCrashAndCorrect(bool crashLeft, bool crashRight, double c
         customPrintln("Crash right-");
         #endif
         correctionAfterCrash(false, currentOrientation, useWallDistance);
+        return true;
     }
 }
 
