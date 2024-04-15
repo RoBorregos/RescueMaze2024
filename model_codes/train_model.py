@@ -93,7 +93,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
                 print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
-
+                #save data of epoch_loss and epoch_acc in csv
+                with open('data.csv', 'a') as f:
+                    f.write(f'{epoch_loss},{epoch_acc}\n')
+                    
                 # deep copy the model
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc

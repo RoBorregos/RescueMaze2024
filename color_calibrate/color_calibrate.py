@@ -85,7 +85,7 @@ cv2.createTrackbar("dilate","TrackBars",0,30,empty)
 
 
 
-video_capture = cv2.VideoCapture(camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0), cv2.CAP_GSTREAMER)
+video_capture = cv2.VideoCapture(camera_activate.gstreamer_pipeline(sensor_id=1,flip_method=0), cv2.CAP_GSTREAMER)
 if video_capture.isOpened():
     try:
         data = download_json()

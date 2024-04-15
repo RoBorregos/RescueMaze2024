@@ -14,7 +14,7 @@ import json
 ################################################################
 ###############COLOR SEGMENTATION FUNCTIONS#####################
 
-def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0,dilate=0):
+def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0,dilate=0,text="",frame=None):
     img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     imgHSV = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     imgHSV[:,:,0] = imgHSV[:,:,0] * hue
@@ -28,44 +28,39 @@ def get_color(img,hmin,hmax,smin,smax,vmin,vmax,hue,sat,val,alpha,beta,erode = 0
     imgResult = cv2.erode(imgResult, None, iterations=erode)
     imgResult = cv2.dilate(imgResult, None, iterations=dilate)
 
-    # contours= cv2.findContours(imgResult, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # areas = [cv2.contourArea(c) for c in contours[0]]
-    # c = max(contours, key =cv2.contourArea)
-    # x,y,w,h = cv2.boundingRect(c)
-    
+    contours= cv2.findContours(imgResult, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    areas = [cv2.contourArea(c) for c in contours[0]]
+    if len(areas) > 0: 
+        c = max(areas)
+        #print(f"areas = {areas}, c = {c}")
+        if c > min_color_area:
+            x,y,w,h = cv2.boundingRect(contours[0][areas.index(c)])
+            if debug['generate_BBOX']:
+                    frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 5)
+                    if text:
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        if y-5 <= 0:
+                            cv2.putText(frame, f"{text} {c}", (x, y+h+15), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        else:
+                            cv2.putText(frame, f"{text} {c}", (x, y-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        
+            return True
 
-    return imgResult
+    return False
 
-def generate_bbox(img,frame,text=""):
-    mask_ = Image.fromarray(img)
-    bbox = mask_.getbbox()
-    if bbox is not None:
-        x1,y1,x2,y2 = bbox
-        if debug['generate_BBOX']:
-            frame = cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 5)
-            if text:
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(frame, text, (x1, y1-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-        return True
-    else:
-        frame = frame
-        return False
+def process_colors(img,frame,actual_state,cam):
+    red = data[cam]["red"]
+    yellow = data[cam]["yellow"]
+    green = data[cam]["green"]
+    img_red = get_color(img,red['hmin'],red['hmax'],red['smin'],red['smax'],red['vmin'],red['vmax'],red['hue'],red['sat'],red['val'],red['alpha'],red['beta'],red['erode'],red['dilate'],"red",frame)
+    img_yellow = get_color(img,yellow['hmin'],yellow['hmax'],yellow['smin'],yellow['smax'],yellow['vmin'],yellow['vmax'],yellow['hue'],yellow['sat'],yellow['val'],yellow['alpha'],yellow['beta'],yellow['erode'],yellow['dilate'],"yellow",frame)
+    img_green = get_color(img,green['hmin'],green['hmax'],green['smin'],green['smax'],green['vmin'],green['vmax'],green['hue'],green['sat'],green['val'],green['alpha'],green['beta'],green['erode'],green['dilate'],"green",frame)
 
-def process_colors(img,frame,actual_state):
-    
-    img_red = get_color(img,red['hmin'],red['hmax'],red['smin'],red['smax'],red['vmin'],red['vmax'],red['hue'],red['sat'],red['val'],red['alpha'],red['beta'],red['erode'],red['dilate'])
-    img_yellow = get_color(img,yellow['hmin'],yellow['hmax'],yellow['smin'],yellow['smax'],yellow['vmin'],yellow['vmax'],yellow['hue'],yellow['sat'],yellow['val'],yellow['alpha'],yellow['beta'],yellow['erode'],yellow['dilate'])
-    img_green = get_color(img,green['hmin'],green['hmax'],green['smin'],green['smax'],green['vmin'],green['vmax'],green['hue'],green['sat'],green['val'],green['alpha'],green['beta'],green['erode'],green['dilate'])
-
-    processed_red = generate_bbox(img_red,frame,"red")
-    processed_yellow = generate_bbox(img_yellow,frame,"yellow")
-    processed_green = generate_bbox(img_green,frame,"green")
-
-    if processed_red:
+    if img_red:
         actual_state = "h"
-    if processed_yellow:
+    if img_yellow:
         actual_state = "s"
-    if processed_green:
+    if img_green:
         actual_state = "u"
 
     return actual_state
@@ -80,7 +75,7 @@ def start_model():
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
-    model_ft.load_state_dict(torch.load('model2.pth'))
+    model_ft.load_state_dict(torch.load('model4.pth'))
     model_ft.eval()
     return model_ft
 
@@ -170,32 +165,12 @@ def search_letter(img,frame,actual_state):
                 if x1b & x2b & y1b & y2b != -12:
                     frame = cv2.rectangle(frame, (x1b,y1b), (x2b,y2b), (0,255,0), 5)
                     font = cv2.FONT_HERSHEY_SIMPLEX
-                    cv2.putText(frame,f"{actual_state} {value_predict}" , (x1b, y1b-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                    if y1b-5 <= 0:
+                        cv2.putText(frame,f"{actual_state} {value_predict}" , (x1b, y2b+15), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                    else:
+                        cv2.putText(frame,f"{actual_state} {value_predict}" , (x1b, y1b-5), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
     
     return actual_state
-
-
-
-
-    # rotated_img = rotate_image(binary_img)
-    # #cv2.imshow("Rotated", new_img)
-    # cutted_img = generate_frame_cut(rotated_img)
-    # if cutted_img is not None:
-    #     post_img = post_processing(cutted_img,4)
-    #     new_img = cv2.cvtColor(post_img,cv2.COLOR_GRAY2RGB)
-    #     if debug['model']:
-    #         actual_letter = predict_image(model_ft,new_img,device,class_names)
-    #         actual_state = actual_letter
-    #     #DEBUG IN IMAGE
-    #     if debug['preprocessing_show']:
-    #         preprocessing_frame = stackImages(0.6,([img,rotated_img],[binary_img,cutted_img]))
-    #         cv2.imshow("preprocesing frame",preprocessing_frame)
-    #     if actual_state != "m" and debug['generate_BBOX'] and debug['model']:
-    #         #cv2.imshow("cutted",cutted_img)
-    #         generate_bbox(binary_img,frame,f"{actual_state} {value_predict}")
-    
-
-
 
 def areaFilter(minArea, inputImage):
     componentsNumber, labeledImage, componentStats, componentCentroids = \
@@ -322,9 +297,8 @@ def setup():
     global arduino
     global model_ft
     global minimum_predict_value
-    global red
-    global yellow
-    global green
+    global data
+    global min_color_area
     #Debug variables
     global out
     global value_predict
@@ -333,14 +307,12 @@ def setup():
     ##################VARIABLES ZONE#################
     class_names = ['h', 's', 'u']
     data = download_json()
-    red = data["red"]
-    yellow = data["yellow"]
-    green = data["green"]
     minimum_predict_value = 0
+    min_color_area = 1500
     #GLOBAL DEBUG VARIABLES
     debug = {
-        'arduino':True,
-        'model':True,
+        'arduino':False,
+        'model':False,
         'record':True,
         'generate_BBOX':True,
         'show_images':False,
@@ -407,8 +379,8 @@ def main():
 
                     # PROCESS COLORS
                     if debug['process_colors']:
-                        actual_state_r = process_colors(img_r,frame_r,actual_state_r)
-                        actual_state_l = process_colors(img_l,frame_l,actual_state_l)
+                        actual_state_r = process_colors(img_r,frame_r,actual_state_r,"right")
+                        actual_state_l = process_colors(img_l,frame_l,actual_state_l,"left")
                     
                     #PROCESS LETTER
                     actual_state_r = search_letter(img_r,frame_r,actual_state_r)

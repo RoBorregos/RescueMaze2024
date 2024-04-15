@@ -15,7 +15,7 @@ Default 1920x1080 displayd in a 1/4 size window
 """
 
 def gstreamer_pipeline(
-    sensor_id=1,
+    sensor_id=0,
     capture_width=640,
     capture_height=480,
     display_width=640,
@@ -55,6 +55,7 @@ def show_camera():
                 ret_val, frame = video_capture.read()
                 #alpha = 2.18
                 #beta=1.72
+                frame = frame[92:420, 0:640]
                 #frame = cv2.convertScaleAbs(frame, alpha=alpha, beta=beta)
                 # Check to see if the user closed the window
                 # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
