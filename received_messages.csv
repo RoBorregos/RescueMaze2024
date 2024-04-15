@@ -1,0 +1,2270 @@
+Timestamp,Message
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Current tile: 0 0
+2024-03-28 14:32:41,Current tile: 0 1
+2024-03-28 14:32:41,Current tile: 0 -1
+2024-03-28 14:32:41,Current tile: -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Exploring: 1 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 2 -1
+2024-03-28 14:32:41,Checkpoint found at: 2 -1
+2024-03-28 14:32:41,Exploring: 3 -1
+2024-03-28 14:32:41,Checkpoint found at: 3 -1
+2024-03-28 14:32:41,Exploring: 3 -2
+2024-03-28 14:32:41,Checkpoint found at: 3 -2
+2024-03-28 14:32:41,Exploring: 2 -2
+2024-03-28 14:32:41,Checkpoint found at: 2 -2
+2024-03-28 14:32:41,Exploring: 1 -2
+2024-03-28 14:32:41,Checkpoint found at: 1 -2
+2024-03-28 14:32:41,Exploring: 0 -2
+2024-03-28 14:32:41,Checkpoint found at: 0 -2
+2024-03-28 14:32:41,Exploring: 0 -3
+2024-03-28 14:32:41,Checkpoint found at: 0 -3
+2024-03-28 14:32:41,Exploring: 1 -3
+2024-03-28 14:32:41,Checkpoint found at: 1 -3
+2024-03-28 14:32:41,Exploring: 2 -3
+2024-03-28 14:32:41,Checkpoint found at: 2 -3
+2024-03-28 14:32:41,Exploring: 3 -3
+2024-03-28 14:32:41,Checkpoint found at: 3 -3
+2024-03-28 14:32:41,Exploring: 3 0
+2024-03-28 14:32:41,Checkpoint found at: 2 -3
+2024-03-28 14:32:41,Checkpoint found at: 2 -2
+2024-03-28 14:32:41,Checkpoint found at: 3 -2
+2024-03-28 14:32:41,Checkpoint found at: 3 -1
+2024-03-28 14:32:41,Checkpoint found at: 3 0
+2024-03-28 14:32:41,Exploring: 4 0
+2024-03-28 14:32:41,Checkpoint found at: 4 0
+2024-03-28 14:32:41,Exploring: 2 0
+2024-03-28 14:32:41,Checkpoint found at: 3 0
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 2
+2024-03-28 14:32:41,Checkpoint found at: 1 2
+2024-03-28 14:32:41,Exploring: 2 2
+2024-03-28 14:32:41,Checkpoint found at: 2 2
+2024-03-28 14:32:41,Exploring: 2 1
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Exploring: 2 3
+2024-03-28 14:32:41,Checkpoint found at: 2 3
+2024-03-28 14:32:41,Exploring: 1 3
+2024-03-28 14:32:41,Checkpoint found at: 1 3
+2024-03-28 14:32:41,Exploring: 0 3
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 0 -1
+2024-03-28 14:32:41,Exploring: -1 -1
+2024-03-28 14:32:41,Exploring: -2 -1
+2024-03-28 14:32:41,Exploring: -3 -1
+2024-03-28 14:32:41,Checkpoint found at: -3 -1
+2024-03-28 14:32:41,Exploring: -3 0
+2024-03-28 14:32:41,Exploring: -2 0
+2024-03-28 14:32:41,Exploring: -1 0
+2024-03-28 14:32:41,Exploring: -1 1
+2024-03-28 14:32:41,Exploring: -2 1
+2024-03-28 14:32:41,Exploring: -3 1
+2024-03-28 14:32:41,Exploring: -4 1
+2024-03-28 14:32:41,Checkpoint found at: -4 1
+2024-03-28 14:32:41,Exploring: -3 2
+2024-03-28 14:32:41,Checkpoint found at: -3 2
+2024-03-28 14:32:41,Exploring: -2 2
+2024-03-28 14:32:41,Exploring: -2 3
+2024-03-28 14:32:41,Checkpoint found at: -2 3
+2024-03-28 14:32:41,Exploring: -1 3
+2024-03-28 14:32:41,Exploring: 0 3
+2024-03-28 14:32:41,Exploring: 1 3
+2024-03-28 14:32:41,Exploring: 1 2
+2024-03-28 14:32:41,Exploring: 0 2
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 2 0
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Exploring: 3 0
+2024-03-28 14:32:41,Checkpoint found at: 3 0
+2024-03-28 14:32:41,Exploring: 4 0
+2024-03-28 14:32:41,Checkpoint found at: 4 0
+2024-03-28 14:32:41,Exploring: 4 1
+2024-03-28 14:32:41,Checkpoint found at: 4 1
+2024-03-28 14:32:41,Exploring: 3 1
+2024-03-28 14:32:41,Checkpoint found at: 3 1
+2024-03-28 14:32:41,Exploring: 3 2
+2024-03-28 14:32:41,Exploring: 3 1
+2024-03-28 14:32:41,Exploring: 2 1
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Exploring: 2 2
+2024-03-28 14:32:41,Checkpoint found at: 2 2
+2024-03-28 14:32:41,Exploring: 3 2
+2024-03-28 14:32:41,Checkpoint found at: 3 2
+2024-03-28 14:32:41,Exploring: 3 3
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 1 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: -1 0
+2024-03-28 14:32:41,Checkpoint found at: -1 0
+2024-03-28 14:32:41,Exploring: -1 1
+2024-03-28 14:32:41,Checkpoint found at: -1 1
+2024-03-28 14:32:41,Exploring: 0 1
+2024-03-28 14:32:41,Exploring: -1 1
+2024-03-28 14:32:41,Exploring: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: -1 0
+2024-03-28 14:32:41,Checkpoint found at: -1 0
+2024-03-28 14:32:41,Exploring: -1 -1
+2024-03-28 14:32:41,Checkpoint found at: -1 -1
+2024-03-28 14:32:41,Exploring: -1 1
+2024-03-28 14:32:41,Checkpoint found at: -1 0
+2024-03-28 14:32:41,Checkpoint found at: -1 1
+2024-03-28 14:32:41,Exploring: 0 1
+2024-03-28 14:32:41,Exploring: -1 1
+2024-03-28 14:32:41,Exploring: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0
+2024-03-28 14:32:41,Exploring: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 2 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 2 -1
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Exploring: 1 -2 0
+2024-03-28 14:32:41,Checkpoint found at: 2 -1
+2024-03-28 14:32:41,Exploring: 2 -2 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: -1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 5
+2024-03-28 14:32:41,visited: 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,TilesMap size: 5
+2024-03-28 14:32:41,visited: 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,TilesMap size: 5
+2024-03-28 14:32:41,visited: 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 5
+2024-03-28 14:32:41,visited: 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 5
+2024-03-28 14:32:41,visited: 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: -1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Exploring: 2 -1 0
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Exploring: 3 1 0
+2024-03-28 14:32:41,Checkpoint found at: 3 1
+2024-03-28 14:32:41,Exploring: 3 0 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 3 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 1 2 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Exploring: 0 3 0
+2024-03-28 14:32:41,Exploring: 1 3 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 -2 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Exploring: -2 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: -1 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Exploring: 3 1 0
+2024-03-28 14:32:41,Exploring: 3 2 0
+2024-03-28 14:32:41,Exploring: 3 3 0
+2024-03-28 14:32:41,Exploring: 2 3 0
+2024-03-28 14:32:41,Exploring: 1 3 0
+2024-03-28 14:32:41,Exploring: 2 2 0
+2024-03-28 14:32:41,Exploring: 1 2 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,TilesMap size: 12
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,TilesMap size: 12
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,TilesMap size: 10
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,unvisited: 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Exploring: 3 1 0
+2024-03-28 14:32:41,Exploring: 3 2 0
+2024-03-28 14:32:41,Exploring: 3 3 0
+2024-03-28 14:32:41,Exploring: 2 3 0
+2024-03-28 14:32:41,Exploring: 1 3 0
+2024-03-28 14:32:41,Exploring: 2 2 0
+2024-03-28 14:32:41,Exploring: 1 2 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 10
+2024-03-28 14:32:41,visited: 3
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,Visited: 1 -1
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: -1 -1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,TilesMap size: 12
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,Visited: 1 -1
+2024-03-28 14:32:41,Visited: 0 -1
+2024-03-28 14:32:41,unvisited: 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 -2 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Checkpoint found at: 1 -2
+2024-03-28 14:32:41,Exploring: 0 -2 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,TilesMap size: 12
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,Visited: 1 -1
+2024-03-28 14:32:41,Visited: 0 -1
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,TilesMap size: 0
+2024-03-28 14:32:41,visited: 0
+2024-03-28 14:32:41,unvisited: 0
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,TilesMap size: 8
+2024-03-28 14:32:41,visited: 2
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Starting at: 1 -1 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,TilesMap size: 10
+2024-03-28 14:32:41,visited: 4
+2024-03-28 14:32:41,Visited: 0 0
+2024-03-28 14:32:41,Visited: 1 0
+2024-03-28 14:32:41,Visited: 1 -1
+2024-03-28 14:32:41,Visited: 0 -1
+2024-03-28 14:32:41,unvisited: 2
+2024-03-28 14:32:41,unvisited: 1 1
+2024-03-28 14:32:41,unvisited: 0 1
+2024-03-28 14:32:41,Starting at: 1 -1 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: -1 0 0
+2024-03-28 14:32:41,Exploring: -2 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: -1 0 0
+2024-03-28 14:32:41,Exploring: -2 0 0
+2024-03-28 14:32:41,Exploring: -2 1 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Exploring: -1 2 0
+2024-03-28 14:32:41,Exploring: -2 2 0
+2024-03-28 14:32:41,Exploring: -2 3 0
+2024-03-28 14:32:41,Exploring: -1 3 0
+2024-03-28 14:32:41,Exploring: 0 3 0
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 0 -1
+2024-03-28 14:32:41,Exploring: 1 0 -1
+2024-03-28 14:32:41,Exploring: 1 1 -1
+2024-03-28 14:32:41,Exploring: 2 1 -1
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Exploring: 2 0 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Exploring: 2 0 -1
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Exploring: 3 0 -1
+2024-03-28 14:32:41,Exploring: 4 0 -2
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 1 -2
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: 2 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: 0 -2
+2024-03-28 14:32:41,Connecting wall at: -1 -1
+2024-03-28 14:32:41,Exploring: 0 -2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -2
+2024-03-28 14:32:41,Connecting wall at: 0 -3
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 1 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 1 -2
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: 2 -1
+2024-03-28 14:32:41,Exploring: 0 -1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: 0 -2
+2024-03-28 14:32:41,Connecting wall at: -1 -1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Connecting wall at: 2 -1
+2024-03-28 14:32:41,Connecting wall at: 3 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Connecting wall at: 2 2
+2024-03-28 14:32:41,Connecting wall at: 3 1
+2024-03-28 14:32:41,Exploring: 2 2 0
+2024-03-28 14:32:41,Checkpoint found at: 2 2
+2024-03-28 14:32:41,Connecting wall at: 2 3
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 3 2
+2024-03-28 14:32:41,Exploring: 1 2 0
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Checkpoint found at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 1 3
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 0 3
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Connecting wall at: -1 1
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 0 3
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Connecting wall at: -1 1
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 0 3
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: 0 -2
+2024-03-28 14:32:41,Connecting wall at: -1 -1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Exploring: 0 -2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 -2
+2024-03-28 14:32:41,Connecting wall at: 0 -3
+2024-03-28 14:32:41,Connecting wall at: -1 -2
+2024-03-28 14:32:41,Connecting wall at: 1 -2
+2024-03-28 14:32:41,Checkpoint found at: 0 -1
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Connecting wall at: 2 -1
+2024-03-28 14:32:41,Connecting wall at: 3 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 1 -1
+2024-03-28 14:32:41,Exploring: 0 2 -2
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 0 3
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Exploring: 1 2 -2
+2024-03-28 14:32:41,Checkpoint found at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 1 3
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 2 2
+2024-03-28 14:32:41,Exploring: 1 1 -2
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: -1 0 0
+2024-03-28 14:32:41,Connecting wall at: -1 1
+2024-03-28 14:32:41,Connecting wall at: -1 -1
+2024-03-28 14:32:41,Connecting wall at: -2 0
+2024-03-28 14:32:41,Exploring: -2 0 0
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Connecting wall at: -2 1
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: -2 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Checkpoint found at: -1 1
+2024-03-28 14:32:41,Connecting wall at: -2 2
+2024-03-28 14:32:41,Connecting wall at: -2 0
+2024-03-28 14:32:41,Connecting wall at: -3 1
+2024-03-28 14:32:41,Exploring: -3 1 0
+2024-03-28 14:32:41,Connecting wall at: -3 2
+2024-03-28 14:32:41,Connecting wall at: -3 0
+2024-03-28 14:32:41,Connecting wall at: -4 1
+2024-03-28 14:32:41,Exploring: -4 1 0
+2024-03-28 14:32:41,Connecting wall at: -4 2
+2024-03-28 14:32:41,Connecting wall at: -4 0
+2024-03-28 14:32:41,Connecting wall at: -5 1
+2024-03-28 14:32:41,Exploring: -4 0 0
+2024-03-28 14:32:41,Connecting wall at: -5 0
+2024-03-28 14:32:41,Connecting wall at: -3 0
+2024-03-28 14:32:41,Exploring: -3 0 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Checkpoint found at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Connecting wall at: -1 1
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Exploring: -1 1 0
+2024-03-28 14:32:41,Checkpoint found at: -1 1
+2024-03-28 14:32:41,Exploring: -2 1 1
+2024-03-28 14:32:41,Checkpoint found at: -2 1
+2024-03-28 14:32:41,Connecting wall at: -2 2
+2024-03-28 14:32:41,Connecting wall at: -2 0
+2024-03-28 14:32:41,Connecting wall at: -3 1
+2024-03-28 14:32:41,Exploring: -3 1 1
+2024-03-28 14:32:41,Checkpoint found at: -3 1
+2024-03-28 14:32:41,Connecting wall at: -3 2
+2024-03-28 14:32:41,Connecting wall at: -3 0
+2024-03-28 14:32:41,Connecting wall at: -4 1
+2024-03-28 14:32:41,Exploring: -4 1 1
+2024-03-28 14:32:41,Checkpoint found at: -4 1
+2024-03-28 14:32:41,Connecting wall at: -4 2
+2024-03-28 14:32:41,Connecting wall at: -4 0
+2024-03-28 14:32:41,Connecting wall at: -5 1
+2024-03-28 14:32:41,Exploring: -5 1 1
+2024-03-28 14:32:41,Checkpoint found at: -5 1
+2024-03-28 14:32:41,Connecting wall at: -5 2
+2024-03-28 14:32:41,Connecting wall at: -5 0
+2024-03-28 14:32:41,Connecting wall at: -6 1
+2024-03-28 14:32:41,Exploring: -6 1 1
+2024-03-28 14:32:41,Checkpoint found at: -6 1
+2024-03-28 14:32:41,Connecting wall at: -6 2
+2024-03-28 14:32:41,Connecting wall at: -6 0
+2024-03-28 14:32:41,Connecting wall at: -7 1
+2024-03-28 14:32:41,Exploring: -7 1 1
+2024-03-28 14:32:41,Checkpoint found at: -7 1
+2024-03-28 14:32:41,Connecting wall at: -7 2
+2024-03-28 14:32:41,Connecting wall at: -7 0
+2024-03-28 14:32:41,Connecting wall at: -8 1
+2024-03-28 14:32:41,Exploring: -8 1 1
+2024-03-28 14:32:41,Checkpoint found at: -8 1
+2024-03-28 14:32:41,Connecting wall at: -8 2
+2024-03-28 14:32:41,Connecting wall at: -8 0
+2024-03-28 14:32:41,Connecting wall at: -9 1
+2024-03-28 14:32:41,Exploring: -9 1 1
+2024-03-28 14:32:41,Checkpoint found at: -9 1
+2024-03-28 14:32:41,Connecting wall at: -9 2
+2024-03-28 14:32:41,Connecting wall at: -9 0
+2024-03-28 14:32:41,Connecting wall at: -10 1
+2024-03-28 14:32:41,Exploring: -10 1 1
+2024-03-28 14:32:41,Checkpoint found at: -10 1
+2024-03-28 14:32:41,Connecting wall at: -10 2
+2024-03-28 14:32:41,Connecting wall at: -10 0
+2024-03-28 14:32:41,Connecting wall at: -11 1
+2024-03-28 14:32:41,Exploring: -11 1 1
+2024-03-28 14:32:41,Checkpoint found at: -11 1
+2024-03-28 14:32:41,Connecting wall at: -11 2
+2024-03-28 14:32:41,Connecting wall at: -11 0
+2024-03-28 14:32:41,Connecting wall at: -12 1
+2024-03-28 14:32:41,Exploring: -12 1 1
+2024-03-28 14:32:41,Checkpoint found at: -12 1
+2024-03-28 14:32:41,Connecting wall at: -12 2
+2024-03-28 14:32:41,Connecting wall at: -12 0
+2024-03-28 14:32:41,Connecting wall at: -13 1
+2024-03-28 14:32:41,Exploring: -13 1 1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 1 0 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Connecting wall at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 -1
+2024-03-28 14:32:41,Connecting wall at: 2 0
+2024-03-28 14:32:41,Exploring: 2 0 0
+2024-03-28 14:32:41,Checkpoint found at: 2 0
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Connecting wall at: 2 -1
+2024-03-28 14:32:41,Connecting wall at: 3 0
+2024-03-28 14:32:41,Exploring: 1 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 0
+2024-03-28 14:32:41,Checkpoint found at: 1 1
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 2 1
+2024-03-28 14:32:41,Exploring: 2 1 0
+2024-03-28 14:32:41,Checkpoint found at: 2 1
+2024-03-28 14:32:41,Connecting wall at: 2 2
+2024-03-28 14:32:41,Connecting wall at: 3 1
+2024-03-28 14:32:41,Exploring: 3 1 0
+2024-03-28 14:32:41,Checkpoint found at: 3 1
+2024-03-28 14:32:41,Connecting wall at: 3 2
+2024-03-28 14:32:41,Connecting wall at: 3 0
+2024-03-28 14:32:41,Connecting wall at: 4 1
+2024-03-28 14:32:41,Exploring: 3 2 0
+2024-03-28 14:32:41,Checkpoint found at: 3 2
+2024-03-28 14:32:41,Connecting wall at: 3 3
+2024-03-28 14:32:41,Connecting wall at: 2 2
+2024-03-28 14:32:41,Connecting wall at: 4 2
+2024-03-28 14:32:41,Exploring: 2 2 0
+2024-03-28 14:32:41,Checkpoint found at: 2 2
+2024-03-28 14:32:41,Connecting wall at: 2 3
+2024-03-28 14:32:41,Connecting wall at: 1 2
+2024-03-28 14:32:41,Exploring: 1 2 0
+2024-03-28 14:32:41,Checkpoint found at: 1 2
+2024-03-28 14:32:41,Connecting wall at: 1 3
+2024-03-28 14:32:41,Connecting wall at: 0 2
+2024-03-28 14:32:41,Exploring: 0 2 0
+2024-03-28 14:32:41,Checkpoint found at: 0 2
+2024-03-28 14:32:41,Connecting wall at: 0 3
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: -1 2
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Exploring: 0 0 -1
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Starting at: 0 0 0
+2024-03-28 14:32:41,Exploring: 0 0 0
+2024-03-28 14:32:41,Connecting wall at: 0 1
+2024-03-28 14:32:41,Connecting wall at: 0 -1
+2024-03-28 14:32:41,Connecting wall at: -1 0
+2024-03-28 14:32:41,Connecting wall at: 1 0
+2024-03-28 14:32:41,Exploring: 0 1 0
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,OrientationY:-4.81
+2024-03-28 14:32:41,OrientationY:-4.37
+2024-03-28 14:32:41,DistanceTraveled:0.00
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation349.19 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.00
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation349.25 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.01
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation350.25 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.01
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation352.94 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.40
+2024-03-28 14:32:41,totalDistanceTraveled:0.40
+2024-03-28 14:32:41,OrientationY:-3.44
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation75.19 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.44
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation67.06 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.50
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation57.31 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.50
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation53.69 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.50
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation358.87 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-3.81
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation345.12 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-3.62
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation346.62 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-3.31
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation348.00 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-2.19
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation350.19 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-0.94
+2024-03-28 14:32:41,Connected to WiFi
+2024-03-28 14:32:41,OrientationY:-4.19
+2024-03-28 14:32:41,OrientationY:-4.06
+2024-03-28 14:32:41,DistanceTraveled:0.00
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation359.87 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.00
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation359.94 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.01
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.13 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.02
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.00 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.04
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation359.69 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.06
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation359.75 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.09
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.25 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.12
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.06 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.15
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.50 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.18
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.13 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.21
+2024-03-28 14:32:41,DistanceTraveled:0.24
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.31 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.27
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.19 CurrentDistance0.30 
+2024-03-28 14:32:41,DistanceTraveled:0.31
+2024-03-28 14:32:41,totalDistanceTraveled:0.31
+2024-03-28 14:32:41,OrientationY:-3.50
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.19 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.19
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.50 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.19
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.44 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.06
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.31 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-4.00
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.00 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-3.75
+2024-03-28 14:32:41,targetOrientation0.00 CurrentOreintation0.00 CurrentDistance0.30
+2024-03-28 14:32:41,OrientationY:-3.37
+2024-03-28 14:32:41,OrientationY:-3.50
+2024-03-28 14:32:41,TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:0.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:0.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.75 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:359.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:359.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:358.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:358.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:357.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:357.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:356.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:355.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:354.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:353.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:352.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:351.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:350.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:349.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:348.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:348.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:348.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:347.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:346.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:345.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:345.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:344.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:343.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.87 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:342.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:341.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:340.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:339.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:338.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:337.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:336.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:335.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:334.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.44 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:333.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:333.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:332.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:331.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:330.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:329.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:328.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:327.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.44 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:326.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:325.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:324.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:323.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.88 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:322.37 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:321.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:320.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:319.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:318.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:317.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:316.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.75 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:315.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:314.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:313.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:312.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:311.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:310.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:309.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:308.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:307.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:306.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:305.00 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:304.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:303.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:302.13 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.62 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.12 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:301.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:301.12 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.56 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:300.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:299.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:299.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:299.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:299.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:299.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:298.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:297.25 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:296.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:295.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:294.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:293.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.69 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:292.19 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.63 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:291.06 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,Speed:0.10
+2024-03-28 14:32:41,CurrentOrientation:290.50 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:289.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:289.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:289.94 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:289.38 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:288.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:288.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.81 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.31 TargetOrientation:270.00
+2024-03-28 14:32:41,CurrentOrientation:287.31 TargetOrientation:270.00

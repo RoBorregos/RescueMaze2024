@@ -12,8 +12,8 @@
 
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.119"; // Replace with your Python script's IP address
-const int udpServerPort = 1239;
+const char* udpServerIP = "192.168.0.123"; // Replace with your Python script's IP address
+const int udpServerPort = 1;
 
 WiFiUDP udp; 
 #endif
@@ -289,7 +289,7 @@ double Movement::getWallDistance(const VlxID vlxId) {
     // return wallDistances[static_cast<uint8_t>(vlxId)];
 }
 
-void Movement::goForward(const double targetOrientation, const bool& hasVictim) {
+void Movement::goForward(const double targetOrientation, const bool hasVictim) {
     victimFound = hasVictim;
     moveMotors(MovementState::kForward, targetOrientation, kMoveOneTileDistance);
 }
@@ -356,6 +356,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blueTile_ = false;
             checkpointTile_ = false;
             finishedMovement_ = false;
+            victimFound = false;
 
             // customPrintln("Moving forward");
             // customPrintln("TargetDistance:" + String(targetDistance));
@@ -372,30 +373,42 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             #if DEBUG_OFFLINE_MOVEMENT
             #endif
 
-            if (frontWallDistance <= 0.45) {
-                while (frontWallDistance > 0.06 && lackOfProgress_ == false) {
-                    checkForLackOfProgress();
-                    frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
-                    pidForward_.setBaseSpeed(kBaseSpeedForward_);
-                    moveMotorsInADirection(targetOrientation, moveForward);
-                    // Checking serial.
-                    if (victimFound == false) {
-                        if (hasReceivedSerial == true) {
-                            screenPrint("request sent on vlx");
-                            sendSerialRequest();
-                        }
-                        // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
-                        checkSerial(currentOrientation_);
-                        // }
-                    }
-                    checkColors(targetOrientation);
-                }
-                stopMotors();
-                break;
-            }
+            // if (frontWallDistance <= 0.45) {
+            //     while (frontWallDistance > 0.06 && lackOfProgress_ == false) {
+            //         checkForLackOfProgress();
+            //         frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
+            //         pidForward_.setBaseSpeed(kBaseSpeedForward_);
+            //         moveMotorsInADirection(targetOrientation, moveForward);
+            //         // Checking serial.
+            //         if (victimFound == false) {
+            //             if (hasReceivedSerial == true) {
+            //                 screenPrint("request sent on vlx");
+            //                 sendSerialRequest();
+            //             }
+            //             // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
+            //             checkSerial(currentOrientation_);
+            //             // }
+            //         }
+            //         checkColors(targetOrientation);
+            //         // customPrintln("FrontWallDistance:" + String(frontWallDistance));
+            //         // crashLeft = limitSwitch_[leftLimitSwitch].getState();
+            //         // crashRight = limitSwitch_[rightLimitSwitch].getState();
+            //         // checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation_, useWallDistance);
+            //     }
+            //     stopMotors();
+            //     finishedMovement_ = true;
+            //     checkColors(targetOrientation);
+            //     break; // Break here ?
+            // }
 
+            // Moving with encoders.
             while (hasTraveledDistanceWithSpeed(targetDistance) == false  && lackOfProgress_ == false) {
                 checkForLackOfProgress();
+                
+                if (wasBlackTile()) {
+                    return;
+                }
+                checkColors(targetOrientation);
 
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
                 /* udp.beginPacket(udpServerIP, udpServerPort);
@@ -407,7 +420,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     stopMotors();
                     break;
                 }
-                checkColors(targetOrientation);
 
                 // Checking serial.
                 if (victimFound == false) {
@@ -417,7 +429,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         hasReceivedSerial = false;
                     }
                     // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
-                    checkSerial(currentOrientation_);
+                    checkSerial();
                     // }
                 }
 
@@ -425,10 +437,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 // customPrintln("blackTile" + String(blackTile_));
                 #if DEBUG_MOVEMENT
                 #endif
-                if (wasBlackTile()) {
-                    // customPrintln("Black tile detected");
-                    return;
-                }
 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
@@ -437,7 +445,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("targetOrientation" + String(targetOrientation));
                 udp.print(" ");
-                udp.print("CurrentOreintation" + String(currentOrientation));
+                udp.print("CurrentOreintation" + String(currentOrientation_));
                 udp.print(" ");
                 udp.print("CurrentDistance" + String(targetDistance));
                 udp.print(" ");
@@ -458,6 +466,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             // udp.print("Antes de entrar a vlx");
             // udp.endPacket();
 
+            // Center in tile with vlx.
             if (inResetRoutine_ == false || useWallDistance == false) {
                
                 frontWallDistance = vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance();
@@ -474,6 +483,22 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                                              targetDistance) - (targetDistance * kMToCm))) >= kMaxDistanceErrorInCm  && lackOfProgress_ == false) {
                     
                     checkForLackOfProgress();
+
+                    if (wasBlackTile()) {
+                        return;
+                    }
+                    checkColors(targetOrientation);
+
+                    // Checking serial.
+                    if (victimFound == false) {
+                        if (hasReceivedSerial == true) {
+                            screenPrint("request sent on vlx");
+                            sendSerialRequest();
+                        }
+                        // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
+                        checkSerial();
+                        // }
+                    }
 
                     pidBackward_.setBaseSpeed(kBaseSpeedForwardReset_);
                     pidForward_.setBaseSpeed(kBaseSpeedForwardReset_);
@@ -500,10 +525,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     customPrintln("Color:" + String(getTCSInfo()));
                     customPrintln("blackTile" + String(blackTile_));
                     #endif
-                    // if (wasBlackTile()) {
-                    //     customPrintln("Black tile detected");
-                    //     return;
-                    // }
                     
                     if (moveForward){
                         crashLeft = limitSwitch_[leftLimitSwitch].getState();
@@ -516,7 +537,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     udp.beginPacket(udpServerIP, udpServerPort);
                     udp.print("targetOrientation" + String(targetOrientation));
                     udp.print(" ");
-                    udp.print("CurrentOreintation" + String(currentOrientation));
+                    udp.print("CurrentOreintation" + String(currentOrientation_));
                     udp.print(" ");
                     udp.print("CurrentDistance" + String(targetDistance));
                     udp.endPacket();
@@ -562,12 +583,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
+            resetSerial();
             currentState_ = MovementState::kTurnLeft;
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
             break;
         }
         case (MovementState::kTurnRight): {
+            resetSerial();
             currentState_ = MovementState::kTurnRight;
             turnMotors(targetOrientation, targetDistance, currentOrientation_);
 
@@ -684,7 +707,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
                 hasReceivedSerial = false;
             }
             // if (vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance() < kWallDistance) {
-            checkSerial(currentOrientation_);
+            checkSerial();
             // }
         }
 
@@ -885,13 +908,13 @@ char Movement::checkColors(const double targetOrientation) {
         stopMotors();
         moveMotors(MovementState::kBackward, targetOrientation, targetDistance_);
         return color;
-    } else if (color == kBlueColor && finishedMovement_ == true) {
+    } else if (color == kBlueColor && finishedMovement_ == true && !blueTile_) {
         screenPrint("Blue tile detected");
         blueTile_ = true;
         stopMotors();
         delay(kFiveSeconds_);        
         return color;
-    } else if (color == 'C' && finishedMovement_ == true) { // TODO:  && bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError
+    } else if (color == 'C' && finishedMovement_ == true && !checkpointTile_ && bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError) { 
         screenPrint("Checkpoint tile detected");
         checkpointTile_ = true;
         stopMotors();
@@ -1324,29 +1347,34 @@ void Movement::sendSerialRequest() {
     hasReceivedSerial = false;
 }
 
-void Movement::checkSerial(double currentOrientation) {
+void Movement::checkSerial() {
     if (Serial.available() > 0) {
         hasReceivedSerial = true;
         victim = Serial.read();
         screenPrint("Serial Received");
         if (victim != kNoVictimSerialCode) {
             screenPrint("Victim Found");
-            saveLastState(getCurrentState(), currentOrientation);
+            saveLastState(getCurrentState(), currentOrientation_);
             moveMotors(MovementState::kStop, 0, 0);
             victimFound = true;
             delay(kOneSecInMs);
-            if (victim == kHarmedSerialCode) {
-                // Drop 2 medkits.
-                screenPrint("Throw 2 medkits");
+            if (victim == kHarmedSerialCodeLeft) {
+                screenPrint("Throw 2 medkits left");
                 moveServo(servoPosition::kLeft);
+                moveServo(servoPosition::kLeft);
+            } else if (victim == kHarmedSerialCodeRight) {
+                screenPrint("Throw 2 medkits right");
                 moveServo(servoPosition::kRight);
-            } else if (victim == kStableSerialCode) {
-                // Drop 1 medkit.
-                screenPrint("Throw 1 medkit");
+                moveServo(servoPosition::kRight);
+            } else if (victim == kStableSerialCodeLeft) {
+                screenPrint("Throw 1 medkit left");
                 moveServo(servoPosition::kLeft);
                 delay(2000);
-            } else if (victim == kUnharmedSerialCode){
-                // Only indicate victim found.
+            } else if (victim == kStableSerialCodeRight) {
+                screenPrint("Throw 1 medkit right");
+                moveServo(servoPosition::kRight);
+                delay(2000);
+            } else if (victim == kUnharmedSerialCodeLeft || victim == kUnharmedSerialCodeRight){
                 screenPrint("Unharmed");
                 delay(4000);
             }
@@ -1471,4 +1499,14 @@ void Movement::checkForLackOfProgress() {
 
 bool Movement::getLackOfProgress() {
     return lackOfProgress_;
+}
+
+void Movement::resetLackOfProgress() {
+    lackOfProgress_ = false;
+    // currentOrientation_ = 0;
+}
+
+bool Movement::onFlatGround() {
+    customPrintln(String("OrientationY:") + String(bno_.getOrientationY()));
+    return bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError;
 }

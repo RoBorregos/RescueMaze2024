@@ -110,8 +110,11 @@ void TCS::setPrecision(const uint8_t precision) {
 
 char TCS::getColor() {
     updateRGBC();
-    char colorLetter;
+    char colorLetter = kUndefinedColor_;
     float adc = photoresistor.readADC_SingleEnded(0);
+    #if DEBUG_TCS
+    customPrintln(String(kMinPhotoresistorValue_) + " " + String(kMaxPhotoresistorValue_) + " " + String(adc));
+    #endif
     // TODO: check each color
     // Serial.println("red: " + String(red_) + " green: " + String(green_) + " blue: " + String(blue_));
     // Serial.println("for BLUE: max red: " + String(kMaxRedValueInBlue_) + " min green: " + String(kMinGreenValueInBlue_) + " min blue: " + String(kMinBlueValueInBlue_));
@@ -323,9 +326,11 @@ void TCS::getBlackRanges() {
 
 void TCS::getCheckpointRanges() {
     float adc = photoresistor.readADC_SingleEnded(0);
+    #if DEBUG_TCS
     customPrintln(adc);
-    kMinPhotoresistorValue_ = adc - kRangeTolerance_;
-    kMaxPhotoresistorValue_ = adc + kRangeTolerance_;
+    #endif
+    kMinPhotoresistorValue_ = adc - kPhotoresistorThreshold_;
+    kMaxPhotoresistorValue_ = adc + kPhotoresistorThreshold_;
     #if DEBUG_TCS
     customPrintln("photoresistor: " + String(kMinPhotoresistorValue_) + " " + String(kMaxPhotoresistorValue_));
     #endif

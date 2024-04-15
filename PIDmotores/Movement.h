@@ -237,9 +237,12 @@ class Movement {
 
         // Dispenser stuff.
         // const char kCheckpointSerialCode = -1;
-        const char kHarmedSerialCode = 'h';
-        const char kStableSerialCode = 's';
-        const char kUnharmedSerialCode = 'u';
+        const char kHarmedSerialCodeLeft = 'h';
+        const char kHarmedSerialCodeRight = 'H';
+        const char kStableSerialCodeLeft = 's';
+        const char kStableSerialCodeRight = 'S';
+        const char kUnharmedSerialCodeLeft = 'u';
+        const char kUnharmedSerialCodeRight = 'U';
         const char kNoVictimSerialCode = 'm';
         const int kHalfSecond = 500;
         char victim = 'm';
@@ -247,9 +250,9 @@ class Movement {
         static constexpr int kSendRequestCode = 1;
         static constexpr int kResetSerialCode = 2;
         Servo myservo;
-        static constexpr uint8_t initialAngle = 85;
-        static constexpr uint8_t rightAngle = initialAngle + 35;
-        static constexpr uint8_t leftAngle = initialAngle - 41;
+        static constexpr uint8_t initialAngle = 100;
+        static constexpr uint8_t rightAngle = initialAngle + 37;
+        static constexpr uint8_t leftAngle = initialAngle - 39;
         bool victimFound = false;
         u_int8_t rightStock = 6;
         u_int8_t leftStock = 6;
@@ -310,7 +313,7 @@ class Movement {
 
         double getWallDistance(const VlxID vlxId);
 
-        void goForward(const double targetOrientation, const bool& hasVictim);
+        void goForward(const double targetOrientation, const bool hasVictim);
 
         void goBackward(const double targetOrientation);
 
@@ -372,7 +375,7 @@ class Movement {
 
         void sendSerialRequest();
 
-        void checkSerial(double currentOrientation);
+        void checkSerial();
 
         char getVictim();
 
@@ -393,6 +396,12 @@ class Movement {
         void checkForLackOfProgress();
 
         bool getLackOfProgress();
+
+        void resetLackOfProgress();
+
+        void checkForBumper(); // TODO: Implement this function.
+
+        bool onFlatGround(); // Not used.
 };
 
 #endif

@@ -20,6 +20,17 @@
 #define DEBUG_MERGE 1
 #define MOVEMENT 1
 #define NO_ROBOT 0
+#define DEBUG_ONLINE 1
+
+#if DEBUG_ONLINE
+#include <WiFi.h>
+#include <WiFiUdp.h>
+const char* ssid = "RoBorregos2";
+const char* password = "RoBorregos2024";
+const char* udpServerIP = "192.168.0.123"; // Replace with your Python script's IP address
+const int udpServerPort = 1;
+WiFiUDP udp;
+#endif
 
 Movement robot;
 
@@ -34,10 +45,13 @@ etl::vector<bool, kMaxMapSize> explored;
 etl::vector<int, kMaxMapSize> distance;
 etl::vector<coord, kMaxMapSize> previousPositions;
 etl::stack<coord, kMaxMapSize> path;
+etl::stack<coord, kMaxMapSize> unvisited;
 
 etl::vector<coord, kMaxMapSize> lastCheckpointCoords;
 etl::vector<Tile, kMaxMapSize> lastCheckpointTiles;
 etl::vector<coord, kMaxMapSize> lastCheckpointVisited;
+etl::stack<coord, kMaxMapSize> lastCheckpointUnvisited;
+coord endOfPath;
 
 constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
 
@@ -50,15 +64,18 @@ long long int timeAtStart;
 int kSevenMinutes = 420000;
 
 bool firstRun = true;
+bool isLackOfProgress = false;
 
 void onIdle() {
     while (true) {
+        isLackOfProgress = false;
+        robot.resetLackOfProgress();
         robot.screenPrint("Idle");
         if (digitalRead(Pins::buttonPin) == LOW) {
             robot.screenPrint("Loading ...");
             delay(kOneSecInMs);
             long long int time = millis();
-            while (millis() - time < 2000) {
+            while (millis() - time < 500) {
                 if (digitalRead(Pins::buttonPin) == LOW) {
                     robot.calibrateColors();
                     break;      
@@ -71,8 +88,8 @@ void onIdle() {
                 firstRun = false;
                 startAlgorithm();
             } else {
-                delay(kOneSecInMs);
                 robot.screenPrint("Restarting algorithm");
+                delay(kOneSecInMs);
                 restartOnLastCheckpoint();
                 // startAlgorithm();
             }
@@ -80,33 +97,83 @@ void onIdle() {
     }
 }
 
-void updateLastCheckpoint(const coord& checkpointCoord) {
+void updateLastCheckpoint() {
     lastCheckpointCoords = tilesMap.positions;
-    lastCheckpointCoord = checkpointCoord;
+    lastCheckpointCoord = robotCoord;
     lastCheckpointTiles = tiles;
     lastCheckpointVisited = visitedMap.positions;
+    lastCheckpointUnvisited = unvisited; 
+    // Add coord to which I am going and didn't get there too.
+    if (endOfPath != robotCoord) {
+        lastCheckpointUnvisited.push(endOfPath);
+    
+    }
 }
 
 void restartOnLastCheckpoint() {
     robotCoord = lastCheckpointCoord;
     robotOrientation = 0;
     tilesMap.positions = lastCheckpointCoords;
-    for (int i = 0; i < tilesMap.positions.size(); ++i) {
-        customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y));
-    }
     tiles = lastCheckpointTiles;
-    for (int i = 0; i < tiles.size(); ++i) {
-        customPrintln("Tile: " + String(tiles[i].position_.x) + " " + String(tiles[i].position_.y));
+    visitedMap.positions = lastCheckpointVisited;
+    unvisited = lastCheckpointUnvisited;
+    #if DEBUG_MERGE
+    for (int i = 0; i < tilesMap.positions.size(); ++i) {
+        customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y) + " " + String(tilesMap.positions[i].z));
     }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("TilesMap size: " + String(tilesMap.positions.size()));
+    udp.endPacket();
+    for (int i = 0; i < tiles.size(); ++i) {
+        customPrintln("Tile: " + String(tiles[i].position_.x) + " " + String(tiles[i].position_.y) + " " + String(tiles[i].position_.z));
+    }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("visited: " + String(visitedMap.positions.size()));
+    udp.endPacket();
+    for (int i = 0; i < visitedMap.positions.size(); ++i) {
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+        udp.endPacket();
+        customPrintln("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+    }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("unvisited: " + String(unvisited.size()));
+    udp.endPacket();
+    while (!unvisited.empty()) {
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("unvisited: " + String(unvisited.top().x) + " " + String(unvisited.top().y));
+        udp.endPacket();
+        unvisited.pop();
+    }
+    unvisited = lastCheckpointUnvisited;
+    #endif
+    // Check if the robot hasn't detected a checkpoint.
     if (tilesMap.positions.size() == 0 && tiles.size() == 0) {
         tilesMap.positions.push_back(robotCoord);
         tiles.push_back(Tile(robotCoord));
     } else {
-        tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
-    }
-    visitedMap.positions = lastCheckpointVisited;
-    for (int i = 0; i < visitedMap.positions.size(); ++i) {
-        customPrintln("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+        // tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
+        // Make the four adjacent tiles of the last checkpoint to be NULL.
+        for (const TileDirection& direction : directions) {
+            const int staticDirection = static_cast<int>(direction);
+            if (tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] != NULL) {
+                tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] = NULL;
+            }
+        }
+        // Check unvisited tiles adjecencies, if they're not visited make them NULL.
+        while (!unvisited.empty()) {
+            coord currentTileCoord = unvisited.top();
+            unvisited.pop();
+            for (const TileDirection& direction : directions) {
+                const int staticDirection = static_cast<int>(direction);
+                if (tiles[tilesMap.getIndex(currentTileCoord)].adjacentTiles_[staticDirection] != NULL) {
+                    if (visitedMap.getIndex(tiles[tilesMap.getIndex(currentTileCoord)].adjacentTiles_[staticDirection]->position_) == kInvalidIndex) {
+                        tiles[tilesMap.getIndex(currentTileCoord)].adjacentTiles_[staticDirection] = NULL;
+                    }
+                }
+            }
+        }
+        unvisited = lastCheckpointUnvisited;
     }
     depthFirstSearch();
 }
@@ -125,7 +192,11 @@ void turnAndMoveRobot(const int targetOrientation) {
     }
     // If button was pressed while turning, set idle state.
     if (robot.getLackOfProgress()) {
-        onIdle();
+        #if debug_algorithm
+        customPrintln("Lack of progress");
+        #endif
+        isLackOfProgress = true;
+        return;
     }
     // Check how to move (ramp/ground).
     if (robot.isRamp()) {
@@ -135,7 +206,10 @@ void turnAndMoveRobot(const int targetOrientation) {
     }
     // If button was pressed while going forward, set idle state.
     if (robot.getLackOfProgress()) {
-        onIdle();
+        #if debug_algorithm
+        customPrintln("Lack of progress");
+        #endif
+        isLackOfProgress = true;
     }
 }
 
@@ -205,15 +279,23 @@ void followPath() {
         customPrintln("robotOrientation: " + String(robotOrientation));
         customPrintln("robotCoord: " + String(robotCoord.x) + " " + String(robotCoord.y));
         #endif
+        if(isLackOfProgress) {
+            break;
+        }
         if (robot.wasBlackTile()) {
             tiles[tilesMap.getIndex(next)].setBlackTile();
         } else if (robot.isBlueTile()) {
             robotCoord = next;
             tiles[tilesMap.getIndex(robotCoord)].weight_ = kBlueTileWeight;
         } else if (robot.isCheckpointTile()) {
+            #if DEBUG_ONLINE
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("Checkpoint found at: " + String(next.x) + " " + String(next.y));
+            udp.endPacket();
+            #endif
             robotCoord = next;
             tiles[tilesMap.getIndex(robotCoord)].setCheckpoint();
-            updateLastCheckpoint(robotCoord);
+            updateLastCheckpoint();
         } else {
             robotCoord = next;
         }
@@ -225,6 +307,7 @@ void followPath() {
 }
 
 void dijsktra(const coord& start, const coord& end) {
+    endOfPath = end;
     #if DEBUG_ALGORITHM
     customPrintln("End coord: " + String(end.x) + " " + String(end.y));
     #endif
@@ -323,12 +406,16 @@ void dijsktra(const coord& start, const coord& end) {
 // }
 
 void depthFirstSearch() {
-    etl::stack<coord, kMaxMapSize> unvisited;
     Tile* currentTile;
     bool wall;
     bool alreadyConnected;
     coord nextTileCoord;
     TileDirection oppositeDirection;
+    #if DEBUG_ONLINE
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Starting at: " + String(robotCoord.x) + " " + String(robotCoord.y) + " " + String(robotCoord.z));
+    udp.endPacket();
+    #endif
     unvisited.push(robotCoord);
     #if DEBUG_ALGORITHM
     customPrintln("inicio DFS");
@@ -349,6 +436,11 @@ void depthFirstSearch() {
         if (visitedMap.getIndex(currentTileCoord) != kInvalidIndex) {
             continue;
         }
+        #if DEBUG_ONLINE
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Exploring: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y) + " " + String(currentTileCoord.z));
+        udp.endPacket();
+        #endif
         #if DEBUG_ALGORITHM 
         customPrintln("before dijsktra"); 
         #endif
@@ -358,6 +450,9 @@ void depthFirstSearch() {
         // robot.screenPrint("CurrentTileCoord: " + String(currentTileCoord.x) + " " + String(currentTileCoord.y));
         #endif
         dijsktra(robotCoord, currentTileCoord);
+        if (isLackOfProgress) {
+            break;
+        }
         #if DEBUG_ALGORITHM || DEBUG_MERGE
         customPrint("currentTileCoord: ");
         customPrint(currentTileCoord.x);
@@ -452,6 +547,11 @@ void depthFirstSearch() {
                 }
                 // check if the tile has not been checked.
                 if (currentTile->adjacentTiles_[static_cast<int>(direction)] == NULL) {
+                    #if DEBUG_ONLINE
+                    // udp.beginPacket(udpServerIP, udpServerPort);
+                    // udp.print("Connecting wall at: " + String(nextTileCoord.x) + " " + String(nextTileCoord.y));
+                    // udp.endPacket();
+                    #endif
                     // check for a wall.
                     wall = robot.checkWallsDistances(direction, robotOrientation);
                     if (wall) {
@@ -527,6 +627,12 @@ void depthFirstSearch() {
             }
         }
     }
+    if (isLackOfProgress) {
+        #if DEBUG_ALGORITHM
+        customPrintln("returned all the way");
+        #endif
+        return;
+    }
     robot.screenPrint("End of DFS");
     dijsktra(robotCoord, coord{0,0,0});
     #if DEBUG_ALGORITHM
@@ -557,6 +663,18 @@ void setup(){
     Serial.begin(115200);
     #if DEBUG_ALGORITHM
     customPrintln("Serial ready");
+    #endif
+    #if DEBUG_ONLINE
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(kOneSecInMs);
+        customPrintln("Connecting to WiFi...");
+    }
+    customPrintln("Connected to WiFi");
+    udp.begin(udpServerPort);
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Connected to WiFi");
+    udp.endPacket();
     #endif
     robot.setup();
     onIdle();
