@@ -308,7 +308,7 @@ class Movement {
 
         uint8_t getOrientation(const compass currentOrientation);
         
-        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool center = false, bool afterRamp = false);
+        void moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance = true, bool center = false);
 
         void setMotorsDirections(const MovementState state, MotorState directions[4]);
 
@@ -396,7 +396,7 @@ class Movement {
 
         void sendSerialRequest();
 
-        void checkSerial();
+        void checkSerial(double currentOrientation);
 
         char getVictim();
 

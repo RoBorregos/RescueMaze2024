@@ -4,7 +4,7 @@
 #include "VLX.h"
 
 #define DEBUG_MOVEMENT 0
-#define DEBUG_OFFLINE_MOVEMENT 1
+#define DEBUG_OFFLINE_MOVEMENT 0
 
 #if DEBUG_OFFLINE_MOVEMENT
 #include <WiFi.h>
@@ -39,6 +39,7 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
+    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
@@ -50,7 +51,6 @@ void Movement::setup() {
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
     udp.endPacket();
-    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -371,7 +371,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blueTile_ = false;
             checkpointTile_ = false;
             finishedMovement_ = false;
-            victimFound = false;
+            victimFound = false; // Testing.
 
             // customPrintln("Moving forward");
             // customPrintln("TargetDistance:" + String(targetDistance));
@@ -411,7 +411,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     if (hasReceivedSerial == true) {
                         screenPrint("request sent");
                         sendSerialRequest();
-                        hasReceivedSerial = false;
                     }
                     // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
                     checkSerial(targetOrientation);
@@ -500,12 +499,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         crashLeft = limitSwitch_[leftLimitSwitch].getState();
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
                     }
+                    #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
                     udp.print("crashLeft:" + String(crashLeft));
                     udp.print(" ");
                     udp.print("crashRight:" + String(crashRight));
                     udp.endPacket();
-
+                    #endif
                     bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
                     if (!result) {
                         stopMotors();
@@ -698,7 +698,6 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
             if (hasReceivedSerial == true) {
                 screenPrint("request sent");
                 sendSerialRequest();
-                hasReceivedSerial = false;
             }
             // if (vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance() < kWallDistance) {
             checkSerial(targetOrientation);
