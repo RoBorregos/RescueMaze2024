@@ -80,7 +80,7 @@ def start_model():
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
-    model_ft.load_state_dict(torch.load('model.pth'))
+    model_ft.load_state_dict(torch.load('model2.pth'))
     model_ft.eval()
     return model_ft
 
@@ -336,7 +336,7 @@ def setup():
     red = data["red"]
     yellow = data["yellow"]
     green = data["green"]
-    minimum_predict_value = 2.5
+    minimum_predict_value = 0
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':True,
