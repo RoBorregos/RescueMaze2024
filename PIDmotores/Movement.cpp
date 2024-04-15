@@ -7,16 +7,16 @@
 #define DEBUG_OFFLINE_MOVEMENT 0
 
 #if DEBUG_OFFLINE_MOVEMENT
+#endif
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.105"; // Replace with your Python script's IP address
+const char* udpServerIP = "192.168.0.118"; // Replace with your Python script's IP address
 const int udpServerPort = 1239;
 
 WiFiUDP udp; 
-#endif
 
 
 
@@ -39,7 +39,6 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
-    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
@@ -51,6 +50,7 @@ void Movement::setup() {
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
     udp.endPacket();
+    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -431,12 +431,20 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     stopMotors();
                     break;
                 } */
+                crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                crashRight = limitSwitch_[rightLimitSwitch].getState();
 
                 bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
                 if (!result) {
                     stopMotors();
                     break;
                 }
+
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("crashLeft:" + String(crashLeft));
+                udp.print(" ");
+                udp.print("crashRight:" + String(crashRight));
+                udp.endPacket();
                 
 
                 /* if (initialFrontWallDistance >= 0.1 && frontWallDistance <= kMinWallDistance && afterRamp == false) {
@@ -470,8 +478,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     return;
                 }
 
-                crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                crashRight = limitSwitch_[rightLimitSwitch].getState();
 
                 #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
@@ -488,7 +494,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 #endif
                 moveMotorsInADirection(targetOrientation, true);
 
-                checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
             }
 
             stopMotors();
@@ -526,10 +531,27 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         frontWallDistance = vlx[vlxId].getRawDistance();   
                     }
 
-                    if (moveForward && frontWallDistance <= kMinWallDistance) {
+                    
+                    if (moveForward){
+                        crashLeft = limitSwitch_[leftLimitSwitch].getState();
+                        crashRight = limitSwitch_[rightLimitSwitch].getState();
+                    }
+                    udp.beginPacket(udpServerIP, udpServerPort);
+                    udp.print("crashLeft:" + String(crashLeft));
+                    udp.print(" ");
+                    udp.print("crashRight:" + String(crashRight));
+                    udp.endPacket();
+
+                    bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
+                    if (!result) {
                         stopMotors();
                         break;
                     }
+
+                    // if (moveForward && frontWallDistance <= kMinWallDistance) {
+                    //     stopMotors();
+                    //     break;
+                    // }
 
                     // TODO: Only check colors when it is moving forward
                     // checkColors();
@@ -543,10 +565,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         return;
                     }
                     
-                    if (moveForward){
-                        crashLeft = limitSwitch_[leftLimitSwitch].getState();
-                        crashRight = limitSwitch_[rightLimitSwitch].getState();
-                    }
 
                     checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
 
