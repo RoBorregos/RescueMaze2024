@@ -307,6 +307,8 @@ class Movement {
 
         bool inLeftCollision_ = false;
 
+        bool detectedVictimInTurn_ = false;
+
     public:
         Movement();
 
@@ -363,9 +365,9 @@ class Movement {
 
         void goBackward(const double targetOrientation);
 
-        void turnLeft(const double targetOrientation);
+        void turnLeft(const double targetOrientation, const bool hasVictim);
 
-        void turnRight(const double targetOrientation);
+        void turnRight(const double targetOrientation, const bool hasVictim);
 
         void turnMotors(const double targetOrientation, const double targetDistance, double &currentOrientation);
 

@@ -71,6 +71,7 @@ void Movement::setup() {
     setupLimitSwitch(LimitSwitchID::kRight);
 
     myservo.attach(Pins::servoPin);
+    moveServo(servoPosition::kCenter);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
     this->display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);    
@@ -311,12 +312,14 @@ void Movement::goBackward(const double targetOrientation) {
     moveMotors(MovementState::kBackward, targetOrientation, kMoveOneTileDistance);
 }
 
-void Movement::turnLeft(const double targetOrientation) {
+void Movement::turnLeft(const double targetOrientation, const bool hasVictim) {
+    victimFound = hasVictim;
     turning_ = true;
     moveMotors(MovementState::kTurnLeft, targetOrientation, 0);
 }
 
-void Movement::turnRight(const double targetOrientation) {
+void Movement::turnRight(const double targetOrientation, const bool hasVictim) {
+    victimFound = hasVictim;
     turning_ = true;
     moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
@@ -328,6 +331,7 @@ void Movement::rampMovement(const double targetOrientation) {
 // TODO: Clean this function
 void Movement::moveMotors(const MovementState state, const double targetOrientation, double targetDistance, bool useWallDistance, bool center) { 
     // 321
+    // victimFound = false; // Testing.
     lackOfProgress_ = false;
     double speeds[kNumberOfWheels];
     MotorState directions[kNumberOfWheels]; 
@@ -373,7 +377,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             blueTile_ = false;
             checkpointTile_ = false;
             finishedMovement_ = false;
-            victimFound = false; // Testing.
 
             // customPrintln("Moving forward");
             // customPrintln("TargetDistance:" + String(targetDistance));
@@ -621,6 +624,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             resetSerial();
             currentState_ = MovementState::kTurnLeft;
             turnMotors(targetOrientation, targetDistance, currentOrientation);
+            if (detectedVictimInTurn_) {
+                #if DEBUG_VISION
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("Victim detected in turn");
+                udp.endPacket();
+                #endif
+                turnMotors(targetOrientation, targetDistance, currentOrientation);
+            }
 
             break;
         }
@@ -628,6 +639,14 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             resetSerial();
             currentState_ = MovementState::kTurnRight;
             turnMotors(targetOrientation, targetDistance, currentOrientation);
+            if (detectedVictimInTurn_) {
+                #if DEBUG_VISION
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("Victim detected in turn");
+                udp.endPacket();
+                #endif
+                turnMotors(targetOrientation, targetDistance, currentOrientation);
+            }
 
             break;
         }
@@ -773,6 +792,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     MotorState directions[kNumberOfWheels]; 
     double speed = 0;
     bool turnLeft = false;
+    detectedVictimInTurn_ = false;
 
     #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
@@ -780,6 +800,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     udp.endPacket();
     #endif
     timePrevTurn_ = millis();
+    timePrev_ = millis(); // Modified this line.
     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError  && lackOfProgress_ == false) {
         checkForLackOfProgress();
         // Checking serial.
@@ -789,6 +810,9 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
                 sendSerialRequest();
             }
             checkSerial(currentOrientation);
+            if (detectedVictimInTurn_ == true) {
+                break;
+            }
         }
         
         maybeGoBackwards(currentOrientation);
@@ -835,7 +859,6 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         
     }
     stopMotors();
-    
 }
 
 MovementState Movement::getCurrentState() {
@@ -1451,6 +1474,7 @@ void Movement::checkSerial(double currentOrientation) {
                 screenPrint("Unharmed");
                 delay(4000);
             }
+            detectedVictimInTurn_ = true;
             retrieveLastState();
         }
     }

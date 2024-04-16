@@ -198,13 +198,13 @@ void restartOnLastCheckpoint() {
 void turnAndMoveRobot(const int targetOrientation) {
     int difference = targetOrientation - robotOrientation;
     if (difference == 90 || difference == -270) {
-        robot.turnRight(targetOrientation);
+        robot.turnRight(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 90) % 360;
     } else if (difference == -90 || difference == 270) {
-        robot.turnLeft(targetOrientation);
+        robot.turnLeft(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        robot.turnRight(targetOrientation);
+        robot.turnRight(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 180) % 360;
     }
     // If button was pressed while turning, set idle state.
@@ -214,6 +214,10 @@ void turnAndMoveRobot(const int targetOrientation) {
         #endif
         isLackOfProgress = true;
         return;
+    }
+    // If a victim was found, update the tile.
+    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
+        tiles[tilesMap.getIndex(robotCoord)].setVictim();
     }
     // Check how to move (ramp/ground).
     if (robot.isRamp()) {
@@ -227,6 +231,10 @@ void turnAndMoveRobot(const int targetOrientation) {
         customPrintln("Lack of progress");
         #endif
         isLackOfProgress = true;
+    }
+    // If a victim was found, update the tile.
+    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
+        tiles[tilesMap.getIndex(robotCoord)].setVictim();
     }
 }
 
@@ -299,6 +307,7 @@ void followPath() {
         if(isLackOfProgress) {
             break;
         }
+        // If a colored tile was found, update the tile.
         if (robot.wasBlackTile()) {
             tiles[tilesMap.getIndex(next)].setBlackTile();
         } else if (robot.isBlueTile()) {
@@ -315,10 +324,6 @@ void followPath() {
             updateLastCheckpoint();
         } else {
             robotCoord = next;
-        }
-        // If a victim was found, update the tile.
-        if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
-            tiles[tilesMap.getIndex(robotCoord)].setVictim();
         }
     }
 }
