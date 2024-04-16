@@ -401,11 +401,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
 
+                #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("crashLeft:" + String(crashLeft));
                 udp.print(" ");
                 udp.print("crashRight:" + String(crashRight));
                 udp.endPacket();
+                #endif
 
                 bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
                 if (!result) {
@@ -448,10 +450,12 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             }
 
             stopMotors();
+            
+            #if DEBUG_OFFLINE_MOVEMENT
             udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("Finished");
             udp.endPacket();
-
+            #endif
 
             // udp.beginPacket(udpServerIP, udpServerPort);
             // udp.print("Antes de entrar a vlx");
@@ -459,9 +463,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             // Center in tile with vlx.
             if (inResetRoutine_ == false || useWallDistance == true) {
+                #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("inCollision:" + String(inCollision_));
                 udp.endPacket();
+                #endif
                 if (inCollision_) {
                     inCollision_ = false;
                     return;
@@ -516,11 +522,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     if (moveForward){
                         crashLeft = limitSwitch_[leftLimitSwitch].getState();
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
+                        #if DEBUG_OFFLINE_MOVEMENT
                         udp.beginPacket(udpServerIP, udpServerPort);
                         udp.print("crashLeft:" + String(crashLeft));
                         udp.print(" ");
                         udp.print("crashRight:" + String(crashRight));
                         udp.endPacket();
+                        #endif
                     }
                     #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
@@ -683,17 +691,23 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
             return;
         }
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15 , false);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Backward");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + crashDeltaOrientation_ + orientation), 0);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Turining left");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kForward, getOrientation(currentOrientation + crashDeltaOrientation_ + orientation), 0.15, false);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Forward");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - orientation), 0);
     } else  {
         #if DEBUG_MOVEMENT
@@ -707,17 +721,23 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
             return;
         }
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Backward");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kTurnRight, getOrientation(currentOrientation - crashDeltaOrientation_ - orientation), 0);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Turining right");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kForward, getOrientation(currentOrientation - crashDeltaOrientation_ - orientation), crashDeltaDistance_, false);
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Forward");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + orientation), 0);
 
     }
@@ -1597,9 +1617,11 @@ void Movement::maybeGoBackwards(const double currentOrientation) {
         return;
     }
     stopMotors();
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Stop");
     udp.endPacket();
+    #endif
     kITurn = 0.00005;
     moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
     timePrevTurn_ = millis();
