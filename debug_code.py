@@ -327,11 +327,11 @@ def setup():
     ##################VARIABLES ZONE#################
     class_names = ['h', 's', 'u']
     data = download_json()
-    minimum_predict_value = 1.6
+    minimum_predict_value = 1.3
     min_color_area = 1500
     #GLOBAL DEBUG VARIABLES
     debug = {
-        'arduino':False,
+        'arduino':True,
         'model':True,
         'record':False,
         'generate_BBOX':False,
