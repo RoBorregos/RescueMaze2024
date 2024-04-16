@@ -281,7 +281,7 @@ bool Movement::checkWallsDistances(const TileDirection targetTileDirection, cons
     const VlxID vlxID = static_cast<VlxID>(vlxIndex);
 
     // customPrintln("WALL?: " + String(getWallDistance(vlxID)) + " < " + "0.15" + " = " + String(getWallDistance(vlxID) < 0.15));
-    return getWallDistance(vlxID) < 0.17;
+    return getWallDistance(vlxID) < 0.18;
 }
 
 uint8_t Movement::checkWallsDistances() {
@@ -468,6 +468,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
                 frontWallDistance = vlx[vlxId].getRawDistance();
                 backWallDistance = vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance();
+                if (frontWallDistance <= kMinWallDistance) {
+                    return;
+                }
                 // udp.beginPacket(udpServerIP, udpServerPort);
                 // udp.print("ENTRA EN IF");
                 // udp.endPacket();
@@ -682,6 +685,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         if (inLeftCollision_){
             return;
         }
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation)
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.15 , false);
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Backward");
@@ -706,7 +710,8 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         if (inRightCollision_) {
             return;
         }
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false);
+        
+        /* moveMotors(MovementState::kBackward, getOrientation(currentOrientation), crashDeltaDistance_ , false);
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Backward");
         udp.endPacket();
@@ -719,7 +724,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         udp.print("Forward");
         udp.endPacket();
         moveMotors(MovementState::kTurnLeft, getOrientation(currentOrientation + orientation), 0);
-
+ */
     }
     retrieveLastState();
 }
