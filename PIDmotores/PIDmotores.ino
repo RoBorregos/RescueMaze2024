@@ -15,12 +15,12 @@
 #include "Pins.h"
 #include "Encoder.h"
 
-#define DEBUG_ALGORITHM 1
+#define DEBUG_ALGORITHM 0
 #define USING_SCREEN 0
-#define DEBUG_MERGE 1
+#define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
-#define DEBUG_ONLINE 1
+#define DEBUG_ONLINE 0
 
 #if DEBUG_ONLINE
 #include <WiFi.h>
@@ -117,7 +117,7 @@ void restartOnLastCheckpoint() {
     tiles = lastCheckpointTiles;
     visitedMap.positions = lastCheckpointVisited;
     unvisited = lastCheckpointUnvisited;
-    #if DEBUG_MERGE
+    #if DEBUG_ONLINE
     for (int i = 0; i < tilesMap.positions.size(); ++i) {
         customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y) + " " + String(tilesMap.positions[i].z));
     }

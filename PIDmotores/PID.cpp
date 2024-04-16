@@ -13,12 +13,12 @@ PID::PID() {
 
 }
 
-PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxOrientationError) {
+PID::PID(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, double baseModifier, double kMaxError) {
     timePrev_ = millis();
     errorPrev_ = 0;
     kBaseModifier_ = baseModifier;
-    kMaxOrientationError_ = kMaxOrientationError;
-    setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxOrientationError);
+    kMaxError_ = kMaxError;
+    setTunnings(kP, kI, kD, minOutput, maxOutput, maxErrorSum, sampleTime, baseModifier, kMaxError);
     #if DEBUG_PID
     customPrintln("kP9:" + String(kP));
     #endif
@@ -40,7 +40,7 @@ void PID::setBaseSpeed(const double baseModifier) {
     kBaseModifier_ = baseModifier;
 }
 
-void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxOrientationError = 0) {
+void PID::setTunnings(const double kP, const double kI, const double kD, const double minOutput, const double maxOutput, const double maxErrorSum, const long sampleTime, const double baseModifier = 0, const double maxError = 0) {
     kP_ = kP;
     kI_ = kI;
     kD_ = kD;
@@ -49,7 +49,7 @@ void PID::setTunnings(const double kP, const double kI, const double kD, const d
     kMaxErrorSum_ = maxErrorSum;
     kSampleTime_ = sampleTime;
     kBaseModifier_ = baseModifier;
-    kMaxOrientationError_ = maxOrientationError;
+    kMaxError_ = maxError;
     #if DEBUG_PID
     customPrintln("kP:" + String(kP));
     customPrintln("kP_" + String(kP_));
@@ -108,7 +108,7 @@ void PID::computeStraight(const double targetOrientation, const double currentOr
 
     outputLeft = kBaseModifier_;
     outputRight = kBaseModifier_;
-    if (abs(errorOrientation) > kMaxOrientationError_) {
+    if (abs(errorOrientation) > kMaxError_) {
         outputLeft += outputModifier;
         outputRight -= outputModifier;
     }
@@ -136,19 +136,20 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
     const double errorOrientation = computeErrorOrientation(targetOrientation, currentOrientation);
     const double outputModifier = computeOutputModifier(errorOrientation, timeDiff);
 
-    if (errorOrientation < kMaxOrientationError_) {
+    if (errorOrientation < kMaxError_) {
         speed = kBaseModifier_ + outputModifier;
         clockwise = true;
-        #if DEBUG_PID
+
         customPrintln("Aumentando derecho");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        #if DEBUG_PID
         #endif
-    } else if (errorOrientation > -kMaxOrientationError_) {
+    } else if (errorOrientation > -kMaxError_) {
         speed = kBaseModifier_ - outputModifier;
         clockwise = false;
-        #if DEBUG_PID
         customPrintln("Aumentando izquierdo");
         customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        #if DEBUG_PID
         #endif
     } else { 
         speed = 0;
@@ -165,15 +166,6 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
 
     timePrev_ = millis();
 }
-
-/* TODO:
-void PID.computeDistance(....) {
-
-    
-    baseModifier
-
-}
- */
 
 void PID::compute(const double setpoint, double& input, double& output, long long &resetVariable, double (*func)(const long long, const unsigned long)) {
     const unsigned long timeDiff = millis() - timePrev_;
@@ -193,9 +185,34 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
     output = constrain(output, kMinOutput_, kMaxOutput_);
     resetVariable = 0;
     timePrev_ = millis();
+    // customPrintln("OUTPUT motor:" + String(output));
 }
 
 void PID::resetPID() {
     errorPrev_ = 0;
     errorSum_ = 0;
+}
+
+void PID::computeDistance(const double setpoint, const double input, double& outputLeft, double& outputRight) {
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < kSampleTime_) {
+        return;
+    }
+
+    const double error = setpoint - input;
+    const double outputModifier = computeOutputModifier(error, timeDiff);
+
+    outputLeft = kBaseModifier_;
+    outputRight = kBaseModifier_;
+    
+    if (abs(error) > kMaxError_) {
+        outputLeft += outputModifier;
+        outputRight -= outputModifier;
+    }
+
+    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
+    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
+    errorPrev_ = error;
+
+    timePrev_ = millis();
 }

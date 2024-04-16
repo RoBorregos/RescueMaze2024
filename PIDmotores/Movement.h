@@ -43,10 +43,8 @@ class Movement {
         MovementState currentState_;
         MovementState lastState_;
 
-        double currentOrientation_ = 0;
-
         double crashDeltaOrientation_ = 20.0;
-        double crashDeltaDistance_ = 0.08;
+        double crashDeltaDistance_ = 0.10;
 
         unsigned long prevTimeTraveled_;
         double allDistanceTraveled_ = 0; 
@@ -74,7 +72,10 @@ class Movement {
 
         // TODO: Improve the name of this variable
         static constexpr double kMinWallDistance = 0.06; // 6 cm
+        
+        const double timeToTurn_ = 5000;
 
+        static constexpr double kMaxErrorOrientation = 1.0; 
 
         // TODO: Write the member variables like this kNumberOfVlx_ and kMToCm_
 
@@ -122,6 +123,8 @@ class Movement {
 
         double timePrev_ = 0;
 
+        double timePrevTurn_ = 0;
+
         VlxID vlxDirections[kNumberOfVlx] = {VlxID::kFrontRight, VlxID::kBack, VlxID::kLeft, VlxID::kRight, VlxID::kFrontLeft};
 
         double sampleTime_ = 100;
@@ -147,6 +150,8 @@ class Movement {
 
         static constexpr double kMinRampOrientation = 10.0;
 
+        static constexpr double kMaxDistanceError = 0.01;
+
         static constexpr long long kOneSecInMs = 1000;
 
         static constexpr double kOneTileDistance = 0.3; // 0.228 m
@@ -165,6 +170,10 @@ class Movement {
 
         static constexpr double kWeightVlx = 1.0;
 
+        static constexpr double kWeightBNO = 0.5;
+
+        static constexpr double kWeightVLX = 0.5;
+
         int counterMovements_ = 0;
 
         bool encodersReset_ = false;
@@ -173,18 +182,20 @@ class Movement {
 
         constexpr static double speedOffset = 0.02;
 
+        const double kOneCmInM = 0.01;
 
         PID pidDummy_;
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidWallAlignment_;
 
         double vlxDistanceTraveled_;
 
         double distanceToCenter_;
 
         constexpr static double kPForward = 0.07; // 0.09
-        constexpr static double kIForward = 0.00;
+        constexpr static double kIForward = 0.01;
         constexpr static double kDForward = 0.00;
 
         constexpr static double kPBackward = 0.02;
@@ -192,17 +203,21 @@ class Movement {
         constexpr static double kDBackward = 0.0;
 
         constexpr static double kPTurn = 0.00005;
-        constexpr static double kITurn = 0.0;
+        double kITurn = 0.00000; // 0.00050
         constexpr static double kDTurn = 0.00019;
 
+        constexpr static double kPDistance = 0.63; // 0.63
+        constexpr static double kIDistance = 0.00; // 0.00
+        constexpr static double kDDistance = 0.082; // 0.07
+
         constexpr static double kMaxErrorSum{4000};
-        constexpr static double kMinOutput{0};
+        constexpr static double kMinOutput{0.003};
         constexpr static double kTurnMinOutput{0.050};
         constexpr static double kMaxOutput{0.5};
         constexpr static long kSampleTime{100};
         constexpr static long kSampleTimeTraveled{50};
 
-        // TCS
+        // TCS 
         TCS tcs_;
         static constexpr int kPrecision = 100;
         static constexpr uint8_t kColorAmount = 3;
@@ -229,12 +244,18 @@ class Movement {
         const int16_t kColorThresholds[kColorAmount][kColorThresholdsAmount] {
             {220, 270, 60, 80, 50, 75},
             {20, 120, 30, 90, 20, 79},
-            {85, 150, 80, 140, 120, 175}
+            {85, 150, 80, 200, 120, 220}
         };
 
         bool blackTile_ = false;
         bool blueTile_ = false;
         bool checkpointTile_ = false;
+
+        bool swithcVlx_ = false;
+
+        bool leftVlx_ = true;
+
+        bool turning_ = false;
 
         bool finishedMovement_ = false;
 
@@ -305,7 +326,7 @@ class Movement {
 
         bool hasTraveledWallDistance(const double targetDistance, const double currentDistance);
 
-        void moveMotorsInADirection(double targetOrientation, bool moveForward);
+        void moveMotorsInADirection(double targetOrientation, bool moveForward, bool inRamp = false);
 
         void setupVlx(const VlxID vlxId);
 
@@ -381,7 +402,7 @@ class Movement {
 
         void sendSerialRequest();
 
-        void checkSerial();
+        void checkSerial(double currentOrientation);
 
         char getVictim();
 
@@ -408,6 +429,12 @@ class Movement {
         void checkForBumper(); // TODO: Implement this function.
 
         bool onFlatGround(); // Not used.
+
+        void printColorRanges();
+
+        void maybeGoBackwards(const double currentOrientation);
+
+        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, double& speedLeft, double& speedRight);
 };
 
 #endif

@@ -16,17 +16,17 @@ bool VLX::init() {
     uint8_t count = 0;
     mux_.selectChannel();
     while (!vLX_.begin()) {
-        customPrintln("ERROR VLX");
+        // customPrintln("ERROR VLX");
         customPrint(mux_.hasAddress(VLX_ADDR));
         customPrintln(mux_.hasAddress(0x70));
         count++;
         if (count > kMaxInitAttempts_) {
-            customPrint("Test the VLX: ");
+            // customPrint("Test the VLX: ");
             customPrintln(static_cast<uint8_t>(vlxId_));
             return false;
         }
     }
-    customPrintln("VLX OK");
+    // customPrintln("VLX OK");
     itWorks_ = true;
     return true;
     

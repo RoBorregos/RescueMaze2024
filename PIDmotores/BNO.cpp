@@ -8,14 +8,14 @@ BNO::BNO() {
 void BNO::setupBNO() {
     adafruit_bno055_opmode_t mode = OPERATION_MODE_IMUPLUS;
 
-    customPrintln("Orientation Sensor Test");
+    // customPrintln("Orientation Sensor Test");
     // Initialise the sensor
     if (!bno_.begin()){
         // There was a problem detecting the BNO055 ... check your connections
-        customPrint("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+        // customPrint("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
         while(1);
     }
-    customPrintln("BNO055 detected");
+    // customPrintln("BNO055 detected");
     delay(1000);
     bno_.setExtCrystalUse(true);
 }
