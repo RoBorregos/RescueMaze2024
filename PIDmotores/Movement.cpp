@@ -5,15 +5,16 @@
 
 #define DEBUG_MOVEMENT 0
 #define DEBUG_OFFLINE_MOVEMENT 0
+#define DEBUG_VISION 1
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
-#if DEBUG_OFFLINE_MOVEMENT
+#if DEBUG_OFFLINE_MOVEMENT || DEBUG_VISION
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.118"; // Replace with your Python script's IP address
-const int udpServerPort = 12;
+const char* udpServerIP = "192.168.0.135"; // Replace with your Python script's IP address
+const int udpServerPort = 1;
 
 WiFiUDP udp; 
 #endif
@@ -39,7 +40,7 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
-    #if DEBUG_OFFLINE_MOVEMENT
+    #if DEBUG_OFFLINE_MOVEMENT || DEBUG_VISION
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
@@ -421,9 +422,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         screenPrint("request sent");
                         sendSerialRequest();
                     }
-                    // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
                     checkSerial(currentOrientation);
-                    // }
                 }
 
                 // customPrintln("Color:" + String(getTCSInfo()));
@@ -500,9 +499,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                             screenPrint("request sent on vlx");
                             sendSerialRequest();
                         }
-                        // if (vlx[static_cast<uint8_t>(VlxID::kFrontRight)].getRawDistance() < kWallDistance) {
                         checkSerial(currentOrientation);
-                        // }
                     }
 
                     pidBackward_.setBaseSpeed(kBaseSpeedWithVlx_);
@@ -791,9 +788,7 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
                 screenPrint("request sent");
                 sendSerialRequest();
             }
-            // if (vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance() < kWallDistance) {
             checkSerial(currentOrientation);
-            // }
         }
         
         maybeGoBackwards(currentOrientation);
@@ -1409,7 +1404,7 @@ int Movement::directionRamp() {
 }
 
 void Movement::sendSerialRequest() {
-    #if DEBUG_OFFLINE_MOVEMENT
+    #if DEBUG_VISION
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Request");
     udp.endPacket();
@@ -1426,10 +1421,15 @@ void Movement::checkSerial(double currentOrientation) {
         if (victim != kNoVictimSerialCode) {
             screenPrint("Victim Found");
             saveLastState(getCurrentState(), currentOrientation);
-            stopMotors();
+            moveMotors(MovementState::kStop, 0, 0);
             victimFound = true;
             const double rightDistance = vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance();
             const double leftDistance = vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance();
+            #if DEBUG_VISION
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("Victim: " + String(victim) + " RightDistance: " + String(rightDistance) + " " + String(rightDistance < kWallDistance) + " LeftDistance: " + String(leftDistance) + " " + String(leftDistance < kWallDistance));
+            udp.endPacket();
+            #endif
             delay(kOneSecInMs);
             if (victim == kHarmedSerialCodeLeft && leftDistance < kWallDistance) {
                 screenPrint("Throw 2 medkits left");
@@ -1559,7 +1559,7 @@ void Movement::resetSerial() {
     if (Serial.available() > 0) {
         Serial.read(); // Read the serial that was left unread.
     }
-    #if DEBUG_OFFLINE_MOVEMENT
+    #if DEBUG_VISION
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Reset");
     udp.endPacket();

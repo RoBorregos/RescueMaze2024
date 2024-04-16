@@ -290,7 +290,7 @@ class Movement {
         int kSendRequestCode = 1;
         int kResetSerialCode = 2;
         Servo myservo;
-        static constexpr uint8_t initialAngle = 100;
+        static constexpr uint8_t initialAngle = 115;
         static constexpr uint8_t rightAngle = initialAngle + 37;
         static constexpr uint8_t leftAngle = initialAngle - 39;
         bool victimFound = false;
