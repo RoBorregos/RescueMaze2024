@@ -9,13 +9,13 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
+#if DEBUG_OFFLINE_MOVEMENT
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
 const char* udpServerIP = "192.168.0.123"; // Replace with your Python script's IP address
 const int udpServerPort = 1;
 
 WiFiUDP udp; 
-#if DEBUG_OFFLINE_MOVEMENT
 #endif
 
 
@@ -39,6 +39,7 @@ void Movement::setup() {
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
+    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
@@ -50,7 +51,6 @@ void Movement::setup() {
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
     udp.endPacket();
-    #if DEBUG_OFFLINE_MOVEMENT
     #endif
 
     setupInternal(MotorID::kFrontLeft);
@@ -1317,9 +1317,11 @@ int Movement::directionRamp() {
 }
 
 void Movement::sendSerialRequest() {
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Request");
     udp.endPacket();
+    #endif
     Serial.println(kSendRequestCode);
     hasReceivedSerial = false;
 }
@@ -1460,9 +1462,11 @@ void Movement::resetSerial() {
     if (Serial.available() > 0) {
         Serial.read(); // Read the serial that was left unread.
     }
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Reset");
     udp.endPacket();
+    #endif
     Serial.println(kResetSerialCode); // Send serial to reset the count of detections in Jetson.
     delay(500);
     sendSerialRequest();
