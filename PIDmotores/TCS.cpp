@@ -71,11 +71,11 @@ void TCS::updateRGBC() {
 
 void TCS::printRGB() {
     updateRGBC();
+    #if DEBUG_TCS
     customPrint("R:\t"); customPrint(red_);
     customPrint("\tG:\t"); customPrint(green_);
     customPrint("\tB:\t"); customPrint(blue_);
     customPrint("\n");
-    #if DEBUG_TCS
     #endif
 }
 
