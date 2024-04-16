@@ -886,7 +886,7 @@ char Movement::checkColors(const double targetOrientation) {
         screenPrint("Blue tile detected");
         blueTile_ = true;
         stopMotors();
-        delay(kFiveSeconds_);        
+        delay(kFiveSeconds_);
         return color;
     } else if (color == 'C' && finishedMovement_ == true && !checkpointTile_ && bno_.getOrientationY() < kHorizontalAngleError && bno_.getOrientationY() > -kHorizontalAngleError) { 
         screenPrint("Checkpoint tile detected");

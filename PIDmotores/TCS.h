@@ -37,14 +37,14 @@ class TCS {
 
         static constexpr int8_t millisToWait_ = 50;
 
-        float kMaxRedValueInBlue_ = 0;
-        float kMinRedValueInBlue_ = 0;
+        float kMinRedValueInBlue_ = -6;
+        float kMaxRedValueInBlue_ = 194;
 
-        float kMaxGreenValueInBlue_ = 0;
-        float kMinGreenValueInBlue_ = 0;
+        float kMinGreenValueInBlue_ = 49;
+        float kMaxGreenValueInBlue_ = 249;
 
-        float kMaxBlueValueInBlue_ = 0;
-        float kMinBlueValueInBlue_ = 0;
+        float kMinBlueValueInBlue_ = 101;
+        float kMaxBlueValueInBlue_ = 301;
 
         float kMaxRedValueInRed_ = 0;
         float kMinRedValueInRed_ = 0;
@@ -55,14 +55,14 @@ class TCS {
         float kMaxBlueValueInRed_ = 0;
         float kMinBlueValueInRed_ = 0;
 
-        float kMinRedValueInBlack_ = 0;
-        float kMaxRedValueInBlack_ = 0;
+        float kMinRedValueInBlack_ = -37;
+        float kMaxRedValueInBlack_ = 163;
 
-        float kMinGreenValueInBlack_ = 0;
-        float kMaxGreenValueInBlack_ = 0;
+        float kMinGreenValueInBlack_ = -54;
+        float kMaxGreenValueInBlack_ = 146;
 
-        float kMinBlueValueInBlack_ = 0;
-        float kMaxBlueValueInBlack_ = 0;
+        float kMinBlueValueInBlack_ = -61;
+        float kMaxBlueValueInBlack_ = 139;
 
         float kMinRedValueInCheckpoint_ = 0;
         float kMaxRedValueInCheckpoint_ = 0;
@@ -88,8 +88,8 @@ class TCS {
         static constexpr char kCheckpointColor_ = 'C';
         static constexpr char kUndefinedColor_ = 'U';
 
-        float kMinPhotoresistorValue_ = 0;
-        float kMaxPhotoresistorValue_ = 0;
+        float kMinPhotoresistorValue_ = 10295;
+        float kMaxPhotoresistorValue_ = 11295;
         static constexpr float kPhotoresistorThreshold_ = 500;
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
