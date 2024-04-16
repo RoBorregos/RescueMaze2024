@@ -21,11 +21,18 @@ class PID {
         double kMaxOutput_{255};
 
         unsigned long timePrev_{0};
-        unsigned long kSampleTime_{150};
+        unsigned long kSampleTime_{100};
+
+        double errorVLXLeftPrev = 0;
+        double errorVLXRightPrev = 0;
+        double errorOrientationPrev = 0;
 
         double kBaseModifier_{0};
         
         double kMaxError_{0.8};
+
+        double kMaxErrorVlx_{1.0};
+
 
         const double kWeightVlx = 0.6;
 
@@ -44,6 +51,8 @@ class PID {
         void computeTurn(const double targetOrientation, const double currentOrientation, double &speed, bool &clockwise);
 
         void computeDistance(const double targetDistance, const double currentDistance, double &outputLeft, double &outputRight);
+
+        void computeDistance(const double setpoint, const double input1, const double input2, double& outputLeft, double& outputRight, double currentOrientation, double setpointOrientation);
 
         double computeErrorOrientation(const double targetOrientation, const double currentOrientation);
         double computeOutputModifier(const double errorOrientation, const unsigned long timeDiff);

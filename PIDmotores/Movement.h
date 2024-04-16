@@ -62,16 +62,16 @@ class Movement {
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
-        static constexpr double kBaseSpeedForward_ = 0.2; // m/s 0.09
+        static constexpr double kBaseSpeedForward_ = 0.25; // m/s 0.09
         static constexpr double kBaseSpeedTurn_ = 0.1; // m/s 0.07
         static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
-        static constexpr double kBaseSpeedWithVlx_ = 0.05; // m/s
+        static constexpr double kBaseSpeedWithVlx_ = 0.08; // m/s
 
 
         static constexpr uint8_t kMaxMovements_ = 4;
 
         // TODO: Improve the name of this variable
-        static constexpr double kMinWallDistance = 0.06; // 6 cm
+        static constexpr double kMinWallDistance = 0.08; // 6 cm
         
         const double timeToTurn_ = 5000;
 
@@ -189,10 +189,15 @@ class Movement {
         PID pidBackward_;
         PID pidTurn_;
         PID pidWallAlignment_;
+        PID pidVLX_;
+        PID pidBNO_;
+
 
         double vlxDistanceTraveled_;
 
         double distanceToCenter_;
+
+        bool inCollision_ = false;
 
         constexpr static double kPForward = 0.07; // 0.09
         constexpr static double kIForward = 0.01;
@@ -206,9 +211,17 @@ class Movement {
         double kITurn = 0.00000; // 0.00050
         constexpr static double kDTurn = 0.00019;
 
-        constexpr static double kPDistance = 0.63; // 0.63
+        constexpr static double kPDistance = 0.20; // 0.63
         constexpr static double kIDistance = 0.00; // 0.00
-        constexpr static double kDDistance = 0.082; // 0.07
+        constexpr static double kDDistance = 0.082; // 0.082
+
+        constexpr static double kPVLX = 0.63; // 0.63
+        constexpr static double kIVLX = 0.00; // 0.00   
+        constexpr static double kDVLX = 0.0; // 0.07
+
+        constexpr static double kPBNO = 0.07; 
+        constexpr static double kIBNO = 0.00;  
+        constexpr static double kDBNO = 0.00;  
 
         constexpr static double kMaxErrorSum{4000};
         constexpr static double kMinOutput{0.003};
@@ -287,6 +300,12 @@ class Movement {
         Adafruit_SSD1306 display;
 
         bool lackOfProgress_ = false;
+
+        bool alreadyInCollision_ = false;
+
+        bool inRightCollision_ = false;
+
+        bool inLeftCollision_ = false;
 
     public:
         Movement();
@@ -434,7 +453,7 @@ class Movement {
 
         void maybeGoBackwards(const double currentOrientation);
 
-        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistance, double& speedLeft, double& speedRight);
+        void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistanceLeft, const double currentDistanceRight, double& speedLeft, double& speedRight);
 };
 
 #endif

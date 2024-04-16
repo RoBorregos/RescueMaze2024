@@ -140,15 +140,15 @@ void PID::computeTurn(const double targetOrientation, const double currentOrient
         speed = kBaseModifier_ + outputModifier;
         clockwise = true;
 
-        customPrintln("Aumentando derecho");
-        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        // customPrintln("Aumentando derecho");
+        // customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
         #if DEBUG_PID
         #endif
     } else if (errorOrientation > -kMaxError_) {
         speed = kBaseModifier_ - outputModifier;
         clockwise = false;
-        customPrintln("Aumentando izquierdo");
-        customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
+        // customPrintln("Aumentando izquierdo");
+        // customPrintln("OUTPUTMODIFIER:" + String(outputModifier));
         #if DEBUG_PID
         #endif
     } else { 
@@ -191,6 +191,45 @@ void PID::compute(const double setpoint, double& input, double& output, long lon
 void PID::resetPID() {
     errorPrev_ = 0;
     errorSum_ = 0;
+}
+
+void PID::computeDistance(const double setpoint, const double currentDistanceLeft, const double currentDistanceRight, double& outputLeft, double& outputRight, double currentOrientation, double setpointOrientation) {
+    const unsigned long timeDiff = millis() - timePrev_;
+    if (timeDiff < kSampleTime_) {
+        return;
+    }
+
+    const double errorVLXLeft = setpoint - currentDistanceLeft ;
+    const double errorVLXRight = setpoint - currentDistanceRight;
+    
+    errorPrev_ = errorVLXLeftPrev;
+    double outputModifierVlxLeft = computeOutputModifier(errorVLXLeft, timeDiff);
+    errorVLXLeftPrev = errorVLXLeft;
+    errorPrev_ = errorVLXRightPrev;
+    double outputModifierVlxRight = computeOutputModifier(errorVLXRight, timeDiff);
+    errorVLXRightPrev = errorVLXRight;
+    errorPrev_ = errorOrientationPrev;
+    const double errorOrientation = computeErrorOrientation(setpointOrientation, currentOrientation);
+    errorOrientationPrev = errorOrientation;
+    
+    const double outputModifierOrientation = computeOutputModifier(errorOrientation, timeDiff);
+
+    outputLeft = kBaseModifier_;
+    outputRight = kBaseModifier_;
+
+    if (errorOrientation < 0) {
+        outputModifierVlxRight *= -1;
+    } else {
+        outputModifierVlxLeft *= -1;
+    }
+    
+    outputLeft += outputModifierVlxLeft * kWeightVlx + outputModifierOrientation * kWeightBNO;
+    outputRight += outputModifierVlxRight * kWeightVlx - outputModifierOrientation * kWeightBNO;
+
+    outputLeft = constrain(outputLeft, kMinOutput_, kMaxOutput_);
+    outputRight = constrain(outputRight, kMinOutput_, kMaxOutput_);
+
+    timePrev_ = millis();
 }
 
 void PID::computeDistance(const double setpoint, const double input, double& outputLeft, double& outputRight) {

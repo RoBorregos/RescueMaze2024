@@ -23,6 +23,8 @@ void LimitSwitch::initLimitSwitchInternal() {
 
 bool LimitSwitch::getState() {
     const uint8_t val = digitalRead(pin_);
+    delayMicroseconds(1000); // 1ms (1000
+    const uint8_t currentVal = digitalRead(pin_);
     if (val == HIGH) {
         #if DEBUG_LIMIT_SWITCH
         customPrintln("LimitSwitch is active");
@@ -30,6 +32,12 @@ bool LimitSwitch::getState() {
         state_ = true;
     } else {
         state_ = false;
+    }
+    if (val != currentVal) {
+        #if DEBUG_LIMIT_SWITCH
+        customPrintln("LimitSwitch is active");
+        #endif
+        state_ = true;
     }
     return state_;
 }
