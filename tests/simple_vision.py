@@ -47,7 +47,7 @@ def show_camera():
 
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
     print(gstreamer_pipeline(flip_method=0))
-    video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+    video_capture = cv2.VideoCapture(gstreamer_pipeline(sensor_id=1,flip_method=0), cv2.CAP_GSTREAMER)
     if video_capture.isOpened():
         try:
             window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
@@ -55,7 +55,7 @@ def show_camera():
                 ret_val, frame = video_capture.read()
                 #alpha = 2.18
                 #beta=1.72
-                frame = frame[92:420, 0:640]
+                # frame = frame[92:420, 0:640]
                 #frame = cv2.convertScaleAbs(frame, alpha=alpha, beta=beta)
                 # Check to see if the user closed the window
                 # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does

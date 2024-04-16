@@ -1,3 +1,6 @@
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(current_dir)
 import cv2
 import numpy as np
 import camera_activate
@@ -75,7 +78,7 @@ def start_model():
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
-    model_ft.load_state_dict(torch.load('model4.pth'))
+    model_ft.load_state_dict(torch.load('model105.pth'))
     model_ft.eval()
     return model_ft
 
@@ -236,6 +239,23 @@ def post_processing(img,dilate):
 
 ################################################################
 ###############EXTERNAL FUNCTIONS###############################
+def test_cams():
+    try:
+        print("Testing camera")
+        if right_video.isOpened() and left_video.isOpened():
+            print("Opened cameras")
+            ret_val_r, img_r = right_video.read()
+            ret_val_l, img_l = left_video.read()
+            print(img_r.shape)
+            print(img_l.shape)
+            print("Finish read cameras")
+        else:
+            print("Error: Unable to open camera")
+            os.system('sudo reboot')
+    except:
+        print("Error: Unable to open camera")
+        os.system('sudo reboot')
+
 def download_json():
     with open('calibrated_colors.json','r') as file:
         data = json.load(file)
@@ -307,19 +327,25 @@ def setup():
     ##################VARIABLES ZONE#################
     class_names = ['h', 's', 'u']
     data = download_json()
-    minimum_predict_value = 0
+    minimum_predict_value = 1.6
     min_color_area = 1500
     #GLOBAL DEBUG VARIABLES
     debug = {
         'arduino':False,
-        'model':False,
-        'record':True,
-        'generate_BBOX':True,
+        'model':True,
+        'record':False,
+        'generate_BBOX':False,
         'show_images':False,
         'preprocessing_show':False,
         'process_colors':True
     }
     value_predict = 0
+    #CAMERA ASSIGNMENT
+    right_cam = camera_activate.gstreamer_pipeline(flip_method=0)
+    right_video = cv2.VideoCapture(right_cam, cv2.CAP_GSTREAMER)
+    left_cam= camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
+    left_video = cv2.VideoCapture(left_cam, cv2.CAP_GSTREAMER)
+    test_cams()
     #Start record
     if debug['record']:
         fourcc = cv2.VideoWriter_fourcc(*'XVID') 
@@ -335,11 +361,7 @@ def setup():
         model_ft = start_model()
         print(f"Model loaded in {t.time()-loading_time}")
         warmup()
-    #CAMERA ASSIGNMENT
-    right_cam = camera_activate.gstreamer_pipeline(flip_method=0)
-    right_video = cv2.VideoCapture(right_cam, cv2.CAP_GSTREAMER)
-    left_cam= camera_activate.gstreamer_pipeline(sensor_id=0,flip_method=0)
-    left_video = cv2.VideoCapture(left_cam, cv2.CAP_GSTREAMER)
+    
     #SERIAL SETUP
     if debug["arduino"] : arduino = start_serial()
 
@@ -383,27 +405,59 @@ def main():
                         actual_state_l = process_colors(img_l,frame_l,actual_state_l,"left")
                     
                     #PROCESS LETTER
+                    detected_r = actual_state_r
+                    detected_l = actual_state_l
                     actual_state_r = search_letter(img_r,frame_r,actual_state_r)
-        
+                    
                     actual_state_l = search_letter(img_l,frame_l,actual_state_l)
 
                     #GIVE PRIORITY OF LETTERS
                     if actual_state_r == "m" and actual_state_l != "m":
                         actual_state = actual_state_l
+                        if detected_l != actual_state_l:
+                            print(f"Detected left letter {actual_state_l} with {value_predict}")
+                        else:
+                            print(f"Detected left color {actual_state_l}")
                     elif actual_state_r !="m" and actual_state_l == "m":
                         actual_state = actual_state_r.upper()
+                        if detected_r != actual_state_r:
+                            print(f"Detected right letter {actual_state_r} with {value_predict}")
+                        else:
+                            print(f"Detected right color {actual_state_r}")
                     elif actual_state_l == "m" and actual_state_r == "m":
                         actual_state = "m"
                     elif class_names.index(actual_state_r) < class_names.index(actual_state_l):
                         actual_state = actual_state_r.upper()
+                        if detected_r != actual_state_r:
+                            if detected_l != actual_state_l:
+                                print(f"Detected two letter left:{actual_state_l} with {value_predict} right:{actual_state_r} with {value_predict}")
+                            else:
+                                print(f"Detected l and c right: {actual_state_r} with {value_predict} left: {actual_state_l}")
+                        else:
+                            if detected_l != actual_state_l:
+                                print(f"Detected l and c left: {actual_state_l} with {value_predict} right: {actual_state_r}")
+                            else:
+                                print(f"Detected two letter left:{actual_state_l} with {value_predict} right:{actual_state_r} with {value_predict}")
+
                     else:
                         actual_state=actual_state_l
-    
+                        if detected_r != actual_state_r:
+                            if detected_l != actual_state_l:
+                                print(f"Detected two letter left:{actual_state_l} with {value_predict} right:{actual_state_r} with {value_predict}")
+                            else:
+                                print(f"Detected l and c right: {actual_state_r} with {value_predict} left: {actual_state_l}")
+                        else:
+                            if detected_l != actual_state_l:
+                                print(f"Detected l and c left: {actual_state_l} with {value_predict} right: {actual_state_r}")
+                            else:
+                                print(f"Detected two letter left:{actual_state_l} with {value_predict} right:{actual_state_r} with {value_predict}")
 
+    
+                    
                     if debug['generate_BBOX'] and debug['show_images']: 
                         frame_double = stackImages(0.6,([frame_r,frame_l]))
                         cv2.imshow("bbox double",frame_double)
-                        print(frame_double.shape)
+                        # print(frame_double.shape)
 
                     if debug['record']:
                         if debug['generate_BBOX'] and debug['show_images']: pass
@@ -421,7 +475,7 @@ def main():
                             if line == "1":
                                 lastMax = 0
                                 for i in range(6):
-                                    if repetitions[i] > lastMax and repetitions[i] >= 2:
+                                    if repetitions[i] > lastMax and repetitions[i] >= 1:
                                         index = i
                                         lastMax = repetitions[i]
                                 if lastMax != 0: actual_state = letters[index] 
