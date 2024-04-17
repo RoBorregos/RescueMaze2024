@@ -802,55 +802,49 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Crash left");
         udp.endPacket();
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
-        
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("orientation:" + String(currentOrientation));
-        udp.print(" ");
-        udp.print("targetOrientation:" + String(getOrientation(currentOrientation + orientation)));
-        udp.endPacket();
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.05, false);
 
         // udp.beginPacket(udpServerIP, udpServerPort);
         // udp.print("Correcting");
         // udp.endPacket();
-        unsigned long timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorBackward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorBackward(60);
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
-            delay(correctionTime_);
+        // unsigned long timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorBackward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorBackward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        delay(correctionTime_);
 
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
 
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
 
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(60);
-            delay(correctionTime_);
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);;
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(pwmRoutine_);
+        delay(correctionTime_);
 
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
 
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
-            delay(correctionTime_);
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        delay(correctionTime_);
 
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorForward(60);
-            delay(correctionTime_);
-        }
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorForward(pwmRoutine_);
+        delay(correctionTime_);
+        // }
         
         stopMotors();
 
@@ -905,7 +899,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
             // udp.endPacket();
             return;
         }
-        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
+        moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.05, false);
 
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("orientation" + String(currentOrientation));
@@ -916,65 +910,69 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         // udp.beginPacket(udpServerIP, udpServerPort);
         // udp.print("Correcting");
         // udp.endPacket();
-        unsigned long timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("Correcting 1");
-            udp.print(" ");
-            udp.print("timePrev:" + String(timePrev));
-            udp.print(" ");
-            udp.print("timediff: " + String(millis() - timePrev));
-            udp.endPacket();
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
+        // unsigned long timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
+        /* udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Correcting 1");
+        udp.print(" ");
+        udp.print("timePrev:" + String(timePrev));
+        udp.print(" ");
+        udp.print("timediff: " + String(millis() - timePrev));
+        udp.endPacket(); */
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
 
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(60);
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);;
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(pwmRoutine_);
+        delay(correctionTime_);
 
             // motor[static_cast<uint8_t>(MotorID::kFrontRight)].constantSpeed(speedInCorrection_, MotorState::kBackward);
             // motor[static_cast<uint8_t>(MotorID::kBackRight)].constantSpeed(speedInCorrection_, MotorState::kBackward);
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
 
             // motor[static_cast<uint8_t>(MotorID::kFrontLeft)].constantSpeed(speedInCorrection_, MotorState::kBackward);
             // motor[static_cast<uint8_t>(MotorID::kBackLeft)].constantSpeed(speedInCorrection_, MotorState::kBackward);
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorBackward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorBackward(60);
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorBackward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorBackward(pwmRoutine_);
 
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        delay(correctionTime_);
 
             // udp.beginPacket(udpServerIP, udpServerPort);
             // udp.print("Correcting 2");
             // udp.endPacket();
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
 
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorForward(60);
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorForward(pwmRoutine_);
+        delay(correctionTime_);
 
             // udp.beginPacket(udpServerIP, udpServerPort);
             // udp.print("Correcting 3");
             // udp.endPacket();
             // motor[static_cast<uint8_t>(MotorID::kFrontRight)].constantSpeed(speedInCorrection_, MotorState::kForward);
             // motor[static_cast<uint8_t>(MotorID::kBackRight)].constantSpeed(speedInCorrection_, MotorState::kForward);
-        }
-        timePrev = millis();
-        while (millis() - timePrev < correctionTime_){
+        // }
+        // timePrev = millis();
+        // while (millis() - timePrev < correctionTime_){
             // motor[static_cast<uint8_t>(MotorID::kFrontLeft)].constantSpeed(speedInCorrection_, MotorState::kForward);
             // motor[static_cast<uint8_t>(MotorID::kBackLeft)].constantSpeed(speedInCorrection_, MotorState::kForward);
-            motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorForward(60);
-            motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
-            motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorForward(pwmRoutine_);
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorStop();
+        motor[static_cast<uint8_t>(MotorID::kBackRight)].motorStop();
+        delay(correctionTime_);
             // udp.beginPacket(udpServerIP, udpServerPort);
             // udp.print("Correcting 4");
             // udp.endPacket();
-        }
+        // }
 
         // udp.beginPacket(udpServerIP, udpServerPort);
         // udp.print("Finished correction");
