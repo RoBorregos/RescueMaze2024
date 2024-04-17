@@ -59,6 +59,12 @@ class Movement {
         int counterCollisionsRight_ = 0;
         int maxCollisions_ = 5;
 
+        const unsigned long kTimeToDetectBumper_ = 2000;
+
+        double timePrevBumper_ = 0;
+
+        bool bumperDetected_ = false;
+
         static constexpr double kOrientationError = 10.0;
 
         double currentSpeed_ = 0;
@@ -68,6 +74,8 @@ class Movement {
         static constexpr double kBaseSpeedRoutine_ = 0.17; // m/s 0.17
         static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
         static constexpr double kBaseSpeedWithVlx_ = 0.08; // m/s
+
+        static constexpr double kBaseSpeedDownRamp_ = 0.15; // m/s
 
 
         static constexpr uint8_t kMaxMovements_ = 4;
