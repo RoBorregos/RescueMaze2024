@@ -315,6 +315,8 @@ class Movement {
 
         double speedInCorrection_ = 0.10;
 
+        uint8_t pwmRoutine_ = 120;
+
     public:
         Movement();
 
