@@ -5,7 +5,7 @@
 
 #define DEBUG_MOVEMENT 0
 #define DEBUG_OFFLINE_MOVEMENT 0
-#define DEBUG_VISION 1
+#define DEBUG_VISION 0
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
@@ -614,6 +614,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     /* if (alreadyInCollision_) {
 
                     } */
+                    #if DEBUG_OFFLINE_MOVEMENT
                     udp.beginPacket(udpServerIP, udpServerPort);
                     udp.print("crashLeft:" + String(crashLeft));
                     udp.print(" ");
@@ -623,6 +624,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     udp.print(" ");
                     udp.print("targetOrientation:" + String(targetOrientation));
                     udp.endPacket();
+                    #endif
 
                     bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
                     if (!result) {
@@ -794,14 +796,18 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         inCollision_ = true;
         inRightCollision_ = true;
         if (inLeftCollision_ || counterCollisionsRight_ > maxCollisions_){
+            #if DEBUG_OFFLINE_MOVEMENT
             udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("return");
             udp.endPacket();
+            #endif
             return;
         }
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("Crash left");
         udp.endPacket();
+        #endif
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.05, false);
 
         // udp.beginPacket(udpServerIP, udpServerPort);
@@ -821,8 +827,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
 
         motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
         motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
-
-        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);;
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);
         motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(pwmRoutine_);
         delay(correctionTime_);
 
@@ -900,12 +905,13 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
             return;
         }
         moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.05, false);
-
+        #if DEBUG_OFFLINE_MOVEMENT
         udp.beginPacket(udpServerIP, udpServerPort);
         udp.print("orientation" + String(currentOrientation));
         udp.print(" ");
         udp.print("targetOrientation" + String(getOrientation(currentOrientation)));
         udp.endPacket();
+        #endif
         
         // udp.beginPacket(udpServerIP, udpServerPort);
         // udp.print("Correcting");
@@ -922,7 +928,7 @@ void Movement::correctionAfterCrash(const bool crashLeft, double currentOrientat
         motor[static_cast<uint8_t>(MotorID::kFrontLeft)].motorStop();
         motor[static_cast<uint8_t>(MotorID::kBackLeft)].motorStop();
 
-        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);;
+        motor[static_cast<uint8_t>(MotorID::kFrontRight)].motorBackward(pwmRoutine_);
         motor[static_cast<uint8_t>(MotorID::kBackRight)].motorBackward(pwmRoutine_);
         delay(correctionTime_);
 
@@ -1444,7 +1450,9 @@ double Movement::weightMovementVLX(const double currentDistanceBack, const doubl
 
     const uint8_t weightMovement = (vlxDistanceTraveled * kWeightVlx) * kMToCm;
     moveForward = static_cast<int8_t>((vlxDistanceTraveled - targetDistance) * kMToCm) < 0;
+    #if DEBUG_OFFLINE_MOVEMENT
     udp.beginPacket(udpServerIP, udpServerPort);
+    #endif
     // udp.print("currentDistanceBack:" + String(currentDistanceBack));
     // udp.print(" ");
     // udp.print("currentDistanceFront:" + String(currentDistanceFront));
