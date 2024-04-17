@@ -118,5 +118,5 @@ class Motor {
         int getTics();
 
         int getPwm();
-};
+    };
 #endif

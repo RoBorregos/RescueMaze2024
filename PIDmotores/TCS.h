@@ -88,8 +88,8 @@ class TCS {
         static constexpr char kCheckpointColor_ = 'C';
         static constexpr char kUndefinedColor_ = 'U';
 
-        float kMinPhotoresistorValue_ = 10295;
-        float kMaxPhotoresistorValue_ = 11295;
+        float kMinPhotoresistorValue_ = 11544;
+        float kMaxPhotoresistorValue_ = 12544;
         static constexpr float kPhotoresistorThreshold_ = 500;
 
         bool inRange(const uint8_t color, const uint8_t colorRegistered);
