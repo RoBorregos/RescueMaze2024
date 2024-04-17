@@ -57,6 +57,7 @@ class Movement {
 
         int counterCollisionsLeft_ = 0;
         int counterCollisionsRight_ = 0;
+        int maxCollisions_ = 5;
 
         static constexpr double kOrientationError = 10.0;
 
@@ -64,6 +65,7 @@ class Movement {
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.25; // m/s 0.09
         static constexpr double kBaseSpeedTurn_ = 0.1; // m/s 0.07
+        static constexpr double kBaseSpeedRoutine_ = 0.17; // m/s 0.17
         static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
         static constexpr double kBaseSpeedWithVlx_ = 0.08; // m/s
 
@@ -136,6 +138,8 @@ class Movement {
         VLX vlx[kNumberOfVlx];
 
         double wallDistances[kNumberOfVlx];
+
+        double normalizedDistances[3] = {0.05, 0.35, 0.65};
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 
@@ -306,6 +310,10 @@ class Movement {
         bool inRightCollision_ = false;
 
         bool inLeftCollision_ = false;
+
+        unsigned long correctionTime_ = 800;
+
+        double speedInCorrection_ = 0.10;
 
     public:
         Movement();

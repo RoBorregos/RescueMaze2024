@@ -133,6 +133,7 @@ void Motor::motorStop() {
     currentSpeed_ = 0;
     currentState_ = MotorState::kStop;
     pid_.resetPID();
+    timeEpochTics_ = 0;
 }
 
 
