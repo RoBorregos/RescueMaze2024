@@ -20,7 +20,7 @@ def start_model():
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
-    model_ft.load_state_dict(torch.load('model105.pth'))
+    model_ft.load_state_dict(torch.load('model.pth'))
     model_ft.eval()
     return model_ft
 
@@ -174,8 +174,6 @@ def post_processing(img,dilate):
     size_img = cv2.resize(img,(32,32))
     return size_img
 
-
-
 ################################################################
 ###############MAIN STARTED FUNCTON###############################
 def setup():
@@ -200,7 +198,7 @@ def setup():
     #Start record
    
     fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-    out = cv2.VideoWriter('benchmark.avi', fourcc, 10.0, (640, 328)) 
+    out = cv2.VideoWriter('benchmark.avi', fourcc, 60.0, (640, 328)) 
     ##################DEVICES SETUP##################
     #DEVICE TORCH USAGE
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -223,25 +221,25 @@ def main():
     ############LOOP###############
     if video_source.isOpened():
         try:
-            frames = 0
             active_camera = 0
+          
             print("VIDEO STARTED")
-            while True:
+            ret_val =True
+            while ret_val:
                 
                 ret_val, img = video_source.read()
-                time_diference  = 0
+                time_diference  = t.time()
                 if img is not None:
                     frame = img.copy()
                     detection = search_letter(img,frame,"m")
                     out.write(frame)
-                    frames += 1
+
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
-                    if t.time()-time_diference >= 1:
-                        print(f"FPS: {frames}")
-                        frames = 0
-                        time_diference = t.time()
+                    
+                    
                 else:
+                    print("image is none")
                     active_camera += 1
 
         finally:

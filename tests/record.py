@@ -1,7 +1,7 @@
 import cv2
 import camera_activate
 
-def record_video(filename, fps=60, frame_size=(640, 328)):
+def record_video(filename, fps=30, frame_size=(640, 328)):
   """
   Records a video from the camera and saves it to a file.
 

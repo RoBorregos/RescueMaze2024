@@ -13,7 +13,6 @@ import serial
 import calibrated_colors
 import json
 
-
 ################################################################
 ###############COLOR SEGMENTATION FUNCTIONS#####################
 
@@ -325,16 +324,17 @@ def setup():
     global debug
 
     ##################VARIABLES ZONE#################
+    os.system('sudo rm output_log.txt')
     class_names = ['h', 's', 'u']
     data = download_json()
-    minimum_predict_value = 1.3
+    minimum_predict_value = 1.6
     min_color_area = 1500
     #GLOBAL DEBUG VARIABLES
     debug = {
-        'arduino':True,
+        'arduino':False,
         'model':True,
-        'record':False,
-        'generate_BBOX':False,
+        'record':True,
+        'generate_BBOX':True,
         'show_images':False,
         'preprocessing_show':False,
         'process_colors':True
@@ -348,6 +348,7 @@ def setup():
     test_cams()
     #Start record
     if debug['record']:
+        os.system('sudo rm output.avi')
         fourcc = cv2.VideoWriter_fourcc(*'XVID') 
         out = cv2.VideoWriter('output.avi', fourcc, 10.0, (768, 288)) 
     ##################DEVICES SETUP##################
@@ -382,7 +383,9 @@ def main():
             repetitions = [0,0,0,0,0,0]
             index = 0
             print("VIDEO STARTED")
-            while True:
+            ret_val_r = True
+            ret_val_l = True
+            while ret_val_r and ret_val_l:
                 
                 ret_val_r, img_r = right_video.read()
                 ret_val_l, img_l = left_video.read()
@@ -392,7 +395,7 @@ def main():
                     actual_state_l = "m"
                     actual_state = "m"
                     #Resize img left
-                    img_l = img_l[92:420, 0:640]
+                    img_l = img_l[137:420, 0:640]
                     #if debug['show_images']:
                      #   cv2.imshow("Left",img_l)
                       #  cv2.imshow("Right",img_r)
@@ -462,6 +465,7 @@ def main():
                     if debug['record']:
                         if debug['generate_BBOX'] and debug['show_images']: pass
                         else: frame_double = stackImages(0.6,([frame_r,frame_l]))
+                        print(f"frame shape: {frame_double.shape}")
                         out.write(frame_double)
                     # Update counts
                     for letter in letters:
@@ -501,7 +505,9 @@ def main():
                 print("Finishing the program")
                 right_video.release()
                 left_video.release()
-                if debug['record']: out.release()  
+                if debug['record']: 
+                    print("realese camera")
+                    out.release()  
                 cv2.destroyAllWindows()
                 if debug["arduino"] : arduino.close()
 
