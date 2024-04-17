@@ -6,6 +6,7 @@
 # Drivers for the camera ajetsond OpenCV are included in the base image
 
 import cv2
+import numpy as np
 
 """ 
 gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
@@ -47,15 +48,29 @@ def show_camera():
 
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
     print(gstreamer_pipeline(flip_method=0))
-    video_capture = cv2.VideoCapture(gstreamer_pipeline(sensor_id=1,flip_method=0), cv2.CAP_GSTREAMER)
+    video_capture = cv2.VideoCapture(gstreamer_pipeline(sensor_id=0,flip_method=0), cv2.CAP_GSTREAMER)
     if video_capture.isOpened():
         try:
             window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
             while True:
                 ret_val, frame = video_capture.read()
                 #alpha = 2.18
+                pt1 = (0, 0)
+                pt2 = (300, 0)
+                pt3 = (0, 90)
                 #beta=1.72
-                # frame = frame[92:420, 0:640]
+                triangle_cnt = np.array( [pt1, pt2, pt3] )
+
+                pt4 = (640, 0)
+                pt5 = (540, 0)
+                pt6 = (640, 100)
+                #beta=1.72
+                triangle_cnt_2 = np.array( [pt4, pt5, pt6] )
+                
+                frame = frame[143:420, 0:640]
+                print(frame.shape)
+                cv2.drawContours(frame, [triangle_cnt], 0, (215,215,215), -1)
+                cv2.drawContours(frame, [triangle_cnt_2], 0, (215,215,215), -1)
                 #frame = cv2.convertScaleAbs(frame, alpha=alpha, beta=beta)
                 # Check to see if the user closed the window
                 # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does

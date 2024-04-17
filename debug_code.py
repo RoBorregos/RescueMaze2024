@@ -304,6 +304,24 @@ def start_serial():
     print("Serial Opened ..")
     return arduino
 
+def process_jetson(frame):
+    pt1 = (0, 0)
+    pt2 = (300, 0)
+    pt3 = (0, 90)
+    #beta=1.72
+    triangle_cnt = np.array( [pt1, pt2, pt3] )
+
+    pt4 = (640, 0)
+    pt5 = (540, 0)
+    pt6 = (640, 100)
+    #beta=1.72
+    triangle_cnt_2 = np.array( [pt4, pt5, pt6] )
+    
+    frame = frame[143:420, 0:640]
+    # print(frame.shape)
+    cv2.drawContours(frame, [triangle_cnt], 0, (215,215,215), -1)
+    cv2.drawContours(frame, [triangle_cnt_2], 0, (215,215,215), -1)
+    return frame
 
 ################################################################
 ###############MAIN STARTED FUNCTON###############################
@@ -324,14 +342,13 @@ def setup():
     global debug
 
     ##################VARIABLES ZONE#################
-    os.system('sudo rm output_log.txt')
     class_names = ['h', 's', 'u']
     data = download_json()
-    minimum_predict_value = 1.6
+    minimum_predict_value = 2.05
     min_color_area = 1500
     #GLOBAL DEBUG VARIABLES
     debug = {
-        'arduino':False,
+        'arduino':True,
         'model':True,
         'record':True,
         'generate_BBOX':True,
@@ -348,7 +365,6 @@ def setup():
     test_cams()
     #Start record
     if debug['record']:
-        os.system('sudo rm output.avi')
         fourcc = cv2.VideoWriter_fourcc(*'XVID') 
         out = cv2.VideoWriter('output.avi', fourcc, 10.0, (768, 288)) 
     ##################DEVICES SETUP##################
@@ -395,7 +411,7 @@ def main():
                     actual_state_l = "m"
                     actual_state = "m"
                     #Resize img left
-                    img_l = img_l[137:420, 0:640]
+                    img_l = process_jetson(img_l)
                     #if debug['show_images']:
                      #   cv2.imshow("Left",img_l)
                       #  cv2.imshow("Right",img_r)
