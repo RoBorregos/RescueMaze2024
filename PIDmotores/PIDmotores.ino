@@ -20,14 +20,14 @@
 #define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
-#define DEBUG_ONLINE 0
+#define DEBUG_ONLINE 1
 
 #if DEBUG_ONLINE
 #include <WiFi.h>
 #include <WiFiUdp.h>
 const char* ssid = "RoBorregos2";
 const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.0.123"; // Replace with your Python script's IP address
+const char* udpServerIP = "192.168.0.135"; // Replace with your Python script's IP address
 const int udpServerPort = 1;
 WiFiUDP udp;
 #endif
@@ -68,6 +68,7 @@ bool isLackOfProgress = false;
 
 void onIdle() {
     while (true) {
+        delay(500);
         isLackOfProgress = false;
         robot.resetLackOfProgress();
         robot.screenPrint("Idle");
@@ -117,36 +118,6 @@ void restartOnLastCheckpoint() {
     tiles = lastCheckpointTiles;
     visitedMap.positions = lastCheckpointVisited;
     unvisited = lastCheckpointUnvisited;
-    #if DEBUG_ONLINE
-    for (int i = 0; i < tilesMap.positions.size(); ++i) {
-        customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y) + " " + String(tilesMap.positions[i].z));
-    }
-    udp.beginPacket(udpServerIP, udpServerPort);
-    udp.print("TilesMap size: " + String(tilesMap.positions.size()));
-    udp.endPacket();
-    for (int i = 0; i < tiles.size(); ++i) {
-        customPrintln("Tile: " + String(tiles[i].position_.x) + " " + String(tiles[i].position_.y) + " " + String(tiles[i].position_.z));
-    }
-    udp.beginPacket(udpServerIP, udpServerPort);
-    udp.print("visited: " + String(visitedMap.positions.size()));
-    udp.endPacket();
-    for (int i = 0; i < visitedMap.positions.size(); ++i) {
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
-        udp.endPacket();
-        customPrintln("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
-    }
-    udp.beginPacket(udpServerIP, udpServerPort);
-    udp.print("unvisited: " + String(unvisited.size()));
-    udp.endPacket();
-    while (!unvisited.empty()) {
-        udp.beginPacket(udpServerIP, udpServerPort);
-        udp.print("unvisited: " + String(unvisited.top().x) + " " + String(unvisited.top().y));
-        udp.endPacket();
-        unvisited.pop();
-    }
-    unvisited = lastCheckpointUnvisited;
-    #endif
     // Check if the robot hasn't detected a checkpoint.
     if (tilesMap.positions.size() == 0 && tiles.size() == 0) {
         tilesMap.positions.push_back(robotCoord);
@@ -154,12 +125,13 @@ void restartOnLastCheckpoint() {
     } else {
         // tiles[tilesMap.getIndex(robotCoord)] = Tile(robotCoord);
         // Make the four adjacent tiles of the last checkpoint to be NULL.
-        for (const TileDirection& direction : directions) {
-            const int staticDirection = static_cast<int>(direction);
-            if (tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] != NULL) {
-                tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] = NULL;
-            }
-        }
+        // for (const TileDirection& direction : directions) {
+        //     const int staticDirection = static_cast<int>(direction);
+        //     if (tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] != NULL) {
+        //         tiles[tilesMap.getIndex(robotCoord)].adjacentTiles_[staticDirection] = NULL;
+        //     }
+        // }
+        unvisited.push(robotCoord);
         // Check unvisited tiles adjecencies, if they're not visited make them NULL.
         while (!unvisited.empty()) {
             coord currentTileCoord = unvisited.top();
@@ -175,6 +147,51 @@ void restartOnLastCheckpoint() {
         }
         unvisited = lastCheckpointUnvisited;
     }
+    #if DEBUG_ONLINE
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("TilesMap size: " + String(tilesMap.positions.size()));
+    udp.endPacket();
+    // for (int i = 0; i < tilesMap.positions.size(); ++i) {
+    //     customPrintln("TileMap: " + String(tilesMap.positions[i].x) + " " + String(tilesMap.positions[i].y) + " " + String(tilesMap.positions[i].z));
+    // }
+    // for (int i = 0; i < tiles.size(); ++i) {
+    //     customPrintln("Tile: " + String(tiles[i].position_.x) + " " + String(tiles[i].position_.y) + " " + String(tiles[i].position_.z));
+    // }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("visited: " + String(visitedMap.positions.size()));
+    udp.endPacket();
+    for (int i = 0; i < visitedMap.positions.size(); ++i) {
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+        udp.endPacket();
+        for (TileDirection d : directions) {
+            if (tiles[tilesMap.getIndex(visitedMap.positions[i])].adjacentTiles_[static_cast<int>(d)] != NULL) {
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("adjacent: " + String(tiles[tilesMap.getIndex(visitedMap.positions[i])].adjacentTiles_[static_cast<int>(d)]->position_.x) + " " + String(tiles[tilesMap.getIndex(visitedMap.positions[i])].adjacentTiles_[static_cast<int>(d)]->position_.y) + " at " + String(static_cast<int>(d)));
+                udp.endPacket();
+            }
+        }
+        // customPrintln("Visited: " + String(visitedMap.positions[i].x) + " " + String(visitedMap.positions[i].y));
+    }
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("unvisited: " + String(unvisited.size()));
+    udp.endPacket();
+    unvisited.push(robotCoord);
+    while (!unvisited.empty()) {
+        udp.beginPacket(udpServerIP, udpServerPort);
+        udp.print("unvisited: " + String(unvisited.top().x) + " " + String(unvisited.top().y));
+        udp.endPacket();
+        for (TileDirection d : directions) {
+            if (tiles[tilesMap.getIndex(unvisited.top())].adjacentTiles_[static_cast<int>(d)] != NULL) {
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("adjacent: " + String(tiles[tilesMap.getIndex(unvisited.top())].adjacentTiles_[static_cast<int>(d)]->position_.x) + " " + String(tiles[tilesMap.getIndex(unvisited.top())].adjacentTiles_[static_cast<int>(d)]->position_.y) + " at " + String(static_cast<int>(d)));
+                udp.endPacket();
+            }
+        }
+        unvisited.pop();
+    }
+    unvisited = lastCheckpointUnvisited;
+    #endif
     depthFirstSearch();
 }
 
