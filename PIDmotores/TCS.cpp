@@ -134,7 +134,7 @@ char TCS::getColor() {
         #if DEBUG_TCS
         customPrintln("black");
         #endif
-    } else if (adc < kMinPhotoresistorValue_ || adc > kMaxPhotoresistorValue_) {
+    } else if (red_ > kMinRedValueInCheckpoint_ && green_ > kMinGreenValueInCheckpoint_ && blue_ > kMinBlueValueInCheckpoint_ && red_ < kMaxRedValueInCheckpoint_ && green_ < kMaxGreenValueInCheckpoint_ && blue_ < kMaxBlueValueInCheckpoint_) { // adc < kMinPhotoresistorValue_ || adc > kMaxPhotoresistorValue_
         colorLetter = kCheckpointColor_;
         #if DEBUG_TCS
         customPrintln("checkpoint");
@@ -329,13 +329,23 @@ void TCS::getBlackRanges() {
 }
 
 void TCS::getCheckpointRanges() {
-    float adc = photoresistor.readADC_SingleEnded(0);
+    // float adc = photoresistor.readADC_SingleEnded(0);
+    // #if DEBUG_TCS
+    // customPrintln(adc);
+    // #endif
+    // kMinPhotoresistorValue_ = adc - kPhotoresistorThreshold_;
+    // kMaxPhotoresistorValue_ = adc + kPhotoresistorThreshold_;
+    // #if DEBUG_TCS
+    // customPrintln("photoresistor: " + String(kMinPhotoresistorValue_) + " " + String(kMaxPhotoresistorValue_));
+    // #endif
+    updateRGBC();
+    kMinRedValueInCheckpoint_ = red_ - kRangeTolerance_;
+    kMaxRedValueInCheckpoint_ = red_ + kRangeTolerance_;
+    kMinGreenValueInCheckpoint_ = green_ - kRangeTolerance_;
+    kMaxGreenValueInCheckpoint_ = green_ + kRangeTolerance_;
+    kMinBlueValueInCheckpoint_ = blue_ - kRangeTolerance_;
+    kMaxBlueValueInCheckpoint_ = blue_ + kRangeTolerance_;
     #if DEBUG_TCS
-    customPrintln(adc);
-    #endif
-    kMinPhotoresistorValue_ = adc - kPhotoresistorThreshold_;
-    kMaxPhotoresistorValue_ = adc + kPhotoresistorThreshold_;
-    #if DEBUG_TCS
-    customPrintln("photoresistor: " + String(kMinPhotoresistorValue_) + " " + String(kMaxPhotoresistorValue_));
+    customPrintln("red: " + String(kMinRedValueInCheckpoint_) + " " + String(kMaxRedValueInCheckpoint_) + " green: " + String(kMinGreenValueInCheckpoint_) +  " " + String(kMaxGreenValueInCheckpoint_) + " blue: " + String(kMinBlueValueInCheckpoint_) +  " " + String(kMaxBlueValueInCheckpoint_));
     #endif
 }

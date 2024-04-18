@@ -37,14 +37,14 @@ class TCS {
 
         static constexpr int8_t millisToWait_ = 50;
 
-        float kMinRedValueInBlue_ = -6;
-        float kMaxRedValueInBlue_ = 194;
+        float kMinRedValueInBlue_ = 32;
+        float kMaxRedValueInBlue_ = 132;
 
-        float kMinGreenValueInBlue_ = 49;
-        float kMaxGreenValueInBlue_ = 249;
+        float kMinGreenValueInBlue_ = 32;
+        float kMaxGreenValueInBlue_ = 132;
 
-        float kMinBlueValueInBlue_ = 101;
-        float kMaxBlueValueInBlue_ = 301;
+        float kMinBlueValueInBlue_ = 58;
+        float kMaxBlueValueInBlue_ = 158;
 
         float kMaxRedValueInRed_ = 0;
         float kMinRedValueInRed_ = 0;
@@ -55,23 +55,23 @@ class TCS {
         float kMaxBlueValueInRed_ = 0;
         float kMinBlueValueInRed_ = 0;
 
-        float kMinRedValueInBlack_ = -37;
-        float kMaxRedValueInBlack_ = 163;
+        float kMinRedValueInBlack_ = 19;
+        float kMaxRedValueInBlack_ = 119;
 
-        float kMinGreenValueInBlack_ = -54;
-        float kMaxGreenValueInBlack_ = 146;
+        float kMinGreenValueInBlack_ = 2;
+        float kMaxGreenValueInBlack_ = 102;
 
-        float kMinBlueValueInBlack_ = -61;
-        float kMaxBlueValueInBlack_ = 139;
+        float kMinBlueValueInBlack_ = -2;
+        float kMaxBlueValueInBlack_ = 98;
 
-        float kMinRedValueInCheckpoint_ = 0;
-        float kMaxRedValueInCheckpoint_ = 0;
+        float kMinRedValueInCheckpoint_ = 316;
+        float kMaxRedValueInCheckpoint_ = 416;
 
-        float kMinGreenValueInCheckpoint_ = 0;
-        float kMaxGreenValueInCheckpoint_ = 0;
+        float kMinGreenValueInCheckpoint_ = 327;
+        float kMaxGreenValueInCheckpoint_ = 427;
 
-        float kMinBlueValueInCheckpoint_ = 0;
-        float kMaxBlueValueInCheckpoint_ = 0;
+        float kMinBlueValueInCheckpoint_ = 291;
+        float kMaxBlueValueInCheckpoint_ = 391;
 
         float kMinRedValueInWhite_ = 0;
         float kMaxRedValueInWhite_ = 0;
