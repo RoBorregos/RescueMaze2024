@@ -171,8 +171,8 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
 
     if (moveForward) {
         if (inRamp) {
-            pidWallAlignment_.computeDistance(kDistanceDuringWallAlignment, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance(), speedLeft, speedRight, currentOrientation, targetOrientation);
-            // pidWallAlignment_.computeDistance(0.11, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), speedLeft, speedRight);
+            // pidWallAlignment_.computeDistance(kDistanceDuringWallAlignment, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance(), speedLeft, speedRight, currentOrientation, targetOrientation);
+            pidWallAlignment_.computeDistance(0.10, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), speedLeft, speedRight);
         } else {
             pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);
         }
@@ -952,6 +952,7 @@ bool Movement::isRamp() {
     #if DEBUG_MOVEMENT
     #endif
     if (currentOrientationY >= kMinRampOrientation || currentOrientationY <= -kMinRampOrientation) {
+        screenPrint("Ramp detected");
         if (currentOrientationY <= -kMinRampOrientation) {
             downRamp_ = true;
             pidWallAlignment_.setBaseSpeed(kBaseSpeedDownRamp_);

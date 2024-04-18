@@ -66,7 +66,7 @@ class Movement {
 
         bool bumperDetected_ = false;
 
-        static constexpr double kOrientationError = 10.0;
+        static constexpr double kOrientationError = 10.0; 
 
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
@@ -126,7 +126,7 @@ class Movement {
 
         unsigned long kTimeAfterRamp = 300; // 1400
 
-        unsigned long kTimeAfterDownRamp = 500;
+        unsigned long kTimeAfterDownRamp = 700;
 
         static constexpr double kDistanceDuringWallAlignment = 0.05;
 
@@ -167,7 +167,7 @@ class Movement {
 
         static constexpr double kMaxOrientationError = 0.9;
 
-        static constexpr double kMinRampOrientation = 10.0;
+        static constexpr double kMinRampOrientation = 10.0; // 10.0
 
         static constexpr double kMaxDistanceError = 0.01;
 
