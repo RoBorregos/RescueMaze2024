@@ -57,7 +57,8 @@ class Movement {
 
         int counterCollisionsLeft_ = 0;
         int counterCollisionsRight_ = 0;
-        int maxCollisions_ = 5;
+        // CHECK IF WE NEED TO CHANGE THIS IN THE COMPETENCE
+        int maxCollisions_ = 100;
 
         const unsigned long kTimeToDetectBumper_ = 2000;
 
@@ -123,7 +124,11 @@ class Movement {
 
         bool useWallDistance_ = false;
 
-        unsigned long kTimeAfterRamp = 1400;
+        unsigned long kTimeAfterRamp = 300; // 1400
+
+        unsigned long kTimeAfterDownRamp = 1000; 
+
+        bool downRamp_ = false;
 
         double currentDistance_ = 0;
         double targetDistance_ = 0;
@@ -182,9 +187,9 @@ class Movement {
 
         static constexpr double kWeightVlx = 1.0;
 
-        static constexpr double kWeightBNO = 0.5;
+        static constexpr double kWeightBNO = 0.4;
 
-        static constexpr double kWeightVLX = 0.5;
+        static constexpr double kWeightVLX = 0.6;
 
         int counterMovements_ = 0;
 
@@ -223,7 +228,9 @@ class Movement {
         double kITurn = 0.00000; // 0.00050
         constexpr static double kDTurn = 0.00019;
 
-        constexpr static double kPDistance = 0.20; // 0.63
+        constexpr static double kPDownRamp = 0.05;
+
+        constexpr static double kPDistance = 0.05; // 0.20
         constexpr static double kIDistance = 0.00; // 0.00
         constexpr static double kDDistance = 0.082; // 0.082
 
@@ -302,7 +309,7 @@ class Movement {
         int kSendRequestCode = 1;
         int kResetSerialCode = 2;
         Servo myservo;
-        static constexpr uint8_t initialAngle = 115;
+        static constexpr uint8_t initialAngle = 100;
         static constexpr uint8_t rightAngle = initialAngle + 37;
         static constexpr uint8_t leftAngle = initialAngle - 39;
         bool victimFound = false;

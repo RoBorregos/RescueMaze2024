@@ -700,7 +700,6 @@ void setup(){
     #endif
     robot.setup();
     onIdle();
-    // robot.moveMotors(MovementState::kForward, 0, 1);
 }
     
 void loop() {

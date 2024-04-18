@@ -255,3 +255,7 @@ void PID::computeDistance(const double setpoint, const double input, double& out
 
     timePrev_ = millis();
 }
+
+void PID::setKp(double kP) {
+    kP_ = kP;
+}
