@@ -98,7 +98,7 @@ class TCS {
 
         void setDefaultValues();
 
-        float kRangeTolerance_ = 100;
+        float kRangeTolerance_ = 50;
 
     public:
         TCS();

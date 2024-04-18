@@ -58,7 +58,7 @@ class Movement {
         int counterCollisionsLeft_ = 0;
         int counterCollisionsRight_ = 0;
         // CHECK IF WE NEED TO CHANGE THIS IN THE COMPETENCE
-        int maxCollisions_ = 100;
+        int maxCollisions_ = 10;
 
         const unsigned long kTimeToDetectBumper_ = 2000;
 
@@ -230,7 +230,7 @@ class Movement {
 
         constexpr static double kPDownRamp = 0.05;
 
-        constexpr static double kPDistance = 0.05; // 0.20
+        constexpr static double kPDistance = 0.20; // 0.20
         constexpr static double kIDistance = 0.00; // 0.00
         constexpr static double kDDistance = 0.082; // 0.082
 
