@@ -481,6 +481,7 @@ class Movement {
         void maybeGoBackwards(const double currentOrientation);
 
         void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistanceLeft, const double currentDistanceRight, double& speedLeft, double& speedRight);
-};
 
+        void testVlx();
+};
 #endif

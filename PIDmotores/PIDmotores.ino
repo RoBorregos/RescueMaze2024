@@ -20,7 +20,7 @@
 #define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
-#define DEBUG_ONLINE 1
+#define DEBUG_ONLINE 0
 
 #if DEBUG_ONLINE
 #include <WiFi.h>
@@ -703,6 +703,7 @@ void setup(){
 }
     
 void loop() {
+    // robot.testVlx();
     #if DEBUG_ALGORITHM
     customPrintln("Loop");
     delay(1000);
