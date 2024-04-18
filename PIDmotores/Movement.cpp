@@ -354,11 +354,10 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             while (hasTraveledDistanceWithSpeed(targetDistance) == false  && lackOfProgress_ == false) {
                 checkForLackOfProgress();
                 
-                if (wasBlackTile()) {
-                    
+                checkColors(targetOrientation);
+                if (wasBlackTile()) {                    
                     return;
                 }
-                checkColors(targetOrientation);
 
                 crashLeft = limitSwitch_[leftLimitSwitch].getState();
                 crashRight = limitSwitch_[rightLimitSwitch].getState();
@@ -367,6 +366,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 if (!result) {
                     stopMotors();
                     break;
+                }
+
+                checkColors(targetOrientation);
+                if (wasBlackTile()) {                    
+                    return;
                 }
 
                 // Checking serial.
@@ -441,19 +445,19 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                                              moveForward, 
                                              targetDistance) - (targetDistance * kMToCm))) >= 0.5  && lackOfProgress_ == false) {
 
+                    checkForLackOfProgress();
+
                     unsigned long timeDiff = millis() - timePrevBumper_;
                     if (timeDiff > kTimeToDetectBumper_) {
                         bumperDetected_ = true;
                     }
-                    
-                    checkForLackOfProgress();
 
+                    checkColors(targetOrientation);
                     if (wasBlackTile()) {
                         pidBackward_.setBaseSpeed(kBaseSpeedForward_);
                         pidForward_.setBaseSpeed(kBaseSpeedForward_);
                         return;
                     }
-                    checkColors(targetOrientation);
 
                     // Checking serial.
                     if (victimFound == false) {
@@ -478,6 +482,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                         crashLeft = limitSwitch_[leftLimitSwitch].getState();
                         crashRight = limitSwitch_[rightLimitSwitch].getState();
 
+                    }
+
+                    checkColors(targetOrientation);
+                    if (wasBlackTile()) {
+                        pidBackward_.setBaseSpeed(kBaseSpeedForward_);
+                        pidForward_.setBaseSpeed(kBaseSpeedForward_);
+                        return;
                     }
 
                     bool result = checkForCrashAndCorrect(crashLeft, crashRight, currentOrientation, useWallDistance);
