@@ -171,7 +171,7 @@ void Movement::moveMotorsInADirection(double targetOrientation, bool moveForward
 
     if (moveForward) {
         if (inRamp) {
-            pidWallAlignment_.computeDistance(0.11, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance(), speedLeft, speedRight, currentOrientation, targetOrientation);
+            pidWallAlignment_.computeDistance(kDistanceDuringWallAlignment, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance(), speedLeft, speedRight, currentOrientation, targetOrientation);
             // pidWallAlignment_.computeDistance(0.11, vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance(), speedLeft, speedRight);
         } else {
             pidForward_.computeStraight(targetOrientation, currentOrientation, speedLeft, speedRight);

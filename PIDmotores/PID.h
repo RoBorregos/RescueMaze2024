@@ -34,9 +34,9 @@ class PID {
         double kMaxErrorVlx_{1.0};
 
 
-        const double kWeightVlx = 0.6;
+        const double kWeightVlx = 0.8;
 
-        const double kWeightBNO = 0.4;
+        const double kWeightBNO = 0.2;
 
     public:
 
