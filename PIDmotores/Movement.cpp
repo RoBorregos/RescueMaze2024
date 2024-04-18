@@ -1575,7 +1575,6 @@ void Movement::checkSerial(double currentOrientation) {
             screenPrint("Victim Found");
             saveLastState(getCurrentState(), currentOrientation);
             moveMotors(MovementState::kStop, 0, 0);
-            victimFound = true;
             const double rightDistance = vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance();
             const double leftDistance = vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance();
             #if DEBUG_VISION
@@ -1585,22 +1584,27 @@ void Movement::checkSerial(double currentOrientation) {
             #endif
             delay(kOneSecInMs);
             if (victim == kHarmedSerialCodeLeft && leftDistance < kWallDistance) {
-                screenPrint("Throw 2 medkits left");
+                victimFound = true;
+                screenPrint("Harmed left");
                 moveServo(servoPosition::kLeft);
                 moveServo(servoPosition::kLeft);
             } else if (victim == kHarmedSerialCodeRight && rightDistance < kWallDistance) {
-                screenPrint("Throw 2 medkits right");
+                victimFound = true;
+                screenPrint("Harmed right");
                 moveServo(servoPosition::kRight);
                 moveServo(servoPosition::kRight);
             } else if (victim == kStableSerialCodeLeft && leftDistance < kWallDistance) {
-                screenPrint("Throw 1 medkit left");
+                victimFound = true;
+                screenPrint("Stable left");
                 moveServo(servoPosition::kLeft);
                 delay(2000);
             } else if (victim == kStableSerialCodeRight && rightDistance < kWallDistance) {
-                screenPrint("Throw 1 medkit right");
+                victimFound = true;
+                screenPrint("Stable right");
                 moveServo(servoPosition::kRight);
                 delay(2000);
             } else if (victim == kUnharmedSerialCodeLeft || victim == kUnharmedSerialCodeRight){
+                victimFound = true;
                 screenPrint("Unharmed");
                 delay(4000);
             }
