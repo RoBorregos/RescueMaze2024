@@ -128,7 +128,7 @@ class Movement {
 
         unsigned long kTimeAfterDownRamp = 500;
 
-        static constexpr double kDistanceDuringWallAlignment = 0.07;
+        static constexpr double kDistanceDuringWallAlignment = 0.05;
 
         bool downRamp_ = false;
 
