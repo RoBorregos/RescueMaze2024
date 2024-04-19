@@ -71,10 +71,11 @@ class Movement {
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.25; // m/s 0.09
-        static constexpr double kBaseSpeedTurn_ = 0.1; // m/s 0.07
+        static constexpr double kBaseSpeedTurn_ = 0.25; // m/s 0.07
+        static constexpr double kBaseSpeedTurnAlignment_ = 0.07; // m/s 0.07
         static constexpr double kBaseSpeedRoutine_ = 0.17; // m/s 0.17
-        static constexpr double kBaseSpeedForwardReset_ = 0.1; // m/s
-        static constexpr double kBaseSpeedWithVlx_ = 0.08; // m/s
+        static constexpr double kBaseSpeedForwardReset_ = 0.15; // m/s 0.1
+        static constexpr double kBaseSpeedWithVlx_ = 0.08; // m/s 0.08
 
         static constexpr double kBaseSpeedDownRamp_ = 0.15; // m/s
 
@@ -207,6 +208,7 @@ class Movement {
         PID pidForward_;
         PID pidBackward_;
         PID pidTurn_;
+        PID pidTurnAlignment_;
         PID pidWallAlignment_;
         PID pidVLX_;
         PID pidBNO_;
@@ -218,6 +220,8 @@ class Movement {
 
         bool inCollision_ = false;
 
+        bool turnAlignment_ = false;
+
         constexpr static double kPForward = 0.07; // 0.09
         constexpr static double kIForward = 0.01;
         constexpr static double kDForward = 0.00;
@@ -226,9 +230,13 @@ class Movement {
         constexpr static double kIBackward = 0.0;
         constexpr static double kDBackward = 0.0;
 
-        constexpr static double kPTurn = 0.00005;
-        double kITurn = 0.00000; // 0.00050
-        constexpr static double kDTurn = 0.00019;
+        constexpr static double kPTurn = 0.00005; // 0.00005
+        double kITurn = 0.00001; // 0.00000  0.00050
+        constexpr static double kDTurn = 0.00000; // 0.00019
+
+        constexpr static double kPTurnAlignment = 0.00005;
+        constexpr static double kITurnAlignment = 0.00000;
+        constexpr static double kDTurnAlignment = 0.00019; 
 
         constexpr static double kPDownRamp = 0.05;
 
