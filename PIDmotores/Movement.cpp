@@ -22,6 +22,7 @@ Movement::Movement() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    this->pidTurnAlignment_.setTunnings(kPTurnAlignment, kITurnAlignment, kDTurnAlignment, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurnAlignment_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 }
 
@@ -43,6 +44,7 @@ void Movement::setup() {
     this->pidForward_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidBackward_.setTunnings(kPBackward, kIBackward, kDBackward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
     this->pidTurn_.setTunnings(kPTurn, kITurn, kDTurn, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
+    this->pidTurnAlignment_.setTunnings(kPTurnAlignment, kITurnAlignment, kDTurnAlignment, kTurnMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedTurn_, kMaxOrientationError);
     this->pidWallAlignment_.setTunnings(kPDistance, kIDistance, kDDistance, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxDistanceError);
 
     setupInternal(MotorID::kFrontLeft);
@@ -295,12 +297,16 @@ void Movement::turnLeft(const double targetOrientation, const bool hasVictim) {
     victimFound = hasVictim;
     turning_ = true;
     moveMotors(MovementState::kTurnLeft, targetOrientation, 0);
+    // turnAlignment_ = true;
+    // moveMotors(MovementState::kTurnLeft, targetOrientation, 0);
 }
 
 void Movement::turnRight(const double targetOrientation, const bool hasVictim) {
     victimFound = hasVictim;
     turning_ = true;
     moveMotors(MovementState::kTurnRight, targetOrientation, 0);
+    // turnAlignment_ = true;
+    // moveMotors(MovementState::kTurnRight, targetOrientation, 0);
 }
 
 void Movement::rampMovement(const double targetOrientation) {
@@ -579,6 +585,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             if (detectedVictimInTurn_) {
                 turnMotors(targetOrientation, targetDistance, currentOrientation);
             }
+            // turnAlignment_ = false;
 
             break;
         }
@@ -589,6 +596,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             if (detectedVictimInTurn_) {
                 turnMotors(targetOrientation, targetDistance, currentOrientation);
             }
+            // turnAlignment_ = false;
 
             break;
         }
@@ -746,7 +754,7 @@ void Movement::saveLastState(const MovementState state, double &targetOrientatio
 }
 
 void Movement::retrieveLastState() {
-    allDistanceTraveled_ = crashDistance_ - crashDeltaDistance_;
+    allDistanceTraveled_ = crashDistance_;
     currentState_ = lastState_;
 }
 
@@ -793,31 +801,6 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         }
         
         for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
-            // if (inLeftCollision_) {
-            //     if (i == static_cast<uint8_t>(MotorID::kFrontRight) || i == static_cast<uint8_t>(MotorID::kBackRight)) {
-            //         if (directions[i] == MotorState::kForward) {
-            //             speeds[i] = speed * 2.0;
-            //         } else {
-            //             speeds[i] = speed;
-            //         }
-                    
-            //     } else {
-            //         speeds[i] = speed * 0.8;
-            //     }
-            // } else if (inRightCollision_) {
-            //     if (i == static_cast<uint8_t>(MotorID::kFrontLeft) || i == static_cast<uint8_t>(MotorID::kBackLeft)) {
-            //         if (directions[i] == MotorState::kForward) {
-            //             speeds[i] = speed * 2.0;
-            //         } else {
-            //             speeds[i] = speed;
-            //         }
-            //     } else {
-            //         speeds[i] = speed * 0.8;
-            //     }
-            // } else {
-                
-            //     speeds[i] = speed;
-            // }
             speeds[i] = speed;
         }
 
@@ -826,6 +809,93 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
         timePrev_ = millis();
         
     }
+    // if (turnAlignment_ == false) {
+    //     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError  && lackOfProgress_ == false) {
+    //         checkForLackOfProgress();
+    //         // Checking serial.
+    //         if (victimFound == false) {
+    //             if (hasReceivedSerial == true) {
+    //                 screenPrint("request sent");
+    //                 sendSerialRequest();
+    //             }
+    //             checkSerial(currentOrientation);
+    //             if (detectedVictimInTurn_ == true) {
+    //                 break;
+    //             }
+    //         }
+            
+    //         maybeGoBackwards(currentOrientation);
+
+    //         #if DEBUG_MOVEMENT
+    //         customPrintln("ErrorOrientation:" + String(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)));
+    //         #endif
+    //         const unsigned long timeDiff = millis() - timePrev_;
+    //         if (timeDiff < sampleTime_) {
+    //             currentOrientation = bno_.getOrientationX();
+    //             continue;
+    //         }
+
+    //         pidTurn_.computeTurn(targetOrientation, currentOrientation, speed, turnLeft);
+
+    //         if (turnLeft) {
+    //             setMotorsDirections(MovementState::kTurnLeft, directions); 
+    //         } else {
+    //             setMotorsDirections(MovementState::kTurnRight, directions); 
+    //         }
+            
+    //         for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
+    //             speeds[i] = speed;
+    //         }
+
+    //         setSpeedsAndDirections(speeds, directions);
+
+    //         timePrev_ = millis();
+            
+    //     }
+    // } else {
+    //     while (abs(pidTurnAlignment_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError  && lackOfProgress_ == false) {
+    //         checkForLackOfProgress();
+    //         // Checking serial.
+    //         if (victimFound == false) {
+    //             if (hasReceivedSerial == true) {
+    //                 screenPrint("request sent");
+    //                 sendSerialRequest();
+    //             }
+    //             checkSerial(currentOrientation);
+    //             if (detectedVictimInTurn_ == true) {
+    //                 break;
+    //             }
+    //         }
+            
+    //         maybeGoBackwards(currentOrientation);
+
+    //         #if DEBUG_MOVEMENT
+    //         customPrintln("ErrorOrientation:" + String(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)));
+    //         #endif
+    //         const unsigned long timeDiff = millis() - timePrev_;
+    //         if (timeDiff < sampleTime_) {
+    //             currentOrientation = bno_.getOrientationX();
+    //             continue;
+    //         }
+
+    //         pidTurnAlignment_.computeTurn(targetOrientation, currentOrientation, speed, turnLeft);
+
+    //         if (turnLeft) {
+    //             setMotorsDirections(MovementState::kTurnLeft, directions); 
+    //         } else {
+    //             setMotorsDirections(MovementState::kTurnRight, directions); 
+    //         }
+            
+    //         for (uint8_t i = 0; i < kNumberOfWheels; ++i) {
+    //             speeds[i] = speed;
+    //         }
+
+    //         setSpeedsAndDirections(speeds, directions);
+
+    //         timePrev_ = millis();
+            
+    //     }
+    // }
     stopMotors();
 }
 
@@ -1435,7 +1505,7 @@ void Movement::maybeGoBackwards(const double currentOrientation) {
         return;
     }
     stopMotors();
-    kITurn = 0.00005;
+    // kITurn = 0.00005;
     moveMotors(MovementState::kBackward, getOrientation(currentOrientation), 0.02, false);
     timePrevTurn_ = millis();
 }
