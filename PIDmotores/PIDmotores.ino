@@ -612,7 +612,7 @@ void setup(){
     customPrintln("Serial ready");
     #endif
     robot.setup();
-    onIdle();
+    startAlgorithm();
 }
     
 void loop() {

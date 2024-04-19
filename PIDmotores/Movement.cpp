@@ -7,6 +7,7 @@
 #define DEBUG_OFFLINE_MOVEMENT 0
 #define DEBUG_VISION 0
 
+#if DEBUG_OFFLINE_MOVEMENT
 #include <WiFi.h>
 #include <WiFiUdp.h>
 const char* ssid = "RoboMaze";
@@ -14,6 +15,7 @@ const char* password = "RoBorregos2024";
 const char* udpServerIP = "192.168.1.115"; // Replace with your Python script's IP address
 const int udpServerPort = 1;
 WiFiUDP udp;
+#endif
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
@@ -26,6 +28,7 @@ Movement::Movement() {
 }
 
 void Movement::setup() {
+    #if DEBUG_OFFLINE_MOVEMENT
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(kOneSecInMs);
@@ -36,6 +39,7 @@ void Movement::setup() {
     udp.beginPacket(udpServerIP, udpServerPort);
     udp.print("Connected to WiFi");
     udp.endPacket();
+    #endif
 
     this->prevTimeTraveled_ = millis();
     // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by first writing an unused pid it will work with all the pids
@@ -413,9 +417,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             double minTargetDistance_ = 1.0;
             double normalizedDistance = 0.0;
             if (frontWallDistance >= 0.15 && frontWallDistance <= 0.8) {
+                #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("frontWallDistance "+String(frontWallDistance));
                 udp.endPacket();
+                #endif
                 for (int i = 0; i < 3; ++i) {
                     double conversion = normalizedDistances[i + 1] + 0.1;
                     if (frontWallDistance > normalizedDistances[i] + 0.1 && frontWallDistance <= conversion) {
@@ -424,9 +430,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     }
                 }
             } else if (backWallDistance < 0.45) {
+                #if DEBUG_OFFLINE_MOVEMENT
                 udp.beginPacket(udpServerIP, udpServerPort);
                 udp.print("backWallDistance "+String(backWallDistance));
                 udp.endPacket();
+                #endif
                 for (int i = 0; i < 3; ++i) {
                     double conversion = normalizedDistances[i + 1] - 0.15;
                     if (backWallDistance > normalizedDistances[i] - 0.15 && backWallDistance <= conversion) {
@@ -529,9 +537,11 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 pidBackward_.setBaseSpeed(kBaseSpeedForward_);
                 pidForward_.setBaseSpeed(kBaseSpeedForward_);
             }
+            #if DEBUG_OFFLINE_MOVEMENT
             udp.beginPacket(udpServerIP, udpServerPort);
             udp.print("targetDistance "+String(targetDistance)+"\nfrontWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance())+" backWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
             udp.endPacket();
+            #endif
 
             bumperDetected_ = false;
 
