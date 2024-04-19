@@ -58,7 +58,7 @@ class Movement {
         int counterCollisionsLeft_ = 0;
         int counterCollisionsRight_ = 0;
         // CHECK IF WE NEED TO CHANGE THIS IN THE COMPETENCE
-        int maxCollisions_ = 10;
+        int maxCollisions_ = 6;
 
         const unsigned long kTimeToDetectBumper_ = 2000;
 
@@ -154,7 +154,7 @@ class Movement {
 
         double wallDistances[kNumberOfVlx];
 
-        double normalizedDistances[3] = {0.05, 0.35, 0.65};
+        double normalizedDistances[4] = {0.05, 0.35, 0.65, 0.95};
 
         static constexpr double kMToCenter_ = 0.05; // 5 cm
 

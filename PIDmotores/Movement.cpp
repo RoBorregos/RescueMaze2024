@@ -7,6 +7,14 @@
 #define DEBUG_OFFLINE_MOVEMENT 0
 #define DEBUG_VISION 0
 
+#include <WiFi.h>
+#include <WiFiUdp.h>
+const char* ssid = "RoboMaze";
+const char* password = "RoBorregos2024";
+const char* udpServerIP = "192.168.1.115"; // Replace with your Python script's IP address
+const int udpServerPort = 1;
+WiFiUDP udp;
+
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
     this->motor[kNumberOfWheels];
@@ -18,6 +26,17 @@ Movement::Movement() {
 }
 
 void Movement::setup() {
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(kOneSecInMs);
+        Serial.println("Connecting to WiFi...");
+    }
+    customPrintln("Connected to WiFi");
+    udp.begin(udpServerPort);
+    udp.beginPacket(udpServerIP, udpServerPort);
+    udp.print("Connected to WiFi");
+    udp.endPacket();
+
     this->prevTimeTraveled_ = millis();
     // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by first writing an unused pid it will work with all the pids
     this->pidDummy_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
@@ -391,36 +410,30 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
 
             stopMotors();
 
-            
-
-            if (frontWallDistance <= backWallDistance && frontWallDistance < 0.80) {
-                
-                double minTargetDistance_ = 1.0;
-                double normalizedDistance = 0.0;
-                double distanceAfterMoving = frontWallDistance;
+            double minTargetDistance_ = 1.0;
+            double normalizedDistance = 0.0;
+            if (frontWallDistance >= 0.15 && frontWallDistance <= 0.8) {
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("frontWallDistance "+String(frontWallDistance));
+                udp.endPacket();
                 for (int i = 0; i < 3; ++i) {
-                    targetDistance = abs(normalizedDistances[i] - distanceAfterMoving);
-                    
-                    if (targetDistance < minTargetDistance_) {
-                        minTargetDistance_ = targetDistance;
-                        normalizedDistance = normalizedDistances[i];
+                    double conversion = normalizedDistances[i + 1] + 0.1;
+                    if (frontWallDistance > normalizedDistances[i] + 0.1 && frontWallDistance <= conversion) {
+                        targetDistance = frontWallDistance - normalizedDistances[i];
+                        break;
                     }
                 }
-                targetDistance = frontWallDistance - normalizedDistance + 0.30;
-
             } else if (backWallDistance < 0.45) {
-                
-                double minTargetDistance_ = 1.0;
-                double normalizedDistance = 0.0;
-                double distanceAfterMoving = backWallDistance; 
+                udp.beginPacket(udpServerIP, udpServerPort);
+                udp.print("backWallDistance "+String(backWallDistance));
+                udp.endPacket();
                 for (int i = 0; i < 3; ++i) {
-                    targetDistance = abs(normalizedDistances[i] - distanceAfterMoving); 
-                    if (targetDistance < minTargetDistance_) {
-                        minTargetDistance_ = targetDistance;
-                        normalizedDistance = normalizedDistances[i];
+                    double conversion = normalizedDistances[i + 1] - 0.15;
+                    if (backWallDistance > normalizedDistances[i] - 0.15 && backWallDistance <= conversion) {
+                        targetDistance = normalizedDistances[i+1] - backWallDistance;
+                        break;
                     }
                 }
-                targetDistance = normalizedDistance - backWallDistance + 0.30;
             }
 
             // Center in tile with vlx.
@@ -443,7 +456,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                                              initialBackWallDistance, 
                                              initialFrontWallDistance, 
                                              moveForward, 
-                                             targetDistance) - (targetDistance * kMToCm))) >= 0.5  && lackOfProgress_ == false) {
+                                             targetDistance) - (targetDistance * kMToCm))) >= kMaxDistanceErrorInCm  && lackOfProgress_ == false) {
 
                     checkForLackOfProgress();
 
@@ -516,6 +529,9 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 pidBackward_.setBaseSpeed(kBaseSpeedForward_);
                 pidForward_.setBaseSpeed(kBaseSpeedForward_);
             }
+            udp.beginPacket(udpServerIP, udpServerPort);
+            udp.print("targetDistance "+String(targetDistance)+"\nfrontWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance())+" backWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
+            udp.endPacket();
 
             bumperDetected_ = false;
 
