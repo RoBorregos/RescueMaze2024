@@ -20,7 +20,6 @@
 #define DEBUG_MERGE 0
 #define MOVEMENT 1
 #define NO_ROBOT 0
-#define DEBUG_ONLINE 0
 
 Movement robot;
 
@@ -43,7 +42,7 @@ etl::vector<coord, kMaxMapSize> lastCheckpointVisited;
 etl::stack<coord, kMaxMapSize> lastCheckpointUnvisited;
 coord endOfPath;
 
-constexpr TileDirection directions[] = {TileDirection::kUp, TileDirection::kDown, TileDirection::kLeft, TileDirection::kRight};
+constexpr TileDirection directions[] = {TileDirection::kLeft, TileDirection::kDown, TileDirection::kRight, TileDirection::kUp};
 
 uint16_t robotOrientation = 0;
 coord robotCoord = coord{0,0,0};
@@ -140,17 +139,27 @@ void restartOnLastCheckpoint() {
     depthFirstSearch();
 }
 
-void turnAndMoveRobot(const int targetOrientation) {
+void turnAndMoveRobot(const int targetOrientation, coord nextTileCoord) {
     int difference = targetOrientation - robotOrientation;
     if (difference == 90 || difference == -270) {
         robot.turnRight(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.checkSerialStopped(tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 90) % 360;
     } else if (difference == -90 || difference == 270) {
         robot.turnLeft(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.checkSerialStopped(tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 270) % 360;
     } else if (difference == 180 || difference == -180) {
-        robot.turnRight(targetOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.turnRight((robotOrientation + 90) % 360, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.checkSerialStopped(tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.turnRight((robotOrientation + 180) % 360, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
         robotOrientation = (robotOrientation + 180) % 360;
+    }
+    // If a victim was found, update the tile.
+    bool dontSave = false;
+    if (robot.getVictimFound()) {
+        tiles[tilesMap.getIndex(robotCoord)].setVictim();
+        dontSave = true;
     }
     // If button was pressed while turning, set idle state.
     if (robot.getLackOfProgress()) {
@@ -169,6 +178,7 @@ void turnAndMoveRobot(const int targetOrientation) {
         robot.rampMovement(robotOrientation);
     } else {
         robot.goForward(robotOrientation, tiles[tilesMap.getIndex(robotCoord)].hasVictim());
+        robot.checkSerialStopped(tiles[tilesMap.getIndex(nextTileCoord)].hasVictim());
     }
     // If button was pressed while going forward, set idle state.
     if (robot.getLackOfProgress()) {
@@ -178,8 +188,8 @@ void turnAndMoveRobot(const int targetOrientation) {
         isLackOfProgress = true;
     }
     // If a victim was found, update the tile.
-    if (robot.getVictimFound() && !tiles[tilesMap.getIndex(robotCoord)].hasVictim()) {
-        tiles[tilesMap.getIndex(robotCoord)].setVictim();
+    if (robot.getVictimFound() && dontSave == false) {
+        tiles[tilesMap.getIndex(nextTileCoord)].setVictim();
     }
 }
 
@@ -212,7 +222,7 @@ void followPath() {
             // robot.screenPrint("left");
             #endif
             #if MOVEMENT
-            turnAndMoveRobot(270);
+            turnAndMoveRobot(270, next);
             #endif
         } else if (next.x > robotCoord.x) {
             #if DEBUG_MERGE
@@ -222,7 +232,7 @@ void followPath() {
             // robot.screenPrint("right");
             #endif
             #if MOVEMENT
-            turnAndMoveRobot(90);
+            turnAndMoveRobot(90, next);
             #endif
         } else if (next.y > robotCoord.y) {
             #if DEBUG_MERGE
@@ -232,7 +242,7 @@ void followPath() {
             // robot.screenPrint("up");
             #endif
             #if MOVEMENT
-            turnAndMoveRobot(0);
+            turnAndMoveRobot(0, next);
             #endif
         } else if (next.y < robotCoord.y) {
             #if DEBUG_MERGE
@@ -242,7 +252,7 @@ void followPath() {
             // robot.screenPrint("down");
             #endif
             #if MOVEMENT
-            turnAndMoveRobot(180);
+            turnAndMoveRobot(180, next);
             #endif
         }
         #if DEBUG_ALGORITHM
@@ -602,6 +612,7 @@ void startAlgorithm() {
     customPrintln("Start algorithm");
     #endif
     timeAtStart = millis();
+    robot.checkSerialStopped(tiles[tilesMap.getIndex(robotCoord)].hasVictim());
     robot.screenPrint("Start algorithm");
     depthFirstSearch();
 }

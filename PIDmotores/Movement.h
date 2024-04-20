@@ -71,7 +71,7 @@ class Movement {
         double currentSpeed_ = 0;
         double targetSpeed_ = 0;
         static constexpr double kBaseSpeedForward_ = 0.25; // m/s 0.09
-        static constexpr double kBaseSpeedTurn_ = 0.25; // m/s 0.07
+        static constexpr double kBaseSpeedTurn_ = 0.18; // m/s 0.07
         static constexpr double kBaseSpeedTurnAlignment_ = 0.07; // m/s 0.07
         static constexpr double kBaseSpeedRoutine_ = 0.17; // m/s 0.17
         static constexpr double kBaseSpeedForwardReset_ = 0.15; // m/s 0.1
@@ -319,8 +319,8 @@ class Movement {
         int kSendRequestCode = 1;
         int kResetSerialCode = 2;
         Servo myservo;
-        static constexpr uint8_t initialAngle = 100;
-        static constexpr uint8_t rightAngle = initialAngle + 37;
+        static constexpr uint8_t initialAngle = 108;
+        static constexpr uint8_t rightAngle = initialAngle + 40;
         static constexpr uint8_t leftAngle = initialAngle - 39;
         bool victimFound = false;
         u_int8_t rightStock = 6;
@@ -493,5 +493,7 @@ class Movement {
         void weightPID(const double targetOrientation, const double currentOrientation, const double targetDistance, const double currentDistanceLeft, const double currentDistanceRight, double& speedLeft, double& speedRight);
 
         void testVlx();
+        
+        void checkSerialStopped(bool hasVictim);
 };
 #endif

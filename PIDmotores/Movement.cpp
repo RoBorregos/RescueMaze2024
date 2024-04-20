@@ -4,18 +4,7 @@
 #include "VLX.h"
 
 #define DEBUG_MOVEMENT 0
-#define DEBUG_OFFLINE_MOVEMENT 0
 #define DEBUG_VISION 0
-
-#if DEBUG_OFFLINE_MOVEMENT
-#include <WiFi.h>
-#include <WiFiUdp.h>
-const char* ssid = "RoboMaze";
-const char* password = "RoBorregos2024";
-const char* udpServerIP = "192.168.1.115"; // Replace with your Python script's IP address
-const int udpServerPort = 1;
-WiFiUDP udp;
-#endif
 
 Movement::Movement() {
     this->prevTimeTraveled_ = millis();
@@ -29,19 +18,6 @@ Movement::Movement() {
 }
 
 void Movement::setup() {
-    #if DEBUG_OFFLINE_MOVEMENT
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(kOneSecInMs);
-        Serial.println("Connecting to WiFi...");
-    }
-    customPrintln("Connected to WiFi");
-    udp.begin(udpServerPort);
-    udp.beginPacket(udpServerIP, udpServerPort);
-    udp.print("Connected to WiFi");
-    udp.endPacket();
-    #endif
-
     this->prevTimeTraveled_ = millis();
     // WARNING? : The pidDummy_ doesn't work apparently the first pid won't work so by first writing an unused pid it will work with all the pids
     this->pidDummy_.setTunnings(kPForward, kIForward, kDForward, kMinOutput, kMaxOutput, kMaxErrorSum, kSampleTime, kBaseSpeedForward_, kMaxOrientationError);
@@ -82,7 +58,7 @@ void Movement::setup() {
 
     pinMode(Pins::buttonPin, INPUT_PULLUP);
 
-    sendSerialRequest();
+    // sendSerialRequest();
 }
 
 void Movement::setupInternal(const MotorID motorId) {
@@ -361,7 +337,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kForward): {
-            resetSerial();
+            // resetSerial();
             moveForward = true;
             currentState_ = MovementState::kForward;
             blackTile_ = false;
@@ -403,13 +379,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 }
 
                 // Checking serial.
-                if (victimFound == false) {
-                    if (hasReceivedSerial == true) {
-                        screenPrint("request sent");
-                        sendSerialRequest();
-                    }
-                    checkSerial(currentOrientation);
-                }
+                // if (victimFound == false) {
+                //     if (hasReceivedSerial == true) {
+                //         screenPrint("request sent");
+                //         sendSerialRequest();
+                //     }
+                //     checkSerial(currentOrientation);
+                // }
 
                 #if DEBUG_MOVEMENT
                 // customPrintln("Rampa: " + String(isRamp()));
@@ -423,11 +399,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             double minTargetDistance_ = 1.0;
             double normalizedDistance = 0.0;
             if (frontWallDistance >= 0.15 && frontWallDistance <= 0.8) {
-                #if DEBUG_OFFLINE_MOVEMENT
-                udp.beginPacket(udpServerIP, udpServerPort);
-                udp.print("frontWallDistance "+String(frontWallDistance));
-                udp.endPacket();
-                #endif
                 for (int i = 0; i < 3; ++i) {
                     double conversion = normalizedDistances[i + 1] + 0.1;
                     if (frontWallDistance > normalizedDistances[i] + 0.1 && frontWallDistance <= conversion) {
@@ -436,11 +407,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     }
                 }
             } else if (backWallDistance < 0.45) {
-                #if DEBUG_OFFLINE_MOVEMENT
-                udp.beginPacket(udpServerIP, udpServerPort);
-                udp.print("backWallDistance "+String(backWallDistance));
-                udp.endPacket();
-                #endif
                 for (int i = 0; i < 3; ++i) {
                     double conversion = normalizedDistances[i + 1] - 0.15;
                     if (backWallDistance > normalizedDistances[i] - 0.15 && backWallDistance <= conversion) {
@@ -487,13 +453,13 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                     }
 
                     // Checking serial.
-                    if (victimFound == false) {
-                        if (hasReceivedSerial == true) {
-                            screenPrint("request sent on vlx");
-                            sendSerialRequest();
-                        }
-                        checkSerial(currentOrientation);
-                    }
+                    // if (victimFound == false) {
+                    //     if (hasReceivedSerial == true) {
+                    //         screenPrint("request sent on vlx");
+                    //         sendSerialRequest();
+                    //     }
+                    //     checkSerial(currentOrientation);
+                    // }
 
                     pidBackward_.setBaseSpeed(kBaseSpeedWithVlx_);
                     pidForward_.setBaseSpeed(kBaseSpeedWithVlx_);
@@ -543,11 +509,6 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
                 pidBackward_.setBaseSpeed(kBaseSpeedForward_);
                 pidForward_.setBaseSpeed(kBaseSpeedForward_);
             }
-            #if DEBUG_OFFLINE_MOVEMENT
-            udp.beginPacket(udpServerIP, udpServerPort);
-            udp.print("targetDistance "+String(targetDistance)+"\nfrontWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kFrontLeft)].getRawDistance())+" backWallDistance "+String(vlx[static_cast<uint8_t>(VlxID::kBack)].getRawDistance()));
-            udp.endPacket();
-            #endif
 
             bumperDetected_ = false;
 
@@ -589,7 +550,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
         }
         // TODO: change MotorStarte of turnRigth and left to make an oneself motorState and with that I mean turn 
         case (MovementState::kTurnLeft): {
-            resetSerial();
+            // resetSerial();
             currentState_ = MovementState::kTurnLeft;
             turnMotors(targetOrientation, targetDistance, currentOrientation);
             if (detectedVictimInTurn_) {
@@ -600,7 +561,7 @@ void Movement::moveMotors(const MovementState state, const double targetOrientat
             break;
         }
         case (MovementState::kTurnRight): {
-            resetSerial();
+            // resetSerial();
             currentState_ = MovementState::kTurnRight;
             turnMotors(targetOrientation, targetDistance, currentOrientation);
             if (detectedVictimInTurn_) {
@@ -780,16 +741,16 @@ void Movement::turnMotors(const double targetOrientation, const double targetDis
     while (abs(pidTurn_.computeErrorOrientation(targetOrientation, currentOrientation)) > kMaxOrientationError  && lackOfProgress_ == false) {
         checkForLackOfProgress();
         // Checking serial.
-        if (victimFound == false) {
-            if (hasReceivedSerial == true) {
-                screenPrint("request sent");
-                sendSerialRequest();
-            }
-            checkSerial(currentOrientation);
-            if (detectedVictimInTurn_ == true) {
-                break;
-            }
-        }
+        // if (victimFound == false) {
+        //     if (hasReceivedSerial == true) {
+        //         screenPrint("request sent");
+        //         sendSerialRequest();
+        //     }
+        //     checkSerial(currentOrientation);
+        //     if (detectedVictimInTurn_ == true) {
+        //         break;
+        //     }
+        // }
         
         maybeGoBackwards(currentOrientation);
 
@@ -1035,7 +996,7 @@ char Movement::checkColors(const double targetOrientation) {
         screenPrint("Checkpoint tile detected");
         checkpointTile_ = true;
         stopMotors();
-        delay(kOneSecInMs);
+        // delay(kOneSecInMs);
         return color;
     }
     return color;
@@ -1316,6 +1277,7 @@ void Movement::sendSerialRequest() {
 }
 
 void Movement::checkSerial(double currentOrientation) {
+    victimFound = false;
     if (Serial.available() > 0) {
         hasReceivedSerial = true;
         victim = Serial.read();
@@ -1540,4 +1502,61 @@ void Movement::testVlx() {
     double distanceLeft = vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance();
     double distanceRight = vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance();
     customPrintln("FrontLeft: " + String(distanceFrontLeft) + " FrontRight: " + String(distanceFrontRight) + " Back: " + String(distanceBack) + " Left: " + String(distanceLeft) + " Right: " + String(distanceRight));
+}
+void Movement::checkSerialStopped(bool hasVictim) {
+    victimFound = false;
+    if (!hasVictim) {
+        // screenPrint("Serial Reseted");
+        if (Serial.available() > 0) {
+            Serial.read(); // Read the serial that was left unread.
+        }
+        // Serial.println(kResetSerialCode); // Send serial to reset the count of detections in Jetson.
+        // delay(1000);
+        screenPrint("Sending petition");
+        sendSerialRequest();
+        long waiting = millis();
+        while (Serial.available() <= 0 && millis() < waiting + 3000) {
+            screenPrint("Waiting for response");
+        }
+        // hasReceivedSerial = true;
+        if (Serial.available() > 0) {
+            victim = Serial.read();
+            screenPrint("Serial Received");
+            if (victim != kNoVictimSerialCode) {
+                screenPrint("Victim Found");
+                const double rightDistance = vlx[static_cast<uint8_t>(VlxID::kRight)].getRawDistance();
+                const double leftDistance = vlx[static_cast<uint8_t>(VlxID::kLeft)].getRawDistance();
+                delay(kOneSecInMs);
+                if (victim == kHarmedSerialCodeLeft && leftDistance < kWallDistance) {
+                    victimFound = true;
+                    screenPrint("Harmed left");
+                    moveServo(servoPosition::kLeft);
+                    moveServo(servoPosition::kLeft);
+                } else if (victim == kHarmedSerialCodeRight && rightDistance < kWallDistance) {
+                    victimFound = true;
+                    screenPrint("Harmed right");
+                    moveServo(servoPosition::kRight);
+                    moveServo(servoPosition::kRight);
+                } else if (victim == kStableSerialCodeLeft && leftDistance < kWallDistance) {
+                    victimFound = true;
+                    screenPrint("Stable left");
+                    moveServo(servoPosition::kLeft);
+                    delay(2000);
+                } else if (victim == kStableSerialCodeRight && rightDistance < kWallDistance) {
+                    victimFound = true;
+                    screenPrint("Stable right");
+                    moveServo(servoPosition::kRight);
+                    delay(2000);
+                } else if (victim == kUnharmedSerialCodeLeft || victim == kUnharmedSerialCodeRight){
+                    victimFound = true;
+                    screenPrint("Unharmed");
+                    delay(4000);
+                }
+                detectedVictimInTurn_ = true;
+            }
+        } else {
+            screenPrint("No response");
+            delay(500);
+        }
+    }
 }
